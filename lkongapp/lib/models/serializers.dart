@@ -15,6 +15,7 @@ part 'serializers.g.dart';
   AppConfig,
   AppSetting,
   AuthState,
+  UIState,
   ThemeSetting,
   AccountSettings,
   AccountSetting,

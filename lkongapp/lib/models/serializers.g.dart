@@ -28,6 +28,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(AppTheme.serializer)
       ..add(AuthState.serializer)
       ..add(ThemeSetting.serializer)
+      ..add(UIState.serializer)
       ..add(User.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(AppTheme)]),

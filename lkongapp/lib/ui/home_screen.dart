@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:lkongapp/ui/app_drawer.dart';
 
+import 'package:lkongapp/ui/page_controller.dart';
+
 class HomeScreen extends StatelessWidget {
 
   @override
@@ -11,6 +13,7 @@ class HomeScreen extends StatelessWidget {
         title: Text('Home'),
       ),
       drawer: AppDrawerBuilder(),
+      body: PageControl(),
     );
   }
 }

@@ -40,6 +40,9 @@ class _$AppStateSerializer implements StructuredSerializer<AppState> {
       'authState',
       serializers.serialize(object.authState,
           specifiedType: const FullType(AuthState)),
+      'uiState',
+      serializers.serialize(object.uiState,
+          specifiedType: const FullType(UIState)),
       'appConfig',
       serializers.serialize(object.appConfig,
           specifiedType: const FullType(AppConfig)),
@@ -71,6 +74,10 @@ class _$AppStateSerializer implements StructuredSerializer<AppState> {
           result.authState.replace(serializers.deserialize(value,
               specifiedType: const FullType(AuthState)) as AuthState);
           break;
+        case 'uiState':
+          result.uiState.replace(serializers.deserialize(value,
+              specifiedType: const FullType(UIState)) as UIState);
+          break;
         case 'appConfig':
           result.appConfig.replace(serializers.deserialize(value,
               specifiedType: const FullType(AppConfig)) as AppConfig);
@@ -90,13 +97,19 @@ class _$AppState extends AppState {
   @override
   final AuthState authState;
   @override
+  final UIState uiState;
+  @override
   final AppConfig appConfig;
 
   factory _$AppState([void updates(AppStateBuilder b)]) =>
       (new AppStateBuilder()..update(updates)).build();
 
   _$AppState._(
-      {this.rehydrated, this.isLoading, this.authState, this.appConfig})
+      {this.rehydrated,
+      this.isLoading,
+      this.authState,
+      this.uiState,
+      this.appConfig})
       : super._() {
     if (rehydrated == null) {
       throw new BuiltValueNullFieldError('AppState', 'rehydrated');
@@ -106,6 +119,9 @@ class _$AppState extends AppState {
     }
     if (authState == null) {
       throw new BuiltValueNullFieldError('AppState', 'authState');
+    }
+    if (uiState == null) {
+      throw new BuiltValueNullFieldError('AppState', 'uiState');
     }
     if (appConfig == null) {
       throw new BuiltValueNullFieldError('AppState', 'appConfig');
@@ -126,14 +142,17 @@ class _$AppState extends AppState {
         rehydrated == other.rehydrated &&
         isLoading == other.isLoading &&
         authState == other.authState &&
+        uiState == other.uiState &&
         appConfig == other.appConfig;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, rehydrated.hashCode), isLoading.hashCode),
-            authState.hashCode),
+        $jc(
+            $jc($jc($jc(0, rehydrated.hashCode), isLoading.hashCode),
+                authState.hashCode),
+            uiState.hashCode),
         appConfig.hashCode));
   }
 
@@ -143,6 +162,7 @@ class _$AppState extends AppState {
           ..add('rehydrated', rehydrated)
           ..add('isLoading', isLoading)
           ..add('authState', authState)
+          ..add('uiState', uiState)
           ..add('appConfig', appConfig))
         .toString();
   }
@@ -164,6 +184,10 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
       _$this._authState ??= new AuthStateBuilder();
   set authState(AuthStateBuilder authState) => _$this._authState = authState;
 
+  UIStateBuilder _uiState;
+  UIStateBuilder get uiState => _$this._uiState ??= new UIStateBuilder();
+  set uiState(UIStateBuilder uiState) => _$this._uiState = uiState;
+
   AppConfigBuilder _appConfig;
   AppConfigBuilder get appConfig =>
       _$this._appConfig ??= new AppConfigBuilder();
@@ -176,6 +200,7 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
       _rehydrated = _$v.rehydrated;
       _isLoading = _$v.isLoading;
       _authState = _$v.authState?.toBuilder();
+      _uiState = _$v.uiState?.toBuilder();
       _appConfig = _$v.appConfig?.toBuilder();
       _$v = null;
     }
@@ -204,12 +229,15 @@ class AppStateBuilder implements Builder<AppState, AppStateBuilder> {
               rehydrated: rehydrated,
               isLoading: isLoading,
               authState: authState.build(),
+              uiState: uiState.build(),
               appConfig: appConfig.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'authState';
         authState.build();
+        _$failedField = 'uiState';
+        uiState.build();
         _$failedField = 'appConfig';
         appConfig.build();
       } catch (e) {

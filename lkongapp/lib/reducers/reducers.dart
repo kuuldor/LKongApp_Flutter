@@ -15,6 +15,7 @@ AppState appReducer(AppState state, action) {
   return state.rebuild((b) => b
     ..isLoading = loadingReducer(state.isLoading, action)
     ..authState.replace(authReducer(state.authState, action))
+    ..uiState.replace(uiStateReducer(state.uiState, action))
     ..appConfig.replace(appConfigReducer(state.appConfig, action))
   );
 }

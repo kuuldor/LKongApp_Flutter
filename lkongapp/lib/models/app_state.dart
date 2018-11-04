@@ -6,6 +6,7 @@ import 'package:built_value/serializer.dart';
 
 import 'package:lkongapp/models/app_config.dart';
 import 'package:lkongapp/models/auth_state.dart';
+import 'package:lkongapp/models/ui_state.dart';
 import 'package:lkongapp/models/serializers.dart';
 
 part 'app_state.g.dart';
@@ -14,12 +15,14 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   AppState._();
 
   factory AppState([updates(AppStateBuilder b)]) => _$AppState((b) {
-        AppConfigBuilder appConfig = AppConfigBuilder()..replace(AppConfig());
-        AuthStateBuilder authState = AuthStateBuilder()..replace(AuthState());
+        AppConfigBuilder appConfig = AppConfig().toBuilder();
+        AuthStateBuilder authState = AuthState().toBuilder();
+        UIStateBuilder uiState = UIState().toBuilder();
 
         b
           ..appConfig = appConfig
           ..authState = authState
+          ..uiState = uiState
           ..rehydrated = false
           ..isLoading = false
           ..update(updates);
@@ -33,6 +36,9 @@ abstract class AppState implements Built<AppState, AppStateBuilder> {
   
   @BuiltValueField(wireName: 'authState')
   AuthState get authState;
+
+  @BuiltValueField(wireName: 'uiState')
+  UIState get uiState;
 
   @BuiltValueField(wireName: 'appConfig')
   AppConfig get appConfig;

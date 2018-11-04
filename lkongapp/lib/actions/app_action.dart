@@ -28,3 +28,9 @@ class ChangeSetting {
 
   ChangeSetting(this.change);
 }
+
+class UIChange {
+  final Function(UIStateBuilder builder) change;
+
+  UIChange(this.change);
+}
