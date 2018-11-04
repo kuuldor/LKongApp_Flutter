@@ -1,0 +1,1280 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'app_config.dart';
+
+// **************************************************************************
+// BuiltValueGenerator
+// **************************************************************************
+
+// ignore_for_file: always_put_control_body_on_new_line
+// ignore_for_file: annotate_overrides
+// ignore_for_file: avoid_annotating_with_dynamic
+// ignore_for_file: avoid_catches_without_on_clauses
+// ignore_for_file: avoid_returning_this
+// ignore_for_file: lines_longer_than_80_chars
+// ignore_for_file: omit_local_variable_types
+// ignore_for_file: prefer_expression_function_bodies
+// ignore_for_file: sort_constructors_first
+// ignore_for_file: unnecessary_const
+// ignore_for_file: unnecessary_new
+// ignore_for_file: test_types_in_equals
+
+Serializer<AppConfig> _$appConfigSerializer = new _$AppConfigSerializer();
+Serializer<AppSetting> _$appSettingSerializer = new _$AppSettingSerializer();
+Serializer<ThemeSetting> _$themeSettingSerializer =
+    new _$ThemeSettingSerializer();
+Serializer<AccountSettings> _$accountSettingsSerializer =
+    new _$AccountSettingsSerializer();
+Serializer<AccountSetting> _$accountSettingSerializer =
+    new _$AccountSettingSerializer();
+
+class _$AppConfigSerializer implements StructuredSerializer<AppConfig> {
+  @override
+  final Iterable<Type> types = const [AppConfig, _$AppConfig];
+  @override
+  final String wireName = 'AppConfig';
+
+  @override
+  Iterable serialize(Serializers serializers, AppConfig object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'setting',
+      serializers.serialize(object.setting,
+          specifiedType: const FullType(AppSetting)),
+      'accountSettings',
+      serializers.serialize(object.accountSettings,
+          specifiedType: const FullType(AccountSettings)),
+    ];
+
+    return result;
+  }
+
+  @override
+  AppConfig deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new AppConfigBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'setting':
+          result.setting.replace(serializers.deserialize(value,
+              specifiedType: const FullType(AppSetting)) as AppSetting);
+          break;
+        case 'accountSettings':
+          result.accountSettings.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(AccountSettings))
+              as AccountSettings);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
+  @override
+  final Iterable<Type> types = const [AppSetting, _$AppSetting];
+  @override
+  final String wireName = 'AppSetting';
+
+  @override
+  Iterable serialize(Serializers serializers, AppSetting object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'saveCredential',
+      serializers.serialize(object.saveCredential,
+          specifiedType: const FullType(bool)),
+      'version',
+      serializers.serialize(object.version,
+          specifiedType: const FullType(String)),
+      'copyright',
+      serializers.serialize(object.copyright,
+          specifiedType: const FullType(String)),
+      'themeSetting',
+      serializers.serialize(object.themeSetting,
+          specifiedType: const FullType(ThemeSetting)),
+      'nightMode',
+      serializers.serialize(object.nightMode,
+          specifiedType: const FullType(bool)),
+      'shakeToShiftNightMode',
+      serializers.serialize(object.shakeToShiftNightMode,
+          specifiedType: const FullType(bool)),
+      'swipeThreshold',
+      serializers.serialize(object.swipeThreshold,
+          specifiedType: const FullType(int)),
+      'lockOrientation',
+      serializers.serialize(object.lockOrientation,
+          specifiedType: const FullType(bool)),
+      'fontSize',
+      serializers.serialize(object.fontSize,
+          specifiedType: const FullType(int)),
+      'allowCopy',
+      serializers.serialize(object.allowCopy,
+          specifiedType: const FullType(bool)),
+      'loadInSamePage',
+      serializers.serialize(object.loadInSamePage,
+          specifiedType: const FullType(bool)),
+      'hideBlacklisterPost',
+      serializers.serialize(object.hideBlacklisterPost,
+          specifiedType: const FullType(bool)),
+      'showDetailTime',
+      serializers.serialize(object.showDetailTime,
+          specifiedType: const FullType(bool)),
+      'uploadImageAPI',
+      serializers.serialize(object.uploadImageAPI,
+          specifiedType: const FullType(int)),
+      'noImageMode',
+      serializers.serialize(object.noImageMode,
+          specifiedType: const FullType(int)),
+      'loadAvatar',
+      serializers.serialize(object.loadAvatar,
+          specifiedType: const FullType(bool)),
+      'avatarDisplaySize',
+      serializers.serialize(object.avatarDisplaySize,
+          specifiedType: const FullType(int)),
+      'backgroundFetch',
+      serializers.serialize(object.backgroundFetch,
+          specifiedType: const FullType(bool)),
+      'cacheSize',
+      serializers.serialize(object.cacheSize,
+          specifiedType: const FullType(int)),
+    ];
+
+    return result;
+  }
+
+  @override
+  AppSetting deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new AppSettingBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'saveCredential':
+          result.saveCredential = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'version':
+          result.version = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'copyright':
+          result.copyright = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'themeSetting':
+          result.themeSetting.replace(serializers.deserialize(value,
+              specifiedType: const FullType(ThemeSetting)) as ThemeSetting);
+          break;
+        case 'nightMode':
+          result.nightMode = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'shakeToShiftNightMode':
+          result.shakeToShiftNightMode = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'swipeThreshold':
+          result.swipeThreshold = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'lockOrientation':
+          result.lockOrientation = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'fontSize':
+          result.fontSize = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'allowCopy':
+          result.allowCopy = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'loadInSamePage':
+          result.loadInSamePage = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'hideBlacklisterPost':
+          result.hideBlacklisterPost = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'showDetailTime':
+          result.showDetailTime = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'uploadImageAPI':
+          result.uploadImageAPI = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'noImageMode':
+          result.noImageMode = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'loadAvatar':
+          result.loadAvatar = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'avatarDisplaySize':
+          result.avatarDisplaySize = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'backgroundFetch':
+          result.backgroundFetch = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'cacheSize':
+          result.cacheSize = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$ThemeSettingSerializer implements StructuredSerializer<ThemeSetting> {
+  @override
+  final Iterable<Type> types = const [ThemeSetting, _$ThemeSetting];
+  @override
+  final String wireName = 'ThemeSetting';
+
+  @override
+  Iterable serialize(Serializers serializers, ThemeSetting object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'day',
+      serializers.serialize(object.day, specifiedType: const FullType(int)),
+      'night',
+      serializers.serialize(object.night, specifiedType: const FullType(int)),
+      'theme',
+      serializers.serialize(object.theme,
+          specifiedType:
+              const FullType(BuiltList, const [const FullType(AppTheme)])),
+    ];
+
+    return result;
+  }
+
+  @override
+  ThemeSetting deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new ThemeSettingBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'day':
+          result.day = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'night':
+          result.night = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'theme':
+          result.theme.replace(serializers.deserialize(value,
+              specifiedType: const FullType(
+                  BuiltList, const [const FullType(AppTheme)])) as BuiltList);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$AccountSettingsSerializer
+    implements StructuredSerializer<AccountSettings> {
+  @override
+  final Iterable<Type> types = const [AccountSettings, _$AccountSettings];
+  @override
+  final String wireName = 'AccountSettings';
+
+  @override
+  Iterable serialize(Serializers serializers, AccountSettings object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'defaultSetting',
+      serializers.serialize(object.defaultSetting,
+          specifiedType: const FullType(AccountSetting)),
+      'accounts',
+      serializers.serialize(object.accounts,
+          specifiedType: const FullType(Map,
+              const [const FullType(String), const FullType(AccountSetting)])),
+    ];
+
+    return result;
+  }
+
+  @override
+  AccountSettings deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new AccountSettingsBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'defaultSetting':
+          result.defaultSetting.replace(serializers.deserialize(value,
+              specifiedType: const FullType(AccountSetting)) as AccountSetting);
+          break;
+        case 'accounts':
+          result.accounts = serializers.deserialize(value,
+              specifiedType: const FullType(Map, const [
+                const FullType(String),
+                const FullType(AccountSetting)
+              ])) as Map<String, AccountSetting>;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$AccountSettingSerializer
+    implements StructuredSerializer<AccountSetting> {
+  @override
+  final Iterable<Type> types = const [AccountSetting, _$AccountSetting];
+  @override
+  final String wireName = 'AccountSetting';
+
+  @override
+  Iterable serialize(Serializers serializers, AccountSetting object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'autoPunch',
+      serializers.serialize(object.autoPunch,
+          specifiedType: const FullType(bool)),
+      'homePage',
+      serializers.serialize(object.homePage,
+          specifiedType: const FullType(int)),
+      'threadOnlyHome',
+      serializers.serialize(object.threadOnlyHome,
+          specifiedType: const FullType(bool)),
+      'signature',
+      serializers.serialize(object.signature,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  AccountSetting deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new AccountSettingBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'autoPunch':
+          result.autoPunch = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'homePage':
+          result.homePage = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'threadOnlyHome':
+          result.threadOnlyHome = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'signature':
+          result.signature = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$AppConfig extends AppConfig {
+  @override
+  final AppSetting setting;
+  @override
+  final AccountSettings accountSettings;
+
+  factory _$AppConfig([void updates(AppConfigBuilder b)]) =>
+      (new AppConfigBuilder()..update(updates)).build();
+
+  _$AppConfig._({this.setting, this.accountSettings}) : super._() {
+    if (setting == null) {
+      throw new BuiltValueNullFieldError('AppConfig', 'setting');
+    }
+    if (accountSettings == null) {
+      throw new BuiltValueNullFieldError('AppConfig', 'accountSettings');
+    }
+  }
+
+  @override
+  AppConfig rebuild(void updates(AppConfigBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  AppConfigBuilder toBuilder() => new AppConfigBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is AppConfig &&
+        setting == other.setting &&
+        accountSettings == other.accountSettings;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, setting.hashCode), accountSettings.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('AppConfig')
+          ..add('setting', setting)
+          ..add('accountSettings', accountSettings))
+        .toString();
+  }
+}
+
+class AppConfigBuilder implements Builder<AppConfig, AppConfigBuilder> {
+  _$AppConfig _$v;
+
+  AppSettingBuilder _setting;
+  AppSettingBuilder get setting => _$this._setting ??= new AppSettingBuilder();
+  set setting(AppSettingBuilder setting) => _$this._setting = setting;
+
+  AccountSettingsBuilder _accountSettings;
+  AccountSettingsBuilder get accountSettings =>
+      _$this._accountSettings ??= new AccountSettingsBuilder();
+  set accountSettings(AccountSettingsBuilder accountSettings) =>
+      _$this._accountSettings = accountSettings;
+
+  AppConfigBuilder();
+
+  AppConfigBuilder get _$this {
+    if (_$v != null) {
+      _setting = _$v.setting?.toBuilder();
+      _accountSettings = _$v.accountSettings?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(AppConfig other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$AppConfig;
+  }
+
+  @override
+  void update(void updates(AppConfigBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$AppConfig build() {
+    _$AppConfig _$result;
+    try {
+      _$result = _$v ??
+          new _$AppConfig._(
+              setting: setting.build(),
+              accountSettings: accountSettings.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'setting';
+        setting.build();
+        _$failedField = 'accountSettings';
+        accountSettings.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'AppConfig', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$AppSetting extends AppSetting {
+  @override
+  final bool saveCredential;
+  @override
+  final String version;
+  @override
+  final String copyright;
+  @override
+  final ThemeSetting themeSetting;
+  @override
+  final bool nightMode;
+  @override
+  final bool shakeToShiftNightMode;
+  @override
+  final int swipeThreshold;
+  @override
+  final bool lockOrientation;
+  @override
+  final int fontSize;
+  @override
+  final bool allowCopy;
+  @override
+  final bool loadInSamePage;
+  @override
+  final bool hideBlacklisterPost;
+  @override
+  final bool showDetailTime;
+  @override
+  final int uploadImageAPI;
+  @override
+  final int noImageMode;
+  @override
+  final bool loadAvatar;
+  @override
+  final int avatarDisplaySize;
+  @override
+  final bool backgroundFetch;
+  @override
+  final int cacheSize;
+
+  factory _$AppSetting([void updates(AppSettingBuilder b)]) =>
+      (new AppSettingBuilder()..update(updates)).build();
+
+  _$AppSetting._(
+      {this.saveCredential,
+      this.version,
+      this.copyright,
+      this.themeSetting,
+      this.nightMode,
+      this.shakeToShiftNightMode,
+      this.swipeThreshold,
+      this.lockOrientation,
+      this.fontSize,
+      this.allowCopy,
+      this.loadInSamePage,
+      this.hideBlacklisterPost,
+      this.showDetailTime,
+      this.uploadImageAPI,
+      this.noImageMode,
+      this.loadAvatar,
+      this.avatarDisplaySize,
+      this.backgroundFetch,
+      this.cacheSize})
+      : super._() {
+    if (saveCredential == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'saveCredential');
+    }
+    if (version == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'version');
+    }
+    if (copyright == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'copyright');
+    }
+    if (themeSetting == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'themeSetting');
+    }
+    if (nightMode == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'nightMode');
+    }
+    if (shakeToShiftNightMode == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'shakeToShiftNightMode');
+    }
+    if (swipeThreshold == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'swipeThreshold');
+    }
+    if (lockOrientation == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'lockOrientation');
+    }
+    if (fontSize == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'fontSize');
+    }
+    if (allowCopy == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'allowCopy');
+    }
+    if (loadInSamePage == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'loadInSamePage');
+    }
+    if (hideBlacklisterPost == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'hideBlacklisterPost');
+    }
+    if (showDetailTime == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'showDetailTime');
+    }
+    if (uploadImageAPI == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'uploadImageAPI');
+    }
+    if (noImageMode == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'noImageMode');
+    }
+    if (loadAvatar == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'loadAvatar');
+    }
+    if (avatarDisplaySize == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'avatarDisplaySize');
+    }
+    if (backgroundFetch == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'backgroundFetch');
+    }
+    if (cacheSize == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'cacheSize');
+    }
+  }
+
+  @override
+  AppSetting rebuild(void updates(AppSettingBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  AppSettingBuilder toBuilder() => new AppSettingBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is AppSetting &&
+        saveCredential == other.saveCredential &&
+        version == other.version &&
+        copyright == other.copyright &&
+        themeSetting == other.themeSetting &&
+        nightMode == other.nightMode &&
+        shakeToShiftNightMode == other.shakeToShiftNightMode &&
+        swipeThreshold == other.swipeThreshold &&
+        lockOrientation == other.lockOrientation &&
+        fontSize == other.fontSize &&
+        allowCopy == other.allowCopy &&
+        loadInSamePage == other.loadInSamePage &&
+        hideBlacklisterPost == other.hideBlacklisterPost &&
+        showDetailTime == other.showDetailTime &&
+        uploadImageAPI == other.uploadImageAPI &&
+        noImageMode == other.noImageMode &&
+        loadAvatar == other.loadAvatar &&
+        avatarDisplaySize == other.avatarDisplaySize &&
+        backgroundFetch == other.backgroundFetch &&
+        cacheSize == other.cacheSize;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc(
+                        $jc(
+                            $jc(
+                                $jc(
+                                    $jc(
+                                        $jc(
+                                            $jc(
+                                                $jc(
+                                                    $jc(
+                                                        $jc(
+                                                            $jc(
+                                                                $jc(
+                                                                    $jc(
+                                                                        $jc(
+                                                                            $jc(
+                                                                                0,
+                                                                                saveCredential
+                                                                                    .hashCode),
+                                                                            version
+                                                                                .hashCode),
+                                                                        copyright
+                                                                            .hashCode),
+                                                                    themeSetting
+                                                                        .hashCode),
+                                                                nightMode
+                                                                    .hashCode),
+                                                            shakeToShiftNightMode
+                                                                .hashCode),
+                                                        swipeThreshold
+                                                            .hashCode),
+                                                    lockOrientation.hashCode),
+                                                fontSize.hashCode),
+                                            allowCopy.hashCode),
+                                        loadInSamePage.hashCode),
+                                    hideBlacklisterPost.hashCode),
+                                showDetailTime.hashCode),
+                            uploadImageAPI.hashCode),
+                        noImageMode.hashCode),
+                    loadAvatar.hashCode),
+                avatarDisplaySize.hashCode),
+            backgroundFetch.hashCode),
+        cacheSize.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('AppSetting')
+          ..add('saveCredential', saveCredential)
+          ..add('version', version)
+          ..add('copyright', copyright)
+          ..add('themeSetting', themeSetting)
+          ..add('nightMode', nightMode)
+          ..add('shakeToShiftNightMode', shakeToShiftNightMode)
+          ..add('swipeThreshold', swipeThreshold)
+          ..add('lockOrientation', lockOrientation)
+          ..add('fontSize', fontSize)
+          ..add('allowCopy', allowCopy)
+          ..add('loadInSamePage', loadInSamePage)
+          ..add('hideBlacklisterPost', hideBlacklisterPost)
+          ..add('showDetailTime', showDetailTime)
+          ..add('uploadImageAPI', uploadImageAPI)
+          ..add('noImageMode', noImageMode)
+          ..add('loadAvatar', loadAvatar)
+          ..add('avatarDisplaySize', avatarDisplaySize)
+          ..add('backgroundFetch', backgroundFetch)
+          ..add('cacheSize', cacheSize))
+        .toString();
+  }
+}
+
+class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
+  _$AppSetting _$v;
+
+  bool _saveCredential;
+  bool get saveCredential => _$this._saveCredential;
+  set saveCredential(bool saveCredential) =>
+      _$this._saveCredential = saveCredential;
+
+  String _version;
+  String get version => _$this._version;
+  set version(String version) => _$this._version = version;
+
+  String _copyright;
+  String get copyright => _$this._copyright;
+  set copyright(String copyright) => _$this._copyright = copyright;
+
+  ThemeSettingBuilder _themeSetting;
+  ThemeSettingBuilder get themeSetting =>
+      _$this._themeSetting ??= new ThemeSettingBuilder();
+  set themeSetting(ThemeSettingBuilder themeSetting) =>
+      _$this._themeSetting = themeSetting;
+
+  bool _nightMode;
+  bool get nightMode => _$this._nightMode;
+  set nightMode(bool nightMode) => _$this._nightMode = nightMode;
+
+  bool _shakeToShiftNightMode;
+  bool get shakeToShiftNightMode => _$this._shakeToShiftNightMode;
+  set shakeToShiftNightMode(bool shakeToShiftNightMode) =>
+      _$this._shakeToShiftNightMode = shakeToShiftNightMode;
+
+  int _swipeThreshold;
+  int get swipeThreshold => _$this._swipeThreshold;
+  set swipeThreshold(int swipeThreshold) =>
+      _$this._swipeThreshold = swipeThreshold;
+
+  bool _lockOrientation;
+  bool get lockOrientation => _$this._lockOrientation;
+  set lockOrientation(bool lockOrientation) =>
+      _$this._lockOrientation = lockOrientation;
+
+  int _fontSize;
+  int get fontSize => _$this._fontSize;
+  set fontSize(int fontSize) => _$this._fontSize = fontSize;
+
+  bool _allowCopy;
+  bool get allowCopy => _$this._allowCopy;
+  set allowCopy(bool allowCopy) => _$this._allowCopy = allowCopy;
+
+  bool _loadInSamePage;
+  bool get loadInSamePage => _$this._loadInSamePage;
+  set loadInSamePage(bool loadInSamePage) =>
+      _$this._loadInSamePage = loadInSamePage;
+
+  bool _hideBlacklisterPost;
+  bool get hideBlacklisterPost => _$this._hideBlacklisterPost;
+  set hideBlacklisterPost(bool hideBlacklisterPost) =>
+      _$this._hideBlacklisterPost = hideBlacklisterPost;
+
+  bool _showDetailTime;
+  bool get showDetailTime => _$this._showDetailTime;
+  set showDetailTime(bool showDetailTime) =>
+      _$this._showDetailTime = showDetailTime;
+
+  int _uploadImageAPI;
+  int get uploadImageAPI => _$this._uploadImageAPI;
+  set uploadImageAPI(int uploadImageAPI) =>
+      _$this._uploadImageAPI = uploadImageAPI;
+
+  int _noImageMode;
+  int get noImageMode => _$this._noImageMode;
+  set noImageMode(int noImageMode) => _$this._noImageMode = noImageMode;
+
+  bool _loadAvatar;
+  bool get loadAvatar => _$this._loadAvatar;
+  set loadAvatar(bool loadAvatar) => _$this._loadAvatar = loadAvatar;
+
+  int _avatarDisplaySize;
+  int get avatarDisplaySize => _$this._avatarDisplaySize;
+  set avatarDisplaySize(int avatarDisplaySize) =>
+      _$this._avatarDisplaySize = avatarDisplaySize;
+
+  bool _backgroundFetch;
+  bool get backgroundFetch => _$this._backgroundFetch;
+  set backgroundFetch(bool backgroundFetch) =>
+      _$this._backgroundFetch = backgroundFetch;
+
+  int _cacheSize;
+  int get cacheSize => _$this._cacheSize;
+  set cacheSize(int cacheSize) => _$this._cacheSize = cacheSize;
+
+  AppSettingBuilder();
+
+  AppSettingBuilder get _$this {
+    if (_$v != null) {
+      _saveCredential = _$v.saveCredential;
+      _version = _$v.version;
+      _copyright = _$v.copyright;
+      _themeSetting = _$v.themeSetting?.toBuilder();
+      _nightMode = _$v.nightMode;
+      _shakeToShiftNightMode = _$v.shakeToShiftNightMode;
+      _swipeThreshold = _$v.swipeThreshold;
+      _lockOrientation = _$v.lockOrientation;
+      _fontSize = _$v.fontSize;
+      _allowCopy = _$v.allowCopy;
+      _loadInSamePage = _$v.loadInSamePage;
+      _hideBlacklisterPost = _$v.hideBlacklisterPost;
+      _showDetailTime = _$v.showDetailTime;
+      _uploadImageAPI = _$v.uploadImageAPI;
+      _noImageMode = _$v.noImageMode;
+      _loadAvatar = _$v.loadAvatar;
+      _avatarDisplaySize = _$v.avatarDisplaySize;
+      _backgroundFetch = _$v.backgroundFetch;
+      _cacheSize = _$v.cacheSize;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(AppSetting other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$AppSetting;
+  }
+
+  @override
+  void update(void updates(AppSettingBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$AppSetting build() {
+    _$AppSetting _$result;
+    try {
+      _$result = _$v ??
+          new _$AppSetting._(
+              saveCredential: saveCredential,
+              version: version,
+              copyright: copyright,
+              themeSetting: themeSetting.build(),
+              nightMode: nightMode,
+              shakeToShiftNightMode: shakeToShiftNightMode,
+              swipeThreshold: swipeThreshold,
+              lockOrientation: lockOrientation,
+              fontSize: fontSize,
+              allowCopy: allowCopy,
+              loadInSamePage: loadInSamePage,
+              hideBlacklisterPost: hideBlacklisterPost,
+              showDetailTime: showDetailTime,
+              uploadImageAPI: uploadImageAPI,
+              noImageMode: noImageMode,
+              loadAvatar: loadAvatar,
+              avatarDisplaySize: avatarDisplaySize,
+              backgroundFetch: backgroundFetch,
+              cacheSize: cacheSize);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'themeSetting';
+        themeSetting.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'AppSetting', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ThemeSetting extends ThemeSetting {
+  @override
+  final int day;
+  @override
+  final int night;
+  @override
+  final BuiltList<AppTheme> theme;
+
+  factory _$ThemeSetting([void updates(ThemeSettingBuilder b)]) =>
+      (new ThemeSettingBuilder()..update(updates)).build();
+
+  _$ThemeSetting._({this.day, this.night, this.theme}) : super._() {
+    if (day == null) {
+      throw new BuiltValueNullFieldError('ThemeSetting', 'day');
+    }
+    if (night == null) {
+      throw new BuiltValueNullFieldError('ThemeSetting', 'night');
+    }
+    if (theme == null) {
+      throw new BuiltValueNullFieldError('ThemeSetting', 'theme');
+    }
+  }
+
+  @override
+  ThemeSetting rebuild(void updates(ThemeSettingBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ThemeSettingBuilder toBuilder() => new ThemeSettingBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ThemeSetting &&
+        day == other.day &&
+        night == other.night &&
+        theme == other.theme;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc($jc(0, day.hashCode), night.hashCode), theme.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('ThemeSetting')
+          ..add('day', day)
+          ..add('night', night)
+          ..add('theme', theme))
+        .toString();
+  }
+}
+
+class ThemeSettingBuilder
+    implements Builder<ThemeSetting, ThemeSettingBuilder> {
+  _$ThemeSetting _$v;
+
+  int _day;
+  int get day => _$this._day;
+  set day(int day) => _$this._day = day;
+
+  int _night;
+  int get night => _$this._night;
+  set night(int night) => _$this._night = night;
+
+  ListBuilder<AppTheme> _theme;
+  ListBuilder<AppTheme> get theme =>
+      _$this._theme ??= new ListBuilder<AppTheme>();
+  set theme(ListBuilder<AppTheme> theme) => _$this._theme = theme;
+
+  ThemeSettingBuilder();
+
+  ThemeSettingBuilder get _$this {
+    if (_$v != null) {
+      _day = _$v.day;
+      _night = _$v.night;
+      _theme = _$v.theme?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ThemeSetting other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$ThemeSetting;
+  }
+
+  @override
+  void update(void updates(ThemeSettingBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$ThemeSetting build() {
+    _$ThemeSetting _$result;
+    try {
+      _$result = _$v ??
+          new _$ThemeSetting._(day: day, night: night, theme: theme.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'theme';
+        theme.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'ThemeSetting', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$AccountSettings extends AccountSettings {
+  @override
+  final AccountSetting defaultSetting;
+  @override
+  final Map<String, AccountSetting> accounts;
+
+  factory _$AccountSettings([void updates(AccountSettingsBuilder b)]) =>
+      (new AccountSettingsBuilder()..update(updates)).build();
+
+  _$AccountSettings._({this.defaultSetting, this.accounts}) : super._() {
+    if (defaultSetting == null) {
+      throw new BuiltValueNullFieldError('AccountSettings', 'defaultSetting');
+    }
+    if (accounts == null) {
+      throw new BuiltValueNullFieldError('AccountSettings', 'accounts');
+    }
+  }
+
+  @override
+  AccountSettings rebuild(void updates(AccountSettingsBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  AccountSettingsBuilder toBuilder() =>
+      new AccountSettingsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is AccountSettings &&
+        defaultSetting == other.defaultSetting &&
+        accounts == other.accounts;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc(0, defaultSetting.hashCode), accounts.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('AccountSettings')
+          ..add('defaultSetting', defaultSetting)
+          ..add('accounts', accounts))
+        .toString();
+  }
+}
+
+class AccountSettingsBuilder
+    implements Builder<AccountSettings, AccountSettingsBuilder> {
+  _$AccountSettings _$v;
+
+  AccountSettingBuilder _defaultSetting;
+  AccountSettingBuilder get defaultSetting =>
+      _$this._defaultSetting ??= new AccountSettingBuilder();
+  set defaultSetting(AccountSettingBuilder defaultSetting) =>
+      _$this._defaultSetting = defaultSetting;
+
+  Map<String, AccountSetting> _accounts;
+  Map<String, AccountSetting> get accounts => _$this._accounts;
+  set accounts(Map<String, AccountSetting> accounts) =>
+      _$this._accounts = accounts;
+
+  AccountSettingsBuilder();
+
+  AccountSettingsBuilder get _$this {
+    if (_$v != null) {
+      _defaultSetting = _$v.defaultSetting?.toBuilder();
+      _accounts = _$v.accounts;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(AccountSettings other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$AccountSettings;
+  }
+
+  @override
+  void update(void updates(AccountSettingsBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$AccountSettings build() {
+    _$AccountSettings _$result;
+    try {
+      _$result = _$v ??
+          new _$AccountSettings._(
+              defaultSetting: defaultSetting.build(), accounts: accounts);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'defaultSetting';
+        defaultSetting.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'AccountSettings', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$AccountSetting extends AccountSetting {
+  @override
+  final bool autoPunch;
+  @override
+  final int homePage;
+  @override
+  final bool threadOnlyHome;
+  @override
+  final String signature;
+
+  factory _$AccountSetting([void updates(AccountSettingBuilder b)]) =>
+      (new AccountSettingBuilder()..update(updates)).build();
+
+  _$AccountSetting._(
+      {this.autoPunch, this.homePage, this.threadOnlyHome, this.signature})
+      : super._() {
+    if (autoPunch == null) {
+      throw new BuiltValueNullFieldError('AccountSetting', 'autoPunch');
+    }
+    if (homePage == null) {
+      throw new BuiltValueNullFieldError('AccountSetting', 'homePage');
+    }
+    if (threadOnlyHome == null) {
+      throw new BuiltValueNullFieldError('AccountSetting', 'threadOnlyHome');
+    }
+    if (signature == null) {
+      throw new BuiltValueNullFieldError('AccountSetting', 'signature');
+    }
+  }
+
+  @override
+  AccountSetting rebuild(void updates(AccountSettingBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  AccountSettingBuilder toBuilder() =>
+      new AccountSettingBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is AccountSetting &&
+        autoPunch == other.autoPunch &&
+        homePage == other.homePage &&
+        threadOnlyHome == other.threadOnlyHome &&
+        signature == other.signature;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc($jc(0, autoPunch.hashCode), homePage.hashCode),
+            threadOnlyHome.hashCode),
+        signature.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('AccountSetting')
+          ..add('autoPunch', autoPunch)
+          ..add('homePage', homePage)
+          ..add('threadOnlyHome', threadOnlyHome)
+          ..add('signature', signature))
+        .toString();
+  }
+}
+
+class AccountSettingBuilder
+    implements Builder<AccountSetting, AccountSettingBuilder> {
+  _$AccountSetting _$v;
+
+  bool _autoPunch;
+  bool get autoPunch => _$this._autoPunch;
+  set autoPunch(bool autoPunch) => _$this._autoPunch = autoPunch;
+
+  int _homePage;
+  int get homePage => _$this._homePage;
+  set homePage(int homePage) => _$this._homePage = homePage;
+
+  bool _threadOnlyHome;
+  bool get threadOnlyHome => _$this._threadOnlyHome;
+  set threadOnlyHome(bool threadOnlyHome) =>
+      _$this._threadOnlyHome = threadOnlyHome;
+
+  String _signature;
+  String get signature => _$this._signature;
+  set signature(String signature) => _$this._signature = signature;
+
+  AccountSettingBuilder();
+
+  AccountSettingBuilder get _$this {
+    if (_$v != null) {
+      _autoPunch = _$v.autoPunch;
+      _homePage = _$v.homePage;
+      _threadOnlyHome = _$v.threadOnlyHome;
+      _signature = _$v.signature;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(AccountSetting other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$AccountSetting;
+  }
+
+  @override
+  void update(void updates(AccountSettingBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$AccountSetting build() {
+    final _$result = _$v ??
+        new _$AccountSetting._(
+            autoPunch: autoPunch,
+            homePage: homePage,
+            threadOnlyHome: threadOnlyHome,
+            signature: signature);
+    replace(_$result);
+    return _$result;
+  }
+}
