@@ -164,9 +164,7 @@ class LoginViewModel extends ConnectedWidgetModel {
           });
         },
         onSaveCredentialChanged: (BuildContext context, bool value) {
-          store.dispatch(ChangeSetting((b) => b
-            ..saveCredential = value
-            ..nightMode = value));
+          store.dispatch(ChangeSetting((b) => b..saveCredential = value));
         });
   }
 }
