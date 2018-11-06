@@ -40,21 +40,38 @@ class LKongAppState extends State<LKongApp> {
   Widget build(BuildContext context) {
     return StoreProvider<AppState>(
       store: store,
-      child: MaterialApp(
-        title: LKongLocalizations().appTitle,
-        theme: LKongAppTheme.theme,
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
-          LKongLocalizationsDelegate(),
-        ],
-        initialRoute: LKongAppRoutes.login,
-        routes: {
-          LKongAppRoutes.login: (context) =>
-              LoginScreen(key: LKongAppKeys.loginScreen),
-          LKongAppRoutes.home: (context) =>
-              HomeScreen(),
-        },
+      child: buildConnectedWidget(
+        context,
+        ThemedWidgetModel.fromStore,
+        _createApp,
       ),
     );
   }
+}
+
+class ThemedWidgetModel extends ConnectedWidgetModel {
+  final LKongAppTheme theme;
+
+  ThemedWidgetModel(this.theme);
+
+  static ThemedWidgetModel fromStore(Store<AppState> store) {
+    return ThemedWidgetModel(LKongAppTheme.fromStore(store));
+  }
+}
+
+Widget _createApp(viewModel) {
+  return MaterialApp(
+    title: LKongLocalizations().appTitle,
+    theme: viewModel.theme.themeData,
+    debugShowCheckedModeBanner: false,
+    localizationsDelegates: [
+      LKongLocalizationsDelegate(),
+    ],
+    initialRoute: LKongAppRoutes.login,
+    routes: {
+      LKongAppRoutes.login: (context) =>
+          LoginScreen(key: LKongAppKeys.loginScreen),
+      LKongAppRoutes.home: (context) => HomeScreen(),
+    },
+  );
 }

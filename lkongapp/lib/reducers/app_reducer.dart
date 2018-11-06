@@ -22,7 +22,3 @@ AppConfig appConfigReducer(AppConfig config, action) {
   return config.rebuild(
       (b) => b..setting.replace(settingsReducer(config.setting, action)));
 }
-
-UIState uiStateReducer(UIState state, UIChange action) {
-  return state.rebuild((b) => action.change(b));
-}

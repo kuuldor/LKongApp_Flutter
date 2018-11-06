@@ -7,8 +7,10 @@ import 'package:lkongapp/ui/page_builder.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 
-Widget buildThemeWidget<T extends ThemeWidgetModel>(BuildContext context,
-    T fromStore(Store<AppState> store), Widget buidler(ThemeWidgetModel vm)) {
+Widget buildConnectedWidget<T extends ConnectedWidgetModel>(
+    BuildContext context,
+    T fromStore(Store<AppState> store),
+    Widget buidler(vm)) {
   return StoreConnector<AppState, T>(
     converter: fromStore,
     builder: (context, vm) {
@@ -20,31 +22,16 @@ Widget buildThemeWidget<T extends ThemeWidgetModel>(BuildContext context,
   );
 }
 
-class ThemeWidgetModel {
-  AppTheme theme;
-
-  ThemeWidgetModel({
-    @required this.theme,
-  });
-  
-  static AppTheme selectTheme(Store<AppState> store) {
-    int themeIndex = store.state.appConfig.setting.nightMode
-        ? store.state.appConfig.setting.themeSetting.night
-        : store.state.appConfig.setting.themeSetting.day;
-    return store.state.appConfig.setting.themeSetting.theme[themeIndex];
-  }
-
-  static ThemeWidgetModel fromStore(Store<AppState> store) {
-    return ThemeWidgetModel(
-      theme: selectTheme(store),
-    );
+class ConnectedWidgetModel {
+  static ConnectedWidgetModel fromStore(Store<AppState> store) {
+    return ConnectedWidgetModel();
   }
 }
 
-typedef Widget BuilderType(ThemeWidgetModel vm);
+typedef Widget BuilderType(ConnectedWidgetModel vm);
 
 class WidgetView extends StatefulWidget {
-  final ThemeWidgetModel viewModel;
+  final ConnectedWidgetModel viewModel;
   final BuilderType builder;
 
   WidgetView({

@@ -4,7 +4,30 @@ import 'package:flutter_redux/flutter_redux.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
-import 'package:lkongapp/ui/theme_widget.dart';
+import 'package:lkongapp/ui/connected_widget.dart';
+
+const pages = [
+  {
+    "title": '首页',
+    "icon": Icons.home,
+  },
+  {
+    "title": '板块',
+    "icon": Icons.dashboard,
+  },
+  {
+    "title": '书签',
+    "icon": Icons.bookmark,
+  },
+  {
+    "title": '通知',
+    "icon": Icons.notifications,
+  },
+  {
+    "title": '搜索',
+    "icon": Icons.search,
+  },
+];
 
 class PageBuilder extends StatelessWidget {
   PageBuilder({Key key}) : super(key: key);
@@ -17,33 +40,24 @@ class PageBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return buildThemeWidget(context, PageModel.fromStore, (vm) {
-      var viewModel = vm as PageModel;
-      Color mainColor = htmlColor(viewModel.theme.colors['main']);
-      Color pageColor = htmlColor(viewModel.theme.colors['paper']);
-
+    return buildConnectedWidget(context, PageModel.fromStore, (viewModel) {
       return Scaffold(
         body: PageView(
           children: [
             Container(
-              color: pageColor,
-              child: Text('Home'),
+              child: Text('首页'),
             ),
             Container(
-              color: pageColor,
-              child: Text('Searh'),
+              child: Text('板块'),
             ),
             Container(
-              color: pageColor,
-              child: Text('Add'),
+              child: Text('书签'),
             ),
             Container(
-              color: pageColor,
-              child: Text('Feed'),
+              child: Text('通知'),
             ),
             Container(
-              color: pageColor,
-              child: Text('User'),
+              child: Text('搜索'),
             ),
           ],
           controller: pageController,
@@ -51,28 +65,17 @@ class PageBuilder extends StatelessWidget {
           onPageChanged: (page) => viewModel.onPageChanged(context, page),
         ),
         bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home, color: mainColor),
-                title: Container(),
-                backgroundColor: pageColor),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.search, color: mainColor),
-                title: Container(),
-                backgroundColor: pageColor),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.add_circle, color: mainColor),
-                title: Container(),
-                backgroundColor: pageColor),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.star, color: mainColor),
-                title: Container(),
-                backgroundColor: pageColor),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline, color: mainColor),
-                title: Container(),
-                backgroundColor: pageColor),
-          ],
+          items: pages.map((Map page) {
+            String title = page["title"];
+            IconData icon = page["icon"];
+
+            return BottomNavigationBarItem(
+              icon: Icon(
+                icon,
+              ),
+              title: Text(title),
+            );
+          }).toList(),
           onTap: navigationTapped,
           currentIndex: viewModel.page,
           type: BottomNavigationBarType.fixed,
@@ -82,20 +85,18 @@ class PageBuilder extends StatelessWidget {
   }
 }
 
-class PageModel extends ThemeWidgetModel {
+class PageModel extends ConnectedWidgetModel {
   int page;
   final Function(BuildContext, int) onPageChanged;
 
   PageModel({
     @required this.page,
-    @required AppTheme theme,
     @required this.onPageChanged,
-  }) : super(theme: theme);
+  });
 
   static PageModel fromStore(Store<AppState> store) {
     return PageModel(
         page: store.state.uiState.homePageIndex,
-        theme: ThemeWidgetModel.selectTheme(store),
         onPageChanged: (BuildContext context, int value) {
           store.dispatch(UIChange((b) => b..homePageIndex = value));
         });

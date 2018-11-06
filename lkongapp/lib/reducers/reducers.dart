@@ -6,6 +6,7 @@ import 'package:lkongapp/models/models.dart';
 
 import 'app_reducer.dart';
 import 'auth_reducer.dart';
+import 'ui_reducer.dart';
 
 AppState appReducer(AppState state, action) {
   if (action is RehydrateSuccess) {
