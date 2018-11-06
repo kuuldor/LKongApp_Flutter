@@ -37,4 +37,22 @@ void main() {
       print(map.toString());
     });
   });
+
+  test('Get Thread Info Test', () async {
+    await getStoryInfo({"story": 2173241}).then((map) {
+      print(map.toString());
+    });
+  });
+
+  test('Get Thread Content Test', () async {
+    await contentsForStory({"story": 2173241, "page": 0}).then((map) {
+      print(map.toString());
+    });
+  });
+
+  test('Get Forum List Test', () async {
+    await getForumList().then((map) {
+      print(map.toString());
+    });
+  });
 }

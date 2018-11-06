@@ -61,13 +61,13 @@ Future<Map> _handleHttp(
 Future<Map> login(Map args) {
   User user = userParam(args);
   String url = baseURL + endpoint["login"];
-  var action = http.post(url, body: {
+  var httpAction = http.post(url, body: {
     "action": "login",
     "email": user.identity,
     "password": user.password,
     "rememberme": "on"
   });
-  return _handleHttp(action, (body) => json.decode(body));
+  return _handleHttp(httpAction, (body) => json.decode(body));
 }
 
 User userParam(Map args) {
@@ -109,8 +109,8 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
 
   print("Fetching Stories: URL is $urlString");
 
-  var action = http.get(urlString);
-  return _handleHttp(action, (body) {
+  var httpAction = http.get(urlString);
+  return _handleHttp(httpAction, (body) {
     Map result;
     print(body);
     T stories = fromJson(body);
@@ -166,6 +166,49 @@ Future<Map> getHomeList(Map args) {
   });
 }
 
+Future<Map> contentsForStory(Map args) {
+  int story = args["story"];
+  int page = args["page"];
+
+  assert(story != null, "Story must be defined");
+  assert(page != null, "Page must be defined");
+
+  var urlString = baseURL +
+      endpoint["comments"] +
+      "$story/$page" +
+      querify(defaultParameter());
+
+  print("contentsForStory: URL is $urlString");
+
+  var httpAction = http.get(urlString);
+  return _handleHttp(httpAction, (body) => json.decode(body));
+}
+
+Future<Map> getStoryInfo(Map args) {
+  int story = args["story"];
+
+  assert(story != null, "Story must be defined");
+
+  var urlString = baseURL +
+      endpoint["threadInfo"] +
+      "_$story" +
+      querify(defaultParameter());
+
+  print("getStoryInfo: URL is $urlString");
+
+  var httpAction = http.get(urlString);
+  return _handleHttp(httpAction, (body) => json.decode(body));
+}
+
+Future<Map> getForumList() {
+  var urlString = baseURL + endpoint["forumList"] + querify(defaultParameter());
+
+  print("getForumList: URL is $urlString");
+
+  var httpAction = http.get(urlString);
+  return _handleHttp(httpAction, (body) => json.decode(body));
+}
+
 Future<Map> apiDispatch(api, Map parameters) {
   if (api == LOGIN_API) {
     return login(parameters);
@@ -175,21 +218,21 @@ Future<Map> apiDispatch(api, Map parameters) {
     return getHomeList(parameters);
   }
 
-  // if (api == STORY_CONTENT_API) {
-  //   return contentsForStory(parameters);
-  // }
+  if (api == STORY_CONTENT_API) {
+    return contentsForStory(parameters);
+  }
 
-  // if (api == STORY_INFO_API) {
-  //   return getStoryInfo(parameters);
-  // }
+  if (api == STORY_INFO_API) {
+    return getStoryInfo(parameters);
+  }
 
-  // if (api == FORUMLIST_API) {
-  //   return getForumList(parameters);
-  // }
+  if (api == FORUMLIST_API) {
+    return getForumList();
+  }
 
-  // if (api.startsWith(FORUMTHREADS_API)) {
-  //   return getStoriesForForum(parameters);
-  // }
+  if (api.startsWith(FORUMTHREADS_API)) {
+    return getStoriesForForum(parameters);
+  }
 
   return Future<Map>(null);
 }
