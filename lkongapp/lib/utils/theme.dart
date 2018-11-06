@@ -58,7 +58,7 @@ class LKongAppTheme {
         bottomAppBarColor: pageColor,
         primaryTextTheme: template.primaryTextTheme.apply(
           displayColor: textColor,
-          bodyColor: darkTextColor,
+          bodyColor: barTextColor,
         ));
   }
 
