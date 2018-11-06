@@ -8,35 +8,38 @@ import 'package:lkongapp/models/serializers.dart';
 
 part 'story_result.g.dart';
 
-abstract class StoryResult implements Built<StoryResult, StoryResultBuilder> {
-  StoryResult._();
+abstract class HomeListResult  
+    implements Built<HomeListResult, HomeListResultBuilder> {
+  HomeListResult._();
 
-  factory StoryResult([updates(StoryResultBuilder b)]) = _$StoryResult;
+  factory HomeListResult([updates(HomeListResultBuilder b)]) = _$HomeListResult;
 
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
   @BuiltValueField(wireName: 'data')
-  BuiltList<Thread> get data;
+  BuiltList<Story> get data;
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
   String toJson() {
-    return json.encode(serializers.serializeWith(StoryResult.serializer, this));
+    return json
+        .encode(serializers.serializeWith(HomeListResult.serializer, this));
   }
 
-  static StoryResult fromJson(String jsonString) {
+  static HomeListResult fromJson(String jsonString) {
     return serializers.deserializeWith(
-        StoryResult.serializer, json.decode(jsonString));
+        HomeListResult.serializer, json.decode(jsonString));
   }
 
-  static Serializer<StoryResult> get serializer => _$storyResultSerializer;
+  static Serializer<HomeListResult> get serializer =>
+      _$homeListResultSerializer;
 }
 
-abstract class Thread implements Built<Thread, ThreadBuilder> {
-  Thread._();
+abstract class Story implements Built<Story, StoryBuilder> {
+  Story._();
 
-  factory Thread([updates(ThreadBuilder b)]) = _$Thread;
+  factory Story([updates(StoryBuilder b)]) = _$Story;
 
   @BuiltValueField(wireName: 'isquote')
   bool get isquote;
@@ -51,25 +54,10 @@ abstract class Thread implements Built<Thread, ThreadBuilder> {
   @BuiltValueField(wireName: 'isthread')
   bool get isthread;
   @nullable
-  @BuiltValueField(wireName: 'replynum')
-  int get replyNum;
-  @BuiltValueField(wireName: 'subject')
-  String get subject;
-  @nullable
-  @BuiltValueField(wireName: 'fid')
-  int get fid;
-  @nullable
-  @BuiltValueField(wireName: 'forumname')
-  String get forumName;
-  @nullable
-  @BuiltValueField(wireName: 'author')
-  String get author;
-  @nullable
-  @BuiltValueField(wireName: 'authorid')
-  int get authorid;
-  @nullable
   @BuiltValueField(wireName: 'tid')
   String get tid;
+  @BuiltValueField(wireName: 'subject')
+  String get subject;
   @nullable
   @BuiltValueField(wireName: 't_author')
   String get tAuthor;
@@ -81,8 +69,77 @@ abstract class Thread implements Built<Thread, ThreadBuilder> {
   int get tReplynum;
   @BuiltValueField(wireName: 'id')
   String get id;
+  @nullable
+  @BuiltValueField(wireName: 'replynum')
+  int get replynum;
   @BuiltValueField(wireName: 'sortkey')
   int get sortkey;
+  String toJson() {
+    return json.encode(serializers.serializeWith(Story.serializer, this));
+  }
+
+  static Story fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        Story.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<Story> get serializer => _$storySerializer;
+}
+
+abstract class ForumListResult
+    implements Built<ForumListResult, ForumListResultBuilder> {
+  ForumListResult._();
+
+  factory ForumListResult([updates(ForumListResultBuilder b)]) =
+      _$ForumListResult;
+
+  @BuiltValueField(wireName: 'data')
+  BuiltList<Thread> get data;
+  @BuiltValueField(wireName: 'nexttime')
+  int get nexttime;
+  @BuiltValueField(wireName: 'curtime')
+  int get curtime;
+  @BuiltValueField(wireName: 'tmp')
+  String get tmp;
+  String toJson() {
+    return json
+        .encode(serializers.serializeWith(ForumListResult.serializer, this));
+  }
+
+  static ForumListResult fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        ForumListResult.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<ForumListResult> get serializer =>
+      _$forumListResultSerializer;
+}
+
+abstract class Thread implements Built<Thread, ThreadBuilder> {
+  Thread._();
+
+  factory Thread([updates(ThreadBuilder b)]) = _$Thread;
+
+  @BuiltValueField(wireName: 'sortkey')
+  int get sortkey;
+  @BuiltValueField(wireName: 'dateline')
+  String get dateline;
+  @BuiltValueField(wireName: 'subject')
+  String get subject;
+  @BuiltValueField(wireName: 'username')
+  String get username;
+  @BuiltValueField(wireName: 'digest')
+  int get digest;
+  @BuiltValueField(wireName: 'closed')
+  int get closed;
+  @BuiltValueField(wireName: 'uid')
+  int get uid;
+  @BuiltValueField(wireName: 'replynum')
+  int get replynum;
+  @BuiltValueField(wireName: 'id')
+  String get id;
+  @BuiltValueField(wireName: 'fid')
+  int get fid;
   String toJson() {
     return json.encode(serializers.serializeWith(Thread.serializer, this));
   }

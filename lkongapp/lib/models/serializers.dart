@@ -22,7 +22,9 @@ part 'serializers.g.dart';
   AccountSettings,
   AccountSetting,
   AppTheme,
-  StoryResult,
+  HomeListResult,
+  Story,
+  ForumListResult,
   Thread,
 ])
 final Serializers serializers =

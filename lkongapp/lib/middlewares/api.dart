@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:redux/redux.dart';
+import 'package:built_value/built_value.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
@@ -102,7 +103,8 @@ String querify(Map parameters) {
   return param;
 }
 
-Future<Map> fetchStories(url, parameters, [reverse = false]) {
+Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
+    [void proccessor(T t)]) {
   var urlString = url + querify(parameters);
 
   print("Fetching Stories: URL is $urlString");
@@ -110,14 +112,42 @@ Future<Map> fetchStories(url, parameters, [reverse = false]) {
   var action = http.get(urlString);
   return _handleHttp(action, (body) {
     Map result;
-    StoryResult stories = StoryResult.fromJson(body);
+    print(body);
+    T stories = fromJson(body);
     if (stories != null) {
-      if (reverse) {
-        stories.rebuild((b) => b..data.replace(stories.data.reversed));
+      if (proccessor != null) {
+        proccessor(stories);
       }
       result = {"result": stories};
     }
     return result;
+  });
+}
+
+Future<Map> getStoriesForForum(Map args) {
+  int nexttime = args["nexttime"] ?? 0;
+  int current = args["current"] ?? 0;
+  int mode = args["mode"] ?? 0;
+  int forumId = args["forumId"];
+
+  var modeString = "";
+  var reverse = false;
+  if (mode == 1) {
+    modeString = "/digest";
+  } else if (mode == 2) {
+    modeString = "/thread_dateline";
+    reverse = true;
+  }
+
+  var urlString = baseURL + endpoint["forumStories"] + "$forumId" + modeString;
+  print("getHomeList: URL is $urlString");
+  var params = getTimeParameter(nexttime, current);
+
+  return fetchStories<ForumListResult>(
+      urlString, params, ForumListResult.fromJson, (stories) {
+    if (reverse) {
+      stories.rebuild((b) => b..data.replace(stories.data.reversed));
+    }
   });
 }
 
@@ -130,7 +160,10 @@ Future<Map> getHomeList(Map args) {
   print("getHomeList: URL is $urlString");
   var params = getTimeParameter(nexttime, current);
 
-  return fetchStories(urlString, params, true);
+  return fetchStories<HomeListResult>(
+      urlString, params, HomeListResult.fromJson, (stories) {
+    stories.rebuild((b) => b..data.replace(stories.data.reversed));
+  });
 }
 
 Future<Map> apiDispatch(api, Map parameters) {

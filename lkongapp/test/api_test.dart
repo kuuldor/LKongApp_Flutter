@@ -13,7 +13,7 @@ void main() {
       ..password = 'LKong!5app';
 
     User user = builder.build();
-    final Completer<Null> completer = new Completer<Null>();
+    final Completer<Null> completer = Completer<Null>();
     var request = LoginRequest(completer, user);
 
     await login({"user": user}).then((map) {
@@ -26,10 +26,14 @@ void main() {
     });
   });
 
-    test('Get Home List Test', () async {
-    final Completer<Null> completer = new Completer<Null>();
-
+  test('Get Home List Test', () async {
     await getHomeList({}).then((map) {
+      print(map.toString());
+    });
+  });
+
+  test('Get Forum List Test', () async {
+    await getStoriesForForum({"forumId": 60}).then((map) {
       print(map.toString());
     });
   });
