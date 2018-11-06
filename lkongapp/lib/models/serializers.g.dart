@@ -27,12 +27,17 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(AppState.serializer)
       ..add(AppTheme.serializer)
       ..add(AuthState.serializer)
+      ..add(StoryResult.serializer)
       ..add(ThemeSetting.serializer)
+      ..add(Thread.serializer)
       ..add(UIState.serializer)
       ..add(User.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(AppTheme)]),
           () => new ListBuilder<AppTheme>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Thread)]),
+          () => new ListBuilder<Thread>())
       ..addBuilderFactory(
           const FullType(Map,
               const [const FullType(String), const FullType(AccountSetting)]),

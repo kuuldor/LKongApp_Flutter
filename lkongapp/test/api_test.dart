@@ -17,11 +17,20 @@ void main() {
     var request = LoginRequest(completer, user);
 
     await login({"user": user}).then((map) {
+      print(map.toString());
       expect(map['uid'], 812695);
       expect(map['success'], true);
       LoginSuccess response = createResponseAction(request, map);
       expect(response.runtimeType, LoginSuccess);
       print(response.user.toString());
+    });
+  });
+
+    test('Get Home List Test', () async {
+    final Completer<Null> completer = new Completer<Null>();
+
+    await getHomeList({}).then((map) {
+      print(map.toString());
     });
   });
 }

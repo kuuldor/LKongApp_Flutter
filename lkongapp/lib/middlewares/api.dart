@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/actions/actions.dart';
 
 const LOGIN_API = "LOGIN";
@@ -39,22 +40,15 @@ const endpoint = {
   "getBlacklist": "/index.php?mod=ajax&action=getblack",
 };
 
-Future<Map> login(Map parameters) {
-  User user = userParam(parameters);
-  String url = baseURL + endpoint["login"];
-
-  return http.post(url, body: {
-    "action": "login",
-    "email": user.identity,
-    "password": user.password,
-    "rememberme": "on"
-  }).then((response) {
+Future<Map> _handleHttp(
+    Future<http.Response> httpAction, Map handleGoodBody(String body)) {
+  return httpAction.then((response) {
     Map result = {};
 
     if (response.statusCode >= 400) {
       result = {"error": "HTTP错误: ${response.statusCode}"};
     } else {
-      result = json.decode(response.body);
+      result = handleGoodBody(response.body);
       if (result == null) {
         result = {"error": 'API没有返回信息'};
       }
@@ -63,19 +57,90 @@ Future<Map> login(Map parameters) {
   }).catchError((error) => {"error": error.toString()});
 }
 
-User userParam(Map parameters) {
-  User user = parameters["user"];
+Future<Map> login(Map args) {
+  User user = userParam(args);
+  String url = baseURL + endpoint["login"];
+  var action = http.post(url, body: {
+    "action": "login",
+    "email": user.identity,
+    "password": user.password,
+    "rememberme": "on"
+  });
+  return _handleHttp(action, (body) => json.decode(body));
+}
+
+User userParam(Map args) {
+  User user = args["user"];
   return user;
 }
 
-Future<Map> apiDispatch(api, parameters) {
+int timeStamp = DateTime.now().millisecondsSinceEpoch;
+
+Map defaultParameter() {
+  var param = new Map();
+  param['_'] = timeStamp++;
+  return param;
+}
+
+Map getTimeParameter(nexttime, current) {
+  var param = defaultParameter();
+
+  if (nexttime != 0) {
+    param['nexttime'] = nexttime;
+  } else if (current != 0) {
+    param['curtime'] = current;
+  }
+
+  return param;
+}
+
+String querify(Map parameters) {
+  var param = '';
+  parameters.forEach((key, value) {
+    param += '&' + key.toString() + '=' + value.toString();
+  });
+  return param;
+}
+
+Future<Map> fetchStories(url, parameters, [reverse = false]) {
+  var urlString = url + querify(parameters);
+
+  print("Fetching Stories: URL is $urlString");
+
+  var action = http.get(urlString);
+  return _handleHttp(action, (body) {
+    Map result;
+    StoryResult stories = StoryResult.fromJson(body);
+    if (stories != null) {
+      if (reverse) {
+        stories.rebuild((b) => b..data.replace(stories.data.reversed));
+      }
+      result = {"result": stories};
+    }
+    return result;
+  });
+}
+
+Future<Map> getHomeList(Map args) {
+  int nexttime = args["nexttime"] ?? 0;
+  int current = args["current"] ?? 0;
+  bool threadOnly = args["threadOnly"] ?? false;
+
+  var urlString = baseURL + endpoint["stories"] + (threadOnly ? 'thread' : '');
+  print("getHomeList: URL is $urlString");
+  var params = getTimeParameter(nexttime, current);
+
+  return fetchStories(urlString, params, true);
+}
+
+Future<Map> apiDispatch(api, Map parameters) {
   if (api == LOGIN_API) {
     return login(parameters);
   }
 
-  // if (api.startsWith(HOMELIST_API)) {
-  //   return getHomeList(parameters);
-  // }
+  if (api.startsWith(HOMELIST_API)) {
+    return getHomeList(parameters);
+  }
 
   // if (api == STORY_CONTENT_API) {
   //   return contentsForStory(parameters);
