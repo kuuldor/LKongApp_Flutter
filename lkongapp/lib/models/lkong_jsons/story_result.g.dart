@@ -39,11 +39,6 @@ class _$HomeListResultSerializer
   Iterable serialize(Serializers serializers, HomeListResult object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'nexttime',
-      serializers.serialize(object.nexttime,
-          specifiedType: const FullType(int)),
-      'curtime',
-      serializers.serialize(object.curtime, specifiedType: const FullType(int)),
       'data',
       serializers.serialize(object.data,
           specifiedType:
@@ -51,6 +46,18 @@ class _$HomeListResultSerializer
       'tmp',
       serializers.serialize(object.tmp, specifiedType: const FullType(String)),
     ];
+    if (object.nexttime != null) {
+      result
+        ..add('nexttime')
+        ..add(serializers.serialize(object.nexttime,
+            specifiedType: const FullType(int)));
+    }
+    if (object.curtime != null) {
+      result
+        ..add('curtime')
+        ..add(serializers.serialize(object.curtime,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -249,14 +256,21 @@ class _$ForumStoryResultSerializer
       serializers.serialize(object.data,
           specifiedType:
               const FullType(BuiltList, const [const FullType(Thread)])),
-      'nexttime',
-      serializers.serialize(object.nexttime,
-          specifiedType: const FullType(int)),
-      'curtime',
-      serializers.serialize(object.curtime, specifiedType: const FullType(int)),
       'tmp',
       serializers.serialize(object.tmp, specifiedType: const FullType(String)),
     ];
+    if (object.nexttime != null) {
+      result
+        ..add('nexttime')
+        ..add(serializers.serialize(object.nexttime,
+            specifiedType: const FullType(int)));
+    }
+    if (object.curtime != null) {
+      result
+        ..add('curtime')
+        ..add(serializers.serialize(object.curtime,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -547,12 +561,6 @@ class _$HomeListResult extends HomeListResult {
 
   _$HomeListResult._({this.nexttime, this.curtime, this.data, this.tmp})
       : super._() {
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('HomeListResult', 'nexttime');
-    }
-    if (curtime == null) {
-      throw new BuiltValueNullFieldError('HomeListResult', 'curtime');
-    }
     if (data == null) {
       throw new BuiltValueNullFieldError('HomeListResult', 'data');
     }
@@ -962,12 +970,6 @@ class _$ForumStoryResult extends ForumStoryResult {
       : super._() {
     if (data == null) {
       throw new BuiltValueNullFieldError('ForumStoryResult', 'data');
-    }
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('ForumStoryResult', 'nexttime');
-    }
-    if (curtime == null) {
-      throw new BuiltValueNullFieldError('ForumStoryResult', 'curtime');
     }
     if (tmp == null) {
       throw new BuiltValueNullFieldError('ForumStoryResult', 'tmp');

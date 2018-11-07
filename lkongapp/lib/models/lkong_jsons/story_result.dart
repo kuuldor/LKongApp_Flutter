@@ -13,9 +13,10 @@ abstract class HomeListResult
   HomeListResult._();
 
   factory HomeListResult([updates(HomeListResultBuilder b)]) = _$HomeListResult;
-
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
+  @nullable
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
   @BuiltValueField(wireName: 'data')
@@ -95,8 +96,10 @@ abstract class ForumStoryResult
 
   @BuiltValueField(wireName: 'data')
   BuiltList<Thread> get data;
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
+  @nullable
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
   @BuiltValueField(wireName: 'tmp')

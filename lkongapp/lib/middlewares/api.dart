@@ -264,7 +264,7 @@ Future<Map> apiDispatch(api, Map parameters) {
     return login(parameters);
   }
 
-  if (api.startsWith(HOMELIST_API)) {
+  if (api == HOMELIST_API) {
     return getHomeList(parameters);
   }
 
@@ -288,21 +288,43 @@ Future<Map> apiDispatch(api, Map parameters) {
 }
 
 APIResponse createResponseAction(APIRequest action, Map response) {
-  APIResponse result = APIResponse();
-
   String api = action.api;
-  String error = response["error"];
+  APIResponse result = APIFailure("Unimplemented API \"$api\"");
 
-  switch (api) {
-    case LOGIN_API:
-      User user = userParam(action.parameters);
-      result = error == null
-          ? LoginSuccess(user.rebuild((b) => b..uid = response["uid"]))
-          : LoginFailure(error);
-      break;
-    default:
-      break;
+  String error = response["error"];
+  if (error != null) {
+    return action.badResponse(error);
   }
+
+  if (api == LOGIN_API) {
+    User user = userParam(action.parameters);
+    return LoginSuccess(user.rebuild((b) => b..uid = response["uid"]));
+  }
+
+  var output = response["result"];
+  return action.goodResponse(output);
+  
+  if (api == HOMELIST_API) {
+    HomeListResult list = response["result"] as HomeListResult;
+    return HomeListSuccess(list);
+  }
+
+  if (api == STORY_CONTENT_API) {
+    return result;
+  }
+
+  if (api == STORY_INFO_API) {
+    return result;
+  }
+
+  if (api == FORUMLIST_API) {
+    return result;
+  }
+
+  if (api.startsWith(FORUMTHREADS_API)) {
+    return result;
+  }
+
   return result;
 }
 

@@ -67,7 +67,7 @@ Widget _createApp(viewModel) {
     localizationsDelegates: [
       LKongLocalizationsDelegate(),
     ],
-    initialRoute: LKongAppRoutes.login,
+    initialRoute: LKongAppRoutes.home,
     routes: {
       LKongAppRoutes.login: (context) =>
           LoginScreen(key: LKongAppKeys.loginScreen),

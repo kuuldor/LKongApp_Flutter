@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lkongapp/ui/story_list.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -45,7 +46,7 @@ class PageBuilder extends StatelessWidget {
         body: PageView(
           children: [
             Container(
-              child: Text('首页'),
+              child: StoryList(),
             ),
             Container(
               child: Text('板块'),

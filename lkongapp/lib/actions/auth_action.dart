@@ -10,6 +10,12 @@ class LoginRequest extends APIRequest with StartLoading {
 
   LoginRequest(Completer completer, this.user)
       : super(completer: completer, api: LOGIN_API, parameters: {"user": user});
+
+  @override
+  CreateFailure get badResponse => (error) => LoginFailure(error);
+
+  @override
+  CreateSuccess get goodResponse => (user) => LoginSuccess(user);
 }
 
 class LoginSuccess extends APISuccess with StopLoading {

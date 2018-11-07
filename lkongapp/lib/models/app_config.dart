@@ -155,13 +155,13 @@ abstract class AccountSettings
       _$AccountSettings((b) {
         AccountSettingBuilder setting = AccountSettingBuilder()..replace(AccountSetting());
         b
-          ..defaultSetting = setting
+          ..currentSetting = setting
           ..accounts = Map<String, AccountSetting>()
           ..update(updates);
       });
 
-  @BuiltValueField(wireName: 'defaultSetting')
-  AccountSetting get defaultSetting;
+  @BuiltValueField(wireName: 'currentSetting')
+  AccountSetting get currentSetting;
   @BuiltValueField(wireName: 'accounts')
   Map<String, AccountSetting> get accounts;
   String toJson() {

@@ -307,8 +307,8 @@ class _$AccountSettingsSerializer
   Iterable serialize(Serializers serializers, AccountSettings object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'defaultSetting',
-      serializers.serialize(object.defaultSetting,
+      'currentSetting',
+      serializers.serialize(object.currentSetting,
           specifiedType: const FullType(AccountSetting)),
       'accounts',
       serializers.serialize(object.accounts,
@@ -330,8 +330,8 @@ class _$AccountSettingsSerializer
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
-        case 'defaultSetting':
-          result.defaultSetting.replace(serializers.deserialize(value,
+        case 'currentSetting':
+          result.currentSetting.replace(serializers.deserialize(value,
               specifiedType: const FullType(AccountSetting)) as AccountSetting);
           break;
         case 'accounts':
@@ -1044,16 +1044,16 @@ class ThemeSettingBuilder
 
 class _$AccountSettings extends AccountSettings {
   @override
-  final AccountSetting defaultSetting;
+  final AccountSetting currentSetting;
   @override
   final Map<String, AccountSetting> accounts;
 
   factory _$AccountSettings([void updates(AccountSettingsBuilder b)]) =>
       (new AccountSettingsBuilder()..update(updates)).build();
 
-  _$AccountSettings._({this.defaultSetting, this.accounts}) : super._() {
-    if (defaultSetting == null) {
-      throw new BuiltValueNullFieldError('AccountSettings', 'defaultSetting');
+  _$AccountSettings._({this.currentSetting, this.accounts}) : super._() {
+    if (currentSetting == null) {
+      throw new BuiltValueNullFieldError('AccountSettings', 'currentSetting');
     }
     if (accounts == null) {
       throw new BuiltValueNullFieldError('AccountSettings', 'accounts');
@@ -1072,19 +1072,19 @@ class _$AccountSettings extends AccountSettings {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is AccountSettings &&
-        defaultSetting == other.defaultSetting &&
+        currentSetting == other.currentSetting &&
         accounts == other.accounts;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, defaultSetting.hashCode), accounts.hashCode));
+    return $jf($jc($jc(0, currentSetting.hashCode), accounts.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('AccountSettings')
-          ..add('defaultSetting', defaultSetting)
+          ..add('currentSetting', currentSetting)
           ..add('accounts', accounts))
         .toString();
   }
@@ -1094,11 +1094,11 @@ class AccountSettingsBuilder
     implements Builder<AccountSettings, AccountSettingsBuilder> {
   _$AccountSettings _$v;
 
-  AccountSettingBuilder _defaultSetting;
-  AccountSettingBuilder get defaultSetting =>
-      _$this._defaultSetting ??= new AccountSettingBuilder();
-  set defaultSetting(AccountSettingBuilder defaultSetting) =>
-      _$this._defaultSetting = defaultSetting;
+  AccountSettingBuilder _currentSetting;
+  AccountSettingBuilder get currentSetting =>
+      _$this._currentSetting ??= new AccountSettingBuilder();
+  set currentSetting(AccountSettingBuilder currentSetting) =>
+      _$this._currentSetting = currentSetting;
 
   Map<String, AccountSetting> _accounts;
   Map<String, AccountSetting> get accounts => _$this._accounts;
@@ -1109,7 +1109,7 @@ class AccountSettingsBuilder
 
   AccountSettingsBuilder get _$this {
     if (_$v != null) {
-      _defaultSetting = _$v.defaultSetting?.toBuilder();
+      _currentSetting = _$v.currentSetting?.toBuilder();
       _accounts = _$v.accounts;
       _$v = null;
     }
@@ -1135,12 +1135,12 @@ class AccountSettingsBuilder
     try {
       _$result = _$v ??
           new _$AccountSettings._(
-              defaultSetting: defaultSetting.build(), accounts: accounts);
+              currentSetting: currentSetting.build(), accounts: accounts);
     } catch (_) {
       String _$failedField;
       try {
-        _$failedField = 'defaultSetting';
-        defaultSetting.build();
+        _$failedField = 'currentSetting';
+        currentSetting.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'AccountSettings', _$failedField, e.toString());

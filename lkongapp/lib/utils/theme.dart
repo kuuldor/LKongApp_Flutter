@@ -54,7 +54,7 @@ class LKongAppTheme {
     return template.copyWith(
         primaryColor: mainColor,
         backgroundColor: pageColor,
-        accentColor: barTextColor,
+        accentColor: mainColor,
         bottomAppBarColor: pageColor,
         primaryTextTheme: template.primaryTextTheme.apply(
           displayColor: textColor,
