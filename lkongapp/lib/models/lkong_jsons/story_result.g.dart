@@ -22,9 +22,11 @@ part of 'story_result.dart';
 Serializer<HomeListResult> _$homeListResultSerializer =
     new _$HomeListResultSerializer();
 Serializer<Story> _$storySerializer = new _$StorySerializer();
-Serializer<ForumListResult> _$forumListResultSerializer =
-    new _$ForumListResultSerializer();
+Serializer<ForumStoryResult> _$forumStoryResultSerializer =
+    new _$ForumStoryResultSerializer();
 Serializer<Thread> _$threadSerializer = new _$ThreadSerializer();
+Serializer<StoryInfoResult> _$storyInfoResultSerializer =
+    new _$StoryInfoResultSerializer();
 
 class _$HomeListResultSerializer
     implements StructuredSerializer<HomeListResult> {
@@ -103,7 +105,7 @@ class _$StorySerializer implements StructuredSerializer<Story> {
       serializers.serialize(object.isquote,
           specifiedType: const FullType(bool)),
       'uid',
-      serializers.serialize(object.uid, specifiedType: const FullType(String)),
+      serializers.serialize(object.uid, specifiedType: const FullType(int)),
       'username',
       serializers.serialize(object.username,
           specifiedType: const FullType(String)),
@@ -175,7 +177,7 @@ class _$StorySerializer implements StructuredSerializer<Story> {
           break;
         case 'uid':
           result.uid = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(int)) as int;
           break;
         case 'username':
           result.username = serializers.deserialize(value,
@@ -232,15 +234,15 @@ class _$StorySerializer implements StructuredSerializer<Story> {
   }
 }
 
-class _$ForumListResultSerializer
-    implements StructuredSerializer<ForumListResult> {
+class _$ForumStoryResultSerializer
+    implements StructuredSerializer<ForumStoryResult> {
   @override
-  final Iterable<Type> types = const [ForumListResult, _$ForumListResult];
+  final Iterable<Type> types = const [ForumStoryResult, _$ForumStoryResult];
   @override
-  final String wireName = 'ForumListResult';
+  final String wireName = 'ForumStoryResult';
 
   @override
-  Iterable serialize(Serializers serializers, ForumListResult object,
+  Iterable serialize(Serializers serializers, ForumStoryResult object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'data',
@@ -260,9 +262,9 @@ class _$ForumListResultSerializer
   }
 
   @override
-  ForumListResult deserialize(Serializers serializers, Iterable serialized,
+  ForumStoryResult deserialize(Serializers serializers, Iterable serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new ForumListResultBuilder();
+    final result = new ForumStoryResultBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -384,6 +386,144 @@ class _$ThreadSerializer implements StructuredSerializer<Thread> {
         case 'fid':
           result.fid = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$StoryInfoResultSerializer
+    implements StructuredSerializer<StoryInfoResult> {
+  @override
+  final Iterable<Type> types = const [StoryInfoResult, _$StoryInfoResult];
+  @override
+  final String wireName = 'StoryInfoResult';
+
+  @override
+  Iterable serialize(Serializers serializers, StoryInfoResult object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'fid',
+      serializers.serialize(object.fid, specifiedType: const FullType(int)),
+      'tid',
+      serializers.serialize(object.tid, specifiedType: const FullType(int)),
+      'subject',
+      serializers.serialize(object.subject,
+          specifiedType: const FullType(String)),
+      'views',
+      serializers.serialize(object.views, specifiedType: const FullType(int)),
+      'replies',
+      serializers.serialize(object.replies, specifiedType: const FullType(int)),
+      'forumname',
+      serializers.serialize(object.forumname,
+          specifiedType: const FullType(String)),
+      'digest',
+      serializers.serialize(object.digest, specifiedType: const FullType(bool)),
+      'timestamp',
+      serializers.serialize(object.timestamp,
+          specifiedType: const FullType(int)),
+      'authorid',
+      serializers.serialize(object.authorid,
+          specifiedType: const FullType(int)),
+      'author',
+      serializers.serialize(object.author,
+          specifiedType: const FullType(String)),
+      'dateline',
+      serializers.serialize(object.dateline,
+          specifiedType: const FullType(String)),
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(String)),
+      'isok',
+      serializers.serialize(object.isok, specifiedType: const FullType(bool)),
+    ];
+    if (object.uid != null) {
+      result
+        ..add('uid')
+        ..add(serializers.serialize(object.uid,
+            specifiedType: const FullType(int)));
+    }
+    if (object.username != null) {
+      result
+        ..add('username')
+        ..add(serializers.serialize(object.username,
+            specifiedType: const FullType(String)));
+    }
+
+    return result;
+  }
+
+  @override
+  StoryInfoResult deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new StoryInfoResultBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'fid':
+          result.fid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'tid':
+          result.tid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'subject':
+          result.subject = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'views':
+          result.views = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'replies':
+          result.replies = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'forumname':
+          result.forumname = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'digest':
+          result.digest = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'timestamp':
+          result.timestamp = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'uid':
+          result.uid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'username':
+          result.username = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'authorid':
+          result.authorid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'author':
+          result.author = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'dateline':
+          result.dateline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'isok':
+          result.isok = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
           break;
       }
     }
@@ -533,7 +673,7 @@ class _$Story extends Story {
   @override
   final bool isquote;
   @override
-  final String uid;
+  final int uid;
   @override
   final String username;
   @override
@@ -694,9 +834,9 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
   bool get isquote => _$this._isquote;
   set isquote(bool isquote) => _$this._isquote = isquote;
 
-  String _uid;
-  String get uid => _$this._uid;
-  set uid(String uid) => _$this._uid = uid;
+  int _uid;
+  int get uid => _$this._uid;
+  set uid(int uid) => _$this._uid = uid;
 
   String _username;
   String get username => _$this._username;
@@ -805,7 +945,7 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
   }
 }
 
-class _$ForumListResult extends ForumListResult {
+class _$ForumStoryResult extends ForumStoryResult {
   @override
   final BuiltList<Thread> data;
   @override
@@ -815,37 +955,37 @@ class _$ForumListResult extends ForumListResult {
   @override
   final String tmp;
 
-  factory _$ForumListResult([void updates(ForumListResultBuilder b)]) =>
-      (new ForumListResultBuilder()..update(updates)).build();
+  factory _$ForumStoryResult([void updates(ForumStoryResultBuilder b)]) =>
+      (new ForumStoryResultBuilder()..update(updates)).build();
 
-  _$ForumListResult._({this.data, this.nexttime, this.curtime, this.tmp})
+  _$ForumStoryResult._({this.data, this.nexttime, this.curtime, this.tmp})
       : super._() {
     if (data == null) {
-      throw new BuiltValueNullFieldError('ForumListResult', 'data');
+      throw new BuiltValueNullFieldError('ForumStoryResult', 'data');
     }
     if (nexttime == null) {
-      throw new BuiltValueNullFieldError('ForumListResult', 'nexttime');
+      throw new BuiltValueNullFieldError('ForumStoryResult', 'nexttime');
     }
     if (curtime == null) {
-      throw new BuiltValueNullFieldError('ForumListResult', 'curtime');
+      throw new BuiltValueNullFieldError('ForumStoryResult', 'curtime');
     }
     if (tmp == null) {
-      throw new BuiltValueNullFieldError('ForumListResult', 'tmp');
+      throw new BuiltValueNullFieldError('ForumStoryResult', 'tmp');
     }
   }
 
   @override
-  ForumListResult rebuild(void updates(ForumListResultBuilder b)) =>
+  ForumStoryResult rebuild(void updates(ForumStoryResultBuilder b)) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  ForumListResultBuilder toBuilder() =>
-      new ForumListResultBuilder()..replace(this);
+  ForumStoryResultBuilder toBuilder() =>
+      new ForumStoryResultBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ForumListResult &&
+    return other is ForumStoryResult &&
         data == other.data &&
         nexttime == other.nexttime &&
         curtime == other.curtime &&
@@ -861,7 +1001,7 @@ class _$ForumListResult extends ForumListResult {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('ForumListResult')
+    return (newBuiltValueToStringHelper('ForumStoryResult')
           ..add('data', data)
           ..add('nexttime', nexttime)
           ..add('curtime', curtime)
@@ -870,9 +1010,9 @@ class _$ForumListResult extends ForumListResult {
   }
 }
 
-class ForumListResultBuilder
-    implements Builder<ForumListResult, ForumListResultBuilder> {
-  _$ForumListResult _$v;
+class ForumStoryResultBuilder
+    implements Builder<ForumStoryResult, ForumStoryResultBuilder> {
+  _$ForumStoryResult _$v;
 
   ListBuilder<Thread> _data;
   ListBuilder<Thread> get data => _$this._data ??= new ListBuilder<Thread>();
@@ -890,9 +1030,9 @@ class ForumListResultBuilder
   String get tmp => _$this._tmp;
   set tmp(String tmp) => _$this._tmp = tmp;
 
-  ForumListResultBuilder();
+  ForumStoryResultBuilder();
 
-  ForumListResultBuilder get _$this {
+  ForumStoryResultBuilder get _$this {
     if (_$v != null) {
       _data = _$v.data?.toBuilder();
       _nexttime = _$v.nexttime;
@@ -904,24 +1044,24 @@ class ForumListResultBuilder
   }
 
   @override
-  void replace(ForumListResult other) {
+  void replace(ForumStoryResult other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$ForumListResult;
+    _$v = other as _$ForumStoryResult;
   }
 
   @override
-  void update(void updates(ForumListResultBuilder b)) {
+  void update(void updates(ForumStoryResultBuilder b)) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$ForumListResult build() {
-    _$ForumListResult _$result;
+  _$ForumStoryResult build() {
+    _$ForumStoryResult _$result;
     try {
       _$result = _$v ??
-          new _$ForumListResult._(
+          new _$ForumStoryResult._(
               data: data.build(),
               nexttime: nexttime,
               curtime: curtime,
@@ -933,7 +1073,7 @@ class ForumListResultBuilder
         data.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'ForumListResult', _$failedField, e.toString());
+            'ForumStoryResult', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -1162,6 +1302,309 @@ class ThreadBuilder implements Builder<Thread, ThreadBuilder> {
             replynum: replynum,
             id: id,
             fid: fid);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$StoryInfoResult extends StoryInfoResult {
+  @override
+  final int fid;
+  @override
+  final int tid;
+  @override
+  final String subject;
+  @override
+  final int views;
+  @override
+  final int replies;
+  @override
+  final String forumname;
+  @override
+  final bool digest;
+  @override
+  final int timestamp;
+  @override
+  final int uid;
+  @override
+  final String username;
+  @override
+  final int authorid;
+  @override
+  final String author;
+  @override
+  final String dateline;
+  @override
+  final String id;
+  @override
+  final bool isok;
+
+  factory _$StoryInfoResult([void updates(StoryInfoResultBuilder b)]) =>
+      (new StoryInfoResultBuilder()..update(updates)).build();
+
+  _$StoryInfoResult._(
+      {this.fid,
+      this.tid,
+      this.subject,
+      this.views,
+      this.replies,
+      this.forumname,
+      this.digest,
+      this.timestamp,
+      this.uid,
+      this.username,
+      this.authorid,
+      this.author,
+      this.dateline,
+      this.id,
+      this.isok})
+      : super._() {
+    if (fid == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'fid');
+    }
+    if (tid == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'tid');
+    }
+    if (subject == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'subject');
+    }
+    if (views == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'views');
+    }
+    if (replies == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'replies');
+    }
+    if (forumname == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'forumname');
+    }
+    if (digest == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'digest');
+    }
+    if (timestamp == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'timestamp');
+    }
+    if (authorid == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'authorid');
+    }
+    if (author == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'author');
+    }
+    if (dateline == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'dateline');
+    }
+    if (id == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'id');
+    }
+    if (isok == null) {
+      throw new BuiltValueNullFieldError('StoryInfoResult', 'isok');
+    }
+  }
+
+  @override
+  StoryInfoResult rebuild(void updates(StoryInfoResultBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  StoryInfoResultBuilder toBuilder() =>
+      new StoryInfoResultBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is StoryInfoResult &&
+        fid == other.fid &&
+        tid == other.tid &&
+        subject == other.subject &&
+        views == other.views &&
+        replies == other.replies &&
+        forumname == other.forumname &&
+        digest == other.digest &&
+        timestamp == other.timestamp &&
+        uid == other.uid &&
+        username == other.username &&
+        authorid == other.authorid &&
+        author == other.author &&
+        dateline == other.dateline &&
+        id == other.id &&
+        isok == other.isok;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc(
+                        $jc(
+                            $jc(
+                                $jc(
+                                    $jc(
+                                        $jc(
+                                            $jc(
+                                                $jc(
+                                                    $jc(
+                                                        $jc(
+                                                            $jc(0,
+                                                                fid.hashCode),
+                                                            tid.hashCode),
+                                                        subject.hashCode),
+                                                    views.hashCode),
+                                                replies.hashCode),
+                                            forumname.hashCode),
+                                        digest.hashCode),
+                                    timestamp.hashCode),
+                                uid.hashCode),
+                            username.hashCode),
+                        authorid.hashCode),
+                    author.hashCode),
+                dateline.hashCode),
+            id.hashCode),
+        isok.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('StoryInfoResult')
+          ..add('fid', fid)
+          ..add('tid', tid)
+          ..add('subject', subject)
+          ..add('views', views)
+          ..add('replies', replies)
+          ..add('forumname', forumname)
+          ..add('digest', digest)
+          ..add('timestamp', timestamp)
+          ..add('uid', uid)
+          ..add('username', username)
+          ..add('authorid', authorid)
+          ..add('author', author)
+          ..add('dateline', dateline)
+          ..add('id', id)
+          ..add('isok', isok))
+        .toString();
+  }
+}
+
+class StoryInfoResultBuilder
+    implements Builder<StoryInfoResult, StoryInfoResultBuilder> {
+  _$StoryInfoResult _$v;
+
+  int _fid;
+  int get fid => _$this._fid;
+  set fid(int fid) => _$this._fid = fid;
+
+  int _tid;
+  int get tid => _$this._tid;
+  set tid(int tid) => _$this._tid = tid;
+
+  String _subject;
+  String get subject => _$this._subject;
+  set subject(String subject) => _$this._subject = subject;
+
+  int _views;
+  int get views => _$this._views;
+  set views(int views) => _$this._views = views;
+
+  int _replies;
+  int get replies => _$this._replies;
+  set replies(int replies) => _$this._replies = replies;
+
+  String _forumname;
+  String get forumname => _$this._forumname;
+  set forumname(String forumname) => _$this._forumname = forumname;
+
+  bool _digest;
+  bool get digest => _$this._digest;
+  set digest(bool digest) => _$this._digest = digest;
+
+  int _timestamp;
+  int get timestamp => _$this._timestamp;
+  set timestamp(int timestamp) => _$this._timestamp = timestamp;
+
+  int _uid;
+  int get uid => _$this._uid;
+  set uid(int uid) => _$this._uid = uid;
+
+  String _username;
+  String get username => _$this._username;
+  set username(String username) => _$this._username = username;
+
+  int _authorid;
+  int get authorid => _$this._authorid;
+  set authorid(int authorid) => _$this._authorid = authorid;
+
+  String _author;
+  String get author => _$this._author;
+  set author(String author) => _$this._author = author;
+
+  String _dateline;
+  String get dateline => _$this._dateline;
+  set dateline(String dateline) => _$this._dateline = dateline;
+
+  String _id;
+  String get id => _$this._id;
+  set id(String id) => _$this._id = id;
+
+  bool _isok;
+  bool get isok => _$this._isok;
+  set isok(bool isok) => _$this._isok = isok;
+
+  StoryInfoResultBuilder();
+
+  StoryInfoResultBuilder get _$this {
+    if (_$v != null) {
+      _fid = _$v.fid;
+      _tid = _$v.tid;
+      _subject = _$v.subject;
+      _views = _$v.views;
+      _replies = _$v.replies;
+      _forumname = _$v.forumname;
+      _digest = _$v.digest;
+      _timestamp = _$v.timestamp;
+      _uid = _$v.uid;
+      _username = _$v.username;
+      _authorid = _$v.authorid;
+      _author = _$v.author;
+      _dateline = _$v.dateline;
+      _id = _$v.id;
+      _isok = _$v.isok;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(StoryInfoResult other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$StoryInfoResult;
+  }
+
+  @override
+  void update(void updates(StoryInfoResultBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$StoryInfoResult build() {
+    final _$result = _$v ??
+        new _$StoryInfoResult._(
+            fid: fid,
+            tid: tid,
+            subject: subject,
+            views: views,
+            replies: replies,
+            forumname: forumname,
+            digest: digest,
+            timestamp: timestamp,
+            uid: uid,
+            username: username,
+            authorid: authorid,
+            author: author,
+            dateline: dateline,
+            id: id,
+            isok: isok);
     replace(_$result);
     return _$result;
   }

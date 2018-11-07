@@ -24,8 +24,12 @@ part 'serializers.g.dart';
   AppTheme,
   HomeListResult,
   Story,
-  ForumListResult,
+  ForumStoryResult,
   Thread,
+  ForumListResult,
+  Forum,
+  StoryInfoResult,
+  ForumInfoResult,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

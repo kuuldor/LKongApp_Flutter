@@ -27,9 +27,13 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(AppState.serializer)
       ..add(AppTheme.serializer)
       ..add(AuthState.serializer)
+      ..add(Forum.serializer)
+      ..add(ForumInfoResult.serializer)
       ..add(ForumListResult.serializer)
+      ..add(ForumStoryResult.serializer)
       ..add(HomeListResult.serializer)
       ..add(Story.serializer)
+      ..add(StoryInfoResult.serializer)
       ..add(ThemeSetting.serializer)
       ..add(Thread.serializer)
       ..add(UIState.serializer)
@@ -38,8 +42,21 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(AppTheme)]),
           () => new ListBuilder<AppTheme>())
       ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Forum)]),
+          () => new ListBuilder<Forum>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Forum)]),
+          () => new ListBuilder<Forum>())
+      ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Story)]),
           () => new ListBuilder<Story>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltMap, const [const FullType(String), const FullType(Forum)]),
+          () => new MapBuilder<String, Forum>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Thread)]),
           () => new ListBuilder<Thread>())

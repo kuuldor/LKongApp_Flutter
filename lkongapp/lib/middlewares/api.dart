@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
 
@@ -42,14 +43,23 @@ const endpoint = {
 };
 
 Future<Map> _handleHttp(
-    Future<http.Response> httpAction, Map handleGoodBody(String body)) {
+  Future<http.Response> httpAction, {
+  @required Map bodyParser(String body),
+  String preProcessor(String body),
+}) {
   return httpAction.then((response) {
     Map result = {};
 
     if (response.statusCode >= 400) {
       result = {"error": "HTTP错误: ${response.statusCode}"};
     } else {
-      result = handleGoodBody(response.body);
+      var body;
+      if (preProcessor != null) {
+        body = preProcessor(response.body);
+      } else {
+        body = response.body;
+      }
+      result = bodyParser(body);
       if (result == null) {
         result = {"error": 'API没有返回信息'};
       }
@@ -67,7 +77,7 @@ Future<Map> login(Map args) {
     "password": user.password,
     "rememberme": "on"
   });
-  return _handleHttp(httpAction, (body) => json.decode(body));
+  return _handleHttp(httpAction, bodyParser: (body) => json.decode(body));
 }
 
 User userParam(Map args) {
@@ -110,7 +120,7 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
   print("Fetching Stories: URL is $urlString");
 
   var httpAction = http.get(urlString);
-  return _handleHttp(httpAction, (body) {
+  return _handleHttp(httpAction, bodyParser: (body) {
     Map result;
     print(body);
     T stories = fromJson(body);
@@ -121,7 +131,7 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
       result = {"result": stories};
     }
     return result;
-  });
+  }, preProcessor: numMapperBuiler(["uid"]));
 }
 
 Future<Map> getStoriesForForum(Map args) {
@@ -143,8 +153,8 @@ Future<Map> getStoriesForForum(Map args) {
   print("getHomeList: URL is $urlString");
   var params = getTimeParameter(nexttime, current);
 
-  return fetchStories<ForumListResult>(
-      urlString, params, ForumListResult.fromJson, (stories) {
+  return fetchStories<ForumStoryResult>(
+      urlString, params, ForumStoryResult.fromJson, (stories) {
     if (reverse) {
       stories.rebuild((b) => b..data.replace(stories.data.reversed));
     }
@@ -166,6 +176,16 @@ Future<Map> getHomeList(Map args) {
   });
 }
 
+_parseResponseBody<T>(T fromJson(String json)) => (String body) {
+      Map result;
+      print(body);
+      T forums = fromJson(body);
+      if (forums != null) {
+        result = {"result": forums};
+      }
+      return result;
+    };
+
 Future<Map> contentsForStory(Map args) {
   int story = args["story"];
   int page = args["page"];
@@ -181,7 +201,7 @@ Future<Map> contentsForStory(Map args) {
   print("contentsForStory: URL is $urlString");
 
   var httpAction = http.get(urlString);
-  return _handleHttp(httpAction, (body) => json.decode(body));
+  return _handleHttp(httpAction, bodyParser: (body) => json.decode(body));
 }
 
 Future<Map> getStoryInfo(Map args) {
@@ -197,7 +217,8 @@ Future<Map> getStoryInfo(Map args) {
   print("getStoryInfo: URL is $urlString");
 
   var httpAction = http.get(urlString);
-  return _handleHttp(httpAction, (body) => json.decode(body));
+  return _handleHttp(httpAction,
+      bodyParser: _parseResponseBody(StoryInfoResult.fromJson));
 }
 
 Future<Map> getForumList() {
@@ -206,8 +227,37 @@ Future<Map> getForumList() {
   print("getForumList: URL is $urlString");
 
   var httpAction = http.get(urlString);
-  return _handleHttp(httpAction, (body) => json.decode(body));
+  return _handleHttp(httpAction,
+      bodyParser: _parseResponseBody(ForumListResult.fromJson));
 }
+
+Future<Map> getForumInfo(Map args) {
+  int forumId = args["id"];
+
+  assert(forumId != null, "forumId must be defined");
+
+  var urlString = baseURL + endpoint["forumInfo"] + "_$forumId";
+
+  print("getForumInfo: URL is $urlString");
+
+  var httpAction = http.get(urlString);
+  return _handleHttp(httpAction,
+      bodyParser: _parseResponseBody(ForumInfoResult.fromJson),
+      preProcessor: numMapperBuiler(["membernum", "todayposts"]));
+}
+
+var numMapperBuiler = (List<String> fields) => (String body) {
+      var processed = body;
+
+      var numMapper = (Match m) => "${m[1]}:${m[2]}";
+
+      fields.forEach((field) {
+        RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(\\d+)\"");
+        processed = processed.replaceAllMapped(pattern, numMapper);
+      });
+
+      return processed;
+    };
 
 Future<Map> apiDispatch(api, Map parameters) {
   if (api == LOGIN_API) {

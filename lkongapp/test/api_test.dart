@@ -29,30 +29,46 @@ void main() {
   test('Get Home List Test', () async {
     await getHomeList({}).then((map) {
       print(map.toString());
+      expect(map['error'], null);
     });
   });
 
   test('Get Forum List Test', () async {
     await getStoriesForForum({"forumId": 60}).then((map) {
       print(map.toString());
+      expect(map['error'], null);
     });
   });
 
   test('Get Thread Info Test', () async {
     await getStoryInfo({"story": 2173241}).then((map) {
       print(map.toString());
+      expect(map['error'], null);
     });
   });
 
   test('Get Thread Content Test', () async {
     await contentsForStory({"story": 2173241, "page": 0}).then((map) {
       print(map.toString());
+      expect(map['error'], null);
     });
   });
 
   test('Get Forum List Test', () async {
     await getForumList().then((map) {
       print(map.toString());
+      expect(map['error'], null);
+    });
+  });
+
+  test('Get Forum Info Test', () async {
+    await getForumInfo({"id": 60}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+    await getForumInfo({"id": 1024}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
     });
   });
 }
