@@ -42,7 +42,7 @@ class StoryListModel extends ConnectedWidgetModel {
     StoreProvider.of<AppState>(context).dispatch(
         HomeListRefreshRequest(completer, threadOnlyHome, homeList.current));
     return completer.future.then((success) {
-      showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
+      // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
   }
 
@@ -50,7 +50,7 @@ class StoryListModel extends ConnectedWidgetModel {
     final Completer<bool> completer = Completer<bool>();
     StoreProvider.of<AppState>(context)
         .dispatch(HomeListNewRequest(completer, threadOnlyHome, 0, 0));
-    return completer.future;
+    return completer.future.then((success) {});
   }
 
   Future<Null> _handleLoadMore(BuildContext context) {
@@ -58,7 +58,7 @@ class StoryListModel extends ConnectedWidgetModel {
     StoreProvider.of<AppState>(context).dispatch(
         HomeListLoadMoreRequest(completer, threadOnlyHome, homeList.nexttime));
     return completer.future.then((success) {
-      showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
+      // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
   }
 
@@ -74,54 +74,47 @@ class StoryListModel extends ConnectedWidgetModel {
     );
   }
 
-  bool _onNotification(BuildContext context, ScrollNotification notification) {
-    if (notification is ScrollUpdateNotification) {
-      if (_scrollController.position.maxScrollExtent >
-              _scrollController.offset &&
-          _scrollController.position.maxScrollExtent -
-                  _scrollController.offset <=
-              50) {
-        if (!homeList.loading) {
-          _handleLoadMore(context);
-        } else {}
-      }
-    }
-    return true;
-  }
-
   Widget _buildListView(BuildContext context) {
-    if (homeList.loading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
     int itemCount = homeList.stories.length;
     if (itemCount == 0) {
-      _handleLoadNew(context);
-      return Container();
+      if (homeList.loading) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        _handleLoadNew(context);
+        return Container();
+      }
     }
 
-    return NotificationListener(
-        onNotification: (ScrollNotification notification) =>
-            _onNotification(context, notification),
-        child: RefreshIndicator(
-          onRefresh: () => _handleRefresh(context),
-          child: ListView.builder(
-              shrinkWrap: true,
-              controller: _scrollController,
-              itemCount: homeList.stories.length,
-              itemBuilder: (BuildContext context, index) {
-                var story = homeList.stories[index];
+    return RefreshIndicator(
+      onRefresh: () => _handleRefresh(context),
+      child: ListView.builder(
+          shrinkWrap: true,
+          controller: _scrollController,
+          itemCount: homeList.stories.length + 1,
+          itemBuilder: (BuildContext context, index) {
+            Widget item;
+            if (index < homeList.stories.length) {
+              var story = homeList.stories[index];
+              item = StoryItem(
+                story: story,
+                onTap: () => onStoryTap(context, story),
+              );
+            } else {
+              if (!homeList.loading) {
+                _handleLoadMore(context);
+              }
+              item = Container(
+                  height: 84.0,
+                  child: Center(child: CircularProgressIndicator()));
+            }
 
-                return Column(children: <Widget>[
-                  StoryItem(
-                    story: story,
-                    onTap: () => onStoryTap(context, story),
-                  ),
-                  Divider(
-                    height: 1.0,
-                  ),
-                ]);
-              }),
-        ));
+            return Column(children: <Widget>[
+              item,
+              Divider(
+                height: 1.0,
+              ),
+            ]);
+          }),
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/utils/utils.dart';
 
 class StoryItem extends StatelessWidget {
   final GestureTapCallback onTap;
@@ -31,7 +32,7 @@ class StoryItem extends StatelessWidget {
         ),
       ),
       
-      subtitle: Text(story.message, maxLines: 4),
+      subtitle: Text(html2Text(story.message), maxLines: 24),
     );
   }
 }

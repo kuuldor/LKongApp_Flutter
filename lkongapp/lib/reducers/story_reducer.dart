@@ -28,6 +28,7 @@ enum HomeListRequestType {
 _homeListSucceeded(HomeListRequestType type) =>
     (HomeList list, HomeListSuccess action) {
       return list.rebuild((b) {
+        b..loading = false;
         var data = action.list.data;
         if (data.length > 0) {
           int nexttime = type != HomeListRequestType.Refresh
@@ -38,7 +39,6 @@ _homeListSucceeded(HomeListRequestType type) =>
               : list.current;
 
           b
-            ..loading = false
             ..nexttime = nexttime
             ..current = current;
           switch (type) {

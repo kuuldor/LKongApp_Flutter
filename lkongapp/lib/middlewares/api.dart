@@ -122,7 +122,7 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
   var httpAction = http.get(urlString);
   return _handleHttp(httpAction, bodyParser: (body) {
     Map result;
-    print(body);
+
     T stories = fromJson(body);
     if (stories != null) {
       if (proccessor != null) {
@@ -150,7 +150,7 @@ Future<Map> getStoriesForForum(Map args) {
   }
 
   var urlString = baseURL + endpoint["forumStories"] + "$forumId" + modeString;
-  print("getHomeList: URL is $urlString");
+  print("getForumist: URL is $urlString");
   var params = getTimeParameter(nexttime, current);
 
   return fetchStories<ForumStoryResult>(
@@ -178,7 +178,7 @@ Future<Map> getHomeList(Map args) {
 
 _parseResponseBody<T>(T fromJson(String json)) => (String body) {
       Map result;
-      print(body);
+
       T forums = fromJson(body);
       if (forums != null) {
         result = {"result": forums};
@@ -196,7 +196,7 @@ Future<Map> contentsForStory(Map args) {
   var urlString = baseURL +
       endpoint["comments"] +
       "$story/$page" +
-      querify(defaultParameter());
+      querify(defaultParameter());    
 
   print("contentsForStory: URL is $urlString");
 
