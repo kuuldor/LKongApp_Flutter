@@ -10,7 +10,7 @@ import 'package:lkongapp/actions/actions.dart';
 Widget buildConnectedWidget<T extends ConnectedWidgetModel>(
     BuildContext context,
     T fromStore(Store<AppState> store),
-    Widget buidler(vm)) {
+    Widget buidler(T vm)) {
   return StoreConnector<AppState, T>(
     converter: fromStore,
     builder: (context, vm) {

@@ -13,7 +13,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return buildConnectedWidget(context, LoginViewModel.fromStore, (viewModel) {
-      final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+      var _formKey = LoginViewModel.formKey;
 
       final _emailController = TextEditingController();
       final _passwordController = TextEditingController();
@@ -127,6 +127,8 @@ class LoginScreen extends StatelessWidget {
 }
 
 class LoginViewModel extends ConnectedWidgetModel {
+  static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   bool isLoading;
   bool saveCredential;
   AuthState authState;
