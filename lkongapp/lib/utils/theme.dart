@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiver/core.dart';
 import 'dart:math';
 import 'package:redux/redux.dart';
 
@@ -21,6 +22,18 @@ class LKongAppTheme {
 
   final bool _isNightMode;
   final AppTheme _appTheme;
+
+  @override
+  bool operator ==(other) {
+    return other is LKongAppTheme &&
+        _appTheme == other._appTheme &&
+        _isNightMode == other._isNightMode;
+  }
+
+  @override
+  int get hashCode {
+    return hash2(_appTheme, _isNightMode);
+  }
 
   LKongAppTheme(this._appTheme, this._isNightMode);
 

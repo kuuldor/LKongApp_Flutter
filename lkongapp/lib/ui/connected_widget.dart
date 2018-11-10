@@ -7,12 +7,13 @@ import 'package:lkongapp/ui/page_builder.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 
-Widget buildConnectedWidget<T extends ConnectedWidgetModel>(
+Widget buildConnectedWidget<T>(
     BuildContext context,
     T fromStore(Store<AppState> store),
     Widget buidler(T vm)) {
   return StoreConnector<AppState, T>(
     converter: fromStore,
+    distinct: true,
     builder: (context, vm) {
       return WidgetView(
         viewModel: vm,
@@ -22,17 +23,11 @@ Widget buildConnectedWidget<T extends ConnectedWidgetModel>(
   );
 }
 
-class ConnectedWidgetModel {
-  static ConnectedWidgetModel fromStore(Store<AppState> store) {
-    return ConnectedWidgetModel();
-  }
-}
+typedef Widget BuilderType<T>(T vm);
 
-typedef Widget BuilderType(ConnectedWidgetModel vm);
-
-class WidgetView extends StatefulWidget {
-  final ConnectedWidgetModel viewModel;
-  final BuilderType builder;
+class WidgetView<T> extends StatefulWidget {
+  final T viewModel;
+  final BuilderType<T> builder;
 
   WidgetView({
     Key key,
@@ -41,13 +36,13 @@ class WidgetView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _WidgetViewState createState() => new _WidgetViewState();
+  _WidgetViewState<T> createState() => new _WidgetViewState<T>();
 }
 
-class _WidgetViewState extends State<WidgetView> {
+class _WidgetViewState<T> extends State<WidgetView<T>> {
   @override
   Widget build(BuildContext context) {
-    var viewModel = widget.viewModel;
+    T viewModel = widget.viewModel;
 
     return widget.builder(viewModel);
   }

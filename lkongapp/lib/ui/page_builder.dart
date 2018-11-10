@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/story_list.dart';
+import 'package:path/path.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -41,12 +43,14 @@ class PageBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return buildConnectedWidget(context, PageModel.fromStore, (viewModel) {
+    return buildConnectedWidget<PageModel>(context, PageModel.fromStore,
+        (viewModel) {
+      User user = LKModeledApp.modelOf(context).user;
       return Scaffold(
         body: PageView(
           children: [
             Container(
-              child: StoryList(),
+              child: user != null ? StoryList() : Container(),
             ),
             Container(
               child: Text('板块'),
@@ -86,14 +90,25 @@ class PageBuilder extends StatelessWidget {
   }
 }
 
-class PageModel extends ConnectedWidgetModel {
-  int page;
+class PageModel {
+  final int page;
+
   final Function(BuildContext, int) onPageChanged;
 
   PageModel({
     @required this.page,
     @required this.onPageChanged,
   });
+
+  @override
+  bool operator ==(other) {
+    return other is PageModel && page == other.page;
+  }
+
+  @override
+  int get hashCode {
+    return page.hashCode;
+  }
 
   static PageModel fromStore(Store<AppState> store) {
     return PageModel(

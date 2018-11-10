@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/utils/key.dart';
@@ -126,17 +127,26 @@ class LoginScreen extends StatelessWidget {
   }
 }
 
-class LoginViewModel extends ConnectedWidgetModel {
+class LoginViewModel {
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  bool isLoading;
   bool saveCredential;
   AuthState authState;
   final Function(BuildContext, String, String) onLoginPressed;
   final Function(BuildContext, bool) onSaveCredentialChanged;
+  @override
+  bool operator ==(other) {
+    return other is LoginViewModel &&
+        saveCredential == other.saveCredential &&
+        authState == other.authState;
+  }
+
+  @override
+  int get hashCode {
+    return hash2(saveCredential, authState);
+  }
 
   LoginViewModel({
-    @required this.isLoading,
     @required this.authState,
     @required this.saveCredential,
     @required this.onLoginPressed,
@@ -145,7 +155,6 @@ class LoginViewModel extends ConnectedWidgetModel {
 
   static LoginViewModel fromStore(Store<AppState> store) {
     return LoginViewModel(
-        isLoading: store.state.isLoading,
         authState: store.state.authState,
         saveCredential: store.state.appConfig.setting.saveCredential,
         onLoginPressed: (BuildContext context, String email, String password) {

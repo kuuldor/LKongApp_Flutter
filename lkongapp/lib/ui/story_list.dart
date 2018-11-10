@@ -21,7 +21,7 @@ class StoryList extends StatelessWidget {
   }
 }
 
-class StoryListModel extends ConnectedWidgetModel {
+class StoryListModel {
   final bool threadOnlyHome;
   final HomeList homeList;
 
