@@ -7,6 +7,7 @@ import 'package:built_value/built_value.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/actions/actions.dart';
+import 'package:lkongapp/utils/http_session.dart';
 
 const LOGIN_API = "LOGIN";
 const HOMELIST_API = "HOMELIST";
@@ -15,7 +16,7 @@ const STORY_INFO_API = "STORY_INFO";
 const FORUMLIST_API = "FORUMLIST";
 const FORUMTHREADS_API = "FORUMTHREADS";
 
-const baseURL = 'http://lkong.cn';
+HttpSession session = HttpSession(baseURL: 'http://lkong.cn');
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -44,8 +45,8 @@ const endpoint = {
 
 Future<Map> _handleHttp(
   Future<http.Response> httpAction, {
-  @required Map bodyParser(String body),
-  String preProcessor(String body),
+  @required Map dataParser(String data),
+  String preProcessor(String data),
 }) {
   return httpAction.then((response) {
     Map result = {};
@@ -53,13 +54,13 @@ Future<Map> _handleHttp(
     if (response.statusCode >= 400) {
       result = {"error": "HTTP错误: ${response.statusCode}"};
     } else {
-      var body;
+      var data;
       if (preProcessor != null) {
-        body = preProcessor(response.body);
+        data = preProcessor(response.body);
       } else {
-        body = response.body;
+        data = response.body;
       }
-      result = bodyParser(body);
+      result = dataParser(data);
       if (result == null) {
         result = {"error": 'API没有返回信息'};
       }
@@ -70,14 +71,14 @@ Future<Map> _handleHttp(
 
 Future<Map> login(Map args) {
   User user = userParam(args);
-  String url = baseURL + endpoint["login"];
-  var httpAction = http.post(url, body: {
+
+  var httpAction = session.post(endpoint["login"], data: {
     "action": "login",
     "email": user.identity,
     "password": user.password,
     "rememberme": "on"
   });
-  return _handleHttp(httpAction, bodyParser: (body) => json.decode(body));
+  return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
 User userParam(Map args) {
@@ -114,19 +115,17 @@ String querify(Map parameters) {
 }
 
 Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
-    [void proccessor(T t)]) {
+    [T proccessor(T t)]) {
   var urlString = url + querify(parameters);
 
-  print("Fetching Stories: URL is $urlString");
-
-  var httpAction = http.get(urlString);
-  return _handleHttp(httpAction, bodyParser: (body) {
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction, dataParser: (data) {
     Map result;
 
-    T stories = fromJson(body);
+    T stories = fromJson(data);
     if (stories != null) {
       if (proccessor != null) {
-        proccessor(stories);
+        stories = proccessor(stories);
       }
       result = {"result": stories};
     }
@@ -149,16 +148,16 @@ Future<Map> getStoriesForForum(Map args) {
     reverse = true;
   }
 
-  var urlString = baseURL + endpoint["forumStories"] + "$forumId" + modeString;
-  print("getForumist: URL is $urlString");
+  var urlString = endpoint["forumStories"] + "$forumId" + modeString;
   var params = getTimeParameter(nexttime, current);
 
   return fetchStories<ForumStoryResult>(
-      urlString, params, ForumStoryResult.fromJson, (stories) {
-    if (reverse) {
-      stories.rebuild((b) => b..data.replace(stories.data.reversed));
-    }
-  });
+      urlString,
+      params,
+      ForumStoryResult.fromJson,
+      (stories) => reverse
+          ? stories.rebuild((b) => b..data.replace(stories.data.reversed))
+          : stories);
 }
 
 Future<Map> getHomeList(Map args) {
@@ -166,20 +165,21 @@ Future<Map> getHomeList(Map args) {
   int current = args["current"] ?? 0;
   bool threadOnly = args["threadOnly"] ?? false;
 
-  var urlString = baseURL + endpoint["stories"] + (threadOnly ? 'thread' : '');
-  print("getHomeList: URL is $urlString");
+  var urlString = endpoint["stories"] + (threadOnly ? 'thread' : '');
   var params = getTimeParameter(nexttime, current);
 
   return fetchStories<HomeListResult>(
-      urlString, params, HomeListResult.fromJson, (stories) {
-    stories.rebuild((b) => b..data.replace(stories.data.reversed));
-  });
+      urlString,
+      params,
+      HomeListResult.fromJson,
+      (stories) =>
+          stories.rebuild((b) => b..data.replace(stories.data.reversed)));
 }
 
-_parseResponseBody<T>(T fromJson(String json)) => (String body) {
+_parseResponseBody<T>(T fromJson(String json)) => (String data) {
       Map result;
 
-      T forums = fromJson(body);
+      T forums = fromJson(data);
       if (forums != null) {
         result = {"result": forums};
       }
@@ -193,15 +193,11 @@ Future<Map> contentsForStory(Map args) {
   assert(story != null, "Story must be defined");
   assert(page != null, "Page must be defined");
 
-  var urlString = baseURL +
-      endpoint["comments"] +
-      "$story/$page" +
-      querify(defaultParameter());    
+  var urlString =
+      endpoint["comments"] + "$story/$page" + querify(defaultParameter());
 
-  print("contentsForStory: URL is $urlString");
-
-  var httpAction = http.get(urlString);
-  return _handleHttp(httpAction, bodyParser: (body) => json.decode(body));
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
 Future<Map> getStoryInfo(Map args) {
@@ -209,26 +205,20 @@ Future<Map> getStoryInfo(Map args) {
 
   assert(story != null, "Story must be defined");
 
-  var urlString = baseURL +
-      endpoint["threadInfo"] +
-      "_$story" +
-      querify(defaultParameter());
+  var urlString =
+      endpoint["threadInfo"] + "_$story" + querify(defaultParameter());
 
-  print("getStoryInfo: URL is $urlString");
-
-  var httpAction = http.get(urlString);
+  var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
-      bodyParser: _parseResponseBody(StoryInfoResult.fromJson));
+      dataParser: _parseResponseBody(StoryInfoResult.fromJson));
 }
 
 Future<Map> getForumList() {
-  var urlString = baseURL + endpoint["forumList"] + querify(defaultParameter());
+  var urlString = endpoint["forumList"] + querify(defaultParameter());
 
-  print("getForumList: URL is $urlString");
-
-  var httpAction = http.get(urlString);
+  var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
-      bodyParser: _parseResponseBody(ForumListResult.fromJson));
+      dataParser: _parseResponseBody(ForumListResult.fromJson));
 }
 
 Future<Map> getForumInfo(Map args) {
@@ -236,18 +226,16 @@ Future<Map> getForumInfo(Map args) {
 
   assert(forumId != null, "forumId must be defined");
 
-  var urlString = baseURL + endpoint["forumInfo"] + "_$forumId";
+  var urlString = endpoint["forumInfo"] + "_$forumId";
 
-  print("getForumInfo: URL is $urlString");
-
-  var httpAction = http.get(urlString);
+  var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
-      bodyParser: _parseResponseBody(ForumInfoResult.fromJson),
+      dataParser: _parseResponseBody(ForumInfoResult.fromJson),
       preProcessor: numMapperBuiler(["membernum", "todayposts"]));
 }
 
-var numMapperBuiler = (List<String> fields) => (String body) {
-      var processed = body;
+var numMapperBuiler = (List<String> fields) => (String data) {
+      var processed = data;
 
       var numMapper = (Match m) => "${m[1]}:${m[2]}";
 
@@ -303,7 +291,7 @@ APIResponse createResponseAction(APIRequest action, Map response) {
 
   var output = response["result"];
   return action.goodResponse(output);
-  
+
   if (api == HOMELIST_API) {
     HomeListResult list = response["result"] as HomeListResult;
     return HomeListSuccess(list);
