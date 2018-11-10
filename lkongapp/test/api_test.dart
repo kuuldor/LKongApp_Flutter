@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:lkongapp/actions/actions.dart';
-import 'package:test/test.dart';
-
+import 'package:flutter_test/flutter_test.dart';
 import 'package:lkongapp/models/user.dart';
 import 'package:lkongapp/middlewares/api.dart';
 

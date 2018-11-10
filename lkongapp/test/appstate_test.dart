@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';

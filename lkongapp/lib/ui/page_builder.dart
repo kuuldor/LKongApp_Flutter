@@ -51,6 +51,7 @@ class PageBuilder extends StatelessWidget {
           children: [
             Container(
               child: user != null ? StoryList() : Container(),
+              // child: StoryList(),
             ),
             Container(
               child: Text('板块'),

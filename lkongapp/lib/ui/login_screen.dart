@@ -21,13 +21,10 @@ class LoginScreen extends StatelessWidget {
 
       final ValueKey _emailKey = LKongAppKeys.loginEmailKey;
       final ValueKey _passwordKey = LKongAppKeys.loginPasswordKey;
-      final logo = Hero(
-        tag: 'hero',
-        child: CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 48.0,
-          child: Image.asset('assets/logo.png'),
-        ),
+      final logo = CircleAvatar(
+        backgroundColor: Colors.transparent,
+        radius: 48.0,
+        child: Image.asset("assets/logo.png"),
       );
 
       final email = TextFormField(

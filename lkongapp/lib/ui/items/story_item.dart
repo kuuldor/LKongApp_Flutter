@@ -18,6 +18,12 @@ class StoryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
+      leading: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        backgroundImage: CachedNetworkImageProvider(avatarForUserID(story.uid),
+            imageOnError: "assets/noavatar.png"),
+        radius: 16.0,
+      ),
       title: Container(
         width: MediaQuery.of(context).size.width,
         child: Row(
@@ -31,8 +37,7 @@ class StoryItem extends StatelessWidget {
           ],
         ),
       ),
-      
-      subtitle: Text(html2Text(story.message), maxLines: 24),
+      subtitle: Text(html2Text(story.message), maxLines: 4),
     );
   }
 }
