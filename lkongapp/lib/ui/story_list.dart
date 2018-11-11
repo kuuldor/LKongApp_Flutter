@@ -111,7 +111,7 @@ class StoryListModel {
             return Column(children: <Widget>[
               item,
               Divider(
-                height: 1.0,
+                height: 12.0,
               ),
             ]);
           }),

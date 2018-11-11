@@ -31,6 +31,9 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
   Iterable serialize(Serializers serializers, UIState object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
+      'navigationRoute',
+      serializers.serialize(object.navigationRoute,
+          specifiedType: const FullType(String)),
       'homePageIndex',
       serializers.serialize(object.homePageIndex,
           specifiedType: const FullType(int)),
@@ -53,6 +56,10 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
+        case 'navigationRoute':
+          result.navigationRoute = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'homePageIndex':
           result.homePageIndex = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
@@ -70,6 +77,8 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
 
 class _$UIState extends UIState {
   @override
+  final String navigationRoute;
+  @override
   final int homePageIndex;
   @override
   final HomeList homeList;
@@ -77,7 +86,11 @@ class _$UIState extends UIState {
   factory _$UIState([void updates(UIStateBuilder b)]) =>
       (new UIStateBuilder()..update(updates)).build();
 
-  _$UIState._({this.homePageIndex, this.homeList}) : super._() {
+  _$UIState._({this.navigationRoute, this.homePageIndex, this.homeList})
+      : super._() {
+    if (navigationRoute == null) {
+      throw new BuiltValueNullFieldError('UIState', 'navigationRoute');
+    }
     if (homePageIndex == null) {
       throw new BuiltValueNullFieldError('UIState', 'homePageIndex');
     }
@@ -97,18 +110,22 @@ class _$UIState extends UIState {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is UIState &&
+        navigationRoute == other.navigationRoute &&
         homePageIndex == other.homePageIndex &&
         homeList == other.homeList;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, homePageIndex.hashCode), homeList.hashCode));
+    return $jf($jc(
+        $jc($jc(0, navigationRoute.hashCode), homePageIndex.hashCode),
+        homeList.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('UIState')
+          ..add('navigationRoute', navigationRoute)
           ..add('homePageIndex', homePageIndex)
           ..add('homeList', homeList))
         .toString();
@@ -117,6 +134,11 @@ class _$UIState extends UIState {
 
 class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
   _$UIState _$v;
+
+  String _navigationRoute;
+  String get navigationRoute => _$this._navigationRoute;
+  set navigationRoute(String navigationRoute) =>
+      _$this._navigationRoute = navigationRoute;
 
   int _homePageIndex;
   int get homePageIndex => _$this._homePageIndex;
@@ -130,6 +152,7 @@ class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
 
   UIStateBuilder get _$this {
     if (_$v != null) {
+      _navigationRoute = _$v.navigationRoute;
       _homePageIndex = _$v.homePageIndex;
       _homeList = _$v.homeList?.toBuilder();
       _$v = null;
@@ -156,7 +179,9 @@ class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
     try {
       _$result = _$v ??
           new _$UIState._(
-              homePageIndex: homePageIndex, homeList: homeList.build());
+              navigationRoute: navigationRoute,
+              homePageIndex: homePageIndex,
+              homeList: homeList.build());
     } catch (_) {
       String _$failedField;
       try {

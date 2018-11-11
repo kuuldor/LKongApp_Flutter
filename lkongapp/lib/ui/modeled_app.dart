@@ -6,28 +6,23 @@ import 'package:redux/redux.dart';
 
 class LKAppModel {
   final LKongAppTheme theme;
-  final User user;
   LKAppModel({
     @required this.theme,
-    @required this.user,
-  });
+   });
 
   static LKAppModel fromStore(Store<AppState> store) {
     var _theme = LKongAppTheme.fromStore(store);
-    var _user = store.state.authState.isAuthed
-        ? store.state.authState.currentUser
-        : null;
-    LKAppModel model = LKAppModel(theme: _theme, user: _user);
+    LKAppModel model = LKAppModel(theme: _theme);
     return model;
   }
 
   @override
   bool operator ==(other) {
-    return other is LKAppModel && theme == other.theme && user == other.user;
+    return other is LKAppModel && theme == other.theme;
   }
 
   @override
-  int get hashCode => hash2(theme, user);
+  int get hashCode => hash2(theme, 0);
 }
 
 class LKModeledApp extends InheritedWidget {

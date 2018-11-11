@@ -8,14 +8,15 @@ import 'package:lkongapp/actions/actions.dart';
 
 import 'persist.dart';
 import 'api.dart';
+import 'ui_nav.dart';
 
 List<Middleware<AppState>> createStoreMiddleware() {
   return [thunkMiddleware]
-  ..addAll(createStorePersistentMiddleware()
-  ..addAll(createAPICallMiddleware())
-  );
+    ..addAll(createStorePersistentMiddleware())
+    ..addAll(createAPICallMiddleware())
+    ..addAll(createUINavigationMiddleware())
+    ;
 }
-
 
 List<Middleware<AppState>> createStorePersistentMiddleware() {
   return [
@@ -24,9 +25,16 @@ List<Middleware<AppState>> createStorePersistentMiddleware() {
   ];
 }
 
-
 List<Middleware<AppState>> createAPICallMiddleware() {
   return [
     TypedMiddleware<AppState, APIRequest>(callAPI),
+  ];
+}
+
+List<Middleware<AppState>> createUINavigationMiddleware() {
+  return [
+    TypedMiddleware<AppState, UINavigationPush>(navigatorPush),
+    TypedMiddleware<AppState, UINavigationPopTo>(navigatorPopTo),
+    TypedMiddleware<AppState, UINavigationPop>(navigatorPop),
   ];
 }

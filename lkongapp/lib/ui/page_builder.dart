@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/story_list.dart';
+import 'package:lkongapp/utils/route.dart';
 import 'package:path/path.dart';
+import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -45,12 +47,14 @@ class PageBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return buildConnectedWidget<PageModel>(context, PageModel.fromStore,
         (viewModel) {
-      User user = LKModeledApp.modelOf(context).user;
+      if (viewModel.user == null) {
+        viewModel.showLoginScreen(context);
+      }
       return Scaffold(
         body: PageView(
           children: [
             Container(
-              child: user != null ? StoryList() : Container(),
+              child: viewModel.user != null ? StoryList() : Container(),
               // child: StoryList(),
             ),
             Container(
@@ -93,29 +97,43 @@ class PageBuilder extends StatelessWidget {
 
 class PageModel {
   final int page;
-
+  final User user;
   final Function(BuildContext, int) onPageChanged;
+  final Function(BuildContext) showLoginScreen;
 
   PageModel({
     @required this.page,
+    @required this.user,
     @required this.onPageChanged,
+    @required this.showLoginScreen,
   });
 
   @override
   bool operator ==(other) {
-    return other is PageModel && page == other.page;
+    return other is PageModel && page == other.page && user == other.user;
   }
 
   @override
   int get hashCode {
-    return page.hashCode;
+    return hash2(page, user);
   }
 
   static PageModel fromStore(Store<AppState> store) {
+    var _user = store.state.authState.isAuthed
+        ? store.state.authState.currentUser
+        : null;
+
     return PageModel(
-        page: store.state.uiState.homePageIndex,
-        onPageChanged: (BuildContext context, int value) {
-          store.dispatch(UIChange((b) => b..homePageIndex = value));
+      page: store.state.uiState.homePageIndex,
+      user: _user,
+      onPageChanged: (BuildContext context, int value) {
+        store.dispatch(UIChange((b) => b..homePageIndex = value));
+      },
+      showLoginScreen: (BuildContext context) {
+        Future(() {
+          store.dispatch(UINavigationPush(context, LKongAppRoutes.login, true));
         });
+      },
+    );
   }
 }

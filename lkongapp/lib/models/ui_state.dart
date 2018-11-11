@@ -18,8 +18,11 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
         b
           ..homePageIndex = 0
           ..homeList = (HomeListBuilder()..replace(HomeList()))
+          ..navigationRoute = "/"
           ..update(updates);
       });
+
+  String get navigationRoute;
 
   @BuiltValueField(wireName: 'homePageIndex')
   int get homePageIndex;

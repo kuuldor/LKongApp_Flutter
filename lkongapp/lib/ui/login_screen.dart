@@ -167,7 +167,7 @@ class LoginViewModel {
                 ..password = password.trim())));
           completer.future.then((succeed) {
             if (succeed) {
-              Navigator.of(context).pop();
+              store.dispatch(UINavigationPop(context));
             }
           });
         },

@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/base_action.dart';
 
 class Rehydrate extends StartLoading {}
+
 class Dehydrate {}
 
 class RehydrateSuccess implements StopLoading {
@@ -29,8 +31,3 @@ class ChangeSetting {
   ChangeSetting(this.change);
 }
 
-class UIChange {
-  final Function(UIStateBuilder builder) change;
-
-  UIChange(this.change);
-}
