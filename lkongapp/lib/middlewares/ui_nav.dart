@@ -7,7 +7,13 @@ void navigatorPush(Store<AppState> store, action, NextDispatcher next) {
   String route = store.state.uiState.navigationRoute;
   if (action is UINavigationPush) {
     if (!action.unique || !route.endsWith(action.routeName)) {
-      Navigator.of(action.context).pushNamed(action.routeName);
+      if (action.builder != null) {
+        Navigator.of(action.context).push(MaterialPageRoute(
+          builder: action.builder,
+        ));
+      } else {
+        Navigator.of(action.context).pushNamed(action.routeName);
+      }
       route = route + action.routeName;
     }
   }
