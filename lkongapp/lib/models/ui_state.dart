@@ -17,7 +17,7 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
   factory UIState([updates(UIStateBuilder b)]) => _$UIState((b) {
         b
           ..homePageIndex = 0
-          ..homeList = (HomeListBuilder()..replace(HomeList()))
+          ..content = (ContentCacheBuilder()..replace(ContentCache()))
           ..navigationRoute = "/"
           ..update(updates);
       });
@@ -27,7 +27,7 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
   @BuiltValueField(wireName: 'homePageIndex')
   int get homePageIndex;
 
-  HomeList get homeList;
+  ContentCache get content;
 
   String toJson() {
     return json.encode(serializers.serializeWith(UIState.serializer, this));
@@ -39,6 +39,18 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
   }
 
   static Serializer<UIState> get serializer => _$uIStateSerializer;
+}
+
+abstract class ContentCache
+    implements Built<ContentCache, ContentCacheBuilder> {
+  ContentCache._();
+  factory ContentCache([updates(ContentCacheBuilder b)]) =>
+      _$ContentCache((b) => b
+        ..homeList = (HomeListBuilder()..replace(HomeList()))
+        ..update(updates));
+
+  HomeList get homeList;
+  BuiltMap<int, StoryPageList> get storyRepo;
 }
 
 abstract class HomeList implements Built<HomeList, HomeListBuilder> {
@@ -53,4 +65,18 @@ abstract class HomeList implements Built<HomeList, HomeListBuilder> {
   int get nexttime;
   int get current;
   BuiltList<Story> get stories;
+}
+
+abstract class StoryPageList implements Built<StoryPageList, StoryPageListBuilder> {
+  StoryPageList._();
+  factory StoryPageList([updates(StoryPageListBuilder b)]) => _$StoryPageList((b) => b
+    ..update(updates));
+  BuiltMap<int, StoryPage> get pages;
+}
+
+abstract class StoryPage implements Built<StoryPage, StoryPageBuilder> {
+  StoryPage._();
+  factory StoryPage([updates(StoryPageBuilder b)]) => _$StoryPage((b) => b
+    ..update(updates));
+  BuiltList<Comment> get comments;
 }

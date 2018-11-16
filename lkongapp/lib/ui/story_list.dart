@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
+import 'package:lkongapp/ui/story_content.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
+import 'package:lkongapp/utils/route.dart';
+import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
@@ -27,7 +30,12 @@ class StoryListModel {
 
   var _scrollController = ScrollController();
 
-  StoryListModel({@required this.homeList, @required this.threadOnlyHome});
+  final Future<Null> Function(BuildContext context, Story story) onStoryTap;
+
+  StoryListModel(
+      {@required this.homeList,
+      @required this.threadOnlyHome,
+      @required this.onStoryTap});
 
   void showToast(BuildContext context, String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -62,17 +70,32 @@ class StoryListModel {
     });
   }
 
-  Future<Null> onStoryTap(BuildContext context, Story story) {
-    return null;
-  }
-
   static StoryListModel fromStore(Store<AppState> store) {
     return StoryListModel(
-      homeList: store.state.uiState.homeList,
+      homeList: store.state.uiState.content.homeList,
       threadOnlyHome:
           store.state.appConfig.accountSettings.currentSetting.threadOnlyHome,
+      onStoryTap: (BuildContext context, Story story) {
+        return Future(() {
+          String storyId = story.tid;
+          String postId = "0";
+          if (storyId == null) {
+            storyId = parseLKTypeId(story.id);
+          } else {
+            postId = parseLKTypeId(story.id);
+          }
+          store.dispatch(
+              UINavigationPush(context, LKongAppRoutes.login, false, (context) {
+            return StoryContent(
+              storyId: int.parse(storyId),
+              postId: int.parse(postId),
+            );
+          }));
+        });
+      },
     );
   }
+
 
   Widget _buildListView(BuildContext context) {
     int itemCount = homeList.stories.length;

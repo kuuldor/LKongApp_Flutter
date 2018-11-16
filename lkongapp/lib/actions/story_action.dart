@@ -21,7 +21,9 @@ abstract class HomeListRequest extends APIRequest with StartLoading {
 }
 
 class HomeListNewRequest extends HomeListRequest {
-  HomeListNewRequest(Completer completer, bool threadOnly, int nexttime, int current) : super(completer, threadOnly, nexttime, current);
+  HomeListNewRequest(
+      Completer completer, bool threadOnly, int nexttime, int current)
+      : super(completer, threadOnly, nexttime, current);
 
   @override
   CreateFailure get badResponse => (error) => HomeListNewFailure(error);
@@ -90,4 +92,32 @@ class HomeListLoadMoreSuccess extends HomeListSuccess {
 
 class HomeListLoadMoreFailure extends HomeListFailure {
   HomeListLoadMoreFailure(String error) : super(error);
+}
+
+class StoryContentRequest extends APIRequest with StartLoading {
+  final int story;
+  final int page;
+
+  StoryContentRequest(
+      Completer completer, this.story, this.page)
+      : super(completer: completer, api: STORY_CONTENT_API, parameters: {
+          "story": story,
+          "page": page,
+        });
+
+  @override
+  CreateFailure get badResponse => (error) => StoryContentFailure(error);
+
+  @override
+  CreateSuccess get goodResponse => (list) => StoryContentSuccess(list);
+}
+
+class StoryContentSuccess extends APISuccess with StopLoading {
+  final StoryContentResult result;
+
+  StoryContentSuccess(this.result);
+}
+
+class StoryContentFailure extends APIFailure with StopLoading {
+  StoryContentFailure(String error) : super(error);
 }

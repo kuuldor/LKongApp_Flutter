@@ -27,6 +27,10 @@ Serializer<ForumStoryResult> _$forumStoryResultSerializer =
 Serializer<Thread> _$threadSerializer = new _$ThreadSerializer();
 Serializer<StoryInfoResult> _$storyInfoResultSerializer =
     new _$StoryInfoResultSerializer();
+Serializer<StoryContentResult> _$storyContentResultSerializer =
+    new _$StoryContentResultSerializer();
+Serializer<Comment> _$commentSerializer = new _$CommentSerializer();
+Serializer<Ratelog> _$ratelogSerializer = new _$RatelogSerializer();
 
 class _$HomeListResultSerializer
     implements StructuredSerializer<HomeListResult> {
@@ -538,6 +542,352 @@ class _$StoryInfoResultSerializer
         case 'isok':
           result.isok = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$StoryContentResultSerializer
+    implements StructuredSerializer<StoryContentResult> {
+  @override
+  final Iterable<Type> types = const [StoryContentResult, _$StoryContentResult];
+  @override
+  final String wireName = 'StoryContentResult';
+
+  @override
+  Iterable serialize(Serializers serializers, StoryContentResult object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'model',
+      serializers.serialize(object.model,
+          specifiedType: const FullType(String)),
+      'replies',
+      serializers.serialize(object.replies, specifiedType: const FullType(int)),
+      'page',
+      serializers.serialize(object.page, specifiedType: const FullType(int)),
+      'data',
+      serializers.serialize(object.comments,
+          specifiedType:
+              const FullType(BuiltList, const [const FullType(Comment)])),
+      'isend',
+      serializers.serialize(object.isend, specifiedType: const FullType(int)),
+      'loadtime',
+      serializers.serialize(object.loadtime,
+          specifiedType: const FullType(int)),
+      'tmp',
+      serializers.serialize(object.tmp, specifiedType: const FullType(String)),
+    ];
+    if (object.isfull != null) {
+      result
+        ..add('isfull')
+        ..add(serializers.serialize(object.isfull,
+            specifiedType: const FullType(int)));
+    }
+
+    return result;
+  }
+
+  @override
+  StoryContentResult deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new StoryContentResultBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'isfull':
+          result.isfull = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'model':
+          result.model = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'replies':
+          result.replies = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'page':
+          result.page = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'data':
+          result.comments.replace(serializers.deserialize(value,
+              specifiedType: const FullType(
+                  BuiltList, const [const FullType(Comment)])) as BuiltList);
+          break;
+        case 'isend':
+          result.isend = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'loadtime':
+          result.loadtime = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'tmp':
+          result.tmp = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$CommentSerializer implements StructuredSerializer<Comment> {
+  @override
+  final Iterable<Type> types = const [Comment, _$Comment];
+  @override
+  final String wireName = 'Comment';
+
+  @override
+  Iterable serialize(Serializers serializers, Comment object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'fid',
+      serializers.serialize(object.fid, specifiedType: const FullType(int)),
+      'sortkey',
+      serializers.serialize(object.sortkey, specifiedType: const FullType(int)),
+      'warning',
+      serializers.serialize(object.warning,
+          specifiedType: const FullType(bool)),
+      'warningreason',
+      serializers.serialize(object.warningReason,
+          specifiedType: const FullType(String)),
+      'dateline',
+      serializers.serialize(object.dateline,
+          specifiedType: const FullType(String)),
+      'message',
+      serializers.serialize(object.message,
+          specifiedType: const FullType(String)),
+      'author',
+      serializers.serialize(object.author,
+          specifiedType: const FullType(String)),
+      'authorid',
+      serializers.serialize(object.authorid,
+          specifiedType: const FullType(String)),
+      'isme',
+      serializers.serialize(object.isme, specifiedType: const FullType(int)),
+      'notgroup',
+      serializers.serialize(object.notgroup,
+          specifiedType: const FullType(int)),
+      'pid',
+      serializers.serialize(object.pid, specifiedType: const FullType(String)),
+      'first',
+      serializers.serialize(object.first, specifiedType: const FullType(int)),
+      'status',
+      serializers.serialize(object.status, specifiedType: const FullType(int)),
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(String)),
+      'tsadmin',
+      serializers.serialize(object.tsadmin,
+          specifiedType: const FullType(bool)),
+      'isadmin',
+      serializers.serialize(object.isadmin, specifiedType: const FullType(int)),
+      'lou',
+      serializers.serialize(object.lou, specifiedType: const FullType(int)),
+    ];
+    if (object.tid != null) {
+      result
+        ..add('tid')
+        ..add(serializers.serialize(object.tid,
+            specifiedType: const FullType(int)));
+    }
+    if (object.ratelog != null) {
+      result
+        ..add('ratelog')
+        ..add(serializers.serialize(object.ratelog,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(Ratelog)])));
+    }
+
+    return result;
+  }
+
+  @override
+  Comment deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new CommentBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'fid':
+          result.fid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'sortkey':
+          result.sortkey = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'warning':
+          result.warning = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'warningreason':
+          result.warningReason = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'dateline':
+          result.dateline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'message':
+          result.message = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'author':
+          result.author = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'authorid':
+          result.authorid = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'isme':
+          result.isme = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'notgroup':
+          result.notgroup = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'pid':
+          result.pid = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'first':
+          result.first = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'status':
+          result.status = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'tsadmin':
+          result.tsadmin = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'isadmin':
+          result.isadmin = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'lou':
+          result.lou = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'tid':
+          result.tid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'ratelog':
+          result.ratelog.replace(serializers.deserialize(value,
+              specifiedType: const FullType(
+                  BuiltList, const [const FullType(Ratelog)])) as BuiltList);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
+  @override
+  final Iterable<Type> types = const [Ratelog, _$Ratelog];
+  @override
+  final String wireName = 'Ratelog';
+
+  @override
+  Iterable serialize(Serializers serializers, Ratelog object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      '_id',
+      serializers.serialize(object.id,
+          specifiedType: const FullType(BuiltMap,
+              const [const FullType(String), const FullType(String)])),
+      'dateline',
+      serializers.serialize(object.dateline,
+          specifiedType: const FullType(String)),
+      'extcredits',
+      serializers.serialize(object.extcredits,
+          specifiedType: const FullType(int)),
+      'pid',
+      serializers.serialize(object.pid, specifiedType: const FullType(int)),
+      'reason',
+      serializers.serialize(object.reason,
+          specifiedType: const FullType(String)),
+      'score',
+      serializers.serialize(object.score, specifiedType: const FullType(int)),
+      'uid',
+      serializers.serialize(object.uid, specifiedType: const FullType(int)),
+      'username',
+      serializers.serialize(object.username,
+          specifiedType: const FullType(String)),
+    ];
+
+    return result;
+  }
+
+  @override
+  Ratelog deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new RatelogBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case '_id':
+          result.id.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap, const [
+                const FullType(String),
+                const FullType(String)
+              ])) as BuiltMap);
+          break;
+        case 'dateline':
+          result.dateline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'extcredits':
+          result.extcredits = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'pid':
+          result.pid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'reason':
+          result.reason = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'score':
+          result.score = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'uid':
+          result.uid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'username':
+          result.username = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -1607,6 +1957,801 @@ class StoryInfoResultBuilder
             dateline: dateline,
             id: id,
             isok: isok);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$StoryContentResult extends StoryContentResult {
+  @override
+  final int isfull;
+  @override
+  final String model;
+  @override
+  final int replies;
+  @override
+  final int page;
+  @override
+  final BuiltList<Comment> comments;
+  @override
+  final int isend;
+  @override
+  final int loadtime;
+  @override
+  final String tmp;
+
+  factory _$StoryContentResult([void updates(StoryContentResultBuilder b)]) =>
+      (new StoryContentResultBuilder()..update(updates)).build();
+
+  _$StoryContentResult._(
+      {this.isfull,
+      this.model,
+      this.replies,
+      this.page,
+      this.comments,
+      this.isend,
+      this.loadtime,
+      this.tmp})
+      : super._() {
+    if (model == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'model');
+    }
+    if (replies == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'replies');
+    }
+    if (page == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'page');
+    }
+    if (comments == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'comments');
+    }
+    if (isend == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'isend');
+    }
+    if (loadtime == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'loadtime');
+    }
+    if (tmp == null) {
+      throw new BuiltValueNullFieldError('StoryContentResult', 'tmp');
+    }
+  }
+
+  @override
+  StoryContentResult rebuild(void updates(StoryContentResultBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  StoryContentResultBuilder toBuilder() =>
+      new StoryContentResultBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is StoryContentResult &&
+        isfull == other.isfull &&
+        model == other.model &&
+        replies == other.replies &&
+        page == other.page &&
+        comments == other.comments &&
+        isend == other.isend &&
+        loadtime == other.loadtime &&
+        tmp == other.tmp;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc(
+                        $jc($jc($jc(0, isfull.hashCode), model.hashCode),
+                            replies.hashCode),
+                        page.hashCode),
+                    comments.hashCode),
+                isend.hashCode),
+            loadtime.hashCode),
+        tmp.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('StoryContentResult')
+          ..add('isfull', isfull)
+          ..add('model', model)
+          ..add('replies', replies)
+          ..add('page', page)
+          ..add('comments', comments)
+          ..add('isend', isend)
+          ..add('loadtime', loadtime)
+          ..add('tmp', tmp))
+        .toString();
+  }
+}
+
+class StoryContentResultBuilder
+    implements Builder<StoryContentResult, StoryContentResultBuilder> {
+  _$StoryContentResult _$v;
+
+  int _isfull;
+  int get isfull => _$this._isfull;
+  set isfull(int isfull) => _$this._isfull = isfull;
+
+  String _model;
+  String get model => _$this._model;
+  set model(String model) => _$this._model = model;
+
+  int _replies;
+  int get replies => _$this._replies;
+  set replies(int replies) => _$this._replies = replies;
+
+  int _page;
+  int get page => _$this._page;
+  set page(int page) => _$this._page = page;
+
+  ListBuilder<Comment> _comments;
+  ListBuilder<Comment> get comments =>
+      _$this._comments ??= new ListBuilder<Comment>();
+  set comments(ListBuilder<Comment> comments) => _$this._comments = comments;
+
+  int _isend;
+  int get isend => _$this._isend;
+  set isend(int isend) => _$this._isend = isend;
+
+  int _loadtime;
+  int get loadtime => _$this._loadtime;
+  set loadtime(int loadtime) => _$this._loadtime = loadtime;
+
+  String _tmp;
+  String get tmp => _$this._tmp;
+  set tmp(String tmp) => _$this._tmp = tmp;
+
+  StoryContentResultBuilder();
+
+  StoryContentResultBuilder get _$this {
+    if (_$v != null) {
+      _isfull = _$v.isfull;
+      _model = _$v.model;
+      _replies = _$v.replies;
+      _page = _$v.page;
+      _comments = _$v.comments?.toBuilder();
+      _isend = _$v.isend;
+      _loadtime = _$v.loadtime;
+      _tmp = _$v.tmp;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(StoryContentResult other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$StoryContentResult;
+  }
+
+  @override
+  void update(void updates(StoryContentResultBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$StoryContentResult build() {
+    _$StoryContentResult _$result;
+    try {
+      _$result = _$v ??
+          new _$StoryContentResult._(
+              isfull: isfull,
+              model: model,
+              replies: replies,
+              page: page,
+              comments: comments.build(),
+              isend: isend,
+              loadtime: loadtime,
+              tmp: tmp);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'comments';
+        comments.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'StoryContentResult', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Comment extends Comment {
+  @override
+  final int fid;
+  @override
+  final int sortkey;
+  @override
+  final bool warning;
+  @override
+  final String warningReason;
+  @override
+  final String dateline;
+  @override
+  final String message;
+  @override
+  final String author;
+  @override
+  final String authorid;
+  @override
+  final int isme;
+  @override
+  final int notgroup;
+  @override
+  final String pid;
+  @override
+  final int first;
+  @override
+  final int status;
+  @override
+  final String id;
+  @override
+  final bool tsadmin;
+  @override
+  final int isadmin;
+  @override
+  final int lou;
+  @override
+  final int tid;
+  @override
+  final BuiltList<Ratelog> ratelog;
+
+  factory _$Comment([void updates(CommentBuilder b)]) =>
+      (new CommentBuilder()..update(updates)).build();
+
+  _$Comment._(
+      {this.fid,
+      this.sortkey,
+      this.warning,
+      this.warningReason,
+      this.dateline,
+      this.message,
+      this.author,
+      this.authorid,
+      this.isme,
+      this.notgroup,
+      this.pid,
+      this.first,
+      this.status,
+      this.id,
+      this.tsadmin,
+      this.isadmin,
+      this.lou,
+      this.tid,
+      this.ratelog})
+      : super._() {
+    if (fid == null) {
+      throw new BuiltValueNullFieldError('Comment', 'fid');
+    }
+    if (sortkey == null) {
+      throw new BuiltValueNullFieldError('Comment', 'sortkey');
+    }
+    if (warning == null) {
+      throw new BuiltValueNullFieldError('Comment', 'warning');
+    }
+    if (warningReason == null) {
+      throw new BuiltValueNullFieldError('Comment', 'warningReason');
+    }
+    if (dateline == null) {
+      throw new BuiltValueNullFieldError('Comment', 'dateline');
+    }
+    if (message == null) {
+      throw new BuiltValueNullFieldError('Comment', 'message');
+    }
+    if (author == null) {
+      throw new BuiltValueNullFieldError('Comment', 'author');
+    }
+    if (authorid == null) {
+      throw new BuiltValueNullFieldError('Comment', 'authorid');
+    }
+    if (isme == null) {
+      throw new BuiltValueNullFieldError('Comment', 'isme');
+    }
+    if (notgroup == null) {
+      throw new BuiltValueNullFieldError('Comment', 'notgroup');
+    }
+    if (pid == null) {
+      throw new BuiltValueNullFieldError('Comment', 'pid');
+    }
+    if (first == null) {
+      throw new BuiltValueNullFieldError('Comment', 'first');
+    }
+    if (status == null) {
+      throw new BuiltValueNullFieldError('Comment', 'status');
+    }
+    if (id == null) {
+      throw new BuiltValueNullFieldError('Comment', 'id');
+    }
+    if (tsadmin == null) {
+      throw new BuiltValueNullFieldError('Comment', 'tsadmin');
+    }
+    if (isadmin == null) {
+      throw new BuiltValueNullFieldError('Comment', 'isadmin');
+    }
+    if (lou == null) {
+      throw new BuiltValueNullFieldError('Comment', 'lou');
+    }
+  }
+
+  @override
+  Comment rebuild(void updates(CommentBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  CommentBuilder toBuilder() => new CommentBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Comment &&
+        fid == other.fid &&
+        sortkey == other.sortkey &&
+        warning == other.warning &&
+        warningReason == other.warningReason &&
+        dateline == other.dateline &&
+        message == other.message &&
+        author == other.author &&
+        authorid == other.authorid &&
+        isme == other.isme &&
+        notgroup == other.notgroup &&
+        pid == other.pid &&
+        first == other.first &&
+        status == other.status &&
+        id == other.id &&
+        tsadmin == other.tsadmin &&
+        isadmin == other.isadmin &&
+        lou == other.lou &&
+        tid == other.tid &&
+        ratelog == other.ratelog;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc(
+                        $jc(
+                            $jc(
+                                $jc(
+                                    $jc(
+                                        $jc(
+                                            $jc(
+                                                $jc(
+                                                    $jc(
+                                                        $jc(
+                                                            $jc(
+                                                                $jc(
+                                                                    $jc(
+                                                                        $jc(
+                                                                            $jc(
+                                                                                0,
+                                                                                fid
+                                                                                    .hashCode),
+                                                                            sortkey
+                                                                                .hashCode),
+                                                                        warning
+                                                                            .hashCode),
+                                                                    warningReason
+                                                                        .hashCode),
+                                                                dateline
+                                                                    .hashCode),
+                                                            message.hashCode),
+                                                        author.hashCode),
+                                                    authorid.hashCode),
+                                                isme.hashCode),
+                                            notgroup.hashCode),
+                                        pid.hashCode),
+                                    first.hashCode),
+                                status.hashCode),
+                            id.hashCode),
+                        tsadmin.hashCode),
+                    isadmin.hashCode),
+                lou.hashCode),
+            tid.hashCode),
+        ratelog.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('Comment')
+          ..add('fid', fid)
+          ..add('sortkey', sortkey)
+          ..add('warning', warning)
+          ..add('warningReason', warningReason)
+          ..add('dateline', dateline)
+          ..add('message', message)
+          ..add('author', author)
+          ..add('authorid', authorid)
+          ..add('isme', isme)
+          ..add('notgroup', notgroup)
+          ..add('pid', pid)
+          ..add('first', first)
+          ..add('status', status)
+          ..add('id', id)
+          ..add('tsadmin', tsadmin)
+          ..add('isadmin', isadmin)
+          ..add('lou', lou)
+          ..add('tid', tid)
+          ..add('ratelog', ratelog))
+        .toString();
+  }
+}
+
+class CommentBuilder implements Builder<Comment, CommentBuilder> {
+  _$Comment _$v;
+
+  int _fid;
+  int get fid => _$this._fid;
+  set fid(int fid) => _$this._fid = fid;
+
+  int _sortkey;
+  int get sortkey => _$this._sortkey;
+  set sortkey(int sortkey) => _$this._sortkey = sortkey;
+
+  bool _warning;
+  bool get warning => _$this._warning;
+  set warning(bool warning) => _$this._warning = warning;
+
+  String _warningReason;
+  String get warningReason => _$this._warningReason;
+  set warningReason(String warningReason) =>
+      _$this._warningReason = warningReason;
+
+  String _dateline;
+  String get dateline => _$this._dateline;
+  set dateline(String dateline) => _$this._dateline = dateline;
+
+  String _message;
+  String get message => _$this._message;
+  set message(String message) => _$this._message = message;
+
+  String _author;
+  String get author => _$this._author;
+  set author(String author) => _$this._author = author;
+
+  String _authorid;
+  String get authorid => _$this._authorid;
+  set authorid(String authorid) => _$this._authorid = authorid;
+
+  int _isme;
+  int get isme => _$this._isme;
+  set isme(int isme) => _$this._isme = isme;
+
+  int _notgroup;
+  int get notgroup => _$this._notgroup;
+  set notgroup(int notgroup) => _$this._notgroup = notgroup;
+
+  String _pid;
+  String get pid => _$this._pid;
+  set pid(String pid) => _$this._pid = pid;
+
+  int _first;
+  int get first => _$this._first;
+  set first(int first) => _$this._first = first;
+
+  int _status;
+  int get status => _$this._status;
+  set status(int status) => _$this._status = status;
+
+  String _id;
+  String get id => _$this._id;
+  set id(String id) => _$this._id = id;
+
+  bool _tsadmin;
+  bool get tsadmin => _$this._tsadmin;
+  set tsadmin(bool tsadmin) => _$this._tsadmin = tsadmin;
+
+  int _isadmin;
+  int get isadmin => _$this._isadmin;
+  set isadmin(int isadmin) => _$this._isadmin = isadmin;
+
+  int _lou;
+  int get lou => _$this._lou;
+  set lou(int lou) => _$this._lou = lou;
+
+  int _tid;
+  int get tid => _$this._tid;
+  set tid(int tid) => _$this._tid = tid;
+
+  ListBuilder<Ratelog> _ratelog;
+  ListBuilder<Ratelog> get ratelog =>
+      _$this._ratelog ??= new ListBuilder<Ratelog>();
+  set ratelog(ListBuilder<Ratelog> ratelog) => _$this._ratelog = ratelog;
+
+  CommentBuilder();
+
+  CommentBuilder get _$this {
+    if (_$v != null) {
+      _fid = _$v.fid;
+      _sortkey = _$v.sortkey;
+      _warning = _$v.warning;
+      _warningReason = _$v.warningReason;
+      _dateline = _$v.dateline;
+      _message = _$v.message;
+      _author = _$v.author;
+      _authorid = _$v.authorid;
+      _isme = _$v.isme;
+      _notgroup = _$v.notgroup;
+      _pid = _$v.pid;
+      _first = _$v.first;
+      _status = _$v.status;
+      _id = _$v.id;
+      _tsadmin = _$v.tsadmin;
+      _isadmin = _$v.isadmin;
+      _lou = _$v.lou;
+      _tid = _$v.tid;
+      _ratelog = _$v.ratelog?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Comment other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$Comment;
+  }
+
+  @override
+  void update(void updates(CommentBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$Comment build() {
+    _$Comment _$result;
+    try {
+      _$result = _$v ??
+          new _$Comment._(
+              fid: fid,
+              sortkey: sortkey,
+              warning: warning,
+              warningReason: warningReason,
+              dateline: dateline,
+              message: message,
+              author: author,
+              authorid: authorid,
+              isme: isme,
+              notgroup: notgroup,
+              pid: pid,
+              first: first,
+              status: status,
+              id: id,
+              tsadmin: tsadmin,
+              isadmin: isadmin,
+              lou: lou,
+              tid: tid,
+              ratelog: _ratelog?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'ratelog';
+        _ratelog?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'Comment', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Ratelog extends Ratelog {
+  @override
+  final BuiltMap<String, String> id;
+  @override
+  final String dateline;
+  @override
+  final int extcredits;
+  @override
+  final int pid;
+  @override
+  final String reason;
+  @override
+  final int score;
+  @override
+  final int uid;
+  @override
+  final String username;
+
+  factory _$Ratelog([void updates(RatelogBuilder b)]) =>
+      (new RatelogBuilder()..update(updates)).build();
+
+  _$Ratelog._(
+      {this.id,
+      this.dateline,
+      this.extcredits,
+      this.pid,
+      this.reason,
+      this.score,
+      this.uid,
+      this.username})
+      : super._() {
+    if (id == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'id');
+    }
+    if (dateline == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'dateline');
+    }
+    if (extcredits == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'extcredits');
+    }
+    if (pid == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'pid');
+    }
+    if (reason == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'reason');
+    }
+    if (score == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'score');
+    }
+    if (uid == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'uid');
+    }
+    if (username == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'username');
+    }
+  }
+
+  @override
+  Ratelog rebuild(void updates(RatelogBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  RatelogBuilder toBuilder() => new RatelogBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Ratelog &&
+        id == other.id &&
+        dateline == other.dateline &&
+        extcredits == other.extcredits &&
+        pid == other.pid &&
+        reason == other.reason &&
+        score == other.score &&
+        uid == other.uid &&
+        username == other.username;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc(
+                        $jc($jc($jc(0, id.hashCode), dateline.hashCode),
+                            extcredits.hashCode),
+                        pid.hashCode),
+                    reason.hashCode),
+                score.hashCode),
+            uid.hashCode),
+        username.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('Ratelog')
+          ..add('id', id)
+          ..add('dateline', dateline)
+          ..add('extcredits', extcredits)
+          ..add('pid', pid)
+          ..add('reason', reason)
+          ..add('score', score)
+          ..add('uid', uid)
+          ..add('username', username))
+        .toString();
+  }
+}
+
+class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
+  _$Ratelog _$v;
+
+  MapBuilder<String, String> _id;
+  MapBuilder<String, String> get id =>
+      _$this._id ??= new MapBuilder<String, String>();
+  set id(MapBuilder<String, String> id) => _$this._id = id;
+
+  String _dateline;
+  String get dateline => _$this._dateline;
+  set dateline(String dateline) => _$this._dateline = dateline;
+
+  int _extcredits;
+  int get extcredits => _$this._extcredits;
+  set extcredits(int extcredits) => _$this._extcredits = extcredits;
+
+  int _pid;
+  int get pid => _$this._pid;
+  set pid(int pid) => _$this._pid = pid;
+
+  String _reason;
+  String get reason => _$this._reason;
+  set reason(String reason) => _$this._reason = reason;
+
+  int _score;
+  int get score => _$this._score;
+  set score(int score) => _$this._score = score;
+
+  int _uid;
+  int get uid => _$this._uid;
+  set uid(int uid) => _$this._uid = uid;
+
+  String _username;
+  String get username => _$this._username;
+  set username(String username) => _$this._username = username;
+
+  RatelogBuilder();
+
+  RatelogBuilder get _$this {
+    if (_$v != null) {
+      _id = _$v.id?.toBuilder();
+      _dateline = _$v.dateline;
+      _extcredits = _$v.extcredits;
+      _pid = _$v.pid;
+      _reason = _$v.reason;
+      _score = _$v.score;
+      _uid = _$v.uid;
+      _username = _$v.username;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Ratelog other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$Ratelog;
+  }
+
+  @override
+  void update(void updates(RatelogBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$Ratelog build() {
+    _$Ratelog _$result;
+    try {
+      _$result = _$v ??
+          new _$Ratelog._(
+              id: id.build(),
+              dateline: dateline,
+              extcredits: extcredits,
+              pid: pid,
+              reason: reason,
+              score: score,
+              uid: uid,
+              username: username);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'id';
+        id.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'Ratelog', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

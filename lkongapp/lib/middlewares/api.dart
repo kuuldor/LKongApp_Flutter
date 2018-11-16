@@ -60,13 +60,19 @@ Future<Map> _handleHttp(
       } else {
         data = response.body;
       }
+      print(json.decode(data));
       result = dataParser(data);
+
       if (result == null) {
         result = {"error": 'API没有返回信息'};
       }
     }
     return result;
-  }).catchError((error) => {"error": error.toString()});
+  }).catchError((error) {
+    String errStr = error.toString();
+    print("Error: $errStr");
+    return {"error": errStr};
+  });
 }
 
 Future<Map> login(Map args) {
@@ -197,7 +203,8 @@ Future<Map> contentsForStory(Map args) {
       endpoint["comments"] + "$story/$page" + querify(defaultParameter());
 
   var httpAction = session.get(urlString);
-  return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(StoryContentResult.fromJson));
 }
 
 Future<Map> getStoryInfo(Map args) {
@@ -323,7 +330,7 @@ void callAPI(Store<AppState> store, APIRequest action, NextDispatcher next) {
       APIResponse response = createResponseAction(action, map);
       store.dispatch(response);
 
-      action.completer.complete(response is APISuccess);
+      action.completer?.complete(response is APISuccess);
     });
   });
 }

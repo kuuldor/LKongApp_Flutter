@@ -30,6 +30,9 @@ part 'serializers.g.dart';
   Forum,
   StoryInfoResult,
   ForumInfoResult,
+  StoryContentResult,
+  Comment,
+  Ratelog,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

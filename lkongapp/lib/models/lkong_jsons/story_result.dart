@@ -207,3 +207,134 @@ abstract class StoryInfoResult
   static Serializer<StoryInfoResult> get serializer =>
       _$storyInfoResultSerializer;
 }
+
+abstract class StoryContentResult
+    implements Built<StoryContentResult, StoryContentResultBuilder> {
+  StoryContentResult._();
+
+  factory StoryContentResult([updates(StoryContentResultBuilder b)]) =
+      _$StoryContentResult;
+
+  @nullable
+  @BuiltValueField(wireName: 'isfull')
+  int get isfull;
+  @BuiltValueField(wireName: 'model')
+  String get model;
+  @BuiltValueField(wireName: 'replies')
+  int get replies;
+  @BuiltValueField(wireName: 'page')
+  int get page;
+  @BuiltValueField(wireName: 'data')
+  BuiltList<Comment> get comments;
+  @BuiltValueField(wireName: 'isend')
+  int get isend;
+  @BuiltValueField(wireName: 'loadtime')
+  int get loadtime;
+  @BuiltValueField(wireName: 'tmp')
+  String get tmp;
+
+
+  String toJson() {
+    return json
+        .encode(serializers.serializeWith(StoryContentResult.serializer, this));
+  }
+
+  static StoryContentResult fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        StoryContentResult.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<StoryContentResult> get serializer =>
+      _$storyContentResultSerializer;
+}
+
+abstract class Comment implements Built<Comment, CommentBuilder> {
+  Comment._();
+
+  factory Comment([updates(CommentBuilder b)]) = _$Comment;
+
+  @BuiltValueField(wireName: 'fid')
+  int get fid;
+  @BuiltValueField(wireName: 'sortkey')
+  int get sortkey;
+  @BuiltValueField(wireName: 'warning')
+  bool get warning;
+  @BuiltValueField(wireName: 'warningreason')
+  String get warningReason;
+  @BuiltValueField(wireName: 'dateline')
+  String get dateline;
+  @BuiltValueField(wireName: 'message')
+  String get message;
+  @BuiltValueField(wireName: 'author')
+  String get author;
+  @BuiltValueField(wireName: 'authorid')
+  String get authorid;
+  @BuiltValueField(wireName: 'isme')
+  int get isme;
+  @BuiltValueField(wireName: 'notgroup')
+  int get notgroup;
+  @BuiltValueField(wireName: 'pid')
+  String get pid;
+  @BuiltValueField(wireName: 'first')
+  int get first;
+  @BuiltValueField(wireName: 'status')
+  int get status;
+  @BuiltValueField(wireName: 'id')
+  String get id;
+  @BuiltValueField(wireName: 'tsadmin')
+  bool get tsadmin;
+  @BuiltValueField(wireName: 'isadmin')
+  int get isadmin;
+  @BuiltValueField(wireName: 'lou')
+  int get lou;
+  @nullable
+  @BuiltValueField(wireName: 'tid')
+  int get tid;
+  @nullable
+  @BuiltValueField(wireName: 'ratelog')
+  BuiltList<Ratelog> get ratelog;
+
+  String toJson() {
+    return json.encode(serializers.serializeWith(Comment.serializer, this));
+  }
+
+  static Comment fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        Comment.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<Comment> get serializer => _$commentSerializer;
+}
+
+abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
+  Ratelog._();
+
+  factory Ratelog([updates(RatelogBuilder b)]) = _$Ratelog;
+
+  @BuiltValueField(wireName: '_id')
+  BuiltMap<String, String> get id;
+  @BuiltValueField(wireName: 'dateline')
+  String get dateline;
+  @BuiltValueField(wireName: 'extcredits')
+  int get extcredits;
+  @BuiltValueField(wireName: 'pid')
+  int get pid;
+  @BuiltValueField(wireName: 'reason')
+  String get reason;
+  @BuiltValueField(wireName: 'score')
+  int get score;
+  @BuiltValueField(wireName: 'uid')
+  int get uid;
+  @BuiltValueField(wireName: 'username')
+  String get username;
+  String toJson() {
+    return json.encode(serializers.serializeWith(Ratelog.serializer, this));
+  }
+
+  static Ratelog fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        Ratelog.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<Ratelog> get serializer => _$ratelogSerializer;
+}

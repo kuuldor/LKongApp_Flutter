@@ -15,9 +15,20 @@ String avatarForForumID(id) {
   return avatar;
 }
 
+String parseLKTypeId(String storyId) {
+  var id;
+  var flds = storyId.split("_");
+  if (flds.length > 1) {
+    id = flds[1];
+  } else {
+    id = storyId;
+  }
+  return id;
+}
+
 DateTime parseDatetime(String dateline) {
   DateTime date;
-  
+
   final unixTime = int.tryParse(dateline);
   if (unixTime != null) {
     date = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000);
@@ -28,9 +39,9 @@ DateTime parseDatetime(String dateline) {
   return date;
 }
 
-final UniversalTimeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
-final DefaultTimeZone = "Asia/Shanghai";
-final LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
+// final UniversalTimeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
+// final DefaultTimeZone = "Asia/Shanghai";
+// final LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
 DateTime dateFromString(String dateStr) {
   var date = DateTime.tryParse(dateStr);

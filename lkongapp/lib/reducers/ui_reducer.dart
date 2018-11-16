@@ -8,7 +8,7 @@ import 'package:lkongapp/reducers/story_reducer.dart';
 final uiStateReducer = combineReducers<UIState>([
   TypedReducer<UIState, UIChange>(_changeUIState),
   TypedReducer<UIState, UIUpdateCurrentRoute>(_changeCurrentRoute),
-  _homeListReducer,
+  _contentReducer,
 ]);
 
 UIState _changeUIState(UIState state, UIChange action) {
@@ -19,7 +19,7 @@ UIState _changeCurrentRoute(UIState state, UIUpdateCurrentRoute action) {
   return state.rebuild((b) => b..navigationRoute = action.route);
 }
 
-UIState _homeListReducer(UIState state, action) {
+UIState _contentReducer(UIState state, action) {
   return state.rebuild(
-      (b) => b..homeList.replace(homeListReducer(state.homeList, action)));
+      (b) => b..content.replace(contentReducer(state.content, action)));
 }

@@ -27,12 +27,15 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(AppState.serializer)
       ..add(AppTheme.serializer)
       ..add(AuthState.serializer)
+      ..add(Comment.serializer)
       ..add(Forum.serializer)
       ..add(ForumInfoResult.serializer)
       ..add(ForumListResult.serializer)
       ..add(ForumStoryResult.serializer)
       ..add(HomeListResult.serializer)
+      ..add(Ratelog.serializer)
       ..add(Story.serializer)
+      ..add(StoryContentResult.serializer)
       ..add(StoryInfoResult.serializer)
       ..add(ThemeSetting.serializer)
       ..add(Thread.serializer)
@@ -42,11 +45,17 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(AppTheme)]),
           () => new ListBuilder<AppTheme>())
       ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Comment)]),
+          () => new ListBuilder<Comment>())
+      ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Forum)]),
           () => new ListBuilder<Forum>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Forum)]),
           () => new ListBuilder<Forum>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Ratelog)]),
+          () => new ListBuilder<Ratelog>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Story)]),
           () => new ListBuilder<Story>())
@@ -60,6 +69,10 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Thread)]),
           () => new ListBuilder<Thread>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltMap, const [const FullType(String), const FullType(String)]),
+          () => new MapBuilder<String, String>())
       ..addBuilderFactory(
           const FullType(Map,
               const [const FullType(String), const FullType(AccountSetting)]),

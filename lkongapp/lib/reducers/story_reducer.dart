@@ -1,7 +1,72 @@
+import 'package:built_collection/built_collection.dart';
+import 'package:lkongapp/models/lkong_jsons/story_result.dart';
+import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
+
+ContentCache contentReducer(ContentCache content, action) {
+  return content.rebuild((b) => b
+    ..homeList.replace(homeListReducer(content.homeList, action))
+    ..storyRepo.replace(storyContentsReducer(content.storyRepo, action)));
+}
+
+final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryContentRequest>(
+      _storyContentRequested),
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryContentSuccess>(
+      _storyContentSucceeded),
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryContentFailure>(
+      _storyContentFailed),
+]);
+
+BuiltMap<int, StoryPageList> _storyContentRequested(
+    BuiltMap<int, StoryPageList> storyRepo, StoryContentRequest action) {
+  var newRepo = storyRepo;
+
+  if (action.story != null) {
+    int threadId = action.story;
+    StoryPageList storyContents = newRepo[threadId];
+    StoryPage page = StoryPage();
+    if (storyContents == null) {
+      newRepo = newRepo
+          .rebuild((b) => b.addEntries([MapEntry(threadId, StoryPageList())]));
+      storyContents = newRepo[threadId];
+    }
+    if (storyContents.pages[action.page] == null) {
+      newRepo = newRepo.rebuild((b) => b.updateValue(
+          threadId,
+          (v) => v.rebuild(
+              (b) => b..pages.addEntries([MapEntry(action.page, page)]))));
+    }
+  }
+  return newRepo;
+}
+
+BuiltMap<int, StoryPageList> _storyContentSucceeded(
+    BuiltMap<int, StoryPageList> storyRepo, StoryContentSuccess action) {
+  var newRepo = storyRepo;
+  final result = action.result;
+  var id = parseLKTypeId(result.model);
+
+  if (id != null) {
+    int threadId = int.parse(id);
+    StoryPage page =
+        StoryPage().rebuild((b) => b..comments.replace(result.comments));
+
+    newRepo = newRepo.rebuild((b) => b.updateValue(
+        threadId,
+        (v) =>
+            v.rebuild((b) => b..pages.updateValue(result.page, (v) => page))));
+  }
+  return newRepo;
+}
+
+BuiltMap<int, StoryPageList> _storyContentFailed(
+    storyRepo, StoryContentFailure action) {
+  return storyRepo;
+}
 
 final homeListReducer = combineReducers<HomeList>([
   TypedReducer<HomeList, HomeListRequest>(_homeListLoading),
