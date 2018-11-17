@@ -6,7 +6,16 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
 
-ContentCache contentReducer(ContentCache content, action) {
+final contentReducer = combineReducers<ContentCache>([
+  TypedReducer<ContentCache, APIFailure>(_contentRequestFailed),
+  _contentReducer,
+]);
+
+ContentCache _contentRequestFailed(ContentCache content, APIFailure action) {
+  return content.rebuild((b) => b..lastError = action.error);
+}
+
+ContentCache _contentReducer(ContentCache content, action) {
   return content.rebuild((b) => b
     ..homeList.replace(homeListReducer(content.homeList, action))
     ..storyRepo.replace(storyContentsReducer(content.storyRepo, action)));
@@ -17,9 +26,48 @@ final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
       _storyContentRequested),
   TypedReducer<BuiltMap<int, StoryPageList>, StoryContentSuccess>(
       _storyContentSucceeded),
-  TypedReducer<BuiltMap<int, StoryPageList>, StoryContentFailure>(
-      _storyContentFailed),
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoRequest>(
+      _storyInfoRequested),
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoSuccess>(
+      _storyInfoSucceeded),
 ]);
+
+BuiltMap<int, StoryPageList> _storyInfoRequested(
+    BuiltMap<int, StoryPageList> storyRepo, StoryInfoRequest action) {
+  var newRepo = storyRepo;
+
+  if (action.story != null) {
+    int threadId = action.story;
+    newRepo = _buildStoryPages(newRepo, threadId);
+  }
+  return newRepo;
+}
+
+BuiltMap<int, StoryPageList> _storyInfoSucceeded(
+    BuiltMap<int, StoryPageList> storyRepo, StoryInfoSuccess action) {
+  var newRepo = storyRepo;
+  final result = action.result;
+
+  if (result is StoryInfoResult) {
+    int threadId = result.tid;
+
+    newRepo = newRepo.rebuild((b) => b
+      ..updateValue(
+          threadId, (v) => v.rebuild((b) => b..storyInfo.replace(result))));
+  }
+  return newRepo;
+}
+
+BuiltMap<int, StoryPageList> _buildStoryPages(
+    BuiltMap<int, StoryPageList> newRepo, int threadId) {
+  StoryPageList storyContents = newRepo[threadId];
+  if (storyContents == null) {
+    newRepo = newRepo
+        .rebuild((b) => b..addEntries([MapEntry(threadId, StoryPageList())]));
+    storyContents = newRepo[threadId];
+  }
+  return newRepo;
+}
 
 BuiltMap<int, StoryPageList> _storyContentRequested(
     BuiltMap<int, StoryPageList> storyRepo, StoryContentRequest action) {
@@ -27,13 +75,10 @@ BuiltMap<int, StoryPageList> _storyContentRequested(
 
   if (action.story != null) {
     int threadId = action.story;
+    newRepo = _buildStoryPages(newRepo, threadId);
+
     StoryPageList storyContents = newRepo[threadId];
     StoryPage page = StoryPage();
-    if (storyContents == null) {
-      newRepo = newRepo
-          .rebuild((b) => b.addEntries([MapEntry(threadId, StoryPageList())]));
-      storyContents = newRepo[threadId];
-    }
     if (storyContents.pages[action.page] == null) {
       newRepo = newRepo.rebuild((b) => b.updateValue(
           threadId,
@@ -55,33 +100,29 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
     StoryPage page =
         StoryPage().rebuild((b) => b..comments.replace(result.comments));
 
-    newRepo = newRepo.rebuild((b) => b.updateValue(
-        threadId,
-        (v) =>
-            v.rebuild((b) => b..pages.updateValue(result.page, (v) => page))));
+    newRepo = newRepo.rebuild((b) => b
+      ..updateValue(
+          threadId,
+          (v) => v
+              .rebuild((b) => b..pages.updateValue(result.page, (v) => page))));
   }
   return newRepo;
 }
 
-BuiltMap<int, StoryPageList> _storyContentFailed(
-    storyRepo, StoryContentFailure action) {
-  return storyRepo;
-}
-
 final homeListReducer = combineReducers<HomeList>([
-  TypedReducer<HomeList, HomeListRequest>(_homeListLoading),
+  // TypedReducer<HomeList, HomeListRequest>(_homeListLoading),
   TypedReducer<HomeList, HomeListNewSuccess>(
       _homeListSucceeded(HomeListRequestType.New)),
-  TypedReducer<HomeList, HomeListNewFailure>(
-      _homeListFailed(HomeListRequestType.New)),
+  // TypedReducer<HomeList, HomeListNewFailure>(
+      // _homeListFailed(HomeListRequestType.New)),
   TypedReducer<HomeList, HomeListRefreshSuccess>(
       _homeListSucceeded(HomeListRequestType.Refresh)),
-  TypedReducer<HomeList, HomeListRefreshFailure>(
-      _homeListFailed(HomeListRequestType.Refresh)),
+  // TypedReducer<HomeList, HomeListRefreshFailure>(
+      // _homeListFailed(HomeListRequestType.Refresh)),
   TypedReducer<HomeList, HomeListLoadMoreSuccess>(
       _homeListSucceeded(HomeListRequestType.LoadMore)),
-  TypedReducer<HomeList, HomeListLoadMoreFailure>(
-      _homeListFailed(HomeListRequestType.LoadMore)),
+  // TypedReducer<HomeList, HomeListLoadMoreFailure>(
+      // _homeListFailed(HomeListRequestType.LoadMore)),
 ]);
 
 enum HomeListRequestType {
@@ -93,7 +134,7 @@ enum HomeListRequestType {
 _homeListSucceeded(HomeListRequestType type) =>
     (HomeList list, HomeListSuccess action) {
       return list.rebuild((b) {
-        b..loading = false;
+        // b..loading = false;
         var data = action.list.data;
         if (data.length > 0) {
           int nexttime = type != HomeListRequestType.Refresh
@@ -122,10 +163,10 @@ _homeListSucceeded(HomeListRequestType type) =>
       });
     };
 
-_homeListFailed(HomeListRequestType type) => (HomeList list, action) {
-      return list.rebuild((b) => b..loading = false);
-    };
+// _homeListFailed(HomeListRequestType type) => (HomeList list, action) {
+//       return list.rebuild((b) => b..loading = false);
+//     };
 
-HomeList _homeListLoading(HomeList list, action) {
-  return list.rebuild((b) => b..loading = true);
-}
+// HomeList _homeListLoading(HomeList list, action) {
+//   return list.rebuild((b) => b..loading = true);
+// }

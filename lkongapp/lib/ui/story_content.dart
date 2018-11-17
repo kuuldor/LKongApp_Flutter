@@ -4,6 +4,8 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/items/comment_item.dart';
+import 'package:lkongapp/ui/items/story_info.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:redux/redux.dart';
@@ -69,38 +71,99 @@ class StoryContentModel {
     @required this.loading,
     @required this.repo,
     @required this.loadContent,
+    @required this.loadInfo,
   });
 
-  final Future<Null> Function(int story, int page) loadContent;
+  final Future<Null> Function(int storyId, int page) loadContent;
+  final Future<Null> Function(int storyId) loadInfo;
 
   static StoryContentModel fromStore(Store<AppState> store) {
     return StoryContentModel(
         loading: store.state.isLoading,
         repo: store.state.uiState.content.storyRepo,
-        loadContent: (story, page) {
-          store.dispatch(StoryContentRequest(null, story, page));
+        loadContent: (storyId, page) {
+          store.dispatch(StoryContentRequest(null, storyId, page));
+        },
+        loadInfo: (storyId) {
+          store.dispatch(StoryInfoRequest(null, storyId));
         });
   }
 
+  var _scrollController = ScrollController();
   Widget _buildContentView(BuildContext context, StoryContentState state) {
-    int story = state.widget.storyId;
-    int page = state.widget.page;
+    int storyId = state.widget.storyId;
+    int pageNo = state.widget.page;
+    StoryInfoResult info;
 
+    List items = List();
     BuiltList<Comment> comments;
-    try {
-      var pageList = repo[story];
-      comments = pageList.pages[page].comments;
-    } catch (_) {}
+    var story = repo[storyId];
+    if (story != null) {
+      info = story.storyInfo;
 
+      for (int i = 1; i <= pageNo; i++) {
+        StoryPage page = story.pages[i];
+
+        if (page != null) {
+          comments = page.comments;
+        }
+
+        if (comments != null) {
+          items.addAll(comments);
+        } else {
+          items.add(i);
+        }
+      }
+    }
+
+    if (loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (info == null) {
+      if (!loading) {
+        // Future(() {
+        loadInfo(storyId);
+        // });
+      }
+    }
     if (comments == null) {
       if (!loading) {
         // Future(() {
-        loadContent(story, page);
+        loadContent(storyId, pageNo);
         // });
-      } else {
-        return Center(child: CircularProgressIndicator());
       }
     }
-    return Container(child: Text("${comments.toString()}"));
+    return Scaffold(
+      body: ListView.builder(
+          shrinkWrap: true,
+          controller: _scrollController,
+          itemCount: items.length + 1,
+          itemBuilder: (BuildContext context, index) {
+            Widget item;
+            if (index > 0 && index <= items.length) {
+              var comment = items[index - 1];
+              if (comment is Comment) {
+                item = CommentItem(
+                  comment: comment,
+                  // onTap: () => onStoryTap(context, story),
+                );
+              } else {
+                item = Text("第$comment页");
+              }
+            } else {
+              item = Container(
+                  height: 84.0,
+                  child: Center(child: StoryInfoItem(info: info)));
+            }
+
+            return Column(children: <Widget>[
+              item,
+              Divider(
+                height: 12.0,
+              ),
+            ]);
+          }),
+    );
   }
 }

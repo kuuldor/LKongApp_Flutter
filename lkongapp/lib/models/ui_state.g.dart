@@ -201,6 +201,8 @@ class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
 
 class _$ContentCache extends ContentCache {
   @override
+  final String lastError;
+  @override
   final HomeList homeList;
   @override
   final BuiltMap<int, StoryPageList> storyRepo;
@@ -208,7 +210,8 @@ class _$ContentCache extends ContentCache {
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
 
-  _$ContentCache._({this.homeList, this.storyRepo}) : super._() {
+  _$ContentCache._({this.lastError, this.homeList, this.storyRepo})
+      : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
     }
@@ -228,18 +231,21 @@ class _$ContentCache extends ContentCache {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ContentCache &&
+        lastError == other.lastError &&
         homeList == other.homeList &&
         storyRepo == other.storyRepo;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, homeList.hashCode), storyRepo.hashCode));
+    return $jf($jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
+        storyRepo.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('ContentCache')
+          ..add('lastError', lastError)
           ..add('homeList', homeList)
           ..add('storyRepo', storyRepo))
         .toString();
@@ -249,6 +255,10 @@ class _$ContentCache extends ContentCache {
 class ContentCacheBuilder
     implements Builder<ContentCache, ContentCacheBuilder> {
   _$ContentCache _$v;
+
+  String _lastError;
+  String get lastError => _$this._lastError;
+  set lastError(String lastError) => _$this._lastError = lastError;
 
   HomeListBuilder _homeList;
   HomeListBuilder get homeList => _$this._homeList ??= new HomeListBuilder();
@@ -264,6 +274,7 @@ class ContentCacheBuilder
 
   ContentCacheBuilder get _$this {
     if (_$v != null) {
+      _lastError = _$v.lastError;
       _homeList = _$v.homeList?.toBuilder();
       _storyRepo = _$v.storyRepo?.toBuilder();
       _$v = null;
@@ -290,7 +301,9 @@ class ContentCacheBuilder
     try {
       _$result = _$v ??
           new _$ContentCache._(
-              homeList: homeList.build(), storyRepo: storyRepo.build());
+              lastError: lastError,
+              homeList: homeList.build(),
+              storyRepo: storyRepo.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -311,8 +324,6 @@ class ContentCacheBuilder
 
 class _$HomeList extends HomeList {
   @override
-  final bool loading;
-  @override
   final int nexttime;
   @override
   final int current;
@@ -322,11 +333,7 @@ class _$HomeList extends HomeList {
   factory _$HomeList([void updates(HomeListBuilder b)]) =>
       (new HomeListBuilder()..update(updates)).build();
 
-  _$HomeList._({this.loading, this.nexttime, this.current, this.stories})
-      : super._() {
-    if (loading == null) {
-      throw new BuiltValueNullFieldError('HomeList', 'loading');
-    }
+  _$HomeList._({this.nexttime, this.current, this.stories}) : super._() {
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('HomeList', 'nexttime');
     }
@@ -349,7 +356,6 @@ class _$HomeList extends HomeList {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is HomeList &&
-        loading == other.loading &&
         nexttime == other.nexttime &&
         current == other.current &&
         stories == other.stories;
@@ -358,14 +364,12 @@ class _$HomeList extends HomeList {
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, loading.hashCode), nexttime.hashCode), current.hashCode),
-        stories.hashCode));
+        $jc($jc(0, nexttime.hashCode), current.hashCode), stories.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('HomeList')
-          ..add('loading', loading)
           ..add('nexttime', nexttime)
           ..add('current', current)
           ..add('stories', stories))
@@ -375,10 +379,6 @@ class _$HomeList extends HomeList {
 
 class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
   _$HomeList _$v;
-
-  bool _loading;
-  bool get loading => _$this._loading;
-  set loading(bool loading) => _$this._loading = loading;
 
   int _nexttime;
   int get nexttime => _$this._nexttime;
@@ -397,7 +397,6 @@ class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
 
   HomeListBuilder get _$this {
     if (_$v != null) {
-      _loading = _$v.loading;
       _nexttime = _$v.nexttime;
       _current = _$v.current;
       _stories = _$v.stories?.toBuilder();
@@ -425,10 +424,7 @@ class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
     try {
       _$result = _$v ??
           new _$HomeList._(
-              loading: loading,
-              nexttime: nexttime,
-              current: current,
-              stories: stories.build());
+              nexttime: nexttime, current: current, stories: stories.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -447,12 +443,14 @@ class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
 
 class _$StoryPageList extends StoryPageList {
   @override
+  final StoryInfoResult storyInfo;
+  @override
   final BuiltMap<int, StoryPage> pages;
 
   factory _$StoryPageList([void updates(StoryPageListBuilder b)]) =>
       (new StoryPageListBuilder()..update(updates)).build();
 
-  _$StoryPageList._({this.pages}) : super._() {
+  _$StoryPageList._({this.storyInfo, this.pages}) : super._() {
     if (pages == null) {
       throw new BuiltValueNullFieldError('StoryPageList', 'pages');
     }
@@ -468,17 +466,21 @@ class _$StoryPageList extends StoryPageList {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is StoryPageList && pages == other.pages;
+    return other is StoryPageList &&
+        storyInfo == other.storyInfo &&
+        pages == other.pages;
   }
 
   @override
   int get hashCode {
-    return $jf($jc(0, pages.hashCode));
+    return $jf($jc($jc(0, storyInfo.hashCode), pages.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('StoryPageList')..add('pages', pages))
+    return (newBuiltValueToStringHelper('StoryPageList')
+          ..add('storyInfo', storyInfo)
+          ..add('pages', pages))
         .toString();
   }
 }
@@ -486,6 +488,12 @@ class _$StoryPageList extends StoryPageList {
 class StoryPageListBuilder
     implements Builder<StoryPageList, StoryPageListBuilder> {
   _$StoryPageList _$v;
+
+  StoryInfoResultBuilder _storyInfo;
+  StoryInfoResultBuilder get storyInfo =>
+      _$this._storyInfo ??= new StoryInfoResultBuilder();
+  set storyInfo(StoryInfoResultBuilder storyInfo) =>
+      _$this._storyInfo = storyInfo;
 
   MapBuilder<int, StoryPage> _pages;
   MapBuilder<int, StoryPage> get pages =>
@@ -496,6 +504,7 @@ class StoryPageListBuilder
 
   StoryPageListBuilder get _$this {
     if (_$v != null) {
+      _storyInfo = _$v.storyInfo?.toBuilder();
       _pages = _$v.pages?.toBuilder();
       _$v = null;
     }
@@ -519,10 +528,14 @@ class StoryPageListBuilder
   _$StoryPageList build() {
     _$StoryPageList _$result;
     try {
-      _$result = _$v ?? new _$StoryPageList._(pages: pages.build());
+      _$result = _$v ??
+          new _$StoryPageList._(
+              storyInfo: _storyInfo?.build(), pages: pages.build());
     } catch (_) {
       String _$failedField;
       try {
+        _$failedField = 'storyInfo';
+        _storyInfo?.build();
         _$failedField = 'pages';
         pages.build();
       } catch (e) {

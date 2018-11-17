@@ -49,6 +49,8 @@ abstract class ContentCache
         ..homeList = (HomeListBuilder()..replace(HomeList()))
         ..update(updates));
 
+  @nullable
+  String get lastError;
   HomeList get homeList;
   BuiltMap<int, StoryPageList> get storyRepo;
 }
@@ -56,27 +58,31 @@ abstract class ContentCache
 abstract class HomeList implements Built<HomeList, HomeListBuilder> {
   HomeList._();
   factory HomeList([updates(HomeListBuilder b)]) => _$HomeList((b) => b
-    ..loading = false
+    // ..loading = false
     ..current = 0
     ..nexttime = 0
     ..update(updates));
 
-  bool get loading;
+  // bool get loading;
   int get nexttime;
   int get current;
   BuiltList<Story> get stories;
 }
 
-abstract class StoryPageList implements Built<StoryPageList, StoryPageListBuilder> {
+abstract class StoryPageList
+    implements Built<StoryPageList, StoryPageListBuilder> {
+  @nullable
+  StoryInfoResult get storyInfo;
+
   StoryPageList._();
-  factory StoryPageList([updates(StoryPageListBuilder b)]) => _$StoryPageList((b) => b
-    ..update(updates));
+  factory StoryPageList([updates(StoryPageListBuilder b)]) =>
+      _$StoryPageList((b) => b..update(updates));
   BuiltMap<int, StoryPage> get pages;
 }
 
 abstract class StoryPage implements Built<StoryPage, StoryPageBuilder> {
   StoryPage._();
-  factory StoryPage([updates(StoryPageBuilder b)]) => _$StoryPage((b) => b
-    ..update(updates));
+  factory StoryPage([updates(StoryPageBuilder b)]) =>
+      _$StoryPage((b) => b..update(updates));
   BuiltList<Comment> get comments;
 }

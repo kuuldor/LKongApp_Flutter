@@ -27,13 +27,15 @@ class StoryList extends StatelessWidget {
 class StoryListModel {
   final bool threadOnlyHome;
   final HomeList homeList;
+  final bool loading;
 
   var _scrollController = ScrollController();
 
   final Future<Null> Function(BuildContext context, Story story) onStoryTap;
 
   StoryListModel(
-      {@required this.homeList,
+      {@required this.loading,
+      @required this.homeList,
       @required this.threadOnlyHome,
       @required this.onStoryTap});
 
@@ -72,6 +74,7 @@ class StoryListModel {
 
   static StoryListModel fromStore(Store<AppState> store) {
     return StoryListModel(
+      loading: store.state.isLoading,
       homeList: store.state.uiState.content.homeList,
       threadOnlyHome:
           store.state.appConfig.accountSettings.currentSetting.threadOnlyHome,
@@ -96,11 +99,10 @@ class StoryListModel {
     );
   }
 
-
   Widget _buildListView(BuildContext context) {
     int itemCount = homeList.stories.length;
     if (itemCount == 0) {
-      if (homeList.loading) {
+      if (loading) {
         return Center(child: CircularProgressIndicator());
       } else {
         _handleLoadNew(context);
@@ -123,7 +125,7 @@ class StoryListModel {
                 onTap: () => onStoryTap(context, story),
               );
             } else {
-              if (!homeList.loading) {
+              if (!loading) {
                 _handleLoadMore(context);
               }
               item = Container(

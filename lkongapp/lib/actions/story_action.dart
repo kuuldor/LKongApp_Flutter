@@ -98,8 +98,7 @@ class StoryContentRequest extends APIRequest with StartLoading {
   final int story;
   final int page;
 
-  StoryContentRequest(
-      Completer completer, this.story, this.page)
+  StoryContentRequest(Completer completer, this.story, this.page)
       : super(completer: completer, api: STORY_CONTENT_API, parameters: {
           "story": story,
           "page": page,
@@ -120,4 +119,29 @@ class StoryContentSuccess extends APISuccess with StopLoading {
 
 class StoryContentFailure extends APIFailure with StopLoading {
   StoryContentFailure(String error) : super(error);
+}
+
+class StoryInfoRequest extends APIRequest with StartLoading {
+  final int story;
+
+  StoryInfoRequest(Completer completer, this.story)
+      : super(completer: completer, api: STORY_INFO_API, parameters: {
+          "story": story,
+        });
+
+  @override
+  CreateFailure get badResponse => (error) => StoryInfoFailure(error);
+
+  @override
+  CreateSuccess get goodResponse => (list) => StoryInfoSuccess(list);
+}
+
+class StoryInfoSuccess extends APISuccess with StopLoading {
+  final StoryInfoResult result;
+
+  StoryInfoSuccess(this.result);
+}
+
+class StoryInfoFailure extends APIFailure with StopLoading {
+  StoryInfoFailure(String error) : super(error);
 }
