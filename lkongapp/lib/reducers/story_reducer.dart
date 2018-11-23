@@ -8,11 +8,16 @@ import 'package:lkongapp/models/models.dart';
 
 final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIFailure>(_contentRequestFailed),
+  TypedReducer<ContentCache, LoginSuccess>(_loginSucceeded),
   _contentReducer,
 ]);
 
 ContentCache _contentRequestFailed(ContentCache content, APIFailure action) {
   return content.rebuild((b) => b..lastError = action.error);
+}
+
+ContentCache _loginSucceeded(ContentCache content, action) {
+  return content.rebuild((b) => b..homeList.replace(HomeList()));
 }
 
 ContentCache _contentReducer(ContentCache content, action) {
