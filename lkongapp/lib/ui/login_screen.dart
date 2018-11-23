@@ -152,7 +152,7 @@ class LoginViewModel {
 
   static LoginViewModel fromStore(Store<AppState> store) {
     AuthState authState = store.state.authState;
-    if (!store.state.isLoading && authState.isAuthed && authState.currentUser != null) {
+    if (!store.state.isLoading && authState.isAuthed && authState.currentUser != null && authState.userInfo == null) {
       store.dispatch(UserInfoRequest(null, authState.currentUser));
     }
     return LoginViewModel(
