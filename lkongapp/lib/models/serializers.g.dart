@@ -41,6 +41,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Thread.serializer)
       ..add(UIState.serializer)
       ..add(User.serializer)
+      ..add(UserInfo.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(AppTheme)]),
           () => new ListBuilder<AppTheme>())

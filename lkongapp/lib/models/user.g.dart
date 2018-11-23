@@ -172,6 +172,12 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         ..add(serializers.serialize(object.followuidnum,
             specifiedType: const FullType(int)));
     }
+    if (object.blacknum != null) {
+      result
+        ..add('blacknum')
+        ..add(serializers.serialize(object.blacknum,
+            specifiedType: const FullType(int)));
+    }
     if (object.digestposts != null) {
       result
         ..add('digestposts')
@@ -182,12 +188,6 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
       result
         ..add('extcredits1')
         ..add(serializers.serialize(object.extcredits1,
-            specifiedType: const FullType(int)));
-    }
-    if (object.extcredits2 != null) {
-      result
-        ..add('extcredits2')
-        ..add(serializers.serialize(object.extcredits2,
             specifiedType: const FullType(int)));
     }
     if (object.extcredits3 != null) {
@@ -226,6 +226,18 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         ..add(serializers.serialize(object.extcredits8,
             specifiedType: const FullType(int)));
     }
+    if (object.fanscount != null) {
+      result
+        ..add('fanscount')
+        ..add(serializers.serialize(object.fanscount,
+            specifiedType: const FullType(int)));
+    }
+    if (object.followfidcount != null) {
+      result
+        ..add('followfidcount')
+        ..add(serializers.serialize(object.followfidcount,
+            specifiedType: const FullType(int)));
+    }
     if (object.followfidnum != null) {
       result
         ..add('followfidnum')
@@ -243,6 +255,12 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         ..add('posts')
         ..add(serializers.serialize(object.posts,
             specifiedType: const FullType(int)));
+    }
+    if (object.powerlimit != null) {
+      result
+        ..add('powerlimit')
+        ..add(serializers.serialize(object.powerlimit,
+            specifiedType: const FullType(String)));
     }
     if (object.punchallday != null) {
       result
@@ -280,10 +298,40 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         ..add(serializers.serialize(object.threads,
             specifiedType: const FullType(int)));
     }
+    if (object.tmpphone != null) {
+      result
+        ..add('tmpphone')
+        ..add(serializers.serialize(object.tmpphone,
+            specifiedType: const FullType(String)));
+    }
+    if (object.todayinvite != null) {
+      result
+        ..add('todayinvite')
+        ..add(serializers.serialize(object.todayinvite,
+            specifiedType: const FullType(String)));
+    }
     if (object.todaypostnum != null) {
       result
         ..add('todaypostnum')
         ..add(serializers.serialize(object.todaypostnum,
+            specifiedType: const FullType(String)));
+    }
+    if (object.verify != null) {
+      result
+        ..add('verify')
+        ..add(serializers.serialize(object.verify,
+            specifiedType: const FullType(bool)));
+    }
+    if (object.verifymessage != null) {
+      result
+        ..add('verifymessage')
+        ..add(serializers.serialize(object.verifymessage,
+            specifiedType: const FullType(String)));
+    }
+    if (object.id != null) {
+      result
+        ..add('id')
+        ..add(serializers.serialize(object.id,
             specifiedType: const FullType(String)));
     }
     if (object.isok != null) {
@@ -291,6 +339,18 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         ..add('isok')
         ..add(serializers.serialize(object.isok,
             specifiedType: const FullType(bool)));
+    }
+    if (object.allban != null) {
+      result
+        ..add('allban')
+        ..add(serializers.serialize(object.allban,
+            specifiedType: const FullType(bool)));
+    }
+    if (object.smartmessage != null) {
+      result
+        ..add('smartmessage')
+        ..add(serializers.serialize(object.smartmessage,
+            specifiedType: const FullType(String)));
     }
 
     return result;
@@ -359,16 +419,16 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
           result.followuidnum = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'blacknum':
+          result.blacknum = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
         case 'digestposts':
           result.digestposts = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
         case 'extcredits1':
           result.extcredits1 = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'extcredits2':
-          result.extcredits2 = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
         case 'extcredits3':
@@ -395,6 +455,14 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
           result.extcredits8 = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'fanscount':
+          result.fanscount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'followfidcount':
+          result.followfidcount = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
         case 'followfidnum':
           result.followfidnum = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
@@ -406,6 +474,10 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         case 'posts':
           result.posts = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'powerlimit':
+          result.powerlimit = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
         case 'punchallday':
           result.punchallday = serializers.deserialize(value,
@@ -431,13 +503,41 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
           result.threads = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'tmpphone':
+          result.tmpphone = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'todayinvite':
+          result.todayinvite = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
         case 'todaypostnum':
           result.todaypostnum = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'verify':
+          result.verify = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'verifymessage':
+          result.verifymessage = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'isok':
           result.isok = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'allban':
+          result.allban = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'smartmessage':
+          result.smartmessage = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -568,11 +668,11 @@ class _$UserInfo extends UserInfo {
   @override
   final int followuidnum;
   @override
+  final int blacknum;
+  @override
   final int digestposts;
   @override
   final int extcredits1;
-  @override
-  final int extcredits2;
   @override
   final int extcredits3;
   @override
@@ -586,11 +686,17 @@ class _$UserInfo extends UserInfo {
   @override
   final int extcredits8;
   @override
+  final int fanscount;
+  @override
+  final int followfidcount;
+  @override
   final int followfidnum;
   @override
   final int oltime;
   @override
   final int posts;
+  @override
+  final String powerlimit;
   @override
   final int punchallday;
   @override
@@ -604,9 +710,23 @@ class _$UserInfo extends UserInfo {
   @override
   final int threads;
   @override
+  final String tmpphone;
+  @override
+  final String todayinvite;
+  @override
   final String todaypostnum;
   @override
+  final bool verify;
+  @override
+  final String verifymessage;
+  @override
+  final String id;
+  @override
   final bool isok;
+  @override
+  final bool allban;
+  @override
+  final String smartmessage;
 
   factory _$UserInfo([void updates(UserInfoBuilder b)]) =>
       (new UserInfoBuilder()..update(updates)).build();
@@ -625,26 +745,36 @@ class _$UserInfo extends UserInfo {
       this.me,
       this.fansnum,
       this.followuidnum,
+      this.blacknum,
       this.digestposts,
       this.extcredits1,
-      this.extcredits2,
       this.extcredits3,
       this.extcredits4,
       this.extcredits5,
       this.extcredits6,
       this.extcredits7,
       this.extcredits8,
+      this.fanscount,
+      this.followfidcount,
       this.followfidnum,
       this.oltime,
       this.posts,
+      this.powerlimit,
       this.punchallday,
       this.punchday,
       this.punchhighestday,
       this.punchtime,
       this.sendphonemessage,
       this.threads,
+      this.tmpphone,
+      this.todayinvite,
       this.todaypostnum,
-      this.isok})
+      this.verify,
+      this.verifymessage,
+      this.id,
+      this.isok,
+      this.allban,
+      this.smartmessage})
       : super._();
 
   @override
@@ -671,26 +801,36 @@ class _$UserInfo extends UserInfo {
         me == other.me &&
         fansnum == other.fansnum &&
         followuidnum == other.followuidnum &&
+        blacknum == other.blacknum &&
         digestposts == other.digestposts &&
         extcredits1 == other.extcredits1 &&
-        extcredits2 == other.extcredits2 &&
         extcredits3 == other.extcredits3 &&
         extcredits4 == other.extcredits4 &&
         extcredits5 == other.extcredits5 &&
         extcredits6 == other.extcredits6 &&
         extcredits7 == other.extcredits7 &&
         extcredits8 == other.extcredits8 &&
+        fanscount == other.fanscount &&
+        followfidcount == other.followfidcount &&
         followfidnum == other.followfidnum &&
         oltime == other.oltime &&
         posts == other.posts &&
+        powerlimit == other.powerlimit &&
         punchallday == other.punchallday &&
         punchday == other.punchday &&
         punchhighestday == other.punchhighestday &&
         punchtime == other.punchtime &&
         sendphonemessage == other.sendphonemessage &&
         threads == other.threads &&
+        tmpphone == other.tmpphone &&
+        todayinvite == other.todayinvite &&
         todaypostnum == other.todaypostnum &&
-        isok == other.isok;
+        verify == other.verify &&
+        verifymessage == other.verifymessage &&
+        id == other.id &&
+        isok == other.isok &&
+        allban == other.allban &&
+        smartmessage == other.smartmessage;
   }
 
   @override
@@ -713,26 +853,26 @@ class _$UserInfo extends UserInfo {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc(0, blacklists.hashCode), customstatus.hashCode), email.hashCode), gender.hashCode), invite.hashCode), phonenum.hashCode), regdate.hashCode), sightml.hashCode), uid.hashCode), username.hashCode), me.hashCode), fansnum.hashCode), followuidnum.hashCode), digestposts.hashCode),
-                                                                                extcredits1.hashCode),
-                                                                            extcredits2.hashCode),
-                                                                        extcredits3.hashCode),
-                                                                    extcredits4.hashCode),
-                                                                extcredits5.hashCode),
-                                                            extcredits6.hashCode),
-                                                        extcredits7.hashCode),
-                                                    extcredits8.hashCode),
-                                                followfidnum.hashCode),
-                                            oltime.hashCode),
-                                        posts.hashCode),
-                                    punchallday.hashCode),
-                                punchday.hashCode),
-                            punchhighestday.hashCode),
-                        punchtime.hashCode),
-                    sendphonemessage.hashCode),
-                threads.hashCode),
-            todaypostnum.hashCode),
-        isok.hashCode));
+                                                                            $jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc(0, blacklists.hashCode), customstatus.hashCode), email.hashCode), gender.hashCode), invite.hashCode), phonenum.hashCode), regdate.hashCode), sightml.hashCode), uid.hashCode), username.hashCode), me.hashCode), fansnum.hashCode), followuidnum.hashCode), blacknum.hashCode), digestposts.hashCode), extcredits1.hashCode), extcredits3.hashCode), extcredits4.hashCode), extcredits5.hashCode), extcredits6.hashCode), extcredits7.hashCode), extcredits8.hashCode), fanscount.hashCode), followfidcount.hashCode),
+                                                                                followfidnum.hashCode),
+                                                                            oltime.hashCode),
+                                                                        posts.hashCode),
+                                                                    powerlimit.hashCode),
+                                                                punchallday.hashCode),
+                                                            punchday.hashCode),
+                                                        punchhighestday.hashCode),
+                                                    punchtime.hashCode),
+                                                sendphonemessage.hashCode),
+                                            threads.hashCode),
+                                        tmpphone.hashCode),
+                                    todayinvite.hashCode),
+                                todaypostnum.hashCode),
+                            verify.hashCode),
+                        verifymessage.hashCode),
+                    id.hashCode),
+                isok.hashCode),
+            allban.hashCode),
+        smartmessage.hashCode));
   }
 
   @override
@@ -751,26 +891,36 @@ class _$UserInfo extends UserInfo {
           ..add('me', me)
           ..add('fansnum', fansnum)
           ..add('followuidnum', followuidnum)
+          ..add('blacknum', blacknum)
           ..add('digestposts', digestposts)
           ..add('extcredits1', extcredits1)
-          ..add('extcredits2', extcredits2)
           ..add('extcredits3', extcredits3)
           ..add('extcredits4', extcredits4)
           ..add('extcredits5', extcredits5)
           ..add('extcredits6', extcredits6)
           ..add('extcredits7', extcredits7)
           ..add('extcredits8', extcredits8)
+          ..add('fanscount', fanscount)
+          ..add('followfidcount', followfidcount)
           ..add('followfidnum', followfidnum)
           ..add('oltime', oltime)
           ..add('posts', posts)
+          ..add('powerlimit', powerlimit)
           ..add('punchallday', punchallday)
           ..add('punchday', punchday)
           ..add('punchhighestday', punchhighestday)
           ..add('punchtime', punchtime)
           ..add('sendphonemessage', sendphonemessage)
           ..add('threads', threads)
+          ..add('tmpphone', tmpphone)
+          ..add('todayinvite', todayinvite)
           ..add('todaypostnum', todaypostnum)
-          ..add('isok', isok))
+          ..add('verify', verify)
+          ..add('verifymessage', verifymessage)
+          ..add('id', id)
+          ..add('isok', isok)
+          ..add('allban', allban)
+          ..add('smartmessage', smartmessage))
         .toString();
   }
 }
@@ -830,6 +980,10 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
   int get followuidnum => _$this._followuidnum;
   set followuidnum(int followuidnum) => _$this._followuidnum = followuidnum;
 
+  int _blacknum;
+  int get blacknum => _$this._blacknum;
+  set blacknum(int blacknum) => _$this._blacknum = blacknum;
+
   int _digestposts;
   int get digestposts => _$this._digestposts;
   set digestposts(int digestposts) => _$this._digestposts = digestposts;
@@ -837,10 +991,6 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
   int _extcredits1;
   int get extcredits1 => _$this._extcredits1;
   set extcredits1(int extcredits1) => _$this._extcredits1 = extcredits1;
-
-  int _extcredits2;
-  int get extcredits2 => _$this._extcredits2;
-  set extcredits2(int extcredits2) => _$this._extcredits2 = extcredits2;
 
   int _extcredits3;
   int get extcredits3 => _$this._extcredits3;
@@ -866,6 +1016,15 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
   int get extcredits8 => _$this._extcredits8;
   set extcredits8(int extcredits8) => _$this._extcredits8 = extcredits8;
 
+  int _fanscount;
+  int get fanscount => _$this._fanscount;
+  set fanscount(int fanscount) => _$this._fanscount = fanscount;
+
+  int _followfidcount;
+  int get followfidcount => _$this._followfidcount;
+  set followfidcount(int followfidcount) =>
+      _$this._followfidcount = followfidcount;
+
   int _followfidnum;
   int get followfidnum => _$this._followfidnum;
   set followfidnum(int followfidnum) => _$this._followfidnum = followfidnum;
@@ -877,6 +1036,10 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
   int _posts;
   int get posts => _$this._posts;
   set posts(int posts) => _$this._posts = posts;
+
+  String _powerlimit;
+  String get powerlimit => _$this._powerlimit;
+  set powerlimit(String powerlimit) => _$this._powerlimit = powerlimit;
 
   int _punchallday;
   int get punchallday => _$this._punchallday;
@@ -904,13 +1067,42 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
   int get threads => _$this._threads;
   set threads(int threads) => _$this._threads = threads;
 
+  String _tmpphone;
+  String get tmpphone => _$this._tmpphone;
+  set tmpphone(String tmpphone) => _$this._tmpphone = tmpphone;
+
+  String _todayinvite;
+  String get todayinvite => _$this._todayinvite;
+  set todayinvite(String todayinvite) => _$this._todayinvite = todayinvite;
+
   String _todaypostnum;
   String get todaypostnum => _$this._todaypostnum;
   set todaypostnum(String todaypostnum) => _$this._todaypostnum = todaypostnum;
 
+  bool _verify;
+  bool get verify => _$this._verify;
+  set verify(bool verify) => _$this._verify = verify;
+
+  String _verifymessage;
+  String get verifymessage => _$this._verifymessage;
+  set verifymessage(String verifymessage) =>
+      _$this._verifymessage = verifymessage;
+
+  String _id;
+  String get id => _$this._id;
+  set id(String id) => _$this._id = id;
+
   bool _isok;
   bool get isok => _$this._isok;
   set isok(bool isok) => _$this._isok = isok;
+
+  bool _allban;
+  bool get allban => _$this._allban;
+  set allban(bool allban) => _$this._allban = allban;
+
+  String _smartmessage;
+  String get smartmessage => _$this._smartmessage;
+  set smartmessage(String smartmessage) => _$this._smartmessage = smartmessage;
 
   UserInfoBuilder();
 
@@ -929,26 +1121,36 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
       _me = _$v.me;
       _fansnum = _$v.fansnum;
       _followuidnum = _$v.followuidnum;
+      _blacknum = _$v.blacknum;
       _digestposts = _$v.digestposts;
       _extcredits1 = _$v.extcredits1;
-      _extcredits2 = _$v.extcredits2;
       _extcredits3 = _$v.extcredits3;
       _extcredits4 = _$v.extcredits4;
       _extcredits5 = _$v.extcredits5;
       _extcredits6 = _$v.extcredits6;
       _extcredits7 = _$v.extcredits7;
       _extcredits8 = _$v.extcredits8;
+      _fanscount = _$v.fanscount;
+      _followfidcount = _$v.followfidcount;
       _followfidnum = _$v.followfidnum;
       _oltime = _$v.oltime;
       _posts = _$v.posts;
+      _powerlimit = _$v.powerlimit;
       _punchallday = _$v.punchallday;
       _punchday = _$v.punchday;
       _punchhighestday = _$v.punchhighestday;
       _punchtime = _$v.punchtime;
       _sendphonemessage = _$v.sendphonemessage;
       _threads = _$v.threads;
+      _tmpphone = _$v.tmpphone;
+      _todayinvite = _$v.todayinvite;
       _todaypostnum = _$v.todaypostnum;
+      _verify = _$v.verify;
+      _verifymessage = _$v.verifymessage;
+      _id = _$v.id;
       _isok = _$v.isok;
+      _allban = _$v.allban;
+      _smartmessage = _$v.smartmessage;
       _$v = null;
     }
     return this;
@@ -984,26 +1186,36 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
             me: me,
             fansnum: fansnum,
             followuidnum: followuidnum,
+            blacknum: blacknum,
             digestposts: digestposts,
             extcredits1: extcredits1,
-            extcredits2: extcredits2,
             extcredits3: extcredits3,
             extcredits4: extcredits4,
             extcredits5: extcredits5,
             extcredits6: extcredits6,
             extcredits7: extcredits7,
             extcredits8: extcredits8,
+            fanscount: fanscount,
+            followfidcount: followfidcount,
             followfidnum: followfidnum,
             oltime: oltime,
             posts: posts,
+            powerlimit: powerlimit,
             punchallday: punchallday,
             punchday: punchday,
             punchhighestday: punchhighestday,
             punchtime: punchtime,
             sendphonemessage: sendphonemessage,
             threads: threads,
+            tmpphone: tmpphone,
+            todayinvite: todayinvite,
             todaypostnum: todaypostnum,
-            isok: isok);
+            verify: verify,
+            verifymessage: verifymessage,
+            id: id,
+            isok: isok,
+            allban: allban,
+            smartmessage: smartmessage);
     replace(_$result);
     return _$result;
   }

@@ -24,7 +24,11 @@ abstract class AuthState implements Built<AuthState, AuthStateBuilder> {
   bool get isAuthed;
   @BuiltValueField(wireName: 'currentUser')
   User get currentUser;
-  @nullable @BuiltValueField(wireName: 'error')
+  @nullable
+  @BuiltValueField(wireName: 'userInfo')
+  UserInfo get userInfo;
+  @nullable
+  @BuiltValueField(wireName: 'error')
   String get error;
 
   String toJson() {
@@ -38,4 +42,3 @@ abstract class AuthState implements Built<AuthState, AuthStateBuilder> {
 
   static Serializer<AuthState> get serializer => _$authStateSerializer;
 }
-

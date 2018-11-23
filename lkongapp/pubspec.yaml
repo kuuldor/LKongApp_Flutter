@@ -21,6 +21,8 @@ dependencies:
   path_provider: ^0.4.1
   http: ^0.12.0
   flutter_cache_manager: ^0.2.0
+  intl: any
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -49,6 +51,7 @@ flutter:
   assets:
     - assets/logo.png
     - assets/noavatar.png
+    - assets/image_placeholder.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

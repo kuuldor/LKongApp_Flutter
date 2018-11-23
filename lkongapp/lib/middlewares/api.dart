@@ -15,6 +15,7 @@ const STORY_CONTENT_API = "STORY_CONTENT";
 const STORY_INFO_API = "STORY_INFO";
 const FORUMLIST_API = "FORUMLIST";
 const FORUMTHREADS_API = "FORUMTHREADS";
+const USERINFO_API = "USERINFO";
 
 HttpSession session = HttpSession(baseURL: 'http://lkong.cn');
 
@@ -60,7 +61,8 @@ Future<Map> _handleHttp(
       } else {
         data = response.body;
       }
-      print(json.decode(data));
+
+      // print(json.decode(data));
       result = dataParser(data);
 
       if (result == null) {
@@ -241,18 +243,37 @@ Future<Map> getForumInfo(Map args) {
       preProcessor: numMapperBuiler(["membernum", "todayposts"]));
 }
 
-var numMapperBuiler = (List<String> fields) => (String data) {
-      var processed = data;
+Future<Map> getUserInfo(Map args) {
+  int uid = args["id"];
+  bool forceRenew = args["forceRenew"] ?? false;
 
-      var numMapper = (Match m) => "${m[1]}:${m[2]}";
+  assert(uid != null, "UserId must be defined");
 
-      fields.forEach((field) {
-        RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(\\d+)\"");
-        processed = processed.replaceAllMapped(pattern, numMapper);
-      });
+  var urlString = endpoint["userInfo"] +
+      "_$uid" +
+      (forceRenew ? querify(defaultParameter()) : "");
 
-      return processed;
-    };
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(UserInfo.fromJson));
+}
+
+String Function(String) numMapperBuiler(List<String> fields) {
+  String Function(String) processor;
+  processor = (String data) {
+    String processed = data;
+
+    var numMapper = (Match m) => "${m[1]}:${m[2]}";
+
+    fields.forEach((field) {
+      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(\\d+)\"");
+      processed = processed.replaceAllMapped(pattern, numMapper);
+    });
+
+    return processed;
+  };
+  return processor;
+}
 
 Future<Map> apiDispatch(api, Map parameters) {
   if (api == LOGIN_API) {
@@ -277,6 +298,10 @@ Future<Map> apiDispatch(api, Map parameters) {
 
   if (api.startsWith(FORUMTHREADS_API)) {
     return getStoriesForForum(parameters);
+  }
+
+  if (api == USERINFO_API) {
+    return getUserInfo(parameters);
   }
 
   return Future<Map>(null);

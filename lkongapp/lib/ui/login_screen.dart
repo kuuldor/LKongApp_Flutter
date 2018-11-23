@@ -151,8 +151,12 @@ class LoginViewModel {
   });
 
   static LoginViewModel fromStore(Store<AppState> store) {
+    AuthState authState = store.state.authState;
+    if (!store.state.isLoading && authState.isAuthed && authState.currentUser != null) {
+      store.dispatch(UserInfoRequest(null, authState.currentUser));
+    }
     return LoginViewModel(
-        authState: store.state.authState,
+        authState: authState,
         saveCredential: store.state.appConfig.setting.saveCredential,
         onLoginPressed: (BuildContext context, String email, String password) {
           if (store.state.isLoading) {
