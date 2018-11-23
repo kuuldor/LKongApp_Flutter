@@ -48,14 +48,14 @@ class PageBuilder extends StatelessWidget {
     return buildConnectedWidget<PageModel>(context, PageModel.fromStore,
         (viewModel) {
       if (viewModel.user == null) {
-        viewModel.showLoginScreen(context);
+        // viewModel.showLoginScreen(context);
       }
       return Scaffold(
         body: PageView(
           children: [
             Container(
-              child: viewModel.user != null ? StoryList() : Container(),
-              // child: StoryList(),
+              // child: viewModel.user != null ? StoryList() : Container(),
+              child: StoryList(),
             ),
             Container(
               child: Text('板块'),

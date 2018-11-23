@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:intl/intl.dart';
 
 String _avatarForID(id) {
   var padded = '0' * (9 - id.toString().length) + id.toString();
@@ -41,7 +42,7 @@ DateTime parseDatetime(String dateline) {
 
 // final UniversalTimeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 // final DefaultTimeZone = "Asia/Shanghai";
-// final LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
+final LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
 DateTime dateFromString(String dateStr) {
   var date = DateTime.tryParse(dateStr);
@@ -50,6 +51,16 @@ DateTime dateFromString(String dateStr) {
   }
 
   return date;
+}
+
+String stringFromDate(DateTime date) {
+  String dateStr = "";
+  if (date != null) {
+    final format = DateFormat(LKongTimeFormat);
+    dateStr = format.format(date);
+  }
+
+  return dateStr;
 }
 
 String timeAgoSinceDate(DateTime date) {

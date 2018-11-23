@@ -28,7 +28,8 @@ class StoryInfoItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         info.subject,
-                        style: Theme.of(context).textTheme.title,
+                        style: Theme.of(context).textTheme.title.copyWith(
+                            fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -45,14 +46,15 @@ class StoryInfoItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(info.author),
-                          Text(info.forumname),
+                          Text("发表于：${info.forumname}"),
                         ],
                       ),
                     ),
                   ),
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(timeAgoSinceDate(parseDatetime(info.dateline))),
+                      Text(stringFromDate(parseDatetime(info.dateline))),
                       Text("${info.views}查看·${info.replies}回复"),
                     ],
                   ),

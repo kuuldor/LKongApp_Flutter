@@ -95,29 +95,19 @@ class StoryContentModel {
     int pageNo = state.widget.page;
     StoryInfoResult info;
 
-    List items = List();
     BuiltList<Comment> comments;
     var story = repo[storyId];
     if (story != null) {
       info = story.storyInfo;
+      StoryPage page = story.pages[pageNo];
 
-      for (int i = 1; i <= pageNo; i++) {
-        StoryPage page = story.pages[i];
-
-        if (page != null) {
-          comments = page.comments;
-        }
-
-        if (comments != null) {
-          items.addAll(comments);
-        } else {
-          items.add(i);
-        }
+      if (page != null) {
+        comments = page.comments;
       }
     }
 
     if (loading) {
-      return Center(child: CircularProgressIndicator());
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (info == null) {
@@ -133,28 +123,28 @@ class StoryContentModel {
         loadContent(storyId, pageNo);
         // });
       }
+      return Container();
     }
     return Scaffold(
       body: ListView.builder(
           shrinkWrap: true,
           controller: _scrollController,
-          itemCount: items.length + 1,
+          itemCount: comments.length + 1,
           itemBuilder: (BuildContext context, index) {
             Widget item;
-            if (index > 0 && index <= items.length) {
-              var comment = items[index - 1];
-              if (comment is Comment) {
-                item = CommentItem(
-                  comment: comment,
-                  // onTap: () => onStoryTap(context, story),
-                );
-              } else {
-                item = Text("第$comment页");
-              }
+            if (index > 0 && index <= comments.length) {
+              var comment = comments[index - 1];
+
+              item = CommentItem(
+                comment: comment,
+                // onTap: () => onStoryTap(context, story),
+              );
             } else {
               item = Container(
-                  height: 84.0,
-                  child: Center(child: StoryInfoItem(info: info)));
+                child: Center(
+                  child: StoryInfoItem(info: info),
+                ),
+              );
             }
 
             return Column(children: <Widget>[

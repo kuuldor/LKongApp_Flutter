@@ -41,7 +41,7 @@ class CommentItem extends StatelessWidget {
               ),
             ),
             Column(
-              children: <Widget>[
+              children: <Widget>[ 
                 Icon(Icons.layers),
                 Text("${comment.lou}楼"),
               ],
@@ -53,9 +53,10 @@ class CommentItem extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: Text(
+                child: comment2Widget(
+                  context,
                   comment.message,
-                  style: Theme.of(context).textTheme.title,
+                  style: Theme.of(context),
                 ),
               ),
             ],

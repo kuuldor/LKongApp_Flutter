@@ -23,6 +23,18 @@ class LKongAppTheme {
   final bool _isNightMode;
   final AppTheme _appTheme;
 
+  Color get mainColor => htmlColor(_appTheme.colors['main']);
+  Color get pageColor => htmlColor(_appTheme.colors['paper']);
+  Color get barTextColor => htmlColor(_appTheme.colors['barText']);
+  Color get headerBG => htmlColor(_appTheme.colors['headerBG']);
+  Color get quoteBG => htmlColor(_appTheme.colors['quoteBG']);
+  Color get textColor => htmlColor(_appTheme.colors['text']);
+  Color get lightTextColor => htmlColor(_appTheme.colors['lightText']);
+  Color get mediumTextColor => htmlColor(_appTheme.colors['mediumText']);
+  Color get darkTextColor => htmlColor(_appTheme.colors['darkText']);
+  Color get linkColor => htmlColor(_appTheme.colors['link']);
+  Color get linkTapColor => htmlColor(_appTheme.colors['linkTap']);
+
   @override
   bool operator ==(other) {
     return other is LKongAppTheme &&
@@ -50,18 +62,6 @@ class LKongAppTheme {
   }
 
   ThemeData get themeData {
-    Color mainColor = htmlColor(_appTheme.colors['main']);
-    Color pageColor = htmlColor(_appTheme.colors['paper']);
-    Color barTextColor = htmlColor(_appTheme.colors['barText']);
-    Color headerBG = htmlColor(_appTheme.colors['headerBG']);
-    Color quoteBG = htmlColor(_appTheme.colors['quoteBG']);
-    Color textColor = htmlColor(_appTheme.colors['text']);
-    Color lightTextColor = htmlColor(_appTheme.colors['lightText']);
-    Color mediumTextColor = htmlColor(_appTheme.colors['mediumText']);
-    Color darkTextColor = htmlColor(_appTheme.colors['darkText']);
-    Color linkColor = htmlColor(_appTheme.colors['link']);
-    Color linkTapColor = htmlColor(_appTheme.colors['linkTap']);
-
     ThemeData template = _isNightMode ? ThemeData.dark() : ThemeData.light();
 
     return template.copyWith(
