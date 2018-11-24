@@ -41,7 +41,7 @@ class CommentItem extends StatelessWidget {
               ),
             ),
             Column(
-              children: <Widget>[ 
+              children: <Widget>[
                 Icon(Icons.layers),
                 Text("${comment.lou}楼"),
               ],
@@ -49,7 +49,6 @@ class CommentItem extends StatelessWidget {
           ],
         ),
         Container(
-          width: MediaQuery.of(context).size.width,
           child: Row(
             children: <Widget>[
               Expanded(
