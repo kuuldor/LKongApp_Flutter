@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
+import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 //here goes the function
@@ -27,6 +28,7 @@ _cleanUpTextList(List<Widget> widgetList, List<TextSpan> textList) {
       children: <Widget>[
         Expanded(
           child: RichText(
+            softWrap: true,
             text: text,
           ),
         )
@@ -69,6 +71,26 @@ _parseImageAndText(BuildContext context,
 
     } else {
       //TODO: handle text style elements first, like i strong font etc.
+      if (e.localName == "i") {
+        baseTextStyle = baseTextStyle.copyWith(fontStyle: FontStyle.italic);
+      } else if (e.localName == "strong") {
+        baseTextStyle = baseTextStyle.copyWith(fontWeight: FontWeight.bold);
+      } else if (e.localName == "blockquote") {
+        baseTextStyle =
+            baseTextStyle.apply(fontSizeFactor: 0.85, color: Colors.blueGrey);
+      } else if (e.localName == "font") {
+        e.attributes.forEach((name, value) {
+          switch (name.toString().toLowerCase()) {
+            case "size":
+              baseTextStyle = baseTextStyle.apply(
+                  fontSizeFactor: double.parse(value) / 3.0);
+              break;
+            case "color":
+              baseTextStyle = baseTextStyle.apply(color: htmlColor(value));
+              break;
+          }
+        });
+      }
 
       List<Widget> nodeWidgets = List<Widget>();
       List<TextSpan> nodeTextList = List<TextSpan>();
@@ -79,6 +101,14 @@ _parseImageAndText(BuildContext context,
             baseTextStyle: baseTextStyle,
             textList: nodeTextList));
       }
+
+      if (e.localName == "br") {
+        nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+      } else if (e.localName == "p") {
+        nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+      }
+
+      //Handle elements to be converted to widget. Otherwise just append to widget/text list
       if (e.localName == "blockquote") {
         _cleanUpTextList(nodeWidgets, nodeTextList);
         LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
@@ -112,7 +142,8 @@ _parseImageAndText(BuildContext context,
       }
     }
   } else if (node is dom.Text) {
-    textList.add(TextSpan(style: baseTextStyle, text: node.text));
+    String text = node.text.replaceAll(RegExp(r"(\s+)", multiLine: true), "");
+    textList.add(TextSpan(style: baseTextStyle, text: text));
   }
 }
 
@@ -140,8 +171,10 @@ Widget comment2Widget(BuildContext context, String comment, {ThemeData style}) {
 
   _parseDocumentBody(context, body, widgetList);
 
-  return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: widgetList);
+  return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: widgetList));
 }

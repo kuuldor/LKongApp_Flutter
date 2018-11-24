@@ -49,6 +49,7 @@ class CommentItem extends StatelessWidget {
           ],
         ),
         Container(
+          width: MediaQuery.of(context).size.width,
           child: Row(
             children: <Widget>[
               Expanded(
