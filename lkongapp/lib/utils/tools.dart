@@ -1,12 +1,15 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
 import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 //here goes the function
 
 String html2Text(String htmlString) {
@@ -17,23 +20,38 @@ String html2Text(String htmlString) {
   return parsedString;
 }
 
+_handleURL(String url) async {
+  print("URL is cliked: $url");
+  if (url.startsWith("http")) {
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
+  }
+}
+
+_textList2Widget(List<TextSpan> textList) {
+  List<TextSpan> texts = List<TextSpan>();
+  texts.addAll(textList);
+  TextSpan text = texts.length == 1 ? texts[0] : TextSpan(children: texts);
+
+  var widget = Row(
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Expanded(
+        child: RichText(
+          softWrap: true,
+          text: text,
+        ),
+      )
+    ],
+  );
+  return widget;
+}
+
 _cleanUpTextList(List<Widget> widgetList, List<TextSpan> textList) {
   if (textList.length > 0) {
-    List<TextSpan> texts = List<TextSpan>();
-    texts.addAll(textList);
-    TextSpan text = TextSpan(children: texts);
-    widgetList.add(Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: RichText(
-            softWrap: true,
-            text: text,
-          ),
-        )
-      ],
-    ));
+    widgetList.add(_textList2Widget(textList));
     textList.clear();
   }
 }
@@ -45,6 +63,8 @@ _parseImageAndText(BuildContext context,
     @required List<TextSpan> textList}) {
   if (node is dom.Element) {
     dom.Element e = node;
+
+    // print(e.toString());
 
     if (e.localName == "img" && e.attributes.containsKey('src')) {
       _cleanUpTextList(widgetList, textList);
@@ -70,10 +90,9 @@ _parseImageAndText(BuildContext context,
       //TODO: handle video nodes
 
     } else {
-      //TODO: handle text style elements first, like i strong font etc.
-      if (e.localName == "i") {
+      if (e.localName == "em" || e.localName == "i") {
         baseTextStyle = baseTextStyle.copyWith(fontStyle: FontStyle.italic);
-      } else if (e.localName == "strong") {
+      } else if (e.localName == "strong" || e.localName == "b") {
         baseTextStyle = baseTextStyle.copyWith(fontWeight: FontWeight.bold);
       } else if (e.localName == "blockquote") {
         baseTextStyle =
@@ -90,6 +109,8 @@ _parseImageAndText(BuildContext context,
               break;
           }
         });
+      } else if (e.localName == "a") {
+        baseTextStyle = baseTextStyle.apply(color: Colors.blue);
       }
 
       List<Widget> nodeWidgets = List<Widget>();
@@ -105,6 +126,7 @@ _parseImageAndText(BuildContext context,
       if (e.localName == "br") {
         nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
       } else if (e.localName == "p") {
+        nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
         nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
       }
 
@@ -131,6 +153,39 @@ _parseImageAndText(BuildContext context,
             ),
           ),
         );
+      } else if (e.localName == "a") {
+        String link = e.attributes["href"];
+        print("Link is $link");
+
+        if (nodeWidgets.length > 0) {
+          print("Image in link");
+          _cleanUpTextList(nodeWidgets, nodeTextList);
+          var linkDetector = GestureDetector(
+            // When the child is tapped, show a snackbar
+            onTap: () => _handleURL(link),
+            // Our Custom Button!
+            child: Column(
+              children: nodeWidgets,
+            ),
+          );
+          widgetList.add(linkDetector);
+        } else if (nodeTextList.length > 0) {
+          // TextSpan's recognizer only works on direct text but not children.
+          // var linkText = TextSpan(
+          //   style: baseTextStyle,
+          //   children: nodeTextList,
+          //   recognizer: TapGestureRecognizer()..onTap = () => _handleURL(link),
+          // );
+          // textList.add(linkText);
+          TapGestureRecognizer tapper = TapGestureRecognizer()
+            ..onTap = () => _handleURL(link);
+          List<TextSpan> linkTexts = List<TextSpan>();
+          nodeTextList.forEach((text) {
+            linkTexts.add(TextSpan(
+                recognizer: tapper, style: text.style, text: text.text));
+          });
+          textList.addAll(linkTexts);
+        }
       } else {
         if (nodeWidgets.length > 0) {
           _cleanUpTextList(widgetList, textList);
@@ -142,7 +197,8 @@ _parseImageAndText(BuildContext context,
       }
     }
   } else if (node is dom.Text) {
-    String text = node.text.replaceAll(RegExp(r"(\s+)", multiLine: true), "");
+    String text =
+        node.text.trim().replaceAll(RegExp(r"(\s+)", multiLine: true), " ");
     textList.add(TextSpan(style: baseTextStyle, text: text));
   }
 }
@@ -151,7 +207,8 @@ _parseDocumentBody(
     BuildContext context, dom.Element body, List<Widget> widgetList) {
   List<TextSpan> textList = List<TextSpan>();
   dom.NodeList docBodyChildren = body.nodes;
-  TextStyle defaultStyle = Theme.of(context).textTheme.title;
+  TextStyle defaultStyle =
+      Theme.of(context).textTheme.title.apply(fontWeightDelta: -1);
 
   if (docBodyChildren.length > 0)
     docBodyChildren.forEach((e) => _parseImageAndText(context,
