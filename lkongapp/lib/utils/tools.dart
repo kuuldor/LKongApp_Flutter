@@ -25,7 +25,6 @@ _handleURL(String url) async {
   if (url.startsWith("http")) {
     if (await canLaunch(url)) {
       await launch(url);
-      await launch(url);
     }
   }
 }
