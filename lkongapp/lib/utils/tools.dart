@@ -151,7 +151,7 @@ _parseDocumentBody(
     BuildContext context, dom.Element body, List<Widget> widgetList) {
   List<TextSpan> textList = List<TextSpan>();
   dom.NodeList docBodyChildren = body.nodes;
-  TextStyle defaultStyle = Theme.of(context).textTheme.body1;
+  TextStyle defaultStyle = Theme.of(context).textTheme.title;
 
   if (docBodyChildren.length > 0)
     docBodyChildren.forEach((e) => _parseImageAndText(context,

@@ -16,9 +16,6 @@ class LoginScreen extends StatelessWidget {
     return buildConnectedWidget(context, LoginViewModel.fromStore, (viewModel) {
       var _formKey = LoginViewModel.formKey;
 
-      final _emailController = TextEditingController();
-      final _passwordController = TextEditingController();
-
       final ValueKey _emailKey = LKongAppKeys.loginEmailKey;
       final ValueKey _passwordKey = LKongAppKeys.loginPasswordKey;
       final logo = CircleAvatar(
@@ -29,7 +26,7 @@ class LoginScreen extends StatelessWidget {
 
       final email = TextFormField(
         key: _emailKey,
-        controller: _emailController,
+        controller: viewModel.emailController,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         validator: (val) => val.isEmpty || val.trim().length == 0
@@ -43,7 +40,7 @@ class LoginScreen extends StatelessWidget {
       );
 
       final password = TextFormField(
-        controller: _passwordController,
+        controller: viewModel.passwordController,
         key: _passwordKey,
         autocorrect: false,
         autofocus: false,
@@ -68,7 +65,7 @@ class LoginScreen extends StatelessWidget {
               return;
             }
             viewModel.onLoginPressed(
-                context, _emailController.text, _passwordController.text);
+                context, viewModel.emailController.text, viewModel.passwordController.text);
           },
           color: Colors.lightBlueAccent,
           child: Text('Log In', style: TextStyle(color: Colors.white)),
@@ -127,6 +124,9 @@ class LoginScreen extends StatelessWidget {
 class LoginViewModel {
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   bool saveCredential;
   AuthState authState;
   final Function(BuildContext, String, String) onLoginPressed;
@@ -152,7 +152,10 @@ class LoginViewModel {
 
   static LoginViewModel fromStore(Store<AppState> store) {
     AuthState authState = store.state.authState;
-    if (!store.state.isLoading && authState.isAuthed && authState.currentUser != null && authState.userInfo == null) {
+    if (!store.state.isLoading &&
+        authState.isAuthed &&
+        authState.currentUser != null &&
+        authState.userInfo == null) {
       store.dispatch(UserInfoRequest(null, authState.currentUser));
     }
     return LoginViewModel(
