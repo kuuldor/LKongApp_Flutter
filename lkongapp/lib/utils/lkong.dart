@@ -42,9 +42,13 @@ DateTime parseDatetime(String dateline) {
 
 // final UniversalTimeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 // final DefaultTimeZone = "Asia/Shanghai";
+final DefaultTimeZone = "+0800";
 final LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
-
+final RegExp _tmzFormat = RegExp(r'([zZ]|([-+])(\d\d)(\d\d)?)$');
 DateTime dateFromString(String dateStr) {
+  if (!_tmzFormat.hasMatch(dateStr)) {
+    dateStr = "$dateStr $DefaultTimeZone";
+  }
   var date = DateTime.tryParse(dateStr);
   if (date == null) {
     date = DateTime.fromMillisecondsSinceEpoch(0);
