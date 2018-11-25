@@ -6,48 +6,36 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/models/models.dart';
 
 class LKongAppTheme {
-  static Map<String, String> get themeColorKeys => {
-        "main": "主色调",
-        "barText": "标题栏文字颜色",
-        "paper": "背景色",
-        "headerBG": "标题背景",
-        "quoteBG": "引文背景",
-        "text": "正文颜色",
-        "lightText": "淡色文字",
-        "mediumText": "浅色文字",
-        "darkText": "深色文字",
-        "link": "链接颜色",
-        "linkTap": "点击高亮"
-      };
 
-  final bool _isNightMode;
-  final AppTheme _appTheme;
 
-  Color get mainColor => htmlColor(_appTheme.colors['main']);
-  Color get pageColor => htmlColor(_appTheme.colors['paper']);
-  Color get barTextColor => htmlColor(_appTheme.colors['barText']);
-  Color get headerBG => htmlColor(_appTheme.colors['headerBG']);
-  Color get quoteBG => htmlColor(_appTheme.colors['quoteBG']);
-  Color get textColor => htmlColor(_appTheme.colors['text']);
-  Color get lightTextColor => htmlColor(_appTheme.colors['lightText']);
-  Color get mediumTextColor => htmlColor(_appTheme.colors['mediumText']);
-  Color get darkTextColor => htmlColor(_appTheme.colors['darkText']);
-  Color get linkColor => htmlColor(_appTheme.colors['link']);
-  Color get linkTapColor => htmlColor(_appTheme.colors['linkTap']);
+  final bool isNightMode;
+  final AppTheme appTheme;
+
+  Color get mainColor => htmlColor(appTheme.colors['main']);
+  Color get pageColor => htmlColor(appTheme.colors['paper']);
+  Color get barTextColor => htmlColor(appTheme.colors['barText']);
+  Color get headerBG => htmlColor(appTheme.colors['headerBG']);
+  Color get quoteBG => htmlColor(appTheme.colors['quoteBG']);
+  Color get textColor => htmlColor(appTheme.colors['text']);
+  Color get lightTextColor => htmlColor(appTheme.colors['lightText']);
+  Color get mediumTextColor => htmlColor(appTheme.colors['mediumText']);
+  Color get darkTextColor => htmlColor(appTheme.colors['darkText']);
+  Color get linkColor => htmlColor(appTheme.colors['link']);
+  Color get linkTapColor => htmlColor(appTheme.colors['linkTap']);
 
   @override
   bool operator ==(other) {
     return other is LKongAppTheme &&
-        _appTheme == other._appTheme &&
-        _isNightMode == other._isNightMode;
+        appTheme == other.appTheme &&
+        isNightMode == other.isNightMode;
   }
 
   @override
   int get hashCode {
-    return hash2(_appTheme, _isNightMode);
+    return hash2(appTheme, isNightMode);
   }
 
-  LKongAppTheme(this._appTheme, this._isNightMode);
+  LKongAppTheme(this.appTheme, this.isNightMode);
 
   static LKongAppTheme fromStore(Store<AppState> store) {
     bool night = store.state.appConfig.setting.nightMode;
@@ -62,7 +50,7 @@ class LKongAppTheme {
   }
 
   ThemeData get themeData {
-    ThemeData template = _isNightMode ? ThemeData.dark() : ThemeData.light();
+    ThemeData template = isNightMode ? ThemeData.dark() : ThemeData.light();
 
     return template.copyWith(
         primaryColor: mainColor,
@@ -84,7 +72,7 @@ class LKongAppTheme {
     RegExp pattern = RegExp(r"#-([a-zA-Z0-9_]+)-", caseSensitive: false);
     String newCSS = css.replaceAllMapped(pattern, (Match match) {
       String name = match[1];
-      String color = _appTheme.colors[name];
+      String color = appTheme.colors[name];
       if (color != null) {
         return color;
       } else {

@@ -5,42 +5,18 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
 import 'package:lkongapp/models/serializers.dart';
+import 'package:lkongapp/data/theme.dart' as themeData;
 
 part 'theme.g.dart';
 
-
 AppTheme defaultTheme = (AppThemeBuilder()
-      ..name = "默认"
-      ..colors = {
-        "main": "#0080C0",
-        "paper": "#FFF",
-        "headerBG": "#F0F0F0",
-        "quoteBG": "#E9E9E9",
-        "text": "#111",
-        "lightText": "#999",
-        "mediumText": "#666",
-        "darkText": "#333",
-        "barText": "#FFF",
-        "link": "#0099CC",
-        "linkTap": "rgba(51, 51, 51, 0.5)"
-      })
+      ..name = themeData.defaultTheme["name"]
+      ..colors = themeData.defaultTheme["colors"])
     .build();
 
 AppTheme nightTheme = (AppThemeBuilder()
-      ..name = "默认夜间"
-      ..colors = {
-        "main": "#222",
-        "paper": "#111",
-        "headerBG": "#282828",
-        "quoteBG": "#333",
-        "text": "#EEE",
-        "lightText": "#666",
-        "mediumText": "#999",
-        "darkText": "#CCC",
-        "barText": "#FFF",
-        "link": "#0099CC",
-        "linkTap": "rgba(204, 204, 204, 0.5)"
-      })
+      ..name = themeData.nightTheme["name"]
+      ..colors = themeData.nightTheme["colors"])
     .build();
 
 Color htmlColor(String html) {
@@ -67,7 +43,8 @@ Color htmlColor(String html) {
     String b = match.group(3);
     String o = match.group(4);
 
-    color = Color.fromRGBO(int.parse(r), int.parse(g), int.parse(b), double.parse(o));
+    color = Color.fromRGBO(
+        int.parse(r), int.parse(g), int.parse(b), double.parse(o));
   } else {
     color = Color(0);
   }

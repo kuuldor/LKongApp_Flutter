@@ -9,7 +9,7 @@ import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:lkongapp/data/theme.dart' as themeData;
 //here goes the function
 
 String html2Text(String htmlString) {
@@ -91,6 +91,8 @@ _parseImageAndText(BuildContext context,
       //TODO: handle video nodes
 
     } else {
+      String cls = e.attributes["class"];
+      baseTextStyle = applyCSSForClass(cls, theme, baseTextStyle);
       if (e.localName == "em" || e.localName == "i") {
         baseTextStyle = baseTextStyle.copyWith(fontStyle: FontStyle.italic);
       } else if (e.localName == "strong" || e.localName == "b") {
@@ -159,7 +161,6 @@ _parseImageAndText(BuildContext context,
         String link =
             dataItem == null ? e.attributes["href"] : "lkong://$dataItem";
 
-        print("Anchor is ${e.outerHtml}");
         if (link != null) {
           if (nodeWidgets.length > 0) {
             print("Image in link");
@@ -206,6 +207,32 @@ _parseImageAndText(BuildContext context,
         node.text.trim().replaceAll(RegExp(r"(\s+)", multiLine: true), " ");
     textList.add(TextSpan(style: baseTextStyle, text: text));
   }
+}
+
+TextStyle applyCSSForClass(
+    String className, LKongAppTheme theme, TextStyle baseTextStyle) {
+  if (className != null) {
+    print("Class $className");
+    var style = themeData.cssStyle[".$className"];
+    if (style != null) {
+      print("Style $style");
+      String fcolorName = style["color"] as String;
+      if (fcolorName != null) {
+        String fcolor = theme.appTheme.colors[fcolorName];
+        if (fcolor == null) {
+          fcolor = fcolorName;
+        }
+        Color color = htmlColor(fcolor);
+        baseTextStyle = baseTextStyle.apply(color: color);
+      }
+
+      double fsize = style["font-size"];
+      if (fsize != null) {
+        baseTextStyle = baseTextStyle.apply(fontSizeFactor: fsize);
+      }
+    }
+  }
+  return baseTextStyle;
 }
 
 _parseDocumentBody(
