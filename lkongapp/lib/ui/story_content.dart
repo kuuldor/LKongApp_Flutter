@@ -26,13 +26,19 @@ class StoryContent extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return StoryContentState();
+    return StoryContentState(storyId, postId, page);
   }
 }
 
 class StoryContentState extends State<StoryContent> {
+  int storyId;
+  int postId;
+  int page;
+
   bool loaded;
   bool loading;
+
+  StoryContentState(this.storyId, this.postId, this.page);
 
   @override
   void initState() {
@@ -40,6 +46,20 @@ class StoryContentState extends State<StoryContent> {
 
     loaded = false;
     loading = false;
+  }
+
+  void prevPage() {
+    setState(() {
+      if (page > 0) {
+        page--;
+      }
+    });
+  }
+
+  void nextPage() {
+    setState(() {
+      page++;
+    });
   }
 
   void setLoading(bool value) {
@@ -91,8 +111,8 @@ class StoryContentModel {
 
   var _scrollController = ScrollController();
   Widget _buildContentView(BuildContext context, StoryContentState state) {
-    int storyId = state.widget.storyId;
-    int pageNo = state.widget.page;
+    int storyId = state.storyId;
+    int pageNo = state.page;
     StoryInfoResult info;
 
     BuiltList<Comment> comments;
@@ -125,6 +145,7 @@ class StoryContentModel {
       }
       return Container();
     }
+    int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
     return Scaffold(
       body: ListView.builder(
           shrinkWrap: true,
@@ -139,7 +160,7 @@ class StoryContentModel {
                 comment: comment,
                 // onTap: () => onStoryTap(context, story),
               );
-            } else {
+            } else if (index == 0) {
               item = Container(
                 child: Center(
                   child: StoryInfoItem(info: info),
@@ -150,10 +171,51 @@ class StoryContentModel {
             return Column(children: <Widget>[
               item,
               Divider(
-                height: 12.0,
+                height: 44.0,
               ),
             ]);
           }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {},
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            IconButton(
+              color: Theme.of(context).primaryColor,
+              icon: Icon(Icons.arrow_back),
+              onPressed: state.page > 1
+                  ? () {
+                      state.prevPage();
+                    }
+                  : null,
+            ),
+            FlatButton(
+              child: Text(
+                "$pageNo / $totalPages",
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .apply(color: Theme.of(context).primaryColor),
+              ),
+              onPressed: () {},
+            ),
+            IconButton(
+              color: Theme.of(context).primaryColor,
+              icon: Icon(Icons.arrow_forward),
+              onPressed: state.page < totalPages
+                  ? () {
+                      state.nextPage();
+                    }
+                  : null,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

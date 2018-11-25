@@ -61,6 +61,7 @@ _parseImageAndText(BuildContext context,
     @required List<Widget> widgetList,
     @required TextStyle baseTextStyle,
     @required List<TextSpan> textList}) {
+  LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
   if (node is dom.Element) {
     dom.Element e = node;
 
@@ -110,7 +111,7 @@ _parseImageAndText(BuildContext context,
           }
         });
       } else if (e.localName == "a") {
-        baseTextStyle = baseTextStyle.apply(color: Colors.blue);
+        baseTextStyle = baseTextStyle.apply(color: theme.linkColor);
       }
 
       List<Widget> nodeWidgets = List<Widget>();
@@ -133,7 +134,6 @@ _parseImageAndText(BuildContext context,
       //Handle elements to be converted to widget. Otherwise just append to widget/text list
       if (e.localName == "blockquote") {
         _cleanUpTextList(nodeWidgets, nodeTextList);
-        LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
         widgetList.add(
           Card(
             color: theme.quoteBG,
@@ -154,37 +154,42 @@ _parseImageAndText(BuildContext context,
           ),
         );
       } else if (e.localName == "a") {
-        String link = e.attributes["href"];
-        print("Link is $link");
+        String dataItem = e.attributes["dataitem"];
 
-        if (nodeWidgets.length > 0) {
-          print("Image in link");
-          _cleanUpTextList(nodeWidgets, nodeTextList);
-          var linkDetector = GestureDetector(
-            // When the child is tapped, show a snackbar
-            onTap: () => _handleURL(link),
-            // Our Custom Button!
-            child: Column(
-              children: nodeWidgets,
-            ),
-          );
-          widgetList.add(linkDetector);
-        } else if (nodeTextList.length > 0) {
-          // TextSpan's recognizer only works on direct text but not children.
-          // var linkText = TextSpan(
-          //   style: baseTextStyle,
-          //   children: nodeTextList,
-          //   recognizer: TapGestureRecognizer()..onTap = () => _handleURL(link),
-          // );
-          // textList.add(linkText);
-          TapGestureRecognizer tapper = TapGestureRecognizer()
-            ..onTap = () => _handleURL(link);
-          List<TextSpan> linkTexts = List<TextSpan>();
-          nodeTextList.forEach((text) {
-            linkTexts.add(TextSpan(
-                recognizer: tapper, style: text.style, text: text.text));
-          });
-          textList.addAll(linkTexts);
+        String link =
+            dataItem == null ? e.attributes["href"] : "lkong://$dataItem";
+
+        print("Anchor is ${e.outerHtml}");
+        if (link != null) {
+          if (nodeWidgets.length > 0) {
+            print("Image in link");
+            _cleanUpTextList(nodeWidgets, nodeTextList);
+            var linkDetector = GestureDetector(
+              // When the child is tapped, show a snackbar
+              onTap: () => _handleURL(link),
+              // Our Custom Button!
+              child: Column(
+                children: nodeWidgets,
+              ),
+            );
+            widgetList.add(linkDetector);
+          } else if (nodeTextList.length > 0) {
+            // TextSpan's recognizer only works on direct text but not children.
+            // var linkText = TextSpan(
+            //   style: baseTextStyle,
+            //   children: nodeTextList,
+            //   recognizer: TapGestureRecognizer()..onTap = () => _handleURL(link),
+            // );
+            // textList.add(linkText);
+            TapGestureRecognizer tapper = TapGestureRecognizer()
+              ..onTap = () => _handleURL(link);
+            List<TextSpan> linkTexts = List<TextSpan>();
+            nodeTextList.forEach((text) {
+              linkTexts.add(TextSpan(
+                  recognizer: tapper, style: text.style, text: text.text));
+            });
+            textList.addAll(linkTexts);
+          }
         }
       } else {
         if (nodeWidgets.length > 0) {
