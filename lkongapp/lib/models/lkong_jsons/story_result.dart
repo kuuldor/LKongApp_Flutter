@@ -274,13 +274,13 @@ abstract class Comment implements Built<Comment, CommentBuilder> {
   @BuiltValueField(wireName: 'notgroup')
   int get notgroup;
   @BuiltValueField(wireName: 'pid')
-  String get pid;
+  int get pid;
   @BuiltValueField(wireName: 'first')
   int get first;
   @BuiltValueField(wireName: 'status')
   int get status;
   @BuiltValueField(wireName: 'id')
-  String get id;
+  int get id;
   @BuiltValueField(wireName: 'tsadmin')
   bool get tsadmin;
   @BuiltValueField(wireName: 'isadmin')

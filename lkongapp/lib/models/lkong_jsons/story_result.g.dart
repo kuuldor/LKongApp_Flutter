@@ -679,13 +679,13 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
       serializers.serialize(object.notgroup,
           specifiedType: const FullType(int)),
       'pid',
-      serializers.serialize(object.pid, specifiedType: const FullType(String)),
+      serializers.serialize(object.pid, specifiedType: const FullType(int)),
       'first',
       serializers.serialize(object.first, specifiedType: const FullType(int)),
       'status',
       serializers.serialize(object.status, specifiedType: const FullType(int)),
       'id',
-      serializers.serialize(object.id, specifiedType: const FullType(String)),
+      serializers.serialize(object.id, specifiedType: const FullType(int)),
       'tsadmin',
       serializers.serialize(object.tsadmin,
           specifiedType: const FullType(bool)),
@@ -764,7 +764,7 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           break;
         case 'pid':
           result.pid = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(int)) as int;
           break;
         case 'first':
           result.first = serializers.deserialize(value,
@@ -776,7 +776,7 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           break;
         case 'id':
           result.id = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(int)) as int;
           break;
         case 'tsadmin':
           result.tsadmin = serializers.deserialize(value,
@@ -2188,13 +2188,13 @@ class _$Comment extends Comment {
   @override
   final int notgroup;
   @override
-  final String pid;
+  final int pid;
   @override
   final int first;
   @override
   final int status;
   @override
-  final String id;
+  final int id;
   @override
   final bool tsadmin;
   @override
@@ -2433,9 +2433,9 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int get notgroup => _$this._notgroup;
   set notgroup(int notgroup) => _$this._notgroup = notgroup;
 
-  String _pid;
-  String get pid => _$this._pid;
-  set pid(String pid) => _$this._pid = pid;
+  int _pid;
+  int get pid => _$this._pid;
+  set pid(int pid) => _$this._pid = pid;
 
   int _first;
   int get first => _$this._first;
@@ -2445,9 +2445,9 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int get status => _$this._status;
   set status(int status) => _$this._status = status;
 
-  String _id;
-  String get id => _$this._id;
-  set id(String id) => _$this._id = id;
+  int _id;
+  int get id => _$this._id;
+  set id(int id) => _$this._id = id;
 
   bool _tsadmin;
   bool get tsadmin => _$this._tsadmin;

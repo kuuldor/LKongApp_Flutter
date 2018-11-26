@@ -212,7 +212,7 @@ _parseImageAndText(BuildContext context,
 TextStyle applyCSSForClass(
     String className, LKongAppTheme theme, TextStyle baseTextStyle) {
   if (className != null) {
-    print("Class $className");
+    // print("Class $className");
     var style = themeData.cssStyle[".$className"];
     if (style != null) {
       print("Style $style");

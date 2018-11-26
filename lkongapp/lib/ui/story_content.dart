@@ -224,32 +224,47 @@ class StoryContentModel {
                     .apply(color: Theme.of(context).primaryColor),
               ),
               onPressed: () {
-                showBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return Container(
-                        height: 240.0,
-                        decoration: BoxDecoration(
-                            color: theme.headerBG,
-                            border:
-                                Border.all(color: theme.mainColor, width: 2.0),
-                            borderRadius: BorderRadius.circular(6.0)),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: totalPages,
-                          itemBuilder: (BuildContext context, i) => ListTile(
-                                leading: Icon(Icons.layers),
-                                title: Text(
-                                    "第${i + 1}页（${i * 20 + 1}楼 —— ${(i + 1) * 20}楼）"),
-                                onTap: () {
+                if (totalPages > 1) {
+                  final rowHeight = 40.0;
+                  final maxHeight = 320.0;
+                  final maxRows = maxHeight / rowHeight;
+                  showBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return Container(
+                          height: totalPages > maxRows ? maxHeight : totalPages * rowHeight + 20,
+                          decoration: BoxDecoration(
+                              color: theme.headerBG,
+                              border: Border.all(
+                                  color: theme.mainColor, width: 2.0),
+                              borderRadius: BorderRadius.circular(6.0)),
+                          child: ListView.builder(
+                            controller: ScrollController(initialScrollOffset: (pageNo - 4) * rowHeight),
+                              shrinkWrap: true,
+                              itemCount: totalPages,
+                              itemBuilder: (BuildContext context, i) {
+                                final turnPage = (int i) {
                                   state.setPage(i + 1);
                                   Navigator.pop(context);
                                   _scrollController.jumpTo(0.0);
-                                },
-                              ),
-                        ),
-                      );
-                    });
+                                };
+                                return Container(
+                                  height: rowHeight,
+                                  child: ListTile(
+                                    leading: Radio<int>(
+                                      value: i,
+                                      groupValue: pageNo - 1,
+                                      onChanged: turnPage,
+                                    ),
+                                    title: Text(
+                                        "第${i + 1}页（${i * 20 + 1}楼 —— ${(i + 1) * 20}楼）"),
+                                    onTap: () => turnPage(i),
+                                  ),
+                                );
+                              }),
+                        );
+                      });
+                }
               },
             ),
             IconButton(
