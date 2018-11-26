@@ -16,9 +16,6 @@ class StoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('帖子'),
-      ),
       body: StoryContent(storyId: storyId, postId: postId, page: page),
     );
   }

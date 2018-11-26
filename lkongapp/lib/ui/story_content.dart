@@ -7,6 +7,7 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/comment_item.dart';
 import 'package:lkongapp/ui/items/story_info.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:redux/redux.dart';
 
@@ -62,6 +63,12 @@ class StoryContentState extends State<StoryContent> {
     });
   }
 
+  void setPage(int newPage) {
+    setState(() {
+      page = newPage;
+    });
+  }
+
   void setLoading(bool value) {
     setState(() {
       loading = value;
@@ -110,6 +117,7 @@ class StoryContentModel {
   }
 
   var _scrollController = ScrollController();
+
   Widget _buildContentView(BuildContext context, StoryContentState state) {
     int storyId = state.storyId;
     int pageNo = state.page;
@@ -145,36 +153,48 @@ class StoryContentModel {
       }
       return Container();
     }
+
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
+    final theme = LKModeledApp.modelOf(context).theme;
+
+    final buildCommentViews = (int count) {
+      final wrapTile = (Widget tile) => Column(children: <Widget>[
+            tile,
+            Divider(
+              height: 24.0,
+            ),
+          ]);
+      List<Widget> tiles = List();
+      tiles.add(wrapTile(Container(
+          child: Center(
+        child: StoryInfoItem(info: info),
+      ))));
+      for (int i = 0; i < count; i++) {
+        var comment = comments[i];
+
+        Widget item = CommentItem(
+          comment: comment,
+          // onTap: () => onStoryTap(context, story),
+        );
+        tiles.add(wrapTile(item));
+      }
+
+      return tiles;
+    };
+
     return Scaffold(
-      body: ListView.builder(
-          shrinkWrap: true,
-          controller: _scrollController,
-          itemCount: comments.length + 1,
-          itemBuilder: (BuildContext context, index) {
-            Widget item;
-            if (index > 0 && index <= comments.length) {
-              var comment = comments[index - 1];
-
-              item = CommentItem(
-                comment: comment,
-                // onTap: () => onStoryTap(context, story),
-              );
-            } else if (index == 0) {
-              item = Container(
-                child: Center(
-                  child: StoryInfoItem(info: info),
-                ),
-              );
-            }
-
-            return Column(children: <Widget>[
-              item,
-              Divider(
-                height: 44.0,
-              ),
-            ]);
-          }),
+      body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
+        SliverAppBar(
+          title: Text("帖子"),
+          floating: true,
+          pinned: false,
+        ),
+        SliverList(
+          delegate: SliverChildListDelegate(
+            buildCommentViews(comments.length),
+          ),
+        ),
+      ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -191,6 +211,7 @@ class StoryContentModel {
               onPressed: state.page > 1
                   ? () {
                       state.prevPage();
+                      _scrollController.jumpTo(0.0);
                     }
                   : null,
             ),
@@ -202,7 +223,34 @@ class StoryContentModel {
                     .title
                     .apply(color: Theme.of(context).primaryColor),
               ),
-              onPressed: () {},
+              onPressed: () {
+                showBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Container(
+                        height: 240.0,
+                        decoration: BoxDecoration(
+                            color: theme.headerBG,
+                            border:
+                                Border.all(color: theme.mainColor, width: 2.0),
+                            borderRadius: BorderRadius.circular(6.0)),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: totalPages,
+                          itemBuilder: (BuildContext context, i) => ListTile(
+                                leading: Icon(Icons.layers),
+                                title: Text(
+                                    "第${i + 1}页（${i * 20 + 1}楼 —— ${(i + 1) * 20}楼）"),
+                                onTap: () {
+                                  state.setPage(i + 1);
+                                  Navigator.pop(context);
+                                  _scrollController.jumpTo(0.0);
+                                },
+                              ),
+                        ),
+                      );
+                    });
+              },
             ),
             IconButton(
               color: Theme.of(context).primaryColor,
@@ -210,6 +258,7 @@ class StoryContentModel {
               onPressed: state.page < totalPages
                   ? () {
                       state.nextPage();
+                      _scrollController.jumpTo(0.0);
                     }
                   : null,
             ),
