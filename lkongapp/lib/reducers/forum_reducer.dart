@@ -82,7 +82,15 @@ _forumStorySucceeded(ForumStoryRequestType type) =>
               b..stories.replace(list);
               break;
             case ForumStoryRequestType.Refresh:
-              b..stories.insertAll(0, list);
+              var newsSet = list.map((story) => story.id).toSet();
+              var newsList = list.asList();
+              b.stories.map((story) {
+                if (!newsSet.contains(story.id)) {
+                  newsList.add(story);
+                }
+                return null;
+              });
+              b..stories.replace(newsList);
               break;
             case ForumStoryRequestType.LoadMore:
               b..stories.addAll(list);
