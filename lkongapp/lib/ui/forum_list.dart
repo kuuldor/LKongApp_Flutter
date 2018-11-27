@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
@@ -74,7 +75,14 @@ class ForumListModel {
       loading: store.state.isLoading,
       repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
-        return Future(() {});
+        return Future(() {
+          StoreProvider.of<AppState>(context).dispatch(UINavigationPush(
+              context, LKongAppRoutes.forumStory, false, (context) {
+            return ForumStory(
+              forum: forum,
+            );
+          }));
+        });
       },
     );
   }

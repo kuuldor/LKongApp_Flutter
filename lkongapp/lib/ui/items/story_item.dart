@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 class StoryItem extends StatelessWidget {
@@ -16,6 +17,12 @@ class StoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    var titleStyle = Theme.of(context).textTheme.title;
+    if (story.digest != null && story.digest != 0) {
+      titleStyle =
+          titleStyle.apply(color: theme.darkTextColor, fontWeightDelta: 1);
+    }
     return ListTile(
       onTap: onTap,
       title: Column(children: <Widget>[
@@ -54,15 +61,17 @@ class StoryItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  story.subject,
-                  style: Theme.of(context).textTheme.title,
+                  stripHtmlTag(story.subject),
+                  style: titleStyle,
                 ),
               ),
             ],
           ),
         ),
       ]),
-      subtitle: Text(html2Text(story.message), maxLines: 4),
+      subtitle: story.message != null
+          ? Text(html2Text(story.message), maxLines: 4)
+          : null,
     );
   }
 }

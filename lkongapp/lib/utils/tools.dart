@@ -20,6 +20,16 @@ String html2Text(String htmlString) {
   return parsedString;
 }
 
+String stripHtmlTag(String string) {
+  RegExp tagPattern = RegExp(r'<[!/a-z].*?>');
+  RegExp spacePattern = RegExp(r'\s+', multiLine: true);
+
+  string = string.replaceAll(tagPattern, "");
+  string = string.replaceAll(spacePattern, " ");
+  
+  return string.trim();
+}
+
 _handleURL(String url) async {
   print("URL is cliked: $url");
   if (url.startsWith("http")) {

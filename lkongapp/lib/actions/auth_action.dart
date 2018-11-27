@@ -15,13 +15,14 @@ class LoginRequest extends APIRequest with StartLoading {
   CreateFailure get badResponse => (error) => LoginFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (user) => LoginSuccess(user);
+  CreateSuccess get goodResponse =>
+      (request, user) => LoginSuccess(request, user);
 }
 
 class LoginSuccess extends APISuccess with StopLoading {
   final User user;
 
-  LoginSuccess(this.user);
+  LoginSuccess(request, this.user) : super(request);
 }
 
 class LoginFailure extends APIFailure with StopLoading {
@@ -41,13 +42,14 @@ class UserInfoRequest extends APIRequest with StartLoading {
   CreateFailure get badResponse => (error) => UserInfoFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (userInfo) => UserInfoSuccess(userInfo);
+  CreateSuccess get goodResponse =>
+      (request, userInfo) => UserInfoSuccess(request, userInfo);
 }
 
 class UserInfoSuccess extends APISuccess with StopLoading {
   final UserInfo userInfo;
 
-  UserInfoSuccess(this.userInfo);
+  UserInfoSuccess(request, this.userInfo) : super(request);
 }
 
 class UserInfoFailure extends APIFailure with StopLoading {

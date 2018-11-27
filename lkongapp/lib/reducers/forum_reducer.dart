@@ -59,11 +59,13 @@ final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
 
 _forumStorySucceeded(ForumStoryRequestType type) =>
     (BuiltMap<int, StoryFetchList> repo, ForumStorySuccess action) {
+      var request = action.request as ForumStoryRequest;
       var result = action.result;
       var newRepo = repo;
       var list = result.data;
-      if (list != null && list.length > 0) {
-        int fid = list[0].fid;
+
+      if (request != null && list != null && list.length > 0) {
+        int fid = request.forum;
         final update = (StoryFetchListBuilder b) {
           int nexttime = type != ForumStoryRequestType.Refresh
               ? result.nexttime

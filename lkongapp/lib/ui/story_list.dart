@@ -66,8 +66,8 @@ abstract class StoryListModel {
   }
 
   Widget buildListView(BuildContext context) {
-    int itemCount = storyList.stories.length;
-    if (itemCount == 0) {
+    int itemCount = storyList?.stories?.length;
+    if (itemCount == null || itemCount == 0) {
       if (loading) {
         return Center(child: CircularProgressIndicator());
       } else {

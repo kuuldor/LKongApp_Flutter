@@ -298,7 +298,7 @@ Future<Map> apiDispatch(api, Map parameters) {
     return getForumList();
   }
 
-   if (api == FORUM_INFO_API) {
+  if (api == FORUM_INFO_API) {
     return getForumInfo(parameters);
   }
 
@@ -324,15 +324,15 @@ APIResponse createResponseAction(APIRequest action, Map response) {
 
   if (api == LOGIN_API) {
     User user = userParam(action.parameters);
-    return LoginSuccess(user.rebuild((b) => b..uid = response["uid"]));
+    return LoginSuccess(action, user.rebuild((b) => b..uid = response["uid"]));
   }
 
   var output = response["result"];
-  return action.goodResponse(output);
+  return action.goodResponse(action, output);
 
   if (api == HOMELIST_API) {
     HomeListResult list = response["result"] as HomeListResult;
-    return HomeListSuccess(list);
+    return HomeListSuccess(action, list);
   }
 
   if (api == STORY_CONTENT_API) {

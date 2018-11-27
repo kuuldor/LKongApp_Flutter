@@ -14,13 +14,14 @@ class ForumListRequest extends APIRequest with StartLoading {
   CreateFailure get badResponse => (error) => ForumListFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (list) => ForumListSuccess(list);
+  CreateSuccess get goodResponse =>
+      (request, list) => ForumListSuccess(request, list);
 }
 
 class ForumListSuccess extends APISuccess with StopLoading {
   final ForumListResult list;
 
-  ForumListSuccess(this.list);
+  ForumListSuccess(request, this.list) : super(request);
 }
 
 class ForumListFailure extends APIFailure with StopLoading {
@@ -39,13 +40,14 @@ class ForumInfoRequest extends APIRequest with StartLoading {
   CreateFailure get badResponse => (error) => ForumInfoFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (info) => ForumInfoSuccess(info);
+  CreateSuccess get goodResponse =>
+      (request, info) => ForumInfoSuccess(request, info);
 }
 
 class ForumInfoSuccess extends APISuccess with StopLoading {
   final ForumInfoResult result;
 
-  ForumInfoSuccess(this.result);
+  ForumInfoSuccess(request, this.result) : super(request);
 }
 
 class ForumInfoFailure extends APIFailure with StopLoading {
@@ -77,36 +79,40 @@ class ForumStoryNewRequest extends ForumStoryRequest {
   CreateFailure get badResponse => (error) => ForumStoryNewFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (result) => ForumStoryNewSuccess(result);
+  CreateSuccess get goodResponse =>
+      (request, result) => ForumStoryNewSuccess(request, result);
 }
 
 class ForumStoryRefreshRequest extends ForumStoryRequest {
-
-  ForumStoryRefreshRequest(Completer completer, int forum, int mode, int current)
+  ForumStoryRefreshRequest(
+      Completer completer, int forum, int mode, int current)
       : super(completer, forum, mode, 0, current);
 
   @override
   CreateFailure get badResponse => (error) => ForumStoryRefreshFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (result) => ForumStoryRefreshSuccess(result);
+  CreateSuccess get goodResponse =>
+      (request, result) => ForumStoryRefreshSuccess(request, result);
 }
 
 class ForumStoryLoadMoreRequest extends ForumStoryRequest {
-  ForumStoryLoadMoreRequest(Completer completer, int forum, int mode,  int nexttime)
+  ForumStoryLoadMoreRequest(
+      Completer completer, int forum, int mode, int nexttime)
       : super(completer, forum, mode, nexttime, 0);
 
   @override
   CreateFailure get badResponse => (error) => ForumStoryLoadMoreFailure(error);
 
   @override
-  CreateSuccess get goodResponse => (result) => ForumStoryLoadMoreSuccess(result);
+  CreateSuccess get goodResponse =>
+      (request, result) => ForumStoryLoadMoreSuccess(request, result);
 }
 
 class ForumStorySuccess extends APISuccess with StopLoading {
   final ForumStoryResult result;
 
-  ForumStorySuccess(this.result);
+  ForumStorySuccess(request, this.result) : super(request);
 }
 
 class ForumStoryFailure extends APIFailure with StopLoading {
@@ -114,7 +120,8 @@ class ForumStoryFailure extends APIFailure with StopLoading {
 }
 
 class ForumStoryNewSuccess extends ForumStorySuccess {
-  ForumStoryNewSuccess(ForumStoryResult result) : super(result);
+  ForumStoryNewSuccess(request, ForumStoryResult result)
+      : super(request, result);
 }
 
 class ForumStoryNewFailure extends ForumStoryFailure {
@@ -122,7 +129,8 @@ class ForumStoryNewFailure extends ForumStoryFailure {
 }
 
 class ForumStoryRefreshSuccess extends ForumStorySuccess with StopLoading {
-  ForumStoryRefreshSuccess(ForumStoryResult result) : super(result);
+  ForumStoryRefreshSuccess(request, ForumStoryResult result)
+      : super(request, result);
 }
 
 class ForumStoryRefreshFailure extends ForumStoryFailure {
@@ -130,7 +138,8 @@ class ForumStoryRefreshFailure extends ForumStoryFailure {
 }
 
 class ForumStoryLoadMoreSuccess extends ForumStorySuccess {
-  ForumStoryLoadMoreSuccess(ForumStoryResult result) : super(result);
+  ForumStoryLoadMoreSuccess(request, ForumStoryResult result)
+      : super(request, result);
 }
 
 class ForumStoryLoadMoreFailure extends ForumStoryFailure {
