@@ -16,6 +16,24 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var messages = List<Widget>();
+    if (comment.warning) {
+      messages.add(Container(
+          color: Colors.redAccent,
+          child: ListTile(
+            leading: Icon(Icons.warning),
+            title: Text(
+              comment.warningReason,
+            ),
+          )));
+    }
+    messages.add(Expanded(
+      child: comment2Widget(
+        context,
+        comment.message,
+        style: Theme.of(context),
+      ),
+    ));
     return ListTile(
       // onTap: onTap,
       title: Column(children: <Widget>[
@@ -54,15 +72,7 @@ class CommentItem extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           child: Row(
-            children: <Widget>[
-              Expanded(
-                child: comment2Widget(
-                  context,
-                  comment.message,
-                  style: Theme.of(context),
-                ),
-              ),
-            ],
+            children: messages,
           ),
         ),
       ]),

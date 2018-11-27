@@ -116,10 +116,10 @@ class StoryListModel {
       child: ListView.builder(
           shrinkWrap: true,
           controller: _scrollController,
-          itemCount: homeList.stories.length + 1,
+          itemCount: itemCount + 1,
           itemBuilder: (BuildContext context, index) {
             Widget item;
-            if (index < homeList.stories.length) {
+            if (index < itemCount) {
               var story = homeList.stories[index];
               item = StoryItem(
                 story: story,

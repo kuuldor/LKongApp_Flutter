@@ -3,7 +3,7 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 
-import 'package:lkongapp/reducers/story_reducer.dart';
+import 'package:lkongapp/reducers/content_reducer.dart';
 
 final uiStateReducer = combineReducers<UIState>([
   TypedReducer<UIState, UIChange>(_changeUIState),

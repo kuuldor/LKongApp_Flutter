@@ -14,6 +14,7 @@ const HOMELIST_API = "HOMELIST";
 const STORY_CONTENT_API = "STORY_CONTENT";
 const STORY_INFO_API = "STORY_INFO";
 const FORUMLIST_API = "FORUMLIST";
+const FORUM_INFO_API = "FORUMINFO";
 const FORUMTHREADS_API = "FORUMTHREADS";
 const USERINFO_API = "USERINFO";
 
@@ -295,6 +296,10 @@ Future<Map> apiDispatch(api, Map parameters) {
 
   if (api == FORUMLIST_API) {
     return getForumList();
+  }
+
+   if (api == FORUM_INFO_API) {
+    return getForumInfo(parameters);
   }
 
   if (api.startsWith(FORUMTHREADS_API)) {

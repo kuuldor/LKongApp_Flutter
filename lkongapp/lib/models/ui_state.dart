@@ -53,6 +53,7 @@ abstract class ContentCache
   String get lastError;
   HomeList get homeList;
   BuiltMap<int, StoryPageList> get storyRepo;
+  ForumInfo get forumRepo;
 }
 
 abstract class HomeList implements Built<HomeList, HomeListBuilder> {
@@ -85,4 +86,15 @@ abstract class StoryPage implements Built<StoryPage, StoryPageBuilder> {
   factory StoryPage([updates(StoryPageBuilder b)]) =>
       _$StoryPage((b) => b..update(updates));
   BuiltList<Comment> get comments;
+}
+
+abstract class ForumInfo implements Built<ForumInfo, ForumInfoBuilder> {
+  ForumInfo._();
+  factory ForumInfo([updates(ForumInfoBuilder b)]) =>
+      _$ForumInfo((b) => b..update(updates));
+  
+  BuiltList<Forum> get forums;
+  BuiltList<Forum> get sysplanes;
+  BuiltList<Forum> get planes;
+  BuiltMap<int, ForumInfoResult> get info;
 }

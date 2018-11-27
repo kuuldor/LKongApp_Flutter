@@ -206,17 +206,23 @@ class _$ContentCache extends ContentCache {
   final HomeList homeList;
   @override
   final BuiltMap<int, StoryPageList> storyRepo;
+  @override
+  final ForumInfo forumRepo;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
 
-  _$ContentCache._({this.lastError, this.homeList, this.storyRepo})
+  _$ContentCache._(
+      {this.lastError, this.homeList, this.storyRepo, this.forumRepo})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
     }
     if (storyRepo == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'storyRepo');
+    }
+    if (forumRepo == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'forumRepo');
     }
   }
 
@@ -233,13 +239,16 @@ class _$ContentCache extends ContentCache {
     return other is ContentCache &&
         lastError == other.lastError &&
         homeList == other.homeList &&
-        storyRepo == other.storyRepo;
+        storyRepo == other.storyRepo &&
+        forumRepo == other.forumRepo;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
-        storyRepo.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
+            storyRepo.hashCode),
+        forumRepo.hashCode));
   }
 
   @override
@@ -247,7 +256,8 @@ class _$ContentCache extends ContentCache {
     return (newBuiltValueToStringHelper('ContentCache')
           ..add('lastError', lastError)
           ..add('homeList', homeList)
-          ..add('storyRepo', storyRepo))
+          ..add('storyRepo', storyRepo)
+          ..add('forumRepo', forumRepo))
         .toString();
   }
 }
@@ -270,6 +280,11 @@ class ContentCacheBuilder
   set storyRepo(MapBuilder<int, StoryPageList> storyRepo) =>
       _$this._storyRepo = storyRepo;
 
+  ForumInfoBuilder _forumRepo;
+  ForumInfoBuilder get forumRepo =>
+      _$this._forumRepo ??= new ForumInfoBuilder();
+  set forumRepo(ForumInfoBuilder forumRepo) => _$this._forumRepo = forumRepo;
+
   ContentCacheBuilder();
 
   ContentCacheBuilder get _$this {
@@ -277,6 +292,7 @@ class ContentCacheBuilder
       _lastError = _$v.lastError;
       _homeList = _$v.homeList?.toBuilder();
       _storyRepo = _$v.storyRepo?.toBuilder();
+      _forumRepo = _$v.forumRepo?.toBuilder();
       _$v = null;
     }
     return this;
@@ -303,7 +319,8 @@ class ContentCacheBuilder
           new _$ContentCache._(
               lastError: lastError,
               homeList: homeList.build(),
-              storyRepo: storyRepo.build());
+              storyRepo: storyRepo.build(),
+              forumRepo: forumRepo.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -311,6 +328,8 @@ class ContentCacheBuilder
         homeList.build();
         _$failedField = 'storyRepo';
         storyRepo.build();
+        _$failedField = 'forumRepo';
+        forumRepo.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'ContentCache', _$failedField, e.toString());
@@ -631,6 +650,149 @@ class StoryPageBuilder implements Builder<StoryPage, StoryPageBuilder> {
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'StoryPage', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$ForumInfo extends ForumInfo {
+  @override
+  final BuiltList<Forum> forums;
+  @override
+  final BuiltList<Forum> sysplanes;
+  @override
+  final BuiltList<Forum> planes;
+  @override
+  final BuiltMap<int, ForumInfoResult> info;
+
+  factory _$ForumInfo([void updates(ForumInfoBuilder b)]) =>
+      (new ForumInfoBuilder()..update(updates)).build();
+
+  _$ForumInfo._({this.forums, this.sysplanes, this.planes, this.info})
+      : super._() {
+    if (forums == null) {
+      throw new BuiltValueNullFieldError('ForumInfo', 'forums');
+    }
+    if (sysplanes == null) {
+      throw new BuiltValueNullFieldError('ForumInfo', 'sysplanes');
+    }
+    if (planes == null) {
+      throw new BuiltValueNullFieldError('ForumInfo', 'planes');
+    }
+    if (info == null) {
+      throw new BuiltValueNullFieldError('ForumInfo', 'info');
+    }
+  }
+
+  @override
+  ForumInfo rebuild(void updates(ForumInfoBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ForumInfoBuilder toBuilder() => new ForumInfoBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is ForumInfo &&
+        forums == other.forums &&
+        sysplanes == other.sysplanes &&
+        planes == other.planes &&
+        info == other.info;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc($jc($jc(0, forums.hashCode), sysplanes.hashCode), planes.hashCode),
+        info.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('ForumInfo')
+          ..add('forums', forums)
+          ..add('sysplanes', sysplanes)
+          ..add('planes', planes)
+          ..add('info', info))
+        .toString();
+  }
+}
+
+class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
+  _$ForumInfo _$v;
+
+  ListBuilder<Forum> _forums;
+  ListBuilder<Forum> get forums => _$this._forums ??= new ListBuilder<Forum>();
+  set forums(ListBuilder<Forum> forums) => _$this._forums = forums;
+
+  ListBuilder<Forum> _sysplanes;
+  ListBuilder<Forum> get sysplanes =>
+      _$this._sysplanes ??= new ListBuilder<Forum>();
+  set sysplanes(ListBuilder<Forum> sysplanes) => _$this._sysplanes = sysplanes;
+
+  ListBuilder<Forum> _planes;
+  ListBuilder<Forum> get planes => _$this._planes ??= new ListBuilder<Forum>();
+  set planes(ListBuilder<Forum> planes) => _$this._planes = planes;
+
+  MapBuilder<int, ForumInfoResult> _info;
+  MapBuilder<int, ForumInfoResult> get info =>
+      _$this._info ??= new MapBuilder<int, ForumInfoResult>();
+  set info(MapBuilder<int, ForumInfoResult> info) => _$this._info = info;
+
+  ForumInfoBuilder();
+
+  ForumInfoBuilder get _$this {
+    if (_$v != null) {
+      _forums = _$v.forums?.toBuilder();
+      _sysplanes = _$v.sysplanes?.toBuilder();
+      _planes = _$v.planes?.toBuilder();
+      _info = _$v.info?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(ForumInfo other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$ForumInfo;
+  }
+
+  @override
+  void update(void updates(ForumInfoBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$ForumInfo build() {
+    _$ForumInfo _$result;
+    try {
+      _$result = _$v ??
+          new _$ForumInfo._(
+              forums: forums.build(),
+              sysplanes: sysplanes.build(),
+              planes: planes.build(),
+              info: info.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'forums';
+        forums.build();
+        _$failedField = 'sysplanes';
+        sysplanes.build();
+        _$failedField = 'planes';
+        planes.build();
+        _$failedField = 'info';
+        info.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'ForumInfo', _$failedField, e.toString());
       }
       rethrow;
     }
