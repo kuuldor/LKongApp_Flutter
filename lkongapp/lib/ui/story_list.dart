@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
-import 'package:lkongapp/ui/story_content.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
