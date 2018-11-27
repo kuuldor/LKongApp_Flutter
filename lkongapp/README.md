@@ -1,6 +1,6 @@
 # lkongapp
 
-A new Flutter project.
+A Flutter project to create App for http://lkong.cn web forum.
 
 ## Getting Started
 
