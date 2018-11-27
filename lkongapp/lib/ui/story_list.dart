@@ -15,29 +15,28 @@ import 'package:lkongapp/actions/actions.dart';
 
 import 'package:lkongapp/ui/connected_widget.dart';
 
-class StoryList extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return buildConnectedWidget(context, StoryListModel.fromStore, (viewModel) {
-      return viewModel._buildListView(context);
-    });
-  }
-}
-
-class StoryListModel {
-  final bool threadOnlyHome;
-  final HomeList homeList;
-  final bool loading;
-
+abstract class StoryListModel {
   var _scrollController = ScrollController();
 
-  final Future<Null> Function(BuildContext context, Story story) onStoryTap;
-
-  StoryListModel(
-      {@required this.loading,
-      @required this.homeList,
-      @required this.threadOnlyHome,
-      @required this.onStoryTap});
+  final Future<Null> Function(BuildContext context, Story story) onStoryTap =
+      (BuildContext context, Story story) {
+    return Future(() {
+      String storyId = story.tid;
+      String postId = "0";
+      if (storyId == null) {
+        storyId = parseLKTypeId(story.id);
+      } else {
+        postId = parseLKTypeId(story.id);
+      }
+      StoreProvider.of<AppState>(context).dispatch(
+          UINavigationPush(context, LKongAppRoutes.story, false, (context) {
+        return StoryScreen(
+          storyId: int.parse(storyId),
+          postId: int.parse(postId),
+        );
+      }));
+    });
+  };
 
   void showToast(BuildContext context, String message) {
     Scaffold.of(context).showSnackBar(SnackBar(
@@ -47,60 +46,27 @@ class StoryListModel {
         duration: Duration(seconds: 3)));
   }
 
-  Future<Null> _handleRefresh(BuildContext context) {
-    final Completer<bool> completer = Completer<bool>();
-    StoreProvider.of<AppState>(context).dispatch(
-        HomeListRefreshRequest(completer, threadOnlyHome, homeList.current));
-    return completer.future.then((success) {
-      // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
-    });
+  APIRequest get refreshRequest;
+  APIRequest get fetchNewRequest;
+  APIRequest get loadMoreRequest;
+
+  bool get loading;
+  StoryFetchList get storyList;
+
+  Future<Null> _handleRefresh(BuildContext context) async {
+    StoreProvider.of<AppState>(context).dispatch(refreshRequest);
   }
 
-  Future<Null> _handleLoadNew(BuildContext context) {
-    final Completer<bool> completer = Completer<bool>();
-    StoreProvider.of<AppState>(context)
-        .dispatch(HomeListNewRequest(completer, threadOnlyHome, 0, 0));
-    return completer.future.then((success) {});
+  Future<Null> _handleLoadNew(BuildContext context) async {
+    StoreProvider.of<AppState>(context).dispatch(fetchNewRequest);
   }
 
-  Future<Null> _handleLoadMore(BuildContext context) {
-    final Completer<bool> completer = Completer<bool>();
-    StoreProvider.of<AppState>(context).dispatch(
-        HomeListLoadMoreRequest(completer, threadOnlyHome, homeList.nexttime));
-    return completer.future.then((success) {
-      // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
-    });
+  Future<Null> _handleLoadMore(BuildContext context) async {
+    StoreProvider.of<AppState>(context).dispatch(loadMoreRequest);
   }
 
-  static StoryListModel fromStore(Store<AppState> store) {
-    return StoryListModel(
-      loading: store.state.isLoading,
-      homeList: store.state.uiState.content.homeList,
-      threadOnlyHome:
-          store.state.appConfig.accountSettings.currentSetting.threadOnlyHome,
-      onStoryTap: (BuildContext context, Story story) {
-        return Future(() {
-          String storyId = story.tid;
-          String postId = "0";
-          if (storyId == null) {
-            storyId = parseLKTypeId(story.id);
-          } else {
-            postId = parseLKTypeId(story.id);
-          }
-          store.dispatch(
-              UINavigationPush(context, LKongAppRoutes.story, false, (context) {
-            return StoryScreen(
-              storyId: int.parse(storyId),
-              postId: int.parse(postId),
-            );
-          }));
-        });
-      },
-    );
-  }
-
-  Widget _buildListView(BuildContext context) {
-    int itemCount = homeList.stories.length;
+  Widget buildListView(BuildContext context) {
+    int itemCount = storyList.stories.length;
     if (itemCount == 0) {
       if (loading) {
         return Center(child: CircularProgressIndicator());
@@ -119,7 +85,7 @@ class StoryListModel {
           itemBuilder: (BuildContext context, index) {
             Widget item;
             if (index < itemCount) {
-              var story = homeList.stories[index];
+              var story = storyList.stories[index];
               item = StoryItem(
                 story: story,
                 onTap: () => onStoryTap(context, story),

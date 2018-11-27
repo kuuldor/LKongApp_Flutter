@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lkongapp/ui/home_list.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
@@ -57,8 +58,8 @@ class HomeScreen extends StatelessWidget {
         body: PageView(
           children: [
             Container(
-              // child: viewModel.user != null ? StoryList() : Container(),
-              child: StoryList(),
+              // child: viewModel.user != null ? HomeList() : Container(),
+              child: HomeList(),
             ),
             Container(
               child: ForumList(),
