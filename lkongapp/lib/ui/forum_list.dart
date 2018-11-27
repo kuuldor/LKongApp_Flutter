@@ -61,14 +61,20 @@ class ForumListModel {
     final Completer<bool> completer = Completer<bool>();
     StoreProvider.of<AppState>(context).dispatch(ForumListRequest(completer));
     return completer.future.then((success) {
-      _handleLoadInfo(context);
+      if (success) {
+        _handleLoadInfo(context);
+      }
     });
   }
 
   Future<Null> _handleLoadNew(BuildContext context) {
     final Completer<bool> completer = Completer<bool>();
     StoreProvider.of<AppState>(context).dispatch(ForumListRequest(completer));
-    return completer.future.then((success) {});
+    return completer.future.then((success) {
+      if (success) {
+        _handleLoadInfo(context);
+      }
+    });
   }
 
   static ForumListModel fromStore(Store<AppState> store) {
@@ -82,21 +88,15 @@ class ForumListModel {
   }
 
   Widget _buildListView(BuildContext context) {
-    if (loading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
     int forumCount = repo.forums.length;
 
     if (forumCount == 0) {
-      _handleLoadNew(context);
-      return Container();
-    }
-
-    int infoCount = repo.info.length;
-    if (infoCount == 0) {
-      _handleLoadInfo(context);
-      return Container();
+      if (loading) {
+        return Center(child: CircularProgressIndicator());
+      } else {
+        _handleLoadNew(context);
+        return Container();
+      }
     }
 
     return RefreshIndicator(

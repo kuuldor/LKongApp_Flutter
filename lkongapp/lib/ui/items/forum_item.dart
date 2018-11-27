@@ -54,7 +54,8 @@ class ForumItem extends StatelessWidget {
           ],
         ),
       ]),
-      subtitle: Text(info != null ? html2Text(info.description) : "", maxLines: 8),
+      subtitle:
+          info != null ? Text(html2Text(info.description), maxLines: 8) : null,
     );
   }
 }
