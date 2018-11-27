@@ -137,29 +137,20 @@ class StoryContentModel {
       }
     }
 
-    if (loading) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     if (info == null) {
       if (!loading) {
-        // Future(() {
         loadInfo(storyId);
-        // });
       }
     }
     if (comments == null) {
       if (!loading) {
-        // Future(() {
         loadContent(storyId, pageNo);
-        // });
       }
-      return Container();
     }
 
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
 
-    final buildCommentViews = (int count) {
+    final buildCommentViews = () {
       final wrapTile = (Widget tile) => Column(children: <Widget>[
             tile,
             Divider(
@@ -167,20 +158,31 @@ class StoryContentModel {
             ),
           ]);
       List<Widget> tiles = List();
-      tiles.add(wrapTile(Container(
+      if (loading || comments == null) {
+        tiles.add(Container(
+          height: MediaQuery.of(context).size.height - 160,
           child: Center(
-        child: StoryInfoItem(info: info),
-      ))));
-      for (int i = 0; i < count; i++) {
-        var comment = comments[i];
+            child: CircularProgressIndicator(),
+          ),
+        ));
+      } else {
+        tiles.add(wrapTile(
+          Container(
+            child: Center(
+              child: StoryInfoItem(info: info),
+            ),
+          ),
+        ));
+        for (int i = 0; i < comments.length; i++) {
+          var comment = comments[i];
 
-        Widget item = CommentItem(
-          comment: comment,
-          // onTap: () => onStoryTap(context, story),
-        );
-        tiles.add(wrapTile(item));
+          Widget item = CommentItem(
+            comment: comment,
+            // onTap: () => onStoryTap(context, story),
+          );
+          tiles.add(wrapTile(item));
+        }
       }
-
       return tiles;
     };
 
@@ -194,7 +196,7 @@ class StoryContentModel {
         ),
         SliverList(
           delegate: SliverChildListDelegate(
-            buildCommentViews(comments.length),
+            buildCommentViews(),
           ),
         ),
       ]),
