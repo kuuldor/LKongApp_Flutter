@@ -23,10 +23,8 @@ ForumInfo _forumListSucceeded(ForumInfo forumRepo, ForumListSuccess action) {
   var list = action.list;
   var newRepo = forumRepo;
   if (list != null && list.isok) {
-    newRepo = newRepo.rebuild((b) => b
-      ..forums.replace(list.forumList)
-      ..sysplanes.replace(list.sysweimian)
-      ..info.clear());
+    newRepo = newRepo.rebuild((b) =>
+        b..forums.replace(list.forumList)..sysplanes.replace(list.sysweimian));
   }
 
   return newRepo;

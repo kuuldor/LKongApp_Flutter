@@ -48,13 +48,12 @@ class ForumListModel {
         duration: Duration(seconds: 3)));
   }
 
-  Future<Null> _handleLoadInfo(BuildContext context) async {
-    if (repo.forums != null) {
+  void _handleLoadInfo(BuildContext context, [int retries = 0]) async {
+    if (repo.forums != null && repo.forums.length > 0) {
       var list = List<Forum>()..addAll(repo.forums);
       list.forEach((forum) => StoreProvider.of<AppState>(context)
           .dispatch(ForumInfoRequest(null, forum.fid)));
     }
-    return;
   }
 
   Future<Null> _handleRefresh(BuildContext context) {
@@ -70,11 +69,7 @@ class ForumListModel {
   Future<Null> _handleLoadNew(BuildContext context) {
     final Completer<bool> completer = Completer<bool>();
     StoreProvider.of<AppState>(context).dispatch(ForumListRequest(completer));
-    return completer.future.then((success) {
-      if (success) {
-        _handleLoadInfo(context);
-      }
-    });
+    return completer.future.then((success) {});
   }
 
   static ForumListModel fromStore(Store<AppState> store) {
@@ -96,6 +91,13 @@ class ForumListModel {
       } else {
         _handleLoadNew(context);
         return Container();
+      }
+    }
+
+    int infoCount = repo.info.length;
+    if (infoCount == 0) {
+      if (!loading) {
+        _handleLoadInfo(context);
       }
     }
 
