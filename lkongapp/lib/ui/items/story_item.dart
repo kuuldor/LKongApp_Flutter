@@ -20,9 +20,11 @@ class StoryItem extends StatelessWidget {
     final theme = LKModeledApp.modelOf(context).theme;
     var titleStyle = Theme.of(context).textTheme.title;
     if (story.digest != null && story.digest != 0) {
-      titleStyle =
-          titleStyle.apply(color: theme.darkTextColor, fontWeightDelta: 1);
+      titleStyle = titleStyle.apply(fontWeightDelta: 1);
+    } else {
+      titleStyle = titleStyle.apply(fontWeightDelta: -1);
     }
+    titleStyle = titleStyle.apply(color: theme.darkTextColor);
     return ListTile(
       onTap: onTap,
       title: Column(children: <Widget>[
