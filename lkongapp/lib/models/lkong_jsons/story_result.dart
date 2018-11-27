@@ -42,23 +42,43 @@ abstract class Story implements Built<Story, StoryBuilder> {
 
   factory Story([updates(StoryBuilder b)]) = _$Story;
 
-  @BuiltValueField(wireName: 'isquote')
-  bool get isquote;
-  @BuiltValueField(wireName: 'uid')
-  int get uid;
-  @BuiltValueField(wireName: 'username')
-  String get username;
+  @BuiltValueField(wireName: 'sortkey')
+  int get sortkey;
   @BuiltValueField(wireName: 'dateline')
   String get dateline;
+  @BuiltValueField(wireName: 'subject')
+  String get subject;
+  @BuiltValueField(wireName: 'username')
+  String get username;
+  @nullable
+  @BuiltValueField(wireName: 'digest')
+  int get digest;
+  @nullable
+  @BuiltValueField(wireName: 'closed')
+  int get closed;
+  @BuiltValueField(wireName: 'uid')
+  int get uid;
+
+  @BuiltValueField(wireName: 'id')
+  String get id;
+  @nullable
+  @BuiltValueField(wireName: 'fid')
+  int get fid;
+
+  @nullable
+  @BuiltValueField(wireName: 'isquote')
+  bool get isquote;
+
+  @nullable
   @BuiltValueField(wireName: 'message')
   String get message;
+  @nullable
   @BuiltValueField(wireName: 'isthread')
   bool get isthread;
   @nullable
   @BuiltValueField(wireName: 'tid')
   String get tid;
-  @BuiltValueField(wireName: 'subject')
-  String get subject;
+
   @nullable
   @BuiltValueField(wireName: 't_author')
   String get tAuthor;
@@ -68,13 +88,11 @@ abstract class Story implements Built<Story, StoryBuilder> {
   @nullable
   @BuiltValueField(wireName: 't_replynum')
   int get tReplynum;
-  @BuiltValueField(wireName: 'id')
-  String get id;
+
   @nullable
   @BuiltValueField(wireName: 'replynum')
   int get replynum;
-  @BuiltValueField(wireName: 'sortkey')
-  int get sortkey;
+
   String toJson() {
     return json.encode(serializers.serializeWith(Story.serializer, this));
   }
@@ -95,7 +113,7 @@ abstract class ForumStoryResult
       _$ForumStoryResult;
 
   @BuiltValueField(wireName: 'data')
-  BuiltList<Thread> get data;
+  BuiltList<Story> get data;
   @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
@@ -116,43 +134,6 @@ abstract class ForumStoryResult
 
   static Serializer<ForumStoryResult> get serializer =>
       _$forumStoryResultSerializer;
-}
-
-abstract class Thread implements Built<Thread, ThreadBuilder> {
-  Thread._();
-
-  factory Thread([updates(ThreadBuilder b)]) = _$Thread;
-
-  @BuiltValueField(wireName: 'sortkey')
-  int get sortkey;
-  @BuiltValueField(wireName: 'dateline')
-  String get dateline;
-  @BuiltValueField(wireName: 'subject')
-  String get subject;
-  @BuiltValueField(wireName: 'username')
-  String get username;
-  @BuiltValueField(wireName: 'digest')
-  int get digest;
-  @BuiltValueField(wireName: 'closed')
-  int get closed;
-  @BuiltValueField(wireName: 'uid')
-  int get uid;
-  @BuiltValueField(wireName: 'replynum')
-  int get replynum;
-  @BuiltValueField(wireName: 'id')
-  String get id;
-  @BuiltValueField(wireName: 'fid')
-  int get fid;
-  String toJson() {
-    return json.encode(serializers.serializeWith(Thread.serializer, this));
-  }
-
-  static Thread fromJson(String jsonString) {
-    return serializers.deserializeWith(
-        Thread.serializer, json.decode(jsonString));
-  }
-
-  static Serializer<Thread> get serializer => _$threadSerializer;
 }
 
 abstract class StoryInfoResult
@@ -232,7 +213,6 @@ abstract class StoryContentResult
   int get loadtime;
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
-
 
   String toJson() {
     return json

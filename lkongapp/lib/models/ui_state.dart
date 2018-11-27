@@ -46,23 +46,26 @@ abstract class ContentCache
   ContentCache._();
   factory ContentCache([updates(ContentCacheBuilder b)]) =>
       _$ContentCache((b) => b
-        ..homeList = (HomeListBuilder()..replace(HomeList()))
+        ..homeList.replace(StoryFetchList())
         ..update(updates));
 
   @nullable
   String get lastError;
-  HomeList get homeList;
+  StoryFetchList get homeList;
   BuiltMap<int, StoryPageList> get storyRepo;
-  ForumInfo get forumRepo;
+  ForumInfo get forumInfo;
+  BuiltMap<int, StoryFetchList> get forumRepo;
 }
 
-abstract class HomeList implements Built<HomeList, HomeListBuilder> {
-  HomeList._();
-  factory HomeList([updates(HomeListBuilder b)]) => _$HomeList((b) => b
-    // ..loading = false
-    ..current = 0
-    ..nexttime = 0
-    ..update(updates));
+abstract class StoryFetchList
+    implements Built<StoryFetchList, StoryFetchListBuilder> {
+  StoryFetchList._();
+  factory StoryFetchList([updates(StoryFetchListBuilder b)]) =>
+      _$StoryFetchList((b) => b
+        // ..loading = false
+        ..current = 0
+        ..nexttime = 0
+        ..update(updates));
 
   // bool get loading;
   int get nexttime;
@@ -92,7 +95,7 @@ abstract class ForumInfo implements Built<ForumInfo, ForumInfoBuilder> {
   ForumInfo._();
   factory ForumInfo([updates(ForumInfoBuilder b)]) =>
       _$ForumInfo((b) => b..update(updates));
-  
+
   BuiltList<Forum> get forums;
   BuiltList<Forum> get sysplanes;
   BuiltList<Forum> get planes;

@@ -95,17 +95,17 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
   return newRepo;
 }
 
-final homeListReducer = combineReducers<HomeList>([
+final homeListReducer = combineReducers<StoryFetchList>([
   // TypedReducer<HomeList, HomeListRequest>(_homeListLoading),
-  TypedReducer<HomeList, HomeListNewSuccess>(
+  TypedReducer<StoryFetchList, HomeListNewSuccess>(
       _homeListSucceeded(HomeListRequestType.New)),
   // TypedReducer<HomeList, HomeListNewFailure>(
       // _homeListFailed(HomeListRequestType.New)),
-  TypedReducer<HomeList, HomeListRefreshSuccess>(
+  TypedReducer<StoryFetchList, HomeListRefreshSuccess>(
       _homeListSucceeded(HomeListRequestType.Refresh)),
   // TypedReducer<HomeList, HomeListRefreshFailure>(
       // _homeListFailed(HomeListRequestType.Refresh)),
-  TypedReducer<HomeList, HomeListLoadMoreSuccess>(
+  TypedReducer<StoryFetchList, HomeListLoadMoreSuccess>(
       _homeListSucceeded(HomeListRequestType.LoadMore)),
   // TypedReducer<HomeList, HomeListLoadMoreFailure>(
       // _homeListFailed(HomeListRequestType.LoadMore)),
@@ -118,7 +118,7 @@ enum HomeListRequestType {
 }
 
 _homeListSucceeded(HomeListRequestType type) =>
-    (HomeList list, HomeListSuccess action) {
+    (StoryFetchList list, HomeListSuccess action) {
       return list.rebuild((b) {
         // b..loading = false;
         var data = action.list.data;

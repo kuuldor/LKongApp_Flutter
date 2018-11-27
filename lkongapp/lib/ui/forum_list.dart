@@ -72,7 +72,7 @@ class ForumListModel {
   static ForumListModel fromStore(Store<AppState> store) {
     return ForumListModel(
       loading: store.state.isLoading,
-      repo: store.state.uiState.content.forumRepo,
+      repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
         return Future(() {});
       },

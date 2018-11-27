@@ -25,7 +25,6 @@ part 'serializers.g.dart';
   HomeListResult,
   Story,
   ForumStoryResult,
-  Thread,
   ForumListResult,
   Forum,
   StoryInfoResult,

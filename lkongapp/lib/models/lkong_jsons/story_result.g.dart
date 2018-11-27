@@ -24,7 +24,6 @@ Serializer<HomeListResult> _$homeListResultSerializer =
 Serializer<Story> _$storySerializer = new _$StorySerializer();
 Serializer<ForumStoryResult> _$forumStoryResultSerializer =
     new _$ForumStoryResultSerializer();
-Serializer<Thread> _$threadSerializer = new _$ThreadSerializer();
 Serializer<StoryInfoResult> _$storyInfoResultSerializer =
     new _$StoryInfoResultSerializer();
 Serializer<StoryContentResult> _$storyContentResultSerializer =
@@ -112,31 +111,58 @@ class _$StorySerializer implements StructuredSerializer<Story> {
   Iterable serialize(Serializers serializers, Story object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'isquote',
-      serializers.serialize(object.isquote,
-          specifiedType: const FullType(bool)),
-      'uid',
-      serializers.serialize(object.uid, specifiedType: const FullType(int)),
-      'username',
-      serializers.serialize(object.username,
-          specifiedType: const FullType(String)),
+      'sortkey',
+      serializers.serialize(object.sortkey, specifiedType: const FullType(int)),
       'dateline',
       serializers.serialize(object.dateline,
           specifiedType: const FullType(String)),
-      'message',
-      serializers.serialize(object.message,
-          specifiedType: const FullType(String)),
-      'isthread',
-      serializers.serialize(object.isthread,
-          specifiedType: const FullType(bool)),
       'subject',
       serializers.serialize(object.subject,
           specifiedType: const FullType(String)),
+      'username',
+      serializers.serialize(object.username,
+          specifiedType: const FullType(String)),
+      'uid',
+      serializers.serialize(object.uid, specifiedType: const FullType(int)),
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(String)),
-      'sortkey',
-      serializers.serialize(object.sortkey, specifiedType: const FullType(int)),
     ];
+    if (object.digest != null) {
+      result
+        ..add('digest')
+        ..add(serializers.serialize(object.digest,
+            specifiedType: const FullType(int)));
+    }
+    if (object.closed != null) {
+      result
+        ..add('closed')
+        ..add(serializers.serialize(object.closed,
+            specifiedType: const FullType(int)));
+    }
+    if (object.fid != null) {
+      result
+        ..add('fid')
+        ..add(serializers.serialize(object.fid,
+            specifiedType: const FullType(int)));
+    }
+    if (object.isquote != null) {
+      result
+        ..add('isquote')
+        ..add(serializers.serialize(object.isquote,
+            specifiedType: const FullType(bool)));
+    }
+    if (object.message != null) {
+      result
+        ..add('message')
+        ..add(serializers.serialize(object.message,
+            specifiedType: const FullType(String)));
+    }
+    if (object.isthread != null) {
+      result
+        ..add('isthread')
+        ..add(serializers.serialize(object.isthread,
+            specifiedType: const FullType(bool)));
+    }
     if (object.tid != null) {
       result
         ..add('tid')
@@ -182,21 +208,45 @@ class _$StorySerializer implements StructuredSerializer<Story> {
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
-        case 'isquote':
-          result.isquote = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
-          break;
-        case 'uid':
-          result.uid = serializers.deserialize(value,
+        case 'sortkey':
+          result.sortkey = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'dateline':
+          result.dateline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'subject':
+          result.subject = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
         case 'username':
           result.username = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
-        case 'dateline':
-          result.dateline = serializers.deserialize(value,
+        case 'digest':
+          result.digest = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'closed':
+          result.closed = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'uid':
+          result.uid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'fid':
+          result.fid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'isquote':
+          result.isquote = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
           break;
         case 'message':
           result.message = serializers.deserialize(value,
@@ -208,10 +258,6 @@ class _$StorySerializer implements StructuredSerializer<Story> {
           break;
         case 'tid':
           result.tid = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'subject':
-          result.subject = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 't_author':
@@ -226,16 +272,8 @@ class _$StorySerializer implements StructuredSerializer<Story> {
           result.tReplynum = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
-        case 'id':
-          result.id = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
         case 'replynum':
           result.replynum = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'sortkey':
-          result.sortkey = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
       }
@@ -259,7 +297,7 @@ class _$ForumStoryResultSerializer
       'data',
       serializers.serialize(object.data,
           specifiedType:
-              const FullType(BuiltList, const [const FullType(Thread)])),
+              const FullType(BuiltList, const [const FullType(Story)])),
       'tmp',
       serializers.serialize(object.tmp, specifiedType: const FullType(String)),
     ];
@@ -293,7 +331,7 @@ class _$ForumStoryResultSerializer
         case 'data':
           result.data.replace(serializers.deserialize(value,
                   specifiedType:
-                      const FullType(BuiltList, const [const FullType(Thread)]))
+                      const FullType(BuiltList, const [const FullType(Story)]))
               as BuiltList);
           break;
         case 'nexttime':
@@ -307,103 +345,6 @@ class _$ForumStoryResultSerializer
         case 'tmp':
           result.tmp = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$ThreadSerializer implements StructuredSerializer<Thread> {
-  @override
-  final Iterable<Type> types = const [Thread, _$Thread];
-  @override
-  final String wireName = 'Thread';
-
-  @override
-  Iterable serialize(Serializers serializers, Thread object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      'sortkey',
-      serializers.serialize(object.sortkey, specifiedType: const FullType(int)),
-      'dateline',
-      serializers.serialize(object.dateline,
-          specifiedType: const FullType(String)),
-      'subject',
-      serializers.serialize(object.subject,
-          specifiedType: const FullType(String)),
-      'username',
-      serializers.serialize(object.username,
-          specifiedType: const FullType(String)),
-      'digest',
-      serializers.serialize(object.digest, specifiedType: const FullType(int)),
-      'closed',
-      serializers.serialize(object.closed, specifiedType: const FullType(int)),
-      'uid',
-      serializers.serialize(object.uid, specifiedType: const FullType(int)),
-      'replynum',
-      serializers.serialize(object.replynum,
-          specifiedType: const FullType(int)),
-      'id',
-      serializers.serialize(object.id, specifiedType: const FullType(String)),
-      'fid',
-      serializers.serialize(object.fid, specifiedType: const FullType(int)),
-    ];
-
-    return result;
-  }
-
-  @override
-  Thread deserialize(Serializers serializers, Iterable serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new ThreadBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final dynamic value = iterator.current;
-      switch (key) {
-        case 'sortkey':
-          result.sortkey = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'dateline':
-          result.dateline = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'subject':
-          result.subject = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'username':
-          result.username = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'digest':
-          result.digest = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'closed':
-          result.closed = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'uid':
-          result.uid = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'replynum':
-          result.replynum = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'id':
-          result.id = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'fid':
-          result.fid = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -1029,13 +970,25 @@ class HomeListResultBuilder
 
 class _$Story extends Story {
   @override
-  final bool isquote;
+  final int sortkey;
   @override
-  final int uid;
+  final String dateline;
+  @override
+  final String subject;
   @override
   final String username;
   @override
-  final String dateline;
+  final int digest;
+  @override
+  final int closed;
+  @override
+  final int uid;
+  @override
+  final String id;
+  @override
+  final int fid;
+  @override
+  final bool isquote;
   @override
   final String message;
   @override
@@ -1043,65 +996,53 @@ class _$Story extends Story {
   @override
   final String tid;
   @override
-  final String subject;
-  @override
   final String tAuthor;
   @override
   final int tAuthorid;
   @override
   final int tReplynum;
   @override
-  final String id;
-  @override
   final int replynum;
-  @override
-  final int sortkey;
 
   factory _$Story([void updates(StoryBuilder b)]) =>
       (new StoryBuilder()..update(updates)).build();
 
   _$Story._(
-      {this.isquote,
-      this.uid,
-      this.username,
+      {this.sortkey,
       this.dateline,
+      this.subject,
+      this.username,
+      this.digest,
+      this.closed,
+      this.uid,
+      this.id,
+      this.fid,
+      this.isquote,
       this.message,
       this.isthread,
       this.tid,
-      this.subject,
       this.tAuthor,
       this.tAuthorid,
       this.tReplynum,
-      this.id,
-      this.replynum,
-      this.sortkey})
+      this.replynum})
       : super._() {
-    if (isquote == null) {
-      throw new BuiltValueNullFieldError('Story', 'isquote');
-    }
-    if (uid == null) {
-      throw new BuiltValueNullFieldError('Story', 'uid');
-    }
-    if (username == null) {
-      throw new BuiltValueNullFieldError('Story', 'username');
+    if (sortkey == null) {
+      throw new BuiltValueNullFieldError('Story', 'sortkey');
     }
     if (dateline == null) {
       throw new BuiltValueNullFieldError('Story', 'dateline');
     }
-    if (message == null) {
-      throw new BuiltValueNullFieldError('Story', 'message');
-    }
-    if (isthread == null) {
-      throw new BuiltValueNullFieldError('Story', 'isthread');
-    }
     if (subject == null) {
       throw new BuiltValueNullFieldError('Story', 'subject');
     }
+    if (username == null) {
+      throw new BuiltValueNullFieldError('Story', 'username');
+    }
+    if (uid == null) {
+      throw new BuiltValueNullFieldError('Story', 'uid');
+    }
     if (id == null) {
       throw new BuiltValueNullFieldError('Story', 'id');
-    }
-    if (sortkey == null) {
-      throw new BuiltValueNullFieldError('Story', 'sortkey');
     }
   }
 
@@ -1116,20 +1057,23 @@ class _$Story extends Story {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is Story &&
-        isquote == other.isquote &&
-        uid == other.uid &&
-        username == other.username &&
+        sortkey == other.sortkey &&
         dateline == other.dateline &&
+        subject == other.subject &&
+        username == other.username &&
+        digest == other.digest &&
+        closed == other.closed &&
+        uid == other.uid &&
+        id == other.id &&
+        fid == other.fid &&
+        isquote == other.isquote &&
         message == other.message &&
         isthread == other.isthread &&
         tid == other.tid &&
-        subject == other.subject &&
         tAuthor == other.tAuthor &&
         tAuthorid == other.tAuthorid &&
         tReplynum == other.tReplynum &&
-        id == other.id &&
-        replynum == other.replynum &&
-        sortkey == other.sortkey;
+        replynum == other.replynum;
   }
 
   @override
@@ -1147,40 +1091,53 @@ class _$Story extends Story {
                                             $jc(
                                                 $jc(
                                                     $jc(
-                                                        $jc(0,
-                                                            isquote.hashCode),
-                                                        uid.hashCode),
-                                                    username.hashCode),
-                                                dateline.hashCode),
-                                            message.hashCode),
-                                        isthread.hashCode),
-                                    tid.hashCode),
-                                subject.hashCode),
-                            tAuthor.hashCode),
-                        tAuthorid.hashCode),
-                    tReplynum.hashCode),
-                id.hashCode),
-            replynum.hashCode),
-        sortkey.hashCode));
+                                                        $jc(
+                                                            $jc(
+                                                                $jc(
+                                                                    $jc(
+                                                                        0,
+                                                                        sortkey
+                                                                            .hashCode),
+                                                                    dateline
+                                                                        .hashCode),
+                                                                subject
+                                                                    .hashCode),
+                                                            username.hashCode),
+                                                        digest.hashCode),
+                                                    closed.hashCode),
+                                                uid.hashCode),
+                                            id.hashCode),
+                                        fid.hashCode),
+                                    isquote.hashCode),
+                                message.hashCode),
+                            isthread.hashCode),
+                        tid.hashCode),
+                    tAuthor.hashCode),
+                tAuthorid.hashCode),
+            tReplynum.hashCode),
+        replynum.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('Story')
-          ..add('isquote', isquote)
-          ..add('uid', uid)
-          ..add('username', username)
+          ..add('sortkey', sortkey)
           ..add('dateline', dateline)
+          ..add('subject', subject)
+          ..add('username', username)
+          ..add('digest', digest)
+          ..add('closed', closed)
+          ..add('uid', uid)
+          ..add('id', id)
+          ..add('fid', fid)
+          ..add('isquote', isquote)
           ..add('message', message)
           ..add('isthread', isthread)
           ..add('tid', tid)
-          ..add('subject', subject)
           ..add('tAuthor', tAuthor)
           ..add('tAuthorid', tAuthorid)
           ..add('tReplynum', tReplynum)
-          ..add('id', id)
-          ..add('replynum', replynum)
-          ..add('sortkey', sortkey))
+          ..add('replynum', replynum))
         .toString();
   }
 }
@@ -1188,21 +1145,45 @@ class _$Story extends Story {
 class StoryBuilder implements Builder<Story, StoryBuilder> {
   _$Story _$v;
 
-  bool _isquote;
-  bool get isquote => _$this._isquote;
-  set isquote(bool isquote) => _$this._isquote = isquote;
+  int _sortkey;
+  int get sortkey => _$this._sortkey;
+  set sortkey(int sortkey) => _$this._sortkey = sortkey;
 
-  int _uid;
-  int get uid => _$this._uid;
-  set uid(int uid) => _$this._uid = uid;
+  String _dateline;
+  String get dateline => _$this._dateline;
+  set dateline(String dateline) => _$this._dateline = dateline;
+
+  String _subject;
+  String get subject => _$this._subject;
+  set subject(String subject) => _$this._subject = subject;
 
   String _username;
   String get username => _$this._username;
   set username(String username) => _$this._username = username;
 
-  String _dateline;
-  String get dateline => _$this._dateline;
-  set dateline(String dateline) => _$this._dateline = dateline;
+  int _digest;
+  int get digest => _$this._digest;
+  set digest(int digest) => _$this._digest = digest;
+
+  int _closed;
+  int get closed => _$this._closed;
+  set closed(int closed) => _$this._closed = closed;
+
+  int _uid;
+  int get uid => _$this._uid;
+  set uid(int uid) => _$this._uid = uid;
+
+  String _id;
+  String get id => _$this._id;
+  set id(String id) => _$this._id = id;
+
+  int _fid;
+  int get fid => _$this._fid;
+  set fid(int fid) => _$this._fid = fid;
+
+  bool _isquote;
+  bool get isquote => _$this._isquote;
+  set isquote(bool isquote) => _$this._isquote = isquote;
 
   String _message;
   String get message => _$this._message;
@@ -1216,10 +1197,6 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
   String get tid => _$this._tid;
   set tid(String tid) => _$this._tid = tid;
 
-  String _subject;
-  String get subject => _$this._subject;
-  set subject(String subject) => _$this._subject = subject;
-
   String _tAuthor;
   String get tAuthor => _$this._tAuthor;
   set tAuthor(String tAuthor) => _$this._tAuthor = tAuthor;
@@ -1232,36 +1209,31 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
   int get tReplynum => _$this._tReplynum;
   set tReplynum(int tReplynum) => _$this._tReplynum = tReplynum;
 
-  String _id;
-  String get id => _$this._id;
-  set id(String id) => _$this._id = id;
-
   int _replynum;
   int get replynum => _$this._replynum;
   set replynum(int replynum) => _$this._replynum = replynum;
-
-  int _sortkey;
-  int get sortkey => _$this._sortkey;
-  set sortkey(int sortkey) => _$this._sortkey = sortkey;
 
   StoryBuilder();
 
   StoryBuilder get _$this {
     if (_$v != null) {
-      _isquote = _$v.isquote;
-      _uid = _$v.uid;
-      _username = _$v.username;
+      _sortkey = _$v.sortkey;
       _dateline = _$v.dateline;
+      _subject = _$v.subject;
+      _username = _$v.username;
+      _digest = _$v.digest;
+      _closed = _$v.closed;
+      _uid = _$v.uid;
+      _id = _$v.id;
+      _fid = _$v.fid;
+      _isquote = _$v.isquote;
       _message = _$v.message;
       _isthread = _$v.isthread;
       _tid = _$v.tid;
-      _subject = _$v.subject;
       _tAuthor = _$v.tAuthor;
       _tAuthorid = _$v.tAuthorid;
       _tReplynum = _$v.tReplynum;
-      _id = _$v.id;
       _replynum = _$v.replynum;
-      _sortkey = _$v.sortkey;
       _$v = null;
     }
     return this;
@@ -1284,20 +1256,23 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
   _$Story build() {
     final _$result = _$v ??
         new _$Story._(
-            isquote: isquote,
-            uid: uid,
-            username: username,
+            sortkey: sortkey,
             dateline: dateline,
+            subject: subject,
+            username: username,
+            digest: digest,
+            closed: closed,
+            uid: uid,
+            id: id,
+            fid: fid,
+            isquote: isquote,
             message: message,
             isthread: isthread,
             tid: tid,
-            subject: subject,
             tAuthor: tAuthor,
             tAuthorid: tAuthorid,
             tReplynum: tReplynum,
-            id: id,
-            replynum: replynum,
-            sortkey: sortkey);
+            replynum: replynum);
     replace(_$result);
     return _$result;
   }
@@ -1305,7 +1280,7 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
 
 class _$ForumStoryResult extends ForumStoryResult {
   @override
-  final BuiltList<Thread> data;
+  final BuiltList<Story> data;
   @override
   final int nexttime;
   @override
@@ -1366,9 +1341,9 @@ class ForumStoryResultBuilder
     implements Builder<ForumStoryResult, ForumStoryResultBuilder> {
   _$ForumStoryResult _$v;
 
-  ListBuilder<Thread> _data;
-  ListBuilder<Thread> get data => _$this._data ??= new ListBuilder<Thread>();
-  set data(ListBuilder<Thread> data) => _$this._data = data;
+  ListBuilder<Story> _data;
+  ListBuilder<Story> get data => _$this._data ??= new ListBuilder<Story>();
+  set data(ListBuilder<Story> data) => _$this._data = data;
 
   int _nexttime;
   int get nexttime => _$this._nexttime;
@@ -1429,231 +1404,6 @@ class ForumStoryResultBuilder
       }
       rethrow;
     }
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$Thread extends Thread {
-  @override
-  final int sortkey;
-  @override
-  final String dateline;
-  @override
-  final String subject;
-  @override
-  final String username;
-  @override
-  final int digest;
-  @override
-  final int closed;
-  @override
-  final int uid;
-  @override
-  final int replynum;
-  @override
-  final String id;
-  @override
-  final int fid;
-
-  factory _$Thread([void updates(ThreadBuilder b)]) =>
-      (new ThreadBuilder()..update(updates)).build();
-
-  _$Thread._(
-      {this.sortkey,
-      this.dateline,
-      this.subject,
-      this.username,
-      this.digest,
-      this.closed,
-      this.uid,
-      this.replynum,
-      this.id,
-      this.fid})
-      : super._() {
-    if (sortkey == null) {
-      throw new BuiltValueNullFieldError('Thread', 'sortkey');
-    }
-    if (dateline == null) {
-      throw new BuiltValueNullFieldError('Thread', 'dateline');
-    }
-    if (subject == null) {
-      throw new BuiltValueNullFieldError('Thread', 'subject');
-    }
-    if (username == null) {
-      throw new BuiltValueNullFieldError('Thread', 'username');
-    }
-    if (digest == null) {
-      throw new BuiltValueNullFieldError('Thread', 'digest');
-    }
-    if (closed == null) {
-      throw new BuiltValueNullFieldError('Thread', 'closed');
-    }
-    if (uid == null) {
-      throw new BuiltValueNullFieldError('Thread', 'uid');
-    }
-    if (replynum == null) {
-      throw new BuiltValueNullFieldError('Thread', 'replynum');
-    }
-    if (id == null) {
-      throw new BuiltValueNullFieldError('Thread', 'id');
-    }
-    if (fid == null) {
-      throw new BuiltValueNullFieldError('Thread', 'fid');
-    }
-  }
-
-  @override
-  Thread rebuild(void updates(ThreadBuilder b)) =>
-      (toBuilder()..update(updates)).build();
-
-  @override
-  ThreadBuilder toBuilder() => new ThreadBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is Thread &&
-        sortkey == other.sortkey &&
-        dateline == other.dateline &&
-        subject == other.subject &&
-        username == other.username &&
-        digest == other.digest &&
-        closed == other.closed &&
-        uid == other.uid &&
-        replynum == other.replynum &&
-        id == other.id &&
-        fid == other.fid;
-  }
-
-  @override
-  int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc(
-                $jc(
-                    $jc(
-                        $jc(
-                            $jc(
-                                $jc(
-                                    $jc($jc(0, sortkey.hashCode),
-                                        dateline.hashCode),
-                                    subject.hashCode),
-                                username.hashCode),
-                            digest.hashCode),
-                        closed.hashCode),
-                    uid.hashCode),
-                replynum.hashCode),
-            id.hashCode),
-        fid.hashCode));
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper('Thread')
-          ..add('sortkey', sortkey)
-          ..add('dateline', dateline)
-          ..add('subject', subject)
-          ..add('username', username)
-          ..add('digest', digest)
-          ..add('closed', closed)
-          ..add('uid', uid)
-          ..add('replynum', replynum)
-          ..add('id', id)
-          ..add('fid', fid))
-        .toString();
-  }
-}
-
-class ThreadBuilder implements Builder<Thread, ThreadBuilder> {
-  _$Thread _$v;
-
-  int _sortkey;
-  int get sortkey => _$this._sortkey;
-  set sortkey(int sortkey) => _$this._sortkey = sortkey;
-
-  String _dateline;
-  String get dateline => _$this._dateline;
-  set dateline(String dateline) => _$this._dateline = dateline;
-
-  String _subject;
-  String get subject => _$this._subject;
-  set subject(String subject) => _$this._subject = subject;
-
-  String _username;
-  String get username => _$this._username;
-  set username(String username) => _$this._username = username;
-
-  int _digest;
-  int get digest => _$this._digest;
-  set digest(int digest) => _$this._digest = digest;
-
-  int _closed;
-  int get closed => _$this._closed;
-  set closed(int closed) => _$this._closed = closed;
-
-  int _uid;
-  int get uid => _$this._uid;
-  set uid(int uid) => _$this._uid = uid;
-
-  int _replynum;
-  int get replynum => _$this._replynum;
-  set replynum(int replynum) => _$this._replynum = replynum;
-
-  String _id;
-  String get id => _$this._id;
-  set id(String id) => _$this._id = id;
-
-  int _fid;
-  int get fid => _$this._fid;
-  set fid(int fid) => _$this._fid = fid;
-
-  ThreadBuilder();
-
-  ThreadBuilder get _$this {
-    if (_$v != null) {
-      _sortkey = _$v.sortkey;
-      _dateline = _$v.dateline;
-      _subject = _$v.subject;
-      _username = _$v.username;
-      _digest = _$v.digest;
-      _closed = _$v.closed;
-      _uid = _$v.uid;
-      _replynum = _$v.replynum;
-      _id = _$v.id;
-      _fid = _$v.fid;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(Thread other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
-    _$v = other as _$Thread;
-  }
-
-  @override
-  void update(void updates(ThreadBuilder b)) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  _$Thread build() {
-    final _$result = _$v ??
-        new _$Thread._(
-            sortkey: sortkey,
-            dateline: dateline,
-            subject: subject,
-            username: username,
-            digest: digest,
-            closed: closed,
-            uid: uid,
-            replynum: replynum,
-            id: id,
-            fid: fid);
     replace(_$result);
     return _$result;
   }

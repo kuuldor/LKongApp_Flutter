@@ -42,3 +42,55 @@ ForumInfo _forumInfoSucceeded(ForumInfo forumRepo, ForumInfoSuccess action) {
   }
   return newRepo;
 }
+
+enum ForumStoryRequestType {
+  New,
+  Refresh,
+  LoadMore,
+}
+final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
+  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewSuccess>(
+      _forumStorySucceeded(ForumStoryRequestType.New)),
+  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryRefreshSuccess>(
+      _forumStorySucceeded(ForumStoryRequestType.Refresh)),
+  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryLoadMoreSuccess>(
+      _forumStorySucceeded(ForumStoryRequestType.LoadMore)),
+]);
+
+_forumStorySucceeded(ForumStoryRequestType type) =>
+    (BuiltMap<int, StoryFetchList> repo, ForumStorySuccess action) {
+      var result = action.result;
+      var newRepo = repo;
+      var list = result.data;
+      if (list != null && list.length > 0) {
+        int fid = list[0].fid;
+        final update = (StoryFetchListBuilder b) {
+          int nexttime = type != ForumStoryRequestType.Refresh
+              ? result.nexttime
+              : b.nexttime;
+          int current = type != ForumStoryRequestType.LoadMore
+              ? result.curtime
+              : b.current;
+
+          b
+            ..nexttime = nexttime
+            ..current = current;
+          switch (type) {
+            case ForumStoryRequestType.New:
+              b..stories.replace(list);
+              break;
+            case ForumStoryRequestType.Refresh:
+              b..stories.insertAll(0, list);
+              break;
+            case ForumStoryRequestType.LoadMore:
+              b..stories.addAll(list);
+              break;
+          }
+        };
+        newRepo = newRepo.rebuild((b) => b.updateValue(
+            fid, (v) => v.rebuild(update),
+            ifAbsent: () => StoryFetchList().rebuild(update)));
+      }
+
+      return newRepo;
+    };

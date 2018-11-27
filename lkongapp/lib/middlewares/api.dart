@@ -15,7 +15,7 @@ const STORY_CONTENT_API = "STORY_CONTENT";
 const STORY_INFO_API = "STORY_INFO";
 const FORUMLIST_API = "FORUMLIST";
 const FORUM_INFO_API = "FORUMINFO";
-const FORUMTHREADS_API = "FORUMTHREADS";
+const FORUM_THREADS_API = "FORUMTHREADS";
 const USERINFO_API = "USERINFO";
 
 HttpSession session = HttpSession(baseURL: 'http://lkong.cn');
@@ -302,7 +302,7 @@ Future<Map> apiDispatch(api, Map parameters) {
     return getForumInfo(parameters);
   }
 
-  if (api.startsWith(FORUMTHREADS_API)) {
+  if (api.startsWith(FORUM_THREADS_API)) {
     return getStoriesForForum(parameters);
   }
 
@@ -347,7 +347,7 @@ APIResponse createResponseAction(APIRequest action, Map response) {
     return result;
   }
 
-  if (api.startsWith(FORUMTHREADS_API)) {
+  if (api.startsWith(FORUM_THREADS_API)) {
     return result;
   }
 

@@ -38,7 +38,6 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(StoryContentResult.serializer)
       ..add(StoryInfoResult.serializer)
       ..add(ThemeSetting.serializer)
-      ..add(Thread.serializer)
       ..add(UIState.serializer)
       ..add(User.serializer)
       ..add(UserInfo.serializer)
@@ -61,15 +60,15 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(Story)]),
           () => new ListBuilder<Story>())
       ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Story)]),
+          () => new ListBuilder<Story>())
+      ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>())
       ..addBuilderFactory(
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(Forum)]),
           () => new MapBuilder<String, Forum>())
-      ..addBuilderFactory(
-          const FullType(BuiltList, const [const FullType(Thread)]),
-          () => new ListBuilder<Thread>())
       ..addBuilderFactory(
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(String)]),

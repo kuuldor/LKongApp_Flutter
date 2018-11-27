@@ -203,23 +203,32 @@ class _$ContentCache extends ContentCache {
   @override
   final String lastError;
   @override
-  final HomeList homeList;
+  final StoryFetchList homeList;
   @override
   final BuiltMap<int, StoryPageList> storyRepo;
   @override
-  final ForumInfo forumRepo;
+  final ForumInfo forumInfo;
+  @override
+  final BuiltMap<int, StoryFetchList> forumRepo;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
 
   _$ContentCache._(
-      {this.lastError, this.homeList, this.storyRepo, this.forumRepo})
+      {this.lastError,
+      this.homeList,
+      this.storyRepo,
+      this.forumInfo,
+      this.forumRepo})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
     }
     if (storyRepo == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'storyRepo');
+    }
+    if (forumInfo == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'forumInfo');
     }
     if (forumRepo == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'forumRepo');
@@ -240,14 +249,17 @@ class _$ContentCache extends ContentCache {
         lastError == other.lastError &&
         homeList == other.homeList &&
         storyRepo == other.storyRepo &&
+        forumInfo == other.forumInfo &&
         forumRepo == other.forumRepo;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
-            storyRepo.hashCode),
+        $jc(
+            $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
+                storyRepo.hashCode),
+            forumInfo.hashCode),
         forumRepo.hashCode));
   }
 
@@ -257,6 +269,7 @@ class _$ContentCache extends ContentCache {
           ..add('lastError', lastError)
           ..add('homeList', homeList)
           ..add('storyRepo', storyRepo)
+          ..add('forumInfo', forumInfo)
           ..add('forumRepo', forumRepo))
         .toString();
   }
@@ -270,9 +283,10 @@ class ContentCacheBuilder
   String get lastError => _$this._lastError;
   set lastError(String lastError) => _$this._lastError = lastError;
 
-  HomeListBuilder _homeList;
-  HomeListBuilder get homeList => _$this._homeList ??= new HomeListBuilder();
-  set homeList(HomeListBuilder homeList) => _$this._homeList = homeList;
+  StoryFetchListBuilder _homeList;
+  StoryFetchListBuilder get homeList =>
+      _$this._homeList ??= new StoryFetchListBuilder();
+  set homeList(StoryFetchListBuilder homeList) => _$this._homeList = homeList;
 
   MapBuilder<int, StoryPageList> _storyRepo;
   MapBuilder<int, StoryPageList> get storyRepo =>
@@ -280,10 +294,16 @@ class ContentCacheBuilder
   set storyRepo(MapBuilder<int, StoryPageList> storyRepo) =>
       _$this._storyRepo = storyRepo;
 
-  ForumInfoBuilder _forumRepo;
-  ForumInfoBuilder get forumRepo =>
-      _$this._forumRepo ??= new ForumInfoBuilder();
-  set forumRepo(ForumInfoBuilder forumRepo) => _$this._forumRepo = forumRepo;
+  ForumInfoBuilder _forumInfo;
+  ForumInfoBuilder get forumInfo =>
+      _$this._forumInfo ??= new ForumInfoBuilder();
+  set forumInfo(ForumInfoBuilder forumInfo) => _$this._forumInfo = forumInfo;
+
+  MapBuilder<int, StoryFetchList> _forumRepo;
+  MapBuilder<int, StoryFetchList> get forumRepo =>
+      _$this._forumRepo ??= new MapBuilder<int, StoryFetchList>();
+  set forumRepo(MapBuilder<int, StoryFetchList> forumRepo) =>
+      _$this._forumRepo = forumRepo;
 
   ContentCacheBuilder();
 
@@ -292,6 +312,7 @@ class ContentCacheBuilder
       _lastError = _$v.lastError;
       _homeList = _$v.homeList?.toBuilder();
       _storyRepo = _$v.storyRepo?.toBuilder();
+      _forumInfo = _$v.forumInfo?.toBuilder();
       _forumRepo = _$v.forumRepo?.toBuilder();
       _$v = null;
     }
@@ -320,6 +341,7 @@ class ContentCacheBuilder
               lastError: lastError,
               homeList: homeList.build(),
               storyRepo: storyRepo.build(),
+              forumInfo: forumInfo.build(),
               forumRepo: forumRepo.build());
     } catch (_) {
       String _$failedField;
@@ -328,6 +350,8 @@ class ContentCacheBuilder
         homeList.build();
         _$failedField = 'storyRepo';
         storyRepo.build();
+        _$failedField = 'forumInfo';
+        forumInfo.build();
         _$failedField = 'forumRepo';
         forumRepo.build();
       } catch (e) {
@@ -341,7 +365,7 @@ class ContentCacheBuilder
   }
 }
 
-class _$HomeList extends HomeList {
+class _$StoryFetchList extends StoryFetchList {
   @override
   final int nexttime;
   @override
@@ -349,32 +373,33 @@ class _$HomeList extends HomeList {
   @override
   final BuiltList<Story> stories;
 
-  factory _$HomeList([void updates(HomeListBuilder b)]) =>
-      (new HomeListBuilder()..update(updates)).build();
+  factory _$StoryFetchList([void updates(StoryFetchListBuilder b)]) =>
+      (new StoryFetchListBuilder()..update(updates)).build();
 
-  _$HomeList._({this.nexttime, this.current, this.stories}) : super._() {
+  _$StoryFetchList._({this.nexttime, this.current, this.stories}) : super._() {
     if (nexttime == null) {
-      throw new BuiltValueNullFieldError('HomeList', 'nexttime');
+      throw new BuiltValueNullFieldError('StoryFetchList', 'nexttime');
     }
     if (current == null) {
-      throw new BuiltValueNullFieldError('HomeList', 'current');
+      throw new BuiltValueNullFieldError('StoryFetchList', 'current');
     }
     if (stories == null) {
-      throw new BuiltValueNullFieldError('HomeList', 'stories');
+      throw new BuiltValueNullFieldError('StoryFetchList', 'stories');
     }
   }
 
   @override
-  HomeList rebuild(void updates(HomeListBuilder b)) =>
+  StoryFetchList rebuild(void updates(StoryFetchListBuilder b)) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  HomeListBuilder toBuilder() => new HomeListBuilder()..replace(this);
+  StoryFetchListBuilder toBuilder() =>
+      new StoryFetchListBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is HomeList &&
+    return other is StoryFetchList &&
         nexttime == other.nexttime &&
         current == other.current &&
         stories == other.stories;
@@ -388,7 +413,7 @@ class _$HomeList extends HomeList {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('HomeList')
+    return (newBuiltValueToStringHelper('StoryFetchList')
           ..add('nexttime', nexttime)
           ..add('current', current)
           ..add('stories', stories))
@@ -396,8 +421,9 @@ class _$HomeList extends HomeList {
   }
 }
 
-class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
-  _$HomeList _$v;
+class StoryFetchListBuilder
+    implements Builder<StoryFetchList, StoryFetchListBuilder> {
+  _$StoryFetchList _$v;
 
   int _nexttime;
   int get nexttime => _$this._nexttime;
@@ -412,9 +438,9 @@ class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
       _$this._stories ??= new ListBuilder<Story>();
   set stories(ListBuilder<Story> stories) => _$this._stories = stories;
 
-  HomeListBuilder();
+  StoryFetchListBuilder();
 
-  HomeListBuilder get _$this {
+  StoryFetchListBuilder get _$this {
     if (_$v != null) {
       _nexttime = _$v.nexttime;
       _current = _$v.current;
@@ -425,24 +451,24 @@ class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
   }
 
   @override
-  void replace(HomeList other) {
+  void replace(StoryFetchList other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$HomeList;
+    _$v = other as _$StoryFetchList;
   }
 
   @override
-  void update(void updates(HomeListBuilder b)) {
+  void update(void updates(StoryFetchListBuilder b)) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$HomeList build() {
-    _$HomeList _$result;
+  _$StoryFetchList build() {
+    _$StoryFetchList _$result;
     try {
       _$result = _$v ??
-          new _$HomeList._(
+          new _$StoryFetchList._(
               nexttime: nexttime, current: current, stories: stories.build());
     } catch (_) {
       String _$failedField;
@@ -451,7 +477,7 @@ class HomeListBuilder implements Builder<HomeList, HomeListBuilder> {
         stories.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'HomeList', _$failedField, e.toString());
+            'StoryFetchList', _$failedField, e.toString());
       }
       rethrow;
     }

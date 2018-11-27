@@ -32,7 +32,7 @@ void main() {
     });
   });
 
-  test('Get Forum List Test', () async {
+  test('Get Forum Story List Test', () async {
     await getStoriesForForum({"forumId": 60}).then((map) {
       print(map.toString());
       expect(map['error'], null);

@@ -20,13 +20,13 @@ ContentCache _contentRequestFailed(ContentCache content, APIFailure action) {
 }
 
 ContentCache _loginSucceeded(ContentCache content, action) {
-  return content.rebuild((b) => b..homeList.replace(HomeList()));
+  return content.rebuild((b) => b..homeList.replace(StoryFetchList()));
 }
 
 ContentCache _contentReducer(ContentCache content, action) {
   return content.rebuild((b) => b
     ..homeList.replace(homeListReducer(content.homeList, action))
     ..storyRepo.replace(storyContentsReducer(content.storyRepo, action))
-    ..forumRepo.replace(forumContentsReducer(content.forumRepo, action))
-    );
+    ..forumInfo.replace(forumContentsReducer(content.forumInfo, action))
+    ..forumRepo.replace(forumRepoReducer(content.forumRepo, action)));
 }
