@@ -13,6 +13,7 @@ final authReducer = combineReducers<AuthState>([
 AuthState _loginSucceeded(AuthState state, action) {
   return state.rebuild((b) => b
     ..isAuthed = true
+    ..error = null
     ..currentUser.replace(action.user));
 }
 

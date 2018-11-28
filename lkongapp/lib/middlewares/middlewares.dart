@@ -22,6 +22,7 @@ List<Middleware<AppState>> createStorePersistentMiddleware() {
   return [
     TypedMiddleware<AppState, Rehydrate>(loadAppState),
     TypedMiddleware<AppState, Dehydrate>(saveAppState),
+    checkAndSaveAppState
   ];
 }
 

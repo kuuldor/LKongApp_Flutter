@@ -187,7 +187,6 @@ class LoginViewModel {
                 ..password = password.trim())));
           completer.future.then((succeed) {
             if (succeed) {
-              store.dispatch(Dehydrate());
               store.dispatch(UINavigationPop(context));
             }
           });
