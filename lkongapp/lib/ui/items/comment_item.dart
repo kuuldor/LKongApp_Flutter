@@ -20,20 +20,16 @@ class CommentItem extends StatelessWidget {
     if (comment.warning) {
       messages.add(Container(
           color: Colors.redAccent,
-          child: ListTile(
-            leading: Icon(Icons.warning),
-            title: Text(
-              comment.warningReason,
-            ),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.warning),
+              Text(
+                comment.warningReason,
+              ),
+            ],
           )));
     }
-    messages.add(Expanded(
-      child: comment2Widget(
-        context,
-        comment.message,
-        style: Theme.of(context),
-      ),
-    ));
+
     return ListTile(
       // onTap: onTap,
       title: Column(children: <Widget>[
@@ -69,10 +65,34 @@ class CommentItem extends StatelessWidget {
         Container(
           height: 12.0,
         ),
+        comment.warning
+            ? Container(
+                padding: EdgeInsets.all(6.0),
+                decoration: BoxDecoration(
+                    color: Colors.red[300],
+                    borderRadius: BorderRadius.circular(6.0)),
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.warning),
+                    Container(width: 8.0),
+                    Text(
+                      "此帖被警告。理由：${comment.warningReason}",
+                    ),
+                  ],
+                ))
+            : Container(),
         Container(
           width: MediaQuery.of(context).size.width,
           child: Row(
-            children: messages,
+            children: <Widget>[
+              Expanded(
+                child: comment2Widget(
+                  context,
+                  comment.message,
+                  style: Theme.of(context),
+                ),
+              )
+            ],
           ),
         ),
       ]),
