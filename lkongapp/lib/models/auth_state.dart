@@ -13,10 +13,9 @@ abstract class AuthState implements Built<AuthState, AuthStateBuilder> {
   AuthState._();
 
   factory AuthState([updates(AuthStateBuilder b)]) => _$AuthState((b) {
-        UserBuilder user = UserBuilder()..replace(User());
         b
           ..isAuthed = false
-          ..currentUser = user
+          ..currentUser.replace(User())
           ..update(updates);
       });
 

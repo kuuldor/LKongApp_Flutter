@@ -312,7 +312,7 @@ class _$AccountSettingsSerializer
           specifiedType: const FullType(AccountSetting)),
       'accounts',
       serializers.serialize(object.accounts,
-          specifiedType: const FullType(Map,
+          specifiedType: const FullType(BuiltMap,
               const [const FullType(String), const FullType(AccountSetting)])),
     ];
 
@@ -335,11 +335,11 @@ class _$AccountSettingsSerializer
               specifiedType: const FullType(AccountSetting)) as AccountSetting);
           break;
         case 'accounts':
-          result.accounts = serializers.deserialize(value,
-              specifiedType: const FullType(Map, const [
+          result.accounts.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap, const [
                 const FullType(String),
                 const FullType(AccountSetting)
-              ])) as Map<String, AccountSetting>;
+              ])) as BuiltMap);
           break;
       }
     }
@@ -1046,7 +1046,7 @@ class _$AccountSettings extends AccountSettings {
   @override
   final AccountSetting currentSetting;
   @override
-  final Map<String, AccountSetting> accounts;
+  final BuiltMap<String, AccountSetting> accounts;
 
   factory _$AccountSettings([void updates(AccountSettingsBuilder b)]) =>
       (new AccountSettingsBuilder()..update(updates)).build();
@@ -1100,9 +1100,10 @@ class AccountSettingsBuilder
   set currentSetting(AccountSettingBuilder currentSetting) =>
       _$this._currentSetting = currentSetting;
 
-  Map<String, AccountSetting> _accounts;
-  Map<String, AccountSetting> get accounts => _$this._accounts;
-  set accounts(Map<String, AccountSetting> accounts) =>
+  MapBuilder<String, AccountSetting> _accounts;
+  MapBuilder<String, AccountSetting> get accounts =>
+      _$this._accounts ??= new MapBuilder<String, AccountSetting>();
+  set accounts(MapBuilder<String, AccountSetting> accounts) =>
       _$this._accounts = accounts;
 
   AccountSettingsBuilder();
@@ -1110,7 +1111,7 @@ class AccountSettingsBuilder
   AccountSettingsBuilder get _$this {
     if (_$v != null) {
       _currentSetting = _$v.currentSetting?.toBuilder();
-      _accounts = _$v.accounts;
+      _accounts = _$v.accounts?.toBuilder();
       _$v = null;
     }
     return this;
@@ -1135,12 +1136,15 @@ class AccountSettingsBuilder
     try {
       _$result = _$v ??
           new _$AccountSettings._(
-              currentSetting: currentSetting.build(), accounts: accounts);
+              currentSetting: currentSetting.build(),
+              accounts: accounts.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'currentSetting';
         currentSetting.build();
+        _$failedField = 'accounts';
+        accounts.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'AccountSettings', _$failedField, e.toString());

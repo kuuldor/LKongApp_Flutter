@@ -35,8 +35,8 @@ class _$AppThemeSerializer implements StructuredSerializer<AppTheme> {
       serializers.serialize(object.name, specifiedType: const FullType(String)),
       'colors',
       serializers.serialize(object.colors,
-          specifiedType: const FullType(
-              Map, const [const FullType(String), const FullType(String)])),
+          specifiedType: const FullType(BuiltMap,
+              const [const FullType(String), const FullType(String)])),
     ];
 
     return result;
@@ -58,11 +58,11 @@ class _$AppThemeSerializer implements StructuredSerializer<AppTheme> {
               specifiedType: const FullType(String)) as String;
           break;
         case 'colors':
-          result.colors = serializers.deserialize(value,
-              specifiedType: const FullType(Map, const [
+          result.colors.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap, const [
                 const FullType(String),
                 const FullType(String)
-              ])) as Map<String, String>;
+              ])) as BuiltMap);
           break;
       }
     }
@@ -75,7 +75,7 @@ class _$AppTheme extends AppTheme {
   @override
   final String name;
   @override
-  final Map<String, String> colors;
+  final BuiltMap<String, String> colors;
 
   factory _$AppTheme([void updates(AppThemeBuilder b)]) =>
       (new AppThemeBuilder()..update(updates)).build();
@@ -123,16 +123,17 @@ class AppThemeBuilder implements Builder<AppTheme, AppThemeBuilder> {
   String get name => _$this._name;
   set name(String name) => _$this._name = name;
 
-  Map<String, String> _colors;
-  Map<String, String> get colors => _$this._colors;
-  set colors(Map<String, String> colors) => _$this._colors = colors;
+  MapBuilder<String, String> _colors;
+  MapBuilder<String, String> get colors =>
+      _$this._colors ??= new MapBuilder<String, String>();
+  set colors(MapBuilder<String, String> colors) => _$this._colors = colors;
 
   AppThemeBuilder();
 
   AppThemeBuilder get _$this {
     if (_$v != null) {
       _name = _$v.name;
-      _colors = _$v.colors;
+      _colors = _$v.colors?.toBuilder();
       _$v = null;
     }
     return this;
@@ -153,7 +154,20 @@ class AppThemeBuilder implements Builder<AppTheme, AppThemeBuilder> {
 
   @override
   _$AppTheme build() {
-    final _$result = _$v ?? new _$AppTheme._(name: name, colors: colors);
+    _$AppTheme _$result;
+    try {
+      _$result = _$v ?? new _$AppTheme._(name: name, colors: colors.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'colors';
+        colors.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'AppTheme', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

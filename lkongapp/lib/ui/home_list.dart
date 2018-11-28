@@ -42,7 +42,7 @@ class HomeListModel extends StoryListModel {
       loading: store.state.isLoading,
       storyList: store.state.uiState.content.homeList,
       threadOnlyHome:
-          store.state.appConfig.accountSettings.currentSetting.threadOnlyHome,
+          store.state.persistState.appConfig.accountSettings.currentSetting.threadOnlyHome,
     );
   }
 

@@ -7,7 +7,7 @@ class Rehydrate extends StartLoading {}
 class Dehydrate {}
 
 class RehydrateSuccess implements StopLoading {
-  final AppState state;
+  final PersistentState state;
   RehydrateSuccess(this.state);
 }
 

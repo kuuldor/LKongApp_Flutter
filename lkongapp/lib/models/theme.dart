@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -9,16 +10,14 @@ import 'package:lkongapp/data/theme.dart' as themeData;
 
 part 'theme.g.dart';
 
-AppTheme defaultTheme = (AppThemeBuilder()
-      ..name = themeData.defaultTheme["name"]
-      ..colors = themeData.defaultTheme["colors"])
-    .build();
+AppTheme defaultTheme = AppTheme().rebuild((b) => b
+  ..name = themeData.defaultTheme["name"]
+  ..colors.addAll(themeData.defaultTheme["colors"]));
 
-AppTheme nightTheme = (AppThemeBuilder()
+AppTheme nightTheme = AppTheme().rebuild((b) => b
       ..name = themeData.nightTheme["name"]
-      ..colors = themeData.nightTheme["colors"])
-    .build();
-
+      ..colors.addAll(themeData.nightTheme["colors"]));
+    
 Color htmlColor(String html) {
   Color color;
   html = html.trim();
@@ -57,13 +56,14 @@ abstract class AppTheme implements Built<AppTheme, AppThemeBuilder> {
 
   factory AppTheme([updates(AppThemeBuilder b)]) => _$AppTheme((b) => b
     ..name = ""
-    ..colors = {}
+    ..colors.replace(Map<String, String>())
     ..update(updates));
 
   @BuiltValueField(wireName: 'name')
   String get name;
   @BuiltValueField(wireName: 'colors')
-  Map<String, String> get colors;
+  BuiltMap<String, String> get colors;
+
   String toJson() {
     return json.encode(serializers.serializeWith(AppTheme.serializer, this));
   }

@@ -14,11 +14,9 @@ abstract class AppConfig implements Built<AppConfig, AppConfigBuilder> {
   AppConfig._();
 
   factory AppConfig([updates(AppConfigBuilder b)]) => _$AppConfig((b) {
-        AppSettingBuilder app = AppSettingBuilder()..replace(AppSetting());
-        AccountSettingsBuilder accounts = AccountSettingsBuilder()..replace(AccountSettings());
         b
-          ..setting = app
-          ..accountSettings = accounts
+          ..setting.replace(AppSetting())
+          ..accountSettings.replace(AccountSettings())
           ..update(updates);
       });
 
@@ -42,14 +40,12 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   AppSetting._();
 
   factory AppSetting([updates(AppSettingBuilder b)]) => _$AppSetting((b) {
-        ThemeSettingBuilder tsb = ThemeSettingBuilder()
-          ..replace(ThemeSetting());
         b
           ..saveCredential = true
           ..version = '0.1'
           ..copyright = '2017 Akeysoft'
           ..nightMode = false
-          ..themeSetting = tsb
+          ..themeSetting.replace(ThemeSetting())
           ..shakeToShiftNightMode = true
           ..swipeThreshold = 80
           ..lockOrientation = false
@@ -153,17 +149,16 @@ abstract class AccountSettings
 
   factory AccountSettings([updates(AccountSettingsBuilder b)]) =>
       _$AccountSettings((b) {
-        AccountSettingBuilder setting = AccountSettingBuilder()..replace(AccountSetting());
         b
-          ..currentSetting = setting
-          ..accounts = Map<String, AccountSetting>()
+          ..currentSetting.replace(AccountSetting())
+          ..accounts.addAll(Map<String, AccountSetting>())
           ..update(updates);
       });
 
   @BuiltValueField(wireName: 'currentSetting')
   AccountSetting get currentSetting;
   @BuiltValueField(wireName: 'accounts')
-  Map<String, AccountSetting> get accounts;
+  BuiltMap<String, AccountSetting> get accounts;
   String toJson() {
     return json
         .encode(serializers.serializeWith(AccountSettings.serializer, this));
@@ -184,11 +179,11 @@ abstract class AccountSetting
 
   factory AccountSetting([updates(AccountSettingBuilder b)]) =>
       _$AccountSetting((b) => b
-      ..autoPunch = true
-      ..homePage = 0
-      ..threadOnlyHome = false
-      ..signature = LKongLocalizations().defaultSignature
-      ..update(updates));
+        ..autoPunch = true
+        ..homePage = 0
+        ..threadOnlyHome = false
+        ..signature = LKongLocalizations().defaultSignature
+        ..update(updates));
 
   @BuiltValueField(wireName: 'autoPunch')
   bool get autoPunch;

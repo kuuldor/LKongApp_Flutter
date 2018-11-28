@@ -5,7 +5,7 @@ import 'package:lkongapp/actions/ui_action.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -34,8 +34,7 @@ class AppDrawerViewModel {
   });
 
   static AppDrawerViewModel fromStore(Store<AppState> store) {
-    var _user =
-        store.state.authState.isAuthed ? store.state.authState.userInfo : null;
+    var _user = selectUserInfo(store);
     return AppDrawerViewModel(
         user: _user,
         pushScreen: (context, screen) {

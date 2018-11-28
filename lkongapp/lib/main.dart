@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -14,16 +15,19 @@ void main() => runApp(new LKongApp());
 
 class LKongApp extends StatelessWidget {
   // This widget is the root of your application.
-  final store = Store<AppState>(appReducer,
-      initialState: AppState(), middleware: []..addAll(createStoreMiddleware())
-      // ..add(LoggingMiddleware.printer())
-      );
+  final store = Store<AppState>(
+    appReducer,
+    initialState: AppState(),
+    middleware: []..addAll(createStoreMiddleware()),
+    // ..add(LoggingMiddleware.printer())
+    distinct: true,
+  );
 
   @override
   Widget build(BuildContext context) {
+    store.dispatch(Rehydrate());
     return StoreProvider<AppState>(
       store: store,
-      // child: _createApp(ThemedWidgetModel.fromStore(store)),
       child: buildConnectedWidget(
           context, LKAppModel.fromStore, _createModeledApp),
     );

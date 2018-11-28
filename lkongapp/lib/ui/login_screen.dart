@@ -7,13 +7,15 @@ import 'package:lkongapp/utils/key.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return buildConnectedWidget(context, LoginViewModel.fromStore, (viewModel) {
+    return buildConnectedWidget(context, LoginViewModel.fromStore,
+        (LoginViewModel viewModel) {
       var _formKey = LoginViewModel.formKey;
 
       final ValueKey _emailKey = LKongAppKeys.loginEmailKey;
@@ -23,6 +25,13 @@ class LoginScreen extends StatelessWidget {
         radius: 48.0,
         child: Image.asset("assets/logo.png"),
       );
+
+      if (viewModel.saveCredential) {
+        viewModel.emailController.text =
+            viewModel.authState.currentUser?.identity;
+        viewModel.passwordController.text =
+            viewModel.authState.currentUser?.password;
+      }
 
       final email = TextFormField(
         key: _emailKey,
@@ -64,8 +73,8 @@ class LoginScreen extends StatelessWidget {
             if (!_formKey.currentState.validate()) {
               return;
             }
-            viewModel.onLoginPressed(
-                context, viewModel.emailController.text, viewModel.passwordController.text);
+            viewModel.onLoginPressed(context, viewModel.emailController.text,
+                viewModel.passwordController.text);
           },
           color: Colors.lightBlueAccent,
           child: Text('Log In', style: TextStyle(color: Colors.white)),
@@ -124,11 +133,12 @@ class LoginScreen extends StatelessWidget {
 class LoginViewModel {
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
 
-  bool saveCredential;
-  AuthState authState;
+  final bool saveCredential;
+  final AuthState authState;
+
   final Function(BuildContext, String, String) onLoginPressed;
   final Function(BuildContext, bool) onSaveCredentialChanged;
   @override
@@ -151,16 +161,19 @@ class LoginViewModel {
   });
 
   static LoginViewModel fromStore(Store<AppState> store) {
-    AuthState authState = store.state.authState;
-    if (!store.state.isLoading &&
-        authState.isAuthed &&
-        authState.currentUser != null &&
-        authState.userInfo == null) {
-      store.dispatch(UserInfoRequest(null, authState.currentUser));
+    AuthState authState = store.state.persistState.authState;
+    var user = selectUser(store);
+    var info = selectUserInfo(store);
+
+    if (!store.state.isLoading && user != null && info == null) {
+      store.dispatch(UserInfoRequest(null, user));
     }
+
+    var saveCredential = selectSetting(store).saveCredential;
+
     return LoginViewModel(
         authState: authState,
-        saveCredential: store.state.appConfig.setting.saveCredential,
+        saveCredential: saveCredential,
         onLoginPressed: (BuildContext context, String email, String password) {
           if (store.state.isLoading) {
             return;
@@ -174,6 +187,7 @@ class LoginViewModel {
                 ..password = password.trim())));
           completer.future.then((succeed) {
             if (succeed) {
+              store.dispatch(Dehydrate());
               store.dispatch(UINavigationPop(context));
             }
           });

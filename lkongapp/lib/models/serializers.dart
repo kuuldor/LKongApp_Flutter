@@ -14,6 +14,7 @@ part 'serializers.g.dart';
 
 @SerializersFor(const [
   AppState,
+  PersistentState,
   AppConfig,
   AppSetting,
   AuthState,

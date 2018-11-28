@@ -4,7 +4,7 @@ import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/ui/forum_list.dart';
-import 'package:lkongapp/ui/story_list.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
@@ -123,9 +123,7 @@ class PageModel {
   }
 
   static PageModel fromStore(Store<AppState> store) {
-    var _user = store.state.authState.isAuthed
-        ? store.state.authState.currentUser
-        : null;
+    var _user = selectUser(store);
 
     return PageModel(
       page: store.state.uiState.homePageIndex,

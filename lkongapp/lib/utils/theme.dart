@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:quiver/core.dart';
 import 'dart:math';
 import 'package:redux/redux.dart';
-
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/models/models.dart';
 
 class LKongAppTheme {
-
-
   final bool isNightMode;
   final AppTheme appTheme;
 
@@ -38,13 +36,12 @@ class LKongAppTheme {
   LKongAppTheme(this.appTheme, this.isNightMode);
 
   static LKongAppTheme fromStore(Store<AppState> store) {
-    bool night = store.state.appConfig.setting.nightMode;
+    var setting = selectSetting(store);
+    bool night = setting.nightMode;
 
-    int themeIndex = night
-        ? store.state.appConfig.setting.themeSetting.night
-        : store.state.appConfig.setting.themeSetting.day;
-    AppTheme theme =
-        store.state.appConfig.setting.themeSetting.theme[themeIndex];
+    int themeIndex =
+        night ? setting.themeSetting.night : setting.themeSetting.day;
+    AppTheme theme = setting.themeSetting.theme[themeIndex];
 
     return LKongAppTheme(theme, night);
   }
