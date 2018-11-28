@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/ui/setting_screen.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux_logging/redux_logging.dart';
@@ -49,6 +50,7 @@ Widget _createModeledApp(viewModel) {
           LKongAppRoutes.login: (context) =>
               LoginScreen(key: LKongAppKeys.loginScreen),
           LKongAppRoutes.home: (context) => HomeScreen(),
+          LKongAppRoutes.settings: (context) => SettingScreen(),
         },
       ));
 }
