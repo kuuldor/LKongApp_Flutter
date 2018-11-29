@@ -71,15 +71,19 @@ Serializers _$serializers = (new Serializers().toBuilder()
               BuiltMap, const [const FullType(String), const FullType(Forum)]),
           () => new MapBuilder<String, Forum>())
       ..addBuilderFactory(
-          const FullType(BuiltMap,
-              const [const FullType(String), const FullType(AccountSetting)]),
-          () => new MapBuilder<String, AccountSetting>())
-      ..addBuilderFactory(
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(String)]),
           () => new MapBuilder<String, String>())
       ..addBuilderFactory(
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(String)]),
-          () => new MapBuilder<String, String>()))
+          () => new MapBuilder<String, String>())
+      ..addBuilderFactory(
+          const FullType(BuiltMap,
+              const [const FullType(int), const FullType(AccountSetting)]),
+          () => new MapBuilder<int, AccountSetting>())
+      ..addBuilderFactory(
+          const FullType(
+              BuiltMap, const [const FullType(int), const FullType(User)]),
+          () => new MapBuilder<int, User>()))
     .build();

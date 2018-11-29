@@ -313,7 +313,7 @@ class _$AccountSettingsSerializer
       'accounts',
       serializers.serialize(object.accounts,
           specifiedType: const FullType(BuiltMap,
-              const [const FullType(String), const FullType(AccountSetting)])),
+              const [const FullType(int), const FullType(AccountSetting)])),
     ];
 
     return result;
@@ -337,7 +337,7 @@ class _$AccountSettingsSerializer
         case 'accounts':
           result.accounts.replace(serializers.deserialize(value,
               specifiedType: const FullType(BuiltMap, const [
-                const FullType(String),
+                const FullType(int),
                 const FullType(AccountSetting)
               ])) as BuiltMap);
           break;
@@ -1046,7 +1046,7 @@ class _$AccountSettings extends AccountSettings {
   @override
   final AccountSetting currentSetting;
   @override
-  final BuiltMap<String, AccountSetting> accounts;
+  final BuiltMap<int, AccountSetting> accounts;
 
   factory _$AccountSettings([void updates(AccountSettingsBuilder b)]) =>
       (new AccountSettingsBuilder()..update(updates)).build();
@@ -1100,10 +1100,10 @@ class AccountSettingsBuilder
   set currentSetting(AccountSettingBuilder currentSetting) =>
       _$this._currentSetting = currentSetting;
 
-  MapBuilder<String, AccountSetting> _accounts;
-  MapBuilder<String, AccountSetting> get accounts =>
-      _$this._accounts ??= new MapBuilder<String, AccountSetting>();
-  set accounts(MapBuilder<String, AccountSetting> accounts) =>
+  MapBuilder<int, AccountSetting> _accounts;
+  MapBuilder<int, AccountSetting> get accounts =>
+      _$this._accounts ??= new MapBuilder<int, AccountSetting>();
+  set accounts(MapBuilder<int, AccountSetting> accounts) =>
       _$this._accounts = accounts;
 
   AccountSettingsBuilder();

@@ -11,11 +11,10 @@ import 'api.dart';
 import 'ui_nav.dart';
 
 List<Middleware<AppState>> createStoreMiddleware() {
-  return [thunkMiddleware]
+  return [filterAll, thunkMiddleware]
     ..addAll(createStorePersistentMiddleware())
     ..addAll(createAPICallMiddleware())
-    ..addAll(createUINavigationMiddleware())
-    ;
+    ..addAll(createUINavigationMiddleware());
 }
 
 List<Middleware<AppState>> createStorePersistentMiddleware() {
@@ -38,4 +37,20 @@ List<Middleware<AppState>> createUINavigationMiddleware() {
     TypedMiddleware<AppState, UINavigationPopTo>(navigatorPopTo),
     TypedMiddleware<AppState, UINavigationPop>(navigatorPop),
   ];
+}
+
+// Filter every action here
+void filterAll(Store<AppState> store, action, NextDispatcher next) {
+  // if an action should be consumed here, set passon to false
+  bool passon = true;
+
+  //Filter all the actions and do dispatch another action if necessary
+  if (action is LoginSuccess) {
+    User user = action.user;
+    store.dispatch(UserInfoRequest(null, user));
+  }
+
+  if (passon) {
+    next(action);
+  }
 }

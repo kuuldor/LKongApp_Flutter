@@ -10,6 +10,7 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/utils/http_session.dart';
 
 const LOGIN_API = "LOGIN";
+const LOGOUT_API = "LOGOUT";
 const HOMELIST_API = "HOMELIST";
 const STORY_CONTENT_API = "STORY_CONTENT";
 const STORY_INFO_API = "STORY_INFO";
@@ -88,6 +89,12 @@ Future<Map> login(Map args) {
     "rememberme": "on"
   });
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
+}
+
+Future<Map> logout() {
+  final urlString = endpoint["logout"] + querify(defaultParameter());
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction, dataParser: (data) => {"result": data});
 }
 
 User userParam(Map args) {
@@ -280,6 +287,10 @@ String Function(String) numMapperBuiler(List<String> fields) {
 Future<Map> apiDispatch(api, Map parameters) {
   if (api == LOGIN_API) {
     return login(parameters);
+  }
+
+  if (api == LOGOUT_API) {
+    return logout();
   }
 
   if (api == HOMELIST_API) {

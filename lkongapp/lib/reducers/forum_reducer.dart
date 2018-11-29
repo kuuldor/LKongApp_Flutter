@@ -7,17 +7,9 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
 
 final forumContentsReducer = combineReducers<ForumInfo>([
-  // TypedReducer<ForumInfo, ForumListRequest>(_forumListRequested),
   TypedReducer<ForumInfo, ForumListSuccess>(_forumListSucceeded),
-  // TypedReducer<ForumInfo, ForumInfoRequest>(_forumInfoRequested),
   TypedReducer<ForumInfo, ForumInfoSuccess>(_forumInfoSucceeded),
 ]);
-
-// ForumInfo _forumListRequested(
-//     ForumInfo forumRepo, ForumListRequest action) {
-//   var newRepo = forumRepo;
-//   return newRepo;
-// }
 
 ForumInfo _forumListSucceeded(ForumInfo forumRepo, ForumListSuccess action) {
   var list = action.list;
@@ -29,9 +21,6 @@ ForumInfo _forumListSucceeded(ForumInfo forumRepo, ForumListSuccess action) {
 
   return newRepo;
 }
-
-// ForumInfo _forumInfoRequested(
-//     ForumInfo forumRepo, ForumInfoRequest action) {}
 
 ForumInfo _forumInfoSucceeded(ForumInfo forumRepo, ForumInfoSuccess action) {
   var result = action.result;

@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return buildConnectedWidget<PageModel>(context, PageModel.fromStore,
         (viewModel) {
-      if (viewModel.user == null) {
+      if (!viewModel.isAuthed) {
         // viewModel.showLoginScreen(context);
       }
       return Scaffold(
@@ -58,7 +58,6 @@ class HomeScreen extends StatelessWidget {
         body: PageView(
           children: [
             Container(
-              // child: viewModel.user != null ? HomeList() : Container(),
               child: HomeList(),
             ),
             Container(
@@ -101,33 +100,21 @@ class HomeScreen extends StatelessWidget {
 
 class PageModel {
   final int page;
-  final User user;
+  final bool isAuthed;
   final Function(BuildContext, int) onPageChanged;
   final Function(BuildContext) showLoginScreen;
 
   PageModel({
     @required this.page,
-    @required this.user,
+    @required this.isAuthed,
     @required this.onPageChanged,
     @required this.showLoginScreen,
   });
 
-  @override
-  bool operator ==(other) {
-    return other is PageModel && page == other.page && user == other.user;
-  }
-
-  @override
-  int get hashCode {
-    return hash2(page, user);
-  }
-
   static PageModel fromStore(Store<AppState> store) {
-    var _user = selectUser(store);
-
     return PageModel(
       page: store.state.uiState.homePageIndex,
-      user: _user,
+      isAuthed: store.state.persistState.authState.isAuthed,
       onPageChanged: (BuildContext context, int value) {
         store.dispatch(UIChange((b) => b..homePageIndex = value));
       },

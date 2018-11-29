@@ -36,14 +36,15 @@ class _$AuthStateSerializer implements StructuredSerializer<AuthState> {
           specifiedType: const FullType(bool)),
       'currentUser',
       serializers.serialize(object.currentUser,
-          specifiedType: const FullType(User)),
+          specifiedType: const FullType(int)),
+      'lastUser',
+      serializers.serialize(object.lastUser,
+          specifiedType: const FullType(int)),
+      'userRepo',
+      serializers.serialize(object.userRepo,
+          specifiedType: const FullType(
+              BuiltMap, const [const FullType(int), const FullType(User)])),
     ];
-    if (object.userInfo != null) {
-      result
-        ..add('userInfo')
-        ..add(serializers.serialize(object.userInfo,
-            specifiedType: const FullType(UserInfo)));
-    }
     if (object.error != null) {
       result
         ..add('error')
@@ -70,12 +71,19 @@ class _$AuthStateSerializer implements StructuredSerializer<AuthState> {
               specifiedType: const FullType(bool)) as bool;
           break;
         case 'currentUser':
-          result.currentUser.replace(serializers.deserialize(value,
-              specifiedType: const FullType(User)) as User);
+          result.currentUser = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
-        case 'userInfo':
-          result.userInfo.replace(serializers.deserialize(value,
-              specifiedType: const FullType(UserInfo)) as UserInfo);
+        case 'lastUser':
+          result.lastUser = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'userRepo':
+          result.userRepo.replace(serializers.deserialize(value,
+              specifiedType: const FullType(BuiltMap, const [
+                const FullType(int),
+                const FullType(User)
+              ])) as BuiltMap);
           break;
         case 'error':
           result.error = serializers.deserialize(value,
@@ -92,22 +100,35 @@ class _$AuthState extends AuthState {
   @override
   final bool isAuthed;
   @override
-  final User currentUser;
+  final int currentUser;
   @override
-  final UserInfo userInfo;
+  final int lastUser;
+  @override
+  final BuiltMap<int, User> userRepo;
   @override
   final String error;
 
   factory _$AuthState([void updates(AuthStateBuilder b)]) =>
       (new AuthStateBuilder()..update(updates)).build();
 
-  _$AuthState._({this.isAuthed, this.currentUser, this.userInfo, this.error})
+  _$AuthState._(
+      {this.isAuthed,
+      this.currentUser,
+      this.lastUser,
+      this.userRepo,
+      this.error})
       : super._() {
     if (isAuthed == null) {
       throw new BuiltValueNullFieldError('AuthState', 'isAuthed');
     }
     if (currentUser == null) {
       throw new BuiltValueNullFieldError('AuthState', 'currentUser');
+    }
+    if (lastUser == null) {
+      throw new BuiltValueNullFieldError('AuthState', 'lastUser');
+    }
+    if (userRepo == null) {
+      throw new BuiltValueNullFieldError('AuthState', 'userRepo');
     }
   }
 
@@ -124,15 +145,18 @@ class _$AuthState extends AuthState {
     return other is AuthState &&
         isAuthed == other.isAuthed &&
         currentUser == other.currentUser &&
-        userInfo == other.userInfo &&
+        lastUser == other.lastUser &&
+        userRepo == other.userRepo &&
         error == other.error;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, isAuthed.hashCode), currentUser.hashCode),
-            userInfo.hashCode),
+        $jc(
+            $jc($jc($jc(0, isAuthed.hashCode), currentUser.hashCode),
+                lastUser.hashCode),
+            userRepo.hashCode),
         error.hashCode));
   }
 
@@ -141,7 +165,8 @@ class _$AuthState extends AuthState {
     return (newBuiltValueToStringHelper('AuthState')
           ..add('isAuthed', isAuthed)
           ..add('currentUser', currentUser)
-          ..add('userInfo', userInfo)
+          ..add('lastUser', lastUser)
+          ..add('userRepo', userRepo)
           ..add('error', error))
         .toString();
   }
@@ -154,13 +179,18 @@ class AuthStateBuilder implements Builder<AuthState, AuthStateBuilder> {
   bool get isAuthed => _$this._isAuthed;
   set isAuthed(bool isAuthed) => _$this._isAuthed = isAuthed;
 
-  UserBuilder _currentUser;
-  UserBuilder get currentUser => _$this._currentUser ??= new UserBuilder();
-  set currentUser(UserBuilder currentUser) => _$this._currentUser = currentUser;
+  int _currentUser;
+  int get currentUser => _$this._currentUser;
+  set currentUser(int currentUser) => _$this._currentUser = currentUser;
 
-  UserInfoBuilder _userInfo;
-  UserInfoBuilder get userInfo => _$this._userInfo ??= new UserInfoBuilder();
-  set userInfo(UserInfoBuilder userInfo) => _$this._userInfo = userInfo;
+  int _lastUser;
+  int get lastUser => _$this._lastUser;
+  set lastUser(int lastUser) => _$this._lastUser = lastUser;
+
+  MapBuilder<int, User> _userRepo;
+  MapBuilder<int, User> get userRepo =>
+      _$this._userRepo ??= new MapBuilder<int, User>();
+  set userRepo(MapBuilder<int, User> userRepo) => _$this._userRepo = userRepo;
 
   String _error;
   String get error => _$this._error;
@@ -171,8 +201,9 @@ class AuthStateBuilder implements Builder<AuthState, AuthStateBuilder> {
   AuthStateBuilder get _$this {
     if (_$v != null) {
       _isAuthed = _$v.isAuthed;
-      _currentUser = _$v.currentUser?.toBuilder();
-      _userInfo = _$v.userInfo?.toBuilder();
+      _currentUser = _$v.currentUser;
+      _lastUser = _$v.lastUser;
+      _userRepo = _$v.userRepo?.toBuilder();
       _error = _$v.error;
       _$v = null;
     }
@@ -199,16 +230,15 @@ class AuthStateBuilder implements Builder<AuthState, AuthStateBuilder> {
       _$result = _$v ??
           new _$AuthState._(
               isAuthed: isAuthed,
-              currentUser: currentUser.build(),
-              userInfo: _userInfo?.build(),
+              currentUser: currentUser,
+              lastUser: lastUser,
+              userRepo: userRepo.build(),
               error: error);
     } catch (_) {
       String _$failedField;
       try {
-        _$failedField = 'currentUser';
-        currentUser.build();
-        _$failedField = 'userInfo';
-        _userInfo?.build();
+        _$failedField = 'userRepo';
+        userRepo.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'AuthState', _$failedField, e.toString());

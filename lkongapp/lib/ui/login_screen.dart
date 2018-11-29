@@ -26,11 +26,17 @@ class LoginScreen extends StatelessWidget {
         child: Image.asset("assets/logo.png"),
       );
 
-      if (viewModel.saveCredential) {
-        viewModel.emailController.text =
-            viewModel.authState.currentUser?.identity;
-        viewModel.passwordController.text =
-            viewModel.authState.currentUser?.password;
+      if (!viewModel.loading && viewModel.saveCredential) {
+        if ((viewModel.emailController.text == null ||
+                viewModel.emailController.text == "") &&
+            (viewModel.passwordController.text == null ||
+                viewModel.passwordController.text == "")) {
+          User user =
+              viewModel.authState.userRepo[viewModel.authState.lastUser];
+          viewModel.emailController.text = user?.identity;
+
+          viewModel.passwordController.text = user?.password;
+        }
       }
 
       final email = TextFormField(
@@ -136,24 +142,15 @@ class LoginViewModel {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
+  final bool loading;
   final bool saveCredential;
   final AuthState authState;
 
   final Function(BuildContext, String, String) onLoginPressed;
   final Function(BuildContext, bool) onSaveCredentialChanged;
-  @override
-  bool operator ==(other) {
-    return other is LoginViewModel &&
-        saveCredential == other.saveCredential &&
-        authState == other.authState;
-  }
-
-  @override
-  int get hashCode {
-    return hash2(saveCredential, authState);
-  }
 
   LoginViewModel({
+    @required this.loading,
     @required this.authState,
     @required this.saveCredential,
     @required this.onLoginPressed,
@@ -162,16 +159,11 @@ class LoginViewModel {
 
   static LoginViewModel fromStore(Store<AppState> store) {
     AuthState authState = store.state.persistState.authState;
-    var user = selectUser(store);
-    var info = selectUserInfo(store);
-
-    if (!store.state.isLoading && user != null && info == null) {
-      store.dispatch(UserInfoRequest(null, user));
-    }
 
     var saveCredential = selectSetting(store).saveCredential;
 
     return LoginViewModel(
+        loading: store.state.isLoading,
         authState: authState,
         saveCredential: saveCredential,
         onLoginPressed: (BuildContext context, String email, String password) {

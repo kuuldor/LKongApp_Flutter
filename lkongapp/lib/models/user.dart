@@ -27,6 +27,9 @@ abstract class User implements Built<User, UserBuilder> {
   @BuiltValueField(wireName: 'userid')
   int get uid;
 
+  @nullable
+  UserInfo get userInfo;
+
   String toJson() {
     return json.encode(serializers.serializeWith(User.serializer, this));
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
@@ -15,17 +16,22 @@ abstract class AuthState implements Built<AuthState, AuthStateBuilder> {
   factory AuthState([updates(AuthStateBuilder b)]) => _$AuthState((b) {
         b
           ..isAuthed = false
-          ..currentUser.replace(User())
+          ..currentUser = -1
+          ..lastUser = -1
           ..update(updates);
       });
 
   @BuiltValueField(wireName: 'authed')
   bool get isAuthed;
+
   @BuiltValueField(wireName: 'currentUser')
-  User get currentUser;
-  @nullable
-  @BuiltValueField(wireName: 'userInfo')
-  UserInfo get userInfo;
+  int get currentUser;
+
+  @BuiltValueField(wireName: 'lastUser')
+  int get lastUser;
+
+  BuiltMap<int, User> get userRepo;
+
   @nullable
   @BuiltValueField(wireName: 'error')
   String get error;

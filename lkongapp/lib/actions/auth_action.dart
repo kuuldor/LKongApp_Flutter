@@ -55,3 +55,23 @@ class UserInfoSuccess extends APISuccess with StopLoading {
 class UserInfoFailure extends APIFailure with StopLoading {
   UserInfoFailure(String error) : super(error);
 }
+
+class LogoutRequest extends APIRequest with StartLoading {
+  LogoutRequest(Completer completer)
+      : super(completer: completer, api: LOGOUT_API, parameters: {});
+
+  @override
+  CreateFailure get badResponse => (error) => LogoutFailure(error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (request, ignored) => LogoutSuccess(request);
+}
+
+class LogoutSuccess extends APISuccess with StopLoading {
+  LogoutSuccess(request) : super(request);
+}
+
+class LogoutFailure extends APIFailure with StopLoading {
+  LogoutFailure(String error) : super(error);
+}

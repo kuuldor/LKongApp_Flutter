@@ -50,6 +50,12 @@ class _$UserSerializer implements StructuredSerializer<User> {
         ..add(serializers.serialize(object.uid,
             specifiedType: const FullType(int)));
     }
+    if (object.userInfo != null) {
+      result
+        ..add('userInfo')
+        ..add(serializers.serialize(object.userInfo,
+            specifiedType: const FullType(UserInfo)));
+    }
 
     return result;
   }
@@ -76,6 +82,10 @@ class _$UserSerializer implements StructuredSerializer<User> {
         case 'userid':
           result.uid = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'userInfo':
+          result.userInfo.replace(serializers.deserialize(value,
+              specifiedType: const FullType(UserInfo)) as UserInfo);
           break;
       }
     }
@@ -553,11 +563,13 @@ class _$User extends User {
   final String password;
   @override
   final int uid;
+  @override
+  final UserInfo userInfo;
 
   factory _$User([void updates(UserBuilder b)]) =>
       (new UserBuilder()..update(updates)).build();
 
-  _$User._({this.identity, this.password, this.uid}) : super._();
+  _$User._({this.identity, this.password, this.uid, this.userInfo}) : super._();
 
   @override
   User rebuild(void updates(UserBuilder b)) =>
@@ -572,13 +584,15 @@ class _$User extends User {
     return other is User &&
         identity == other.identity &&
         password == other.password &&
-        uid == other.uid;
+        uid == other.uid &&
+        userInfo == other.userInfo;
   }
 
   @override
   int get hashCode {
-    return $jf(
-        $jc($jc($jc(0, identity.hashCode), password.hashCode), uid.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, identity.hashCode), password.hashCode), uid.hashCode),
+        userInfo.hashCode));
   }
 
   @override
@@ -586,7 +600,8 @@ class _$User extends User {
     return (newBuiltValueToStringHelper('User')
           ..add('identity', identity)
           ..add('password', password)
-          ..add('uid', uid))
+          ..add('uid', uid)
+          ..add('userInfo', userInfo))
         .toString();
   }
 }
@@ -606,6 +621,10 @@ class UserBuilder implements Builder<User, UserBuilder> {
   int get uid => _$this._uid;
   set uid(int uid) => _$this._uid = uid;
 
+  UserInfoBuilder _userInfo;
+  UserInfoBuilder get userInfo => _$this._userInfo ??= new UserInfoBuilder();
+  set userInfo(UserInfoBuilder userInfo) => _$this._userInfo = userInfo;
+
   UserBuilder();
 
   UserBuilder get _$this {
@@ -613,6 +632,7 @@ class UserBuilder implements Builder<User, UserBuilder> {
       _identity = _$v.identity;
       _password = _$v.password;
       _uid = _$v.uid;
+      _userInfo = _$v.userInfo?.toBuilder();
       _$v = null;
     }
     return this;
@@ -633,8 +653,25 @@ class UserBuilder implements Builder<User, UserBuilder> {
 
   @override
   _$User build() {
-    final _$result =
-        _$v ?? new _$User._(identity: identity, password: password, uid: uid);
+    _$User _$result;
+    try {
+      _$result = _$v ??
+          new _$User._(
+              identity: identity,
+              password: password,
+              uid: uid,
+              userInfo: _userInfo?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'userInfo';
+        _userInfo?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'User', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

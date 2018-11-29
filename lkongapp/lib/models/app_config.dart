@@ -151,14 +151,15 @@ abstract class AccountSettings
       _$AccountSettings((b) {
         b
           ..currentSetting.replace(AccountSetting())
-          ..accounts.addAll(Map<String, AccountSetting>())
+          ..accounts.addAll(Map<int, AccountSetting>())
           ..update(updates);
       });
 
   @BuiltValueField(wireName: 'currentSetting')
   AccountSetting get currentSetting;
+  
   @BuiltValueField(wireName: 'accounts')
-  BuiltMap<String, AccountSetting> get accounts;
+  BuiltMap<int, AccountSetting> get accounts;
   String toJson() {
     return json
         .encode(serializers.serializeWith(AccountSettings.serializer, this));

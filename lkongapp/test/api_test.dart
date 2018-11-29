@@ -22,6 +22,8 @@ void main() {
       LoginSuccess response = createResponseAction(request, map);
       expect(response.runtimeType, LoginSuccess);
       print(response.user.toString());
+
+      print(session.cookies.toString());
     });
   });
 
@@ -29,6 +31,7 @@ void main() {
     await getHomeList({}).then((map) {
       print(map.toString());
       expect(map['error'], null);
+      print(session.cookies.toString());
     });
   });
 
@@ -68,6 +71,13 @@ void main() {
     await getForumInfo({"id": 1024}).then((map) {
       print(map.toString());
       expect(map['error'], null);
+    });
+  });
+
+  test('Logout Test', () async {
+    await logout().then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
     });
   });
 }
