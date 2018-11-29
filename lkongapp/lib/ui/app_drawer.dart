@@ -91,9 +91,7 @@ class AppDrawer extends StatelessWidget {
 
       nameLine.add(dropMenu);
     } else {
-      nameLine.add(Expanded(
-        child: Text("请登录"),
-      ));
+      nameLine.add(Text("请登录"));
     }
 
     var children = <Widget>[
