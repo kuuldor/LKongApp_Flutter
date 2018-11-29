@@ -9,7 +9,7 @@ void main() {
   test('Login Test', () async {
     UserBuilder builder = UserBuilder()
       ..identity = 'lkongapp@outlook.com'
-      ..password = 'LKong!5app';
+      ..password = 'xxxxxxxxxxxx';
 
     User user = builder.build();
     final Completer<Null> completer = Completer<Null>();
