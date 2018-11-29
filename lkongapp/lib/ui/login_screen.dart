@@ -9,8 +9,18 @@ import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return LoginState();
+  }
+}
+
+class LoginState extends State<LoginScreen> {
+  var emailController = TextEditingController();
+  var passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,22 +36,23 @@ class LoginScreen extends StatelessWidget {
         child: Image.asset("assets/logo.png"),
       );
 
-      if (!viewModel.loading && viewModel.saveCredential && !viewModel.authState.isAuthed) {
-        if ((viewModel.emailController.text == null ||
-                viewModel.emailController.text == "") &&
-            (viewModel.passwordController.text == null ||
-                viewModel.passwordController.text == "")) {
+      if (!viewModel.loading &&
+          viewModel.saveCredential &&
+          !viewModel.authState.isAuthed) {
+        if ((emailController.text == null || emailController.text == "") &&
+            (passwordController.text == null ||
+                passwordController.text == "")) {
           User user =
               viewModel.authState.userRepo[viewModel.authState.lastUser];
-          viewModel.emailController.text = user?.identity;
+          emailController.text = user?.identity;
 
-          viewModel.passwordController.text = user?.password;
+          passwordController.text = user?.password;
         }
       }
 
       final email = TextFormField(
         key: _emailKey,
-        controller: viewModel.emailController,
+        controller: emailController,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         validator: (val) => val.isEmpty || val.trim().length == 0
@@ -55,7 +66,7 @@ class LoginScreen extends StatelessWidget {
       );
 
       final password = TextFormField(
-        controller: viewModel.passwordController,
+        controller: passwordController,
         key: _passwordKey,
         autocorrect: false,
         autofocus: false,
@@ -79,8 +90,8 @@ class LoginScreen extends StatelessWidget {
             if (!_formKey.currentState.validate()) {
               return;
             }
-            viewModel.onLoginPressed(context, viewModel.emailController.text,
-                viewModel.passwordController.text);
+            viewModel.onLoginPressed(
+                context, emailController.text, passwordController.text);
           },
           color: Colors.lightBlueAccent,
           child: Text('Log In', style: TextStyle(color: Colors.white)),
@@ -96,40 +107,48 @@ class LoginScreen extends StatelessWidget {
         },
       );
 
-      return Scaffold(
-        body: Center(
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.only(left: 24.0, right: 24.0),
-              children: <Widget>[
-                logo,
-                SizedBox(height: 48.0),
-                email,
-                SizedBox(height: 8.0),
-                password,
-                SizedBox(height: 8.0),
-                viewModel.authState.error == null
-                    ? Container()
-                    : Container(
-                        padding: EdgeInsets.only(top: 26.0, bottom: 4.0),
-                        child: Center(
-                          child: Text(
-                            viewModel.authState.error,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+      final form = Form(
+        key: _formKey,
+        child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          children: <Widget>[
+            logo,
+            SizedBox(height: 48.0),
+            email,
+            SizedBox(height: 8.0),
+            password,
+            SizedBox(height: 8.0),
+            viewModel.authState.error == null
+                ? Container()
+                : Container(
+                    padding: EdgeInsets.only(top: 26.0, bottom: 4.0),
+                    child: Center(
+                      child: Text(
+                        viewModel.authState.error,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                SizedBox(height: 24.0),
-                loginButton,
-                saveCredential
-              ],
-            ),
-          ),
+                    ),
+                  ),
+            SizedBox(height: 24.0),
+            loginButton,
+            saveCredential
+          ],
+        ),
+      );
+
+      var stackChildren = <Widget>[];
+      if (viewModel.loading) {
+        stackChildren.add(Center(child: CircularProgressIndicator()));
+      }
+      stackChildren.add(form);
+
+      return Scaffold(
+        body: Stack(
+          children: stackChildren,
         ),
       );
     });
@@ -138,9 +157,6 @@ class LoginScreen extends StatelessWidget {
 
 class LoginViewModel {
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-  var emailController = TextEditingController();
-  var passwordController = TextEditingController();
 
   final bool loading;
   final bool saveCredential;
