@@ -3,14 +3,30 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
+import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lkongapp/data/theme.dart' as themeData;
 //here goes the function
+
+dispatchAction(BuildContext context) =>
+    (action) => StoreProvider.of<AppState>(context).dispatch(action);
+
+Widget userAvatar(int uid, double size) {
+  return CircleAvatar(
+    backgroundColor: Colors.transparent,
+    backgroundImage: uid != null && uid > 0
+        ? CachedNetworkImageProvider(avatarForUserID(uid),
+            imageOnError: "assets/noavatar.png")
+        : AssetImage("assets/noavatar.png"),
+    radius: size / 2,
+  );
+}
 
 String html2Text(String htmlString) {
   var document = parse(htmlString);
@@ -26,7 +42,7 @@ String stripHtmlTag(String string) {
 
   string = string.replaceAll(tagPattern, "");
   string = string.replaceAll(spacePattern, " ");
-  
+
   return string.trim();
 }
 

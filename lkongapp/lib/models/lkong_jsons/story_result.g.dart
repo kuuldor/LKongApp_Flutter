@@ -613,7 +613,7 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           specifiedType: const FullType(String)),
       'authorid',
       serializers.serialize(object.authorid,
-          specifiedType: const FullType(String)),
+          specifiedType: const FullType(int)),
       'isme',
       serializers.serialize(object.isme, specifiedType: const FullType(int)),
       'notgroup',
@@ -693,7 +693,7 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           break;
         case 'authorid':
           result.authorid = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
+              specifiedType: const FullType(int)) as int;
           break;
         case 'isme':
           result.isme = serializers.deserialize(value,
@@ -1932,7 +1932,7 @@ class _$Comment extends Comment {
   @override
   final String author;
   @override
-  final String authorid;
+  final int authorid;
   @override
   final int isme;
   @override
@@ -2171,9 +2171,9 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   String get author => _$this._author;
   set author(String author) => _$this._author = author;
 
-  String _authorid;
-  String get authorid => _$this._authorid;
-  set authorid(String authorid) => _$this._authorid = authorid;
+  int _authorid;
+  int get authorid => _$this._authorid;
+  set authorid(int authorid) => _$this._authorid = authorid;
 
   int _isme;
   int get isme => _$this._isme;

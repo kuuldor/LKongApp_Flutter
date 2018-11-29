@@ -215,7 +215,7 @@ Future<Map> contentsForStory(Map args) {
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(StoryContentResult.fromJson),
-      preProcessor: numMapperBuiler(["pid", "id"]));
+      preProcessor: numMapperBuiler(["pid", "id", "authorid"]));
 }
 
 Future<Map> getStoryInfo(Map args) {

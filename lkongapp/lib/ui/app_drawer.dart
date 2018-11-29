@@ -26,26 +26,27 @@ class AppDrawerBuilder extends StatelessWidget {
 }
 
 class AppDrawerViewModel {
-  final bool isAuthed;
+  final AuthState authState;
   final User user;
   final UserInfo info;
   final Function(BuildContext, String) pushScreen;
 
   AppDrawerViewModel({
-    @required this.isAuthed,
+    @required this.authState,
     @required this.info,
     @required this.user,
     @required this.pushScreen,
   });
 
   static AppDrawerViewModel fromStore(Store<AppState> store) {
+    AuthState state = store.state.persistState.authState;
     var _user = selectUser(store);
     var _info = _user?.userInfo;
     if (_user != null && _info == null) {
       store.dispatch(UserInfoRequest(null, _user));
     }
     return AppDrawerViewModel(
-        isAuthed: store.state.persistState.authState.isAuthed,
+        authState: state,
         user: _user,
         info: _info,
         pushScreen: (context, screen) {
@@ -66,7 +67,61 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     User user = viewModel.user;
     UserInfo info = viewModel.info;
-    bool isAuthed = viewModel.isAuthed;
+    bool isAuthed = viewModel.authState.isAuthed;
+
+    var nameLine = <Widget>[];
+
+    if (isAuthed) {
+      nameLine.add(
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(info?.username ?? ""),
+              Container(
+                height: 4.0,
+                width: 3.0,
+              ),
+              Text(user?.identity ?? ""),
+            ],
+          ),
+        ),
+      );
+      if (user != null) {}
+    } else {
+      nameLine.add(Expanded(
+        child: Text("请登录"),
+      ));
+    }
+
+    if (viewModel.authState.userRepo.length > 0) {
+      final allUsers = viewModel.authState.userRepo.asMap().values;
+      final dropMenu = DropdownButtonHideUnderline(
+          child: DropdownButton<User>(
+        items: allUsers.map((User _aUser) {
+          return DropdownMenuItem<User>(
+            value: _aUser,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                userAvatar(_aUser.uid, 18.0),
+                Container(
+                  padding: EdgeInsets.only(left: 4.0),
+                  child: Text(_aUser.userInfo?.username ?? _aUser.identity),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+        onChanged: (_aUser) {
+          dispatchAction(context)(LoginRequest(null, _aUser));
+        },
+      ));
+
+      nameLine.add(dropMenu);
+    }
 
     var children = <Widget>[
       Container(
@@ -75,24 +130,14 @@ class AppDrawer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              CircleAvatar(
-                backgroundColor: Colors.transparent,
-                backgroundImage: isAuthed && user != null
-                    ? CachedNetworkImageProvider(avatarForUserID(user.uid ?? 0),
-                        imageOnError: "assets/noavatar.png")
-                    : AssetImage("assets/noavatar.png"),
-                radius: 36.0,
-              ),
+              userAvatar(isAuthed ? user?.uid : null, 72.0),
               Container(
-                padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
-                child: Text(isAuthed ? info?.username ?? "" : "请登录"),
-              ),
-              isAuthed && user != null
-                  ? Container(
-                      padding: const EdgeInsets.only(top: 2.0, bottom: 8.0),
-                      child: Text(user.identity),
-                    )
-                  : Container(),
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: nameLine,
+                  )),
             ],
           ),
         ),
@@ -113,7 +158,7 @@ class AppDrawer extends StatelessWidget {
           leading: Icon(Icons.exit_to_app),
           title: Text("Logout"),
           onTap: () {
-            StoreProvider.of<AppState>(context).dispatch(LogoutRequest(null));
+            dispatchAction(context)(LogoutRequest(null));
           },
         ),
       ]);

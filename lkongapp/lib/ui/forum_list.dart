@@ -49,14 +49,13 @@ class ForumListModel {
   void _handleLoadInfo(BuildContext context, [int retries = 0]) async {
     if (repo.forums != null && repo.forums.length > 0) {
       var list = List<Forum>()..addAll(repo.forums);
-      list.forEach((forum) => StoreProvider.of<AppState>(context)
-          .dispatch(ForumInfoRequest(null, forum.fid)));
+      list.forEach((forum) => dispatchAction(context)(ForumInfoRequest(null, forum.fid)));
     }
   }
 
   Future<Null> _handleRefresh(BuildContext context) {
     final Completer<bool> completer = Completer<bool>();
-    StoreProvider.of<AppState>(context).dispatch(ForumListRequest(completer));
+    dispatchAction(context)(ForumListRequest(completer));
     return completer.future.then((success) {
       if (success) {
         _handleLoadInfo(context);
@@ -66,7 +65,7 @@ class ForumListModel {
 
   Future<Null> _handleLoadNew(BuildContext context) {
     final Completer<bool> completer = Completer<bool>();
-    StoreProvider.of<AppState>(context).dispatch(ForumListRequest(completer));
+    dispatchAction(context)(ForumListRequest(completer));
     return completer.future.then((success) {});
   }
 
@@ -76,7 +75,7 @@ class ForumListModel {
       repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
         return Future(() {
-          StoreProvider.of<AppState>(context).dispatch(UINavigationPush(
+          dispatchAction(context)(UINavigationPush(
               context, LKongAppRoutes.forumStory, false, (context) {
             return ForumStory(
               forum: forum,

@@ -30,13 +30,7 @@ class StoryItem extends StatelessWidget {
       title: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              backgroundImage: CachedNetworkImageProvider(
-                  avatarForUserID(story.uid),
-                  imageOnError: "assets/noavatar.png"),
-              radius: 18.0,
-            ),
+            userAvatar(story.uid, 36.0),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(left: 8.0),

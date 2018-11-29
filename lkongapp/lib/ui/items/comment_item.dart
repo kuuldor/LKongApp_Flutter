@@ -35,13 +35,7 @@ class CommentItem extends StatelessWidget {
       title: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              backgroundImage: CachedNetworkImageProvider(
-                  avatarForUserID(comment.authorid),
-                  imageOnError: "assets/noavatar.png"),
-              radius: 16.0,
-            ),
+            userAvatar(comment.authorid, 32.0),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(left: 8.0),

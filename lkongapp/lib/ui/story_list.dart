@@ -28,7 +28,7 @@ abstract class StoryListModel {
       } else {
         postId = parseLKTypeId(story.id);
       }
-      StoreProvider.of<AppState>(context).dispatch(
+      dispatchAction(context)(
           UINavigationPush(context, LKongAppRoutes.story, false, (context) {
         return StoryScreen(
           storyId: int.parse(storyId),
@@ -54,15 +54,15 @@ abstract class StoryListModel {
   StoryFetchList get storyList;
 
   Future<Null> _handleRefresh(BuildContext context) async {
-    StoreProvider.of<AppState>(context).dispatch(refreshRequest);
+    dispatchAction(context)(refreshRequest);
   }
 
   Future<Null> _handleLoadNew(BuildContext context) async {
-    StoreProvider.of<AppState>(context).dispatch(fetchNewRequest);
+    dispatchAction(context)(fetchNewRequest);
   }
 
   Future<Null> _handleLoadMore(BuildContext context) async {
-    StoreProvider.of<AppState>(context).dispatch(loadMoreRequest);
+    dispatchAction(context)(loadMoreRequest);
   }
 
   Widget buildListView(BuildContext context) {

@@ -248,7 +248,7 @@ abstract class Comment implements Built<Comment, CommentBuilder> {
   @BuiltValueField(wireName: 'author')
   String get author;
   @BuiltValueField(wireName: 'authorid')
-  String get authorid;
+  int get authorid;
   @BuiltValueField(wireName: 'isme')
   int get isme;
   @BuiltValueField(wireName: 'notgroup')

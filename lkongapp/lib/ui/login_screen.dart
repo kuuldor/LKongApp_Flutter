@@ -26,7 +26,7 @@ class LoginScreen extends StatelessWidget {
         child: Image.asset("assets/logo.png"),
       );
 
-      if (!viewModel.loading && viewModel.saveCredential) {
+      if (!viewModel.loading && viewModel.saveCredential && !viewModel.authState.isAuthed) {
         if ((viewModel.emailController.text == null ||
                 viewModel.emailController.text == "") &&
             (viewModel.passwordController.text == null ||
