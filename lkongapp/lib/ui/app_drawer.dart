@@ -69,50 +69,19 @@ class AppDrawer extends StatelessWidget {
     UserInfo info = viewModel.info;
     bool isAuthed = viewModel.authState.isAuthed;
 
-    var nameLine = <Widget>[];
-
-    if (isAuthed) {
-      nameLine.add(
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(info?.username ?? ""),
-              Container(
-                height: 4.0,
-                width: 3.0,
-              ),
-              Text(user?.identity ?? ""),
-            ],
-          ),
-        ),
-      );
-      if (user != null) {}
-    } else {
-      nameLine.add(Expanded(
-        child: Text("请登录"),
-      ));
-    }
+    var nameLine = <Widget>[Text(user?.identity ?? "")];
 
     if (viewModel.authState.userRepo.length > 0) {
       final allUsers = viewModel.authState.userRepo.asMap().values;
       final dropMenu = DropdownButtonHideUnderline(
           child: DropdownButton<User>(
+        value: user,
+        hint: Text("请登录"),
         items: allUsers.map((User _aUser) {
+          final uname = _aUser.userInfo?.username ?? _aUser.identity;
           return DropdownMenuItem<User>(
             value: _aUser,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                userAvatar(_aUser.uid, 18.0),
-                Container(
-                  padding: EdgeInsets.only(left: 4.0),
-                  child: Text(_aUser.userInfo?.username ?? _aUser.identity),
-                ),
-              ],
-            ),
+            child: Text(uname),
           );
         }).toList(),
         onChanged: (_aUser) {
@@ -121,6 +90,10 @@ class AppDrawer extends StatelessWidget {
       ));
 
       nameLine.add(dropMenu);
+    } else {
+      nameLine.add(Expanded(
+        child: Text("请登录"),
+      ));
     }
 
     var children = <Widget>[
@@ -130,14 +103,18 @@ class AppDrawer extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              userAvatar(isAuthed ? user?.uid : null, 72.0),
+              Row(
+                children: <Widget>[
+                  userAvatar(isAuthed ? user?.uid : null, 64.0),
+                ],
+              ),
               Container(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
+                padding: EdgeInsets.only(top: 8.0, left: 4.0),
+                child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: nameLine,
-                  )),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: nameLine),
+              ),
             ],
           ),
         ),
