@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
-
+import 'package:html_unescape/html_unescape.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -42,7 +42,8 @@ String stripHtmlTag(String string) {
 
   string = string.replaceAll(tagPattern, "");
   string = string.replaceAll(spacePattern, " ");
-
+  string = HtmlUnescape().convert(string);
+  
   return string.trim();
 }
 
