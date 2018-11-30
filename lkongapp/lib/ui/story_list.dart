@@ -91,12 +91,13 @@ abstract class StoryListModel {
                 onTap: () => onStoryTap(context, story),
               );
             } else {
-              if (!loading) {
-                _handleLoadMore(context);
-              }
               item = Container(
                   height: 84.0,
                   child: Center(child: CircularProgressIndicator()));
+            }
+
+            if (!loading && index == itemCount - 6) {
+                _handleLoadMore(context);
             }
 
             return Column(children: <Widget>[
