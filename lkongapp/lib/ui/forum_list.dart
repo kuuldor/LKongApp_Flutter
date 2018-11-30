@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
-import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
@@ -38,18 +38,11 @@ class ForumListModel {
     @required this.onForumTap,
   });
 
-  void showToast(BuildContext context, String message) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-        content: IconMessage(
-          message: message,
-        ),
-        duration: Duration(seconds: 3)));
-  }
-
   void _handleLoadInfo(BuildContext context, [int retries = 0]) async {
     if (repo.forums != null && repo.forums.length > 0) {
       var list = List<Forum>()..addAll(repo.forums);
-      list.forEach((forum) => dispatchAction(context)(ForumInfoRequest(null, forum.fid)));
+      list.forEach((forum) =>
+          dispatchAction(context)(ForumInfoRequest(null, forum.fid)));
     }
   }
 
@@ -74,8 +67,10 @@ class ForumListModel {
       loading: store.state.isLoading,
       repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
+        store.dispatch(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
+
         return Future(() {
-          dispatchAction(context)(UINavigationPush(
+          store.dispatch(UINavigationPush(
               context, LKongAppRoutes.forumStory, false, (context) {
             return ForumStory(
               forum: forum,

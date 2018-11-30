@@ -122,6 +122,10 @@ abstract class ForumStoryResult
   int get curtime;
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
+  @nullable
+  @BuiltValueField(wireName: 'isend')
+  int get isend;
+
   String toJson() {
     return json
         .encode(serializers.serializeWith(ForumStoryResult.serializer, this));

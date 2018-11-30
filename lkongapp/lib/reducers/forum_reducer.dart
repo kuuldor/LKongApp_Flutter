@@ -38,6 +38,8 @@ enum ForumStoryRequestType {
   LoadMore,
 }
 final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
+  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewRequest>(
+      _forumStoryNew),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewSuccess>(
       _forumStorySucceeded(ForumStoryRequestType.New)),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryRefreshSuccess>(
@@ -45,6 +47,14 @@ final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryLoadMoreSuccess>(
       _forumStorySucceeded(ForumStoryRequestType.LoadMore)),
 ]);
+
+BuiltMap<int, StoryFetchList> _forumStoryNew(
+    BuiltMap<int, StoryFetchList> repo, ForumStoryNewRequest action) {
+  var newRepo =
+      repo.rebuild((b) => b.updateValue(action.forum, (v) => StoryFetchList()));
+
+  return newRepo;
+}
 
 _forumStorySucceeded(ForumStoryRequestType type) =>
     (BuiltMap<int, StoryFetchList> repo, ForumStorySuccess action) {

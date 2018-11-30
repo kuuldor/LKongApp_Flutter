@@ -313,6 +313,12 @@ class _$ForumStoryResultSerializer
         ..add(serializers.serialize(object.curtime,
             specifiedType: const FullType(int)));
     }
+    if (object.isend != null) {
+      result
+        ..add('isend')
+        ..add(serializers.serialize(object.isend,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -345,6 +351,10 @@ class _$ForumStoryResultSerializer
         case 'tmp':
           result.tmp = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'isend':
+          result.isend = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -1287,11 +1297,14 @@ class _$ForumStoryResult extends ForumStoryResult {
   final int curtime;
   @override
   final String tmp;
+  @override
+  final int isend;
 
   factory _$ForumStoryResult([void updates(ForumStoryResultBuilder b)]) =>
       (new ForumStoryResultBuilder()..update(updates)).build();
 
-  _$ForumStoryResult._({this.data, this.nexttime, this.curtime, this.tmp})
+  _$ForumStoryResult._(
+      {this.data, this.nexttime, this.curtime, this.tmp, this.isend})
       : super._() {
     if (data == null) {
       throw new BuiltValueNullFieldError('ForumStoryResult', 'data');
@@ -1316,14 +1329,18 @@ class _$ForumStoryResult extends ForumStoryResult {
         data == other.data &&
         nexttime == other.nexttime &&
         curtime == other.curtime &&
-        tmp == other.tmp;
+        tmp == other.tmp &&
+        isend == other.isend;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, data.hashCode), nexttime.hashCode), curtime.hashCode),
-        tmp.hashCode));
+        $jc(
+            $jc($jc($jc(0, data.hashCode), nexttime.hashCode),
+                curtime.hashCode),
+            tmp.hashCode),
+        isend.hashCode));
   }
 
   @override
@@ -1332,7 +1349,8 @@ class _$ForumStoryResult extends ForumStoryResult {
           ..add('data', data)
           ..add('nexttime', nexttime)
           ..add('curtime', curtime)
-          ..add('tmp', tmp))
+          ..add('tmp', tmp)
+          ..add('isend', isend))
         .toString();
   }
 }
@@ -1357,6 +1375,10 @@ class ForumStoryResultBuilder
   String get tmp => _$this._tmp;
   set tmp(String tmp) => _$this._tmp = tmp;
 
+  int _isend;
+  int get isend => _$this._isend;
+  set isend(int isend) => _$this._isend = isend;
+
   ForumStoryResultBuilder();
 
   ForumStoryResultBuilder get _$this {
@@ -1365,6 +1387,7 @@ class ForumStoryResultBuilder
       _nexttime = _$v.nexttime;
       _curtime = _$v.curtime;
       _tmp = _$v.tmp;
+      _isend = _$v.isend;
       _$v = null;
     }
     return this;
@@ -1392,7 +1415,8 @@ class ForumStoryResultBuilder
               data: data.build(),
               nexttime: nexttime,
               curtime: curtime,
-              tmp: tmp);
+              tmp: tmp,
+              isend: isend);
     } catch (_) {
       String _$failedField;
       try {
