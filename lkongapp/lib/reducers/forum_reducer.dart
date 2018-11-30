@@ -50,10 +50,9 @@ final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
 
 BuiltMap<int, StoryFetchList> _forumStoryNew(
     BuiltMap<int, StoryFetchList> repo, ForumStoryNewRequest action) {
-  var newRepo =
-      repo.rebuild((b) => b.updateValue(action.forum, (v) => StoryFetchList()));
-
-  return newRepo;
+  var emptyList = StoryFetchList();
+  return repo.rebuild((b) =>
+      b.updateValue(action.forum, (v) => emptyList, ifAbsent: () => emptyList));
 }
 
 _forumStorySucceeded(ForumStoryRequestType type) =>
