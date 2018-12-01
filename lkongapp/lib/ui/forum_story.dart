@@ -52,11 +52,13 @@ class ForumStoryState extends State<ForumStory> {
 class ForumStoryModel extends StoryListModel {
   final StoryFetchList storyList;
   final bool loading;
+  final String lastError;
   final int forumId;
   final int mode;
 
   ForumStoryModel({
     @required this.loading,
+    @required this.lastError,
     @required this.storyList,
     @required this.forumId,
     @required this.mode,
@@ -65,13 +67,14 @@ class ForumStoryModel extends StoryListModel {
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             loading: store.state.isLoading,
+            lastError: store.state.uiState.content.lastError,
             storyList: store.state.uiState.content.forumRepo[state.forum.fid],
             forumId: state.forum.fid,
             mode: state.mode,
           );
 
   @override
-  APIRequest get fetchNewRequest {
+  APIRequest get fetchFromScratchRequest {
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
@@ -97,6 +100,15 @@ class ForumStoryModel extends StoryListModel {
     });
     return ForumStoryRefreshRequest(
         completer, forumId, mode, storyList.current);
+  }
+
+  @override
+  APIRequest get checkNewRequest {
+    final Completer<bool> completer = Completer<bool>();
+    completer.future.then((success) {
+      // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
+    });
+    return ForumStoryCheckNewRequest(completer, forumId, storyList.current);
   }
 
   Widget _buildStoryListView(BuildContext context, ForumStoryState state) {

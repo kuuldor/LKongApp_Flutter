@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
@@ -15,9 +17,7 @@ import 'package:lkongapp/actions/actions.dart';
 
 import 'package:lkongapp/ui/connected_widget.dart';
 
-abstract class StoryListModel {
-  var _scrollController = ScrollController();
-
+abstract class StoryListModel extends FetchedListModel<Story> {
   final Future<Null> Function(BuildContext context, Story story) onStoryTap =
       (BuildContext context, Story story) {
     return Future(() {
@@ -38,75 +38,32 @@ abstract class StoryListModel {
     });
   };
 
-  void showToast(BuildContext context, String message) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-        content: IconMessage(
-          message: message,
-        ),
-        duration: Duration(seconds: 3)));
-  }
+  APIRequest get checkNewRequest;
 
-  APIRequest get refreshRequest;
-  APIRequest get fetchNewRequest;
-  APIRequest get loadMoreRequest;
-
-  bool get loading;
   StoryFetchList get storyList;
 
-  Future<Null> _handleRefresh(BuildContext context) async {
-    dispatchAction(context)(refreshRequest);
+  List<Story> get list {
+    return storyList?.stories?.toList();
   }
 
-  Future<Null> _handleLoadNew(BuildContext context) async {
-    dispatchAction(context)(fetchNewRequest);
-  }
+  Future<Null> _handleCheckNew(BuildContext context) async {
+    var request = checkNewRequest;
 
-  Future<Null> _handleLoadMore(BuildContext context) async {
-    dispatchAction(context)(loadMoreRequest);
-  }
-
-  Widget buildListView(BuildContext context) {
-    int itemCount = storyList?.stories?.length;
-    if (itemCount == null || itemCount == 0) {
-      if (loading) {
-        return Center(child: CircularProgressIndicator());
-      } else {
-        _handleLoadNew(context);
-        return Container();
-      }
+    if (request != null) {
+      dispatchAction(context)(request);
     }
+  }
 
-    return RefreshIndicator(
-      onRefresh: () => _handleRefresh(context),
-      child: ListView.builder(
-          shrinkWrap: true,
-          controller: _scrollController,
-          itemCount: itemCount + 1,
-          itemBuilder: (BuildContext context, index) {
-            Widget item;
-            if (index < itemCount) {
-              var story = storyList.stories[index];
-              item = StoryItem(
-                story: story,
-                onTap: () => onStoryTap(context, story),
-              );
-            } else {
-              item = Container(
-                  height: 84.0,
-                  child: Center(child: CircularProgressIndicator()));
-            }
+  @override
+  void listIsReady(BuildContext context) {
+    //TODO: dispatch a delayed action here. Need to add action/middleware before this can be done.
+  }
 
-            if (!loading && index == itemCount - 6) {
-                _handleLoadMore(context);
-            }
-
-            return Column(children: <Widget>[
-              item,
-              Divider(
-                height: 12.0,
-              ),
-            ]);
-          }),
+  @override
+  Widget createListItem(BuildContext context, Story story) {
+    return StoryItem(
+      story: story,
+      onTap: () => onStoryTap(context, story),
     );
   }
 }

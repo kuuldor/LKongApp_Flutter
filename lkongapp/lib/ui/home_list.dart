@@ -30,9 +30,11 @@ class HomeListModel extends StoryListModel {
   final bool threadOnlyHome;
   final StoryFetchList storyList;
   final bool loading;
+  final String lastError;
 
   HomeListModel({
     @required this.loading,
+    @required this.lastError,
     @required this.storyList,
     @required this.threadOnlyHome,
   });
@@ -40,14 +42,15 @@ class HomeListModel extends StoryListModel {
   static HomeListModel fromStore(Store<AppState> store) {
     return HomeListModel(
       loading: store.state.isLoading,
+      lastError: store.state.uiState.content.lastError,
       storyList: store.state.uiState.content.homeList,
-      threadOnlyHome:
-          store.state.persistState.appConfig.accountSettings.currentSetting.threadOnlyHome,
+      threadOnlyHome: store.state.persistState.appConfig.accountSettings
+          .currentSetting.threadOnlyHome,
     );
   }
 
   @override
-  APIRequest get fetchNewRequest {
+  APIRequest get fetchFromScratchRequest {
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
@@ -73,4 +76,7 @@ class HomeListModel extends StoryListModel {
     });
     return HomeListRefreshRequest(completer, threadOnlyHome, storyList.current);
   }
+
+  @override
+  APIRequest get checkNewRequest => null;
 }

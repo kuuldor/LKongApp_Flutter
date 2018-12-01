@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/selectors/selectors.dart';
+import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/utils/route.dart';
@@ -19,24 +20,38 @@ class ForumList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return buildConnectedWidget(context, ForumListModel.fromStore, (viewModel) {
-      return viewModel._buildListView(context);
+      return viewModel.buildListView(context);
     });
   }
 }
 
-class ForumListModel {
+class ForumListModel extends FetchedListModel<Forum> {
   final ForumInfo repo;
   final bool loading;
-
-  var _scrollController = ScrollController();
+  final String lastError;
 
   final Future<Null> Function(BuildContext, Forum) onForumTap;
 
   ForumListModel({
     @required this.loading,
+    @required this.lastError,
     @required this.repo,
     @required this.onForumTap,
   });
+
+  @override
+  List<Forum> get list {
+    return repo.forums.toList();
+  }
+
+  @override
+  APIRequest get fetchFromScratchRequest => ForumListRequest(null);
+
+  @override
+  APIRequest get loadMoreRequest => null;
+
+  @override
+  APIRequest get refreshRequest => ForumListRequest(null);
 
   void _handleLoadInfo(BuildContext context, [int retries = 0]) async {
     if (repo.forums != null && repo.forums.length > 0) {
@@ -46,6 +61,7 @@ class ForumListModel {
     }
   }
 
+  @override
   Future<Null> _handleRefresh(BuildContext context) {
     final Completer<bool> completer = Completer<bool>();
     dispatchAction(context)(ForumListRequest(completer));
@@ -56,15 +72,10 @@ class ForumListModel {
     });
   }
 
-  Future<Null> _handleLoadNew(BuildContext context) {
-    final Completer<bool> completer = Completer<bool>();
-    dispatchAction(context)(ForumListRequest(completer));
-    return completer.future.then((success) {});
-  }
-
   static ForumListModel fromStore(Store<AppState> store) {
     return ForumListModel(
       loading: store.state.isLoading,
+      lastError: store.state.uiState.content.lastError,
       repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
         store.dispatch(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
@@ -81,50 +92,23 @@ class ForumListModel {
     );
   }
 
-  Widget _buildListView(BuildContext context) {
-    int forumCount = repo.forums.length;
-
-    if (forumCount == 0) {
-      if (loading) {
-        return Center(child: CircularProgressIndicator());
-      } else {
-        _handleLoadNew(context);
-        return Container();
-      }
-    }
-
+  @override
+  void listIsReady(BuildContext context) {
     int infoCount = repo.info.length;
     if (infoCount == 0) {
       if (!loading) {
         _handleLoadInfo(context);
       }
     }
+  }
 
-    return RefreshIndicator(
-      onRefresh: () => _handleRefresh(context),
-      child: ListView.builder(
-          shrinkWrap: true,
-          controller: _scrollController,
-          itemCount: forumCount,
-          itemBuilder: (BuildContext context, index) {
-            Widget item;
-            if (index < forumCount) {
-              var forum = repo.forums[index];
-              var info = repo.info[forum.fid];
-              item = ForumItem(
-                forum: forum,
-                info: info,
-                onTap: () => onForumTap(context, forum),
-              );
-            }
-
-            return Column(children: <Widget>[
-              item,
-              Divider(
-                height: 12.0,
-              ),
-            ]);
-          }),
+  @override
+  Widget createListItem(BuildContext context, Forum forum) {
+    var info = repo.info[forum.fid];
+    return ForumItem(
+      forum: forum,
+      info: info,
+      onTap: () => onForumTap(context, forum),
     );
   }
 }
