@@ -11,6 +11,7 @@ import 'forum_reducer.dart';
 
 final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIFailure>(_contentRequestFailed),
+  TypedReducer<ContentCache, APISuccess>(_contentRequestSucceed),
   TypedReducer<ContentCache, LoginSuccess>(_loginoutSucceeded),
   TypedReducer<ContentCache, LogoutSuccess>(_loginoutSucceeded),
   _contentReducer,
@@ -18,6 +19,10 @@ final contentReducer = combineReducers<ContentCache>([
 
 ContentCache _contentRequestFailed(ContentCache content, APIFailure action) {
   return content.rebuild((b) => b..lastError = action.error);
+}
+
+ContentCache _contentRequestSucceed(ContentCache content, APISuccess action) {
+  return content.rebuild((b) => b..lastError = null);
 }
 
 ContentCache _loginoutSucceeded(ContentCache content, action) {
