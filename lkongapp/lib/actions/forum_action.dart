@@ -145,3 +145,30 @@ class ForumStoryLoadMoreSuccess extends ForumStorySuccess {
 class ForumStoryLoadMoreFailure extends ForumStoryFailure {
   ForumStoryLoadMoreFailure(String error) : super(error);
 }
+
+class ForumStoryCheckNewRequest extends APIRequest {
+  final int forum;
+  final int current;
+
+  ForumStoryCheckNewRequest(Completer completer, this.forum, this.current)
+      : super(completer: completer, api: FORUM_CHECKNEW_API, parameters: {
+          "forumId": forum,
+          "current": current,
+        });
+
+  @override
+  CreateFailure get badResponse => (error) => ForumStoryCheckNewFailure(error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (request, result) => ForumStoryCheckNewSuccess(request, result);
+}
+
+class ForumStoryCheckNewSuccess extends APISuccess {
+  final int result;
+  ForumStoryCheckNewSuccess(request, this.result) : super(request);
+}
+
+class ForumStoryCheckNewFailure extends APIFailure {
+  ForumStoryCheckNewFailure(String error) : super(error);
+}

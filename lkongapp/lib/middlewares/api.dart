@@ -17,6 +17,7 @@ const STORY_INFO_API = "STORY_INFO";
 const FORUMLIST_API = "FORUMLIST";
 const FORUM_INFO_API = "FORUMINFO";
 const FORUM_THREADS_API = "FORUMTHREADS";
+const FORUM_CHECKNEW_API = "FORUM_CHECKNEW";
 const USERINFO_API = "USERINFO";
 
 HttpSession session = HttpSession(baseURL: 'http://lkong.cn');
@@ -176,6 +177,30 @@ Future<Map> getStoriesForForum(Map args) {
           : stories);
 }
 
+Future<Map> checkNewStories(Map args) {
+  int current = args["current"] ?? 0;
+  int forumId = args["forumId"];
+
+  String urlBase;
+
+  var parameters = getTimeParameter(0, current);
+  parameters["checkrenew"] = 1;
+
+  if (forumId != null) {
+    //Check for new stories in a forum
+    urlBase = endpoint["forumStories"] + "$forumId";
+  } else {
+    //Check for the home list
+    urlBase = endpoint["stories"];
+  }
+
+  var urlString = urlBase + querify(parameters);
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction,
+      dataParser: (data) => {"result": int.parse(data)});
+}
+
 Future<Map> getHomeList(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int current = args["current"] ?? 0;
@@ -195,9 +220,9 @@ Future<Map> getHomeList(Map args) {
 _parseResponseBody<T>(T fromJson(String json)) => (String data) {
       Map result;
 
-      T forums = fromJson(data);
-      if (forums != null) {
-        result = {"result": forums};
+      T object = fromJson(data);
+      if (object != null) {
+        result = {"result": object};
       }
       return result;
     };
@@ -315,6 +340,10 @@ Future<Map> apiDispatch(api, Map parameters) {
 
   if (api.startsWith(FORUM_THREADS_API)) {
     return getStoriesForForum(parameters);
+  }
+
+  if (api == FORUM_CHECKNEW_API) {
+    return checkNewStories(parameters);
   }
 
   if (api == USERINFO_API) {

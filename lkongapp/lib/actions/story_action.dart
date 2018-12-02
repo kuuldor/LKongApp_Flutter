@@ -97,6 +97,31 @@ class HomeListLoadMoreFailure extends HomeListFailure {
   HomeListLoadMoreFailure(String error) : super(error);
 }
 
+class HomeListCheckNewRequest extends APIRequest {
+  final int current;
+
+  HomeListCheckNewRequest(Completer completer, this.current)
+      : super(completer: completer, api: FORUM_CHECKNEW_API, parameters: {
+          "current": current,
+        });
+
+  @override
+  CreateFailure get badResponse => (error) => HomeListCheckNewFailure(error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (request, result) => HomeListCheckNewSuccess(request, result);
+}
+
+class HomeListCheckNewSuccess extends APISuccess {
+  final int result;
+  HomeListCheckNewSuccess(request, this.result) : super(request);
+}
+
+class HomeListCheckNewFailure extends APIFailure {
+  HomeListCheckNewFailure(String error) : super(error);
+}
+
 class StoryContentRequest extends APIRequest with StartLoading {
   final int story;
   final int page;

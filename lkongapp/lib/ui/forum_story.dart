@@ -117,4 +117,24 @@ class ForumStoryModel extends StoryListModel {
       body: buildListView(context),
     );
   }
+
+  @override
+  Widget headerForSection(BuildContext context, {int section}) {
+    int newCount = storyList.newcount;
+    if (newCount > 0) {
+      return Container(
+          height: 36.0,
+          color: Colors.blue[500],
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "$newCount条新信息",
+            style: const TextStyle(color: Colors.white),
+          ));
+    }
+    return null;
+  }
+
+  @override
+  int get checkNewActionKey => "Key-CheckNew-Forum-$forumId".hashCode;
 }

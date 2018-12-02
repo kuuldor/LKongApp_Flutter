@@ -11,13 +11,12 @@ import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
-
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 
 import 'package:lkongapp/ui/connected_widget.dart';
 
-abstract class StoryListModel extends FetchedListModel<Story> {
+abstract class StoryListModel extends FetchedListModel {
   final Future<Null> Function(BuildContext context, Story story) onStoryTap =
       (BuildContext context, Story story) {
     return Future(() {
@@ -42,28 +41,35 @@ abstract class StoryListModel extends FetchedListModel<Story> {
 
   StoryFetchList get storyList;
 
-  List<Story> get list {
-    return storyList?.stories?.toList();
-  }
+  int get checkNewActionKey;
 
-  Future<Null> _handleCheckNew(BuildContext context) async {
+  @override
+  int get itemCount => storyList?.stories?.length;
+
+  @override
+  void listIsReady(BuildContext context) {
     var request = checkNewRequest;
 
     if (request != null) {
-      dispatchAction(context)(request);
+      dispatchAction(context)(
+        DelayedAction(
+          key: checkNewActionKey,
+          action: request,
+          delayed: Duration(seconds: 60),
+        ),
+      );
     }
   }
 
   @override
-  void listIsReady(BuildContext context) {
-    //TODO: dispatch a delayed action here. Need to add action/middleware before this can be done.
-  }
+  Widget createListItem(BuildContext context, int index) {
+    Story story = storyList.stories[index];
 
-  @override
-  Widget createListItem(BuildContext context, Story story) {
-    return StoryItem(
+    var item = StoryItem(
       story: story,
       onTap: () => onStoryTap(context, story),
     );
+
+    return item;
   }
 }

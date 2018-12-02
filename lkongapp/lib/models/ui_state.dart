@@ -65,11 +65,14 @@ abstract class StoryFetchList
         // ..loading = false
         ..current = 0
         ..nexttime = 0
+        ..newcount = 0
         ..update(updates));
 
   // bool get loading;
   int get nexttime;
   int get current;
+  int get newcount;
+
   BuiltList<Story> get stories;
 }
 

@@ -40,6 +40,8 @@ enum ForumStoryRequestType {
 final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewRequest>(
       _forumStoryNew),
+  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryCheckNewSuccess>(
+      _forumStoryNewCountChecked),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewSuccess>(
       _forumStorySucceeded(ForumStoryRequestType.New)),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryRefreshSuccess>(
@@ -53,6 +55,23 @@ BuiltMap<int, StoryFetchList> _forumStoryNew(
   var emptyList = StoryFetchList();
   return repo.rebuild((b) =>
       b.updateValue(action.forum, (v) => emptyList, ifAbsent: () => emptyList));
+}
+
+BuiltMap<int, StoryFetchList> _forumStoryNewCountChecked(
+    BuiltMap<int, StoryFetchList> repo, ForumStoryCheckNewSuccess action) {
+  var newRepo = repo;
+  var request = action.request as ForumStoryCheckNewRequest;
+  if (request != null) {
+    int fid = request.forum;
+
+    var result = action.result;
+    final update = (StoryFetchListBuilder b) => b.newcount = result;
+
+    newRepo = newRepo.rebuild((b) => b.updateValue(
+        fid, (v) => v.rebuild(update),
+        ifAbsent: () => StoryFetchList().rebuild(update)));
+  }
+  return newRepo;
 }
 
 _forumStorySucceeded(ForumStoryRequestType type) =>
@@ -77,12 +96,15 @@ _forumStorySucceeded(ForumStoryRequestType type) =>
             ..current = current;
           switch (type) {
             case ForumStoryRequestType.New:
-              b..stories.replace(list);
+              b
+                ..newcount = 0
+                ..stories.replace(list);
               break;
             case ForumStoryRequestType.Refresh:
               var newsSet = list.map((story) => story.id).toSet();
 
               b
+                ..newcount = 0
                 ..stories.where((story) => !newsSet.contains(story.id))
                 ..stories.insertAll(0, list);
 

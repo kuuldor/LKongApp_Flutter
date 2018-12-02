@@ -25,7 +25,7 @@ class ForumList extends StatelessWidget {
   }
 }
 
-class ForumListModel extends FetchedListModel<Forum> {
+class ForumListModel extends FetchedListModel {
   final ForumInfo repo;
   final bool loading;
   final String lastError;
@@ -40,9 +40,7 @@ class ForumListModel extends FetchedListModel<Forum> {
   });
 
   @override
-  List<Forum> get list {
-    return repo.forums.toList();
-  }
+  int get itemCount => repo.forums.length;
 
   @override
   APIRequest get fetchFromScratchRequest => ForumListRequest(null);
@@ -103,7 +101,8 @@ class ForumListModel extends FetchedListModel<Forum> {
   }
 
   @override
-  Widget createListItem(BuildContext context, Forum forum) {
+  Widget createListItem(BuildContext context, int index) {
+    Forum forum = repo.forums[index];
     var info = repo.info[forum.fid];
     return ForumItem(
       forum: forum,

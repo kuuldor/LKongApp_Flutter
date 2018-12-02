@@ -11,7 +11,11 @@ import 'api.dart';
 import 'ui_nav.dart';
 
 List<Middleware<AppState>> createStoreMiddleware() {
-  return [filterAll, thunkMiddleware]
+  return [
+    filterAll,
+    TypedMiddleware<AppState, DelayedAction>(delayed),
+    thunkMiddleware
+  ]
     ..addAll(createStorePersistentMiddleware())
     ..addAll(createAPICallMiddleware())
     ..addAll(createUINavigationMiddleware());
@@ -53,4 +57,22 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
   if (passon) {
     next(action);
   }
+}
+
+var delayedActions = Map<int, dynamic>();
+
+void delayed(Store<AppState> store, DelayedAction action, NextDispatcher next) {
+  int key = action.key;
+  var delayed = action.delayed;
+
+  delayedActions[key] = action;
+
+  Future.delayed(delayed, () {
+    var now = DateTime.now();
+    var delayedAction = delayedActions[key] as DelayedAction;
+    if (delayedAction != null && delayedAction.fireTime.isBefore(now)) {
+      delayedActions[key] = null;
+      store.dispatch(delayedAction.action);
+    }
+  });
 }

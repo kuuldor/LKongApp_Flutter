@@ -6,7 +6,6 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
 
-
 final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
   TypedReducer<BuiltMap<int, StoryPageList>, StoryContentRequest>(
       _storyContentRequested),
@@ -99,17 +98,20 @@ final homeListReducer = combineReducers<StoryFetchList>([
   // TypedReducer<HomeList, HomeListRequest>(_homeListLoading),
   TypedReducer<StoryFetchList, HomeListNewSuccess>(
       _homeListSucceeded(HomeListRequestType.New)),
-  // TypedReducer<HomeList, HomeListNewFailure>(
-      // _homeListFailed(HomeListRequestType.New)),
   TypedReducer<StoryFetchList, HomeListRefreshSuccess>(
       _homeListSucceeded(HomeListRequestType.Refresh)),
-  // TypedReducer<HomeList, HomeListRefreshFailure>(
-      // _homeListFailed(HomeListRequestType.Refresh)),
   TypedReducer<StoryFetchList, HomeListLoadMoreSuccess>(
       _homeListSucceeded(HomeListRequestType.LoadMore)),
-  // TypedReducer<HomeList, HomeListLoadMoreFailure>(
-      // _homeListFailed(HomeListRequestType.LoadMore)),
+  TypedReducer<StoryFetchList, HomeListCheckNewSuccess>(
+      _homeListNewCountChecked),
 ]);
+
+StoryFetchList _homeListNewCountChecked(
+    StoryFetchList list, HomeListCheckNewSuccess action) {
+  var result = action.result;
+
+  return list.rebuild((b) => b.newcount = result);
+}
 
 enum HomeListRequestType {
   New,
@@ -135,10 +137,14 @@ _homeListSucceeded(HomeListRequestType type) =>
             ..current = current;
           switch (type) {
             case HomeListRequestType.New:
-              b..stories.replace(data);
+              b
+                ..newcount = 0
+                ..stories.replace(data);
               break;
             case HomeListRequestType.Refresh:
-              b..stories.insertAll(0, data);
+              b
+                ..newcount = 0
+                ..stories.insertAll(0, data);
               break;
             case HomeListRequestType.LoadMore:
               b..stories.addAll(data);

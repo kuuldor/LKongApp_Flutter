@@ -78,5 +78,9 @@ class HomeListModel extends StoryListModel {
   }
 
   @override
-  APIRequest get checkNewRequest => null;
+  APIRequest get checkNewRequest =>
+      HomeListCheckNewRequest(null, storyList.current);
+
+  @override
+  int get checkNewActionKey => "Key-CheckNew-HomeList".hashCode;
 }

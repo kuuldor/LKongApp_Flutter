@@ -42,6 +42,13 @@ void main() {
     });
   });
 
+  test('Check New Forum Story Test', () async {
+    await checkNewStories({"forumId": 60}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+  });
+
   test('Get Thread Info Test', () async {
     await getStoryInfo({"story": 2173241}).then((map) {
       print(map.toString());

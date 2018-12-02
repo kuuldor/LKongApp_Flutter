@@ -371,17 +371,23 @@ class _$StoryFetchList extends StoryFetchList {
   @override
   final int current;
   @override
+  final int newcount;
+  @override
   final BuiltList<Story> stories;
 
   factory _$StoryFetchList([void updates(StoryFetchListBuilder b)]) =>
       (new StoryFetchListBuilder()..update(updates)).build();
 
-  _$StoryFetchList._({this.nexttime, this.current, this.stories}) : super._() {
+  _$StoryFetchList._({this.nexttime, this.current, this.newcount, this.stories})
+      : super._() {
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('StoryFetchList', 'nexttime');
     }
     if (current == null) {
       throw new BuiltValueNullFieldError('StoryFetchList', 'current');
+    }
+    if (newcount == null) {
+      throw new BuiltValueNullFieldError('StoryFetchList', 'newcount');
     }
     if (stories == null) {
       throw new BuiltValueNullFieldError('StoryFetchList', 'stories');
@@ -402,13 +408,16 @@ class _$StoryFetchList extends StoryFetchList {
     return other is StoryFetchList &&
         nexttime == other.nexttime &&
         current == other.current &&
+        newcount == other.newcount &&
         stories == other.stories;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc(0, nexttime.hashCode), current.hashCode), stories.hashCode));
+        $jc($jc($jc(0, nexttime.hashCode), current.hashCode),
+            newcount.hashCode),
+        stories.hashCode));
   }
 
   @override
@@ -416,6 +425,7 @@ class _$StoryFetchList extends StoryFetchList {
     return (newBuiltValueToStringHelper('StoryFetchList')
           ..add('nexttime', nexttime)
           ..add('current', current)
+          ..add('newcount', newcount)
           ..add('stories', stories))
         .toString();
   }
@@ -433,6 +443,10 @@ class StoryFetchListBuilder
   int get current => _$this._current;
   set current(int current) => _$this._current = current;
 
+  int _newcount;
+  int get newcount => _$this._newcount;
+  set newcount(int newcount) => _$this._newcount = newcount;
+
   ListBuilder<Story> _stories;
   ListBuilder<Story> get stories =>
       _$this._stories ??= new ListBuilder<Story>();
@@ -444,6 +458,7 @@ class StoryFetchListBuilder
     if (_$v != null) {
       _nexttime = _$v.nexttime;
       _current = _$v.current;
+      _newcount = _$v.newcount;
       _stories = _$v.stories?.toBuilder();
       _$v = null;
     }
@@ -469,7 +484,10 @@ class StoryFetchListBuilder
     try {
       _$result = _$v ??
           new _$StoryFetchList._(
-              nexttime: nexttime, current: current, stories: stories.build());
+              nexttime: nexttime,
+              current: current,
+              newcount: newcount,
+              stories: stories.build());
     } catch (_) {
       String _$failedField;
       try {
