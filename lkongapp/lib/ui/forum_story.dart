@@ -125,7 +125,7 @@ class ForumStoryModel extends StoryListModel {
     var state = aState as ForumStoryState;
     return Scaffold(
       appBar: AppBar(title: Text(state.forum.name)),
-      body: buildListView(context),
+      body: super.buildStoryListView(context, state),
     );
   }
 

@@ -9,7 +9,7 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:lkongapp/actions/actions.dart';
 
 abstract class FetchedListModel extends GroupedListModel {
-  var scrollController = ScrollController();
+  var _scrollController = ScrollController();
 
   APIRequest get refreshRequest;
   APIRequest get fetchFromScratchRequest;
@@ -129,7 +129,7 @@ abstract class FetchedListModel extends GroupedListModel {
       final theme = LKModeledApp.modelOf(context).theme;
 
       listView = SingleChildScrollView(
-        controller: scrollController,
+        controller: _scrollController,
         child: Container(
           height: MediaQuery.of(context).size.height,
           child: Text(

@@ -17,17 +17,19 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 
 abstract class StoryListState<T extends StatefulWidget> extends State<T> {
+  StoryListState({this.timerPeriod: 60});
+
   Widget buildWidgetWithVMFactory(BuildContext context, fromStore) {
     return buildConnectedWidget(context, fromStore, (StoryListModel viewModel) {
-      setCheckNewCallback(() {
-        viewModel.handleCheckNew(context);
-      });
       return viewModel.buildStoryListView(context, this);
     });
   }
 
+  final int timerPeriod;
+
   Timer checkNewTimer;
   Function checkNewCallback;
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +38,7 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
 
   void createTimer() {
     cancelTimer();
-    checkNewTimer = Timer.periodic(Duration(seconds: 60), (timer) {
+    checkNewTimer = Timer.periodic(Duration(seconds: timerPeriod), (timer) {
       if (checkNewCallback != null) {
         checkNewCallback();
       }
@@ -52,6 +54,7 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
 
   @override
   void dispose() {
+    print("State $this disposed");
     super.dispose();
     cancelTimer();
   }
@@ -122,6 +125,11 @@ abstract class StoryListModel extends FetchedListModel {
   }
 
   Widget buildStoryListView(BuildContext context, StoryListState state) {
+    if (itemCount != null && itemCount > 0) {
+      state.setCheckNewCallback(() {
+        handleCheckNew(context);
+      });
+    }
     return buildListView(context);
   }
 }
