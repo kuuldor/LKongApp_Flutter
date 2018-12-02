@@ -9,6 +9,7 @@ import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
+import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
@@ -29,7 +30,7 @@ class ForumStory extends StatefulWidget {
   }
 }
 
-class ForumStoryState extends State<ForumStory> {
+class ForumStoryState extends StoryListState<ForumStory> {
   Forum forum;
   int mode;
 
@@ -39,13 +40,21 @@ class ForumStoryState extends State<ForumStory> {
     });
   }
 
+  @override
+  bool operator ==(other) {
+    return other is ForumStoryState &&
+        forum == other.forum &&
+        mode == other.mode;
+  }
+
+  @override
+  int get hashCode => hash2(forum, mode);
+
   ForumStoryState(this.forum, {this.mode: 0});
   @override
   Widget build(BuildContext context) {
-    return buildConnectedWidget(
-        context, ForumStoryModel.fromStateAndStore(this), (viewModel) {
-      return viewModel._buildStoryListView(context, this);
-    });
+    return buildWidgetWithVMFactory(
+        context, ForumStoryModel.fromStateAndStore(this));
   }
 }
 
@@ -111,7 +120,9 @@ class ForumStoryModel extends StoryListModel {
     return ForumStoryCheckNewRequest(completer, forumId, storyList.current);
   }
 
-  Widget _buildStoryListView(BuildContext context, ForumStoryState state) {
+  @override
+  Widget buildStoryListView(BuildContext context, StoryListState aState) {
+    var state = aState as ForumStoryState;
     return Scaffold(
       appBar: AppBar(title: Text(state.forum.name)),
       body: buildListView(context),
@@ -134,7 +145,4 @@ class ForumStoryModel extends StoryListModel {
     }
     return null;
   }
-
-  @override
-  int get checkNewActionKey => "Key-CheckNew-Forum-$forumId".hashCode;
 }

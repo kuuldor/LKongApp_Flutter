@@ -17,12 +17,17 @@ import 'package:lkongapp/ui/connected_widget.dart';
 
 import 'story_list.dart';
 
-class HomeList extends StatelessWidget {
+class HomeList extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return HomeListState();
+  }
+}
+
+class HomeListState extends StoryListState<HomeList> {
   @override
   Widget build(BuildContext context) {
-    return buildConnectedWidget(context, HomeListModel.fromStore, (viewModel) {
-      return viewModel.buildListView(context);
-    });
+    return buildWidgetWithVMFactory(context, HomeListModel.fromStore);
   }
 }
 
@@ -80,7 +85,4 @@ class HomeListModel extends StoryListModel {
   @override
   APIRequest get checkNewRequest =>
       HomeListCheckNewRequest(null, storyList.current);
-
-  @override
-  int get checkNewActionKey => "Key-CheckNew-HomeList".hashCode;
 }

@@ -16,6 +16,59 @@ import 'package:lkongapp/actions/actions.dart';
 
 import 'package:lkongapp/ui/connected_widget.dart';
 
+abstract class StoryListState<T extends StatefulWidget> extends State<T> {
+  Widget buildWidgetWithVMFactory(BuildContext context, fromStore) {
+    return buildConnectedWidget(context, fromStore, (StoryListModel viewModel) {
+      setCheckNewCallback(() {
+        viewModel.handleCheckNew(context);
+      });
+      return viewModel.buildStoryListView(context, this);
+    });
+  }
+
+  Timer checkNewTimer;
+  Function checkNewCallback;
+  @override
+  void initState() {
+    super.initState();
+    createTimer();
+  }
+
+  void createTimer() {
+    cancelTimer();
+    checkNewTimer = Timer.periodic(Duration(seconds: 60), (timer) {
+      if (checkNewCallback != null) {
+        checkNewCallback();
+      }
+    });
+  }
+
+  void cancelTimer() {
+    if (checkNewTimer != null) {
+      checkNewTimer.cancel();
+      checkNewTimer = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    cancelTimer();
+  }
+
+  void setCheckNewCallback(Function callback) {
+    checkNewCallback = callback;
+  }
+
+  @override
+  bool operator ==(other) {
+    return other is StoryListState;
+  }
+
+  @override
+  int get hashCode => 0;
+}
+
 abstract class StoryListModel extends FetchedListModel {
   final Future<Null> Function(BuildContext context, Story story) onStoryTap =
       (BuildContext context, Story story) {
@@ -41,25 +94,20 @@ abstract class StoryListModel extends FetchedListModel {
 
   StoryFetchList get storyList;
 
-  int get checkNewActionKey;
-
   @override
   int get itemCount => storyList?.stories?.length;
 
-  @override
-  void listIsReady(BuildContext context) {
+  Future<Null> handleCheckNew(BuildContext context) async {
     var request = checkNewRequest;
 
     if (request != null) {
-      dispatchAction(context)(
-        DelayedAction(
-          key: checkNewActionKey,
-          action: request,
-          delayed: Duration(seconds: 60),
-        ),
-      );
+      dispatchAction(context)(request);
     }
   }
+
+  @mustCallSuper
+  @override
+  void listIsReady(BuildContext context) {}
 
   @override
   Widget createListItem(BuildContext context, int index) {
@@ -71,5 +119,9 @@ abstract class StoryListModel extends FetchedListModel {
     );
 
     return item;
+  }
+
+  Widget buildStoryListView(BuildContext context, StoryListState state) {
+    return buildListView(context);
   }
 }
