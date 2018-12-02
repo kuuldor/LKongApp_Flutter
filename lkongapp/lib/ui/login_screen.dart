@@ -165,6 +165,17 @@ class LoginViewModel {
   final Function(BuildContext, String, String) onLoginPressed;
   final Function(BuildContext, bool) onSaveCredentialChanged;
 
+  @override
+  bool operator ==(other) {
+    return other is LoginViewModel &&
+        loading == other.loading &&
+        saveCredential == other.saveCredential &&
+        authState == other.authState;
+  }
+
+  @override
+  int get hashCode => hash3(loading, saveCredential, authState);
+
   LoginViewModel({
     @required this.loading,
     @required this.authState,

@@ -17,6 +17,19 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 
 abstract class StoryListState<T extends StatefulWidget> extends State<T> {
+  final int timerPeriod;
+
+  @override
+  bool operator ==(other) {
+    return other is StoryListState && timerPeriod == other.timerPeriod;
+  }
+
+  @override
+  int get hashCode => timerPeriod.hashCode;
+
+  Timer checkNewTimer;
+  Function checkNewCallback;
+
   StoryListState({this.timerPeriod: 60});
 
   Widget buildWidgetWithVMFactory(BuildContext context, fromStore) {
@@ -24,11 +37,6 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
       return viewModel.buildStoryListView(context, this);
     });
   }
-
-  final int timerPeriod;
-
-  Timer checkNewTimer;
-  Function checkNewCallback;
 
   @override
   void initState() {
@@ -62,14 +70,6 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
   void setCheckNewCallback(Function callback) {
     checkNewCallback = callback;
   }
-
-  @override
-  bool operator ==(other) {
-    return other is StoryListState;
-  }
-
-  @override
-  int get hashCode => 0;
 }
 
 abstract class StoryListModel extends FetchedListModel {
@@ -137,15 +137,24 @@ abstract class StoryListModel extends FetchedListModel {
   Widget headerForSection(BuildContext context, {int section}) {
     int newCount = storyList?.newcount ?? 0;
     if (newCount > 0) {
-      return Container(
-          height: 36.0,
-          color: Colors.blue[500],
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "$newCount条新信息",
-            style: const TextStyle(color: Colors.white),
-          ));
+      return GestureDetector(
+          onTap: () {
+            scrollController.jumpTo(0.0);
+            if (newCount > 50) {
+              handleFetchFromScratch(context);
+            } else {
+              handleRefresh(context);
+            }
+          },
+          child: Container(
+              height: 36.0,
+              color: Colors.blue[500],
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "$newCount条新信息",
+                style: const TextStyle(color: Colors.white),
+              )));
     }
     return null;
   }

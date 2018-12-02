@@ -58,7 +58,7 @@ abstract class FetchedListModel extends GroupedListModel {
           item = createListItem(context, index);
         } else {
           if (!loading && lastError == null) {
-            _handleLoadMore(context);
+            handleLoadMore(context);
           }
           item = Container(
               height: 84.0, child: Center(child: CircularProgressIndicator()));
@@ -87,7 +87,7 @@ abstract class FetchedListModel extends GroupedListModel {
   @override
   SliverAppBar get appBar => null;
 
-  Future<Null> _handleRefresh(BuildContext context) async {
+  Future<Null> handleRefresh(BuildContext context) async {
     if (lastError == null) {
       dispatchAction(context)(refreshRequest);
     } else {
@@ -95,11 +95,11 @@ abstract class FetchedListModel extends GroupedListModel {
     }
   }
 
-  Future<Null> _handleFetchFromScratch(BuildContext context) async {
+  Future<Null> handleFetchFromScratch(BuildContext context) async {
     dispatchAction(context)(fetchFromScratchRequest);
   }
 
-  Future<Null> _handleLoadMore(BuildContext context) async {
+  Future<Null> handleLoadMore(BuildContext context) async {
     var request = loadMoreRequest;
     if (request != null) {
       dispatchAction(context)(request);
@@ -115,7 +115,7 @@ abstract class FetchedListModel extends GroupedListModel {
       if (loading) {
         return Center(child: CircularProgressIndicator());
       } else if (lastError == null) {
-        _handleFetchFromScratch(context);
+        handleFetchFromScratch(context);
         return Container();
       }
     }
@@ -141,6 +141,6 @@ abstract class FetchedListModel extends GroupedListModel {
       );
     }
     return RefreshIndicator(
-        onRefresh: () => _handleRefresh(context), child: listView);
+        onRefresh: () => handleRefresh(context), child: listView);
   }
 }

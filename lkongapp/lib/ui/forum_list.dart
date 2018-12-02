@@ -9,6 +9,7 @@ import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
+import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
@@ -31,6 +32,17 @@ class ForumListModel extends FetchedListModel {
   final String lastError;
 
   final Future<Null> Function(BuildContext, Forum) onForumTap;
+  
+  @override
+  bool operator ==(other) {
+    return other is ForumListModel &&
+        repo == other.repo &&
+        loading == other.loading &&
+        lastError == other.lastError;
+  }
+
+  @override
+  int get hashCode => hash3(repo, loading, lastError);
 
   ForumListModel({
     @required this.loading,
@@ -60,7 +72,7 @@ class ForumListModel extends FetchedListModel {
   }
 
   @override
-  Future<Null> _handleRefresh(BuildContext context) {
+  Future<Null> handleRefresh(BuildContext context) {
     final Completer<bool> completer = Completer<bool>();
     dispatchAction(context)(ForumListRequest(completer));
     return completer.future.then((success) {

@@ -84,12 +84,15 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
     int threadId = int.parse(id);
     StoryPage page =
         StoryPage().rebuild((b) => b..comments.replace(result.comments));
-
-    newRepo = newRepo.rebuild((b) => b
-      ..updateValue(
+    var updater = (b) => b..pages.updateValue(result.page, (v) => page);
+    newRepo = newRepo.rebuild(
+      (b) => b
+        ..updateValue(
           threadId,
-          (v) => v
-              .rebuild((b) => b..pages.updateValue(result.page, (v) => page))));
+          (v) => v.rebuild(updater),
+          ifAbsent: () => StoryPageList().rebuild(updater),
+        ),
+    );
   }
   return newRepo;
 }

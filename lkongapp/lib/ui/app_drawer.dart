@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/actions/ui_action.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
+import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/selectors/selectors.dart';
@@ -30,6 +31,17 @@ class AppDrawerViewModel {
   final User user;
   final UserInfo info;
   final Function(BuildContext, String) pushScreen;
+
+  @override
+  bool operator ==(other) {
+    return other is AppDrawerViewModel &&
+        user == other.user &&
+        authState == other.authState &&
+        info == other.info;
+  }
+
+  @override
+  int get hashCode => hash3(info, user, authState);
 
   AppDrawerViewModel({
     @required this.authState,

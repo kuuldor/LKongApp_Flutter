@@ -242,7 +242,6 @@ TextStyle applyCSSForClass(
     // print("Class $className");
     var style = themeData.cssStyle[".$className"];
     if (style != null) {
-      print("Style $style");
       String fcolorName = style["color"] as String;
       if (fcolorName != null) {
         String fcolor = theme.appTheme.colors[fcolorName];

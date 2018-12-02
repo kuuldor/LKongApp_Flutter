@@ -104,6 +104,16 @@ class PageModel {
   final Function(BuildContext, int) onPageChanged;
   final Function(BuildContext) showLoginScreen;
 
+  @override
+  bool operator ==(other) {
+    return other is PageModel &&
+        page == other.page &&
+        isAuthed == other.isAuthed;
+  }
+
+  @override
+  int get hashCode => hash2(page, isAuthed);
+
   PageModel({
     @required this.page,
     @required this.isAuthed,

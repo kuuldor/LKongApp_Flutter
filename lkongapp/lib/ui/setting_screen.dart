@@ -36,6 +36,16 @@ class SettingModel {
   final Function(BuildContext, int) onSettingChanged;
   final Function(BuildContext, bool) dismissScreen;
 
+  @override
+  bool operator ==(other) {
+    return other is SettingModel &&
+        other.config == config &&
+        other.user == user;
+  }
+
+  @override
+  int get hashCode => hash2(config, user);
+
   SettingModel({
     @required this.config,
     @required this.user,

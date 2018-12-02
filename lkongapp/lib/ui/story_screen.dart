@@ -10,6 +10,7 @@ import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/theme.dart';
+import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
@@ -118,6 +119,16 @@ class StoryContentModel {
           store.dispatch(StoryInfoRequest(null, storyId));
         });
   }
+
+  @override
+  bool operator ==(other) {
+    return other is StoryContentModel &&
+        other.repo == repo &&
+        other.loading == loading;
+  }
+
+  @override
+  int get hashCode => hash2(loading, repo);
 
   var _scrollController = ScrollController();
 
