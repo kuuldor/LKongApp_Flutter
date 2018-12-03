@@ -15,6 +15,10 @@ final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
       _storyInfoRequested),
   TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoSuccess>(
       _storyInfoSucceeded),
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryContentFailure>(
+      _storyContentFailed),
+  TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoFailure>(
+      _storyInfoFailed),
 ]);
 
 BuiltMap<int, StoryPageList> _storyInfoRequested(
@@ -38,7 +42,45 @@ BuiltMap<int, StoryPageList> _storyInfoSucceeded(
 
     newRepo = newRepo.rebuild((b) => b
       ..updateValue(
-          threadId, (v) => v.rebuild((b) => b..storyInfo.replace(result))));
+          threadId,
+          (v) => v.rebuild((b) => b
+            ..loading = false
+            ..lastError = null
+            ..storyInfo.replace(result))));
+  }
+  return newRepo;
+}
+
+BuiltMap<int, StoryPageList> _storyInfoFailed(
+    BuiltMap<int, StoryPageList> storyRepo, StoryInfoFailure action) {
+  int threadId;
+  final request = action.request as StoryInfoRequest;
+  if (request != null) {
+    threadId = request.story;
+  }
+  return _storyRequestFailed(storyRepo, threadId, action);
+}
+
+BuiltMap<int, StoryPageList> _storyContentFailed(
+    BuiltMap<int, StoryPageList> storyRepo, StoryContentFailure action) {
+  int threadId;
+  final request = action.request as StoryContentRequest;
+  if (request != null) {
+    threadId = request.story;
+  }
+  return _storyRequestFailed(storyRepo, threadId, action);
+}
+
+BuiltMap<int, StoryPageList> _storyRequestFailed(
+    BuiltMap<int, StoryPageList> storyRepo, int threadId, APIFailure action) {
+  var newRepo = storyRepo;
+  if (threadId != null) {
+    newRepo = newRepo.rebuild((b) => b
+      ..updateValue(
+          threadId,
+          (v) => v.rebuild((b) => b
+            ..loading = false
+            ..lastError = action.error)));
   }
   return newRepo;
 }
@@ -84,7 +126,10 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
     int threadId = int.parse(id);
     StoryPage page =
         StoryPage().rebuild((b) => b..comments.replace(result.comments));
-    var updater = (b) => b..pages.updateValue(result.page, (v) => page);
+    var updater = (b) => b
+      ..loading = false
+      ..lastError = null
+      ..pages.updateValue(result.page, (v) => page);
     newRepo = newRepo.rebuild(
       (b) => b
         ..updateValue(
@@ -98,7 +143,9 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
 }
 
 final homeListReducer = combineReducers<StoryFetchList>([
-  // TypedReducer<HomeList, HomeListRequest>(_homeListLoading),
+  TypedReducer<StoryFetchList, HomeListRequest>(_homeListLoading),
+  TypedReducer<StoryFetchList, HomeListFailure>(_homeListFailed),
+  TypedReducer<StoryFetchList, HomeListCheckNewFailure>(_homeListFailed),
   TypedReducer<StoryFetchList, HomeListNewSuccess>(
       _homeListSucceeded(HomeListRequestType.New)),
   TypedReducer<StoryFetchList, HomeListRefreshSuccess>(
@@ -114,6 +161,16 @@ StoryFetchList _homeListNewCountChecked(
   var result = action.result;
 
   return list.rebuild((b) => b.newcount = result);
+}
+
+StoryFetchList _homeListLoading(StoryFetchList list, HomeListRequest action) {
+  return list.rebuild((b) => b..loading = true);
+}
+
+StoryFetchList _homeListFailed(StoryFetchList list, APIFailure action) {
+  return list.rebuild((b) => b
+    ..loading = false
+    ..lastError = action.error);
 }
 
 enum HomeListRequestType {
@@ -136,6 +193,8 @@ _homeListSucceeded(HomeListRequestType type) =>
               : list.current;
 
           b
+            ..loading = false
+            ..lastError = null
             ..nexttime = nexttime
             ..current = current;
           switch (type) {
@@ -156,15 +215,7 @@ _homeListSucceeded(HomeListRequestType type) =>
               b..stories.addAll(data);
               break;
           }
-        } 
+        }
         return b;
       });
     };
-
-// _homeListFailed(HomeListRequestType type) => (HomeList list, action) {
-//       return list.rebuild((b) => b..loading = false);
-//     };
-
-// HomeList _homeListLoading(HomeList list, action) {
-//   return list.rebuild((b) => b..loading = true);
-// }

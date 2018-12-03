@@ -11,11 +11,11 @@ class ForumListRequest extends APIRequest with StartLoading {
       : super(completer: completer, api: FORUMLIST_API, parameters: {});
 
   @override
-  CreateFailure get badResponse => (error) => ForumListFailure(error);
+  CreateFailure get badResponse => (error) => ForumListFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, list) => ForumListSuccess(request, list);
+      (list) => ForumListSuccess(this, list);
 }
 
 class ForumListSuccess extends APISuccess with StopLoading {
@@ -25,7 +25,7 @@ class ForumListSuccess extends APISuccess with StopLoading {
 }
 
 class ForumListFailure extends APIFailure with StopLoading {
-  ForumListFailure(String error) : super(error);
+  ForumListFailure(request, String error) : super(request, error);
 }
 
 class ForumInfoRequest extends APIRequest with StartLoading {
@@ -37,11 +37,11 @@ class ForumInfoRequest extends APIRequest with StartLoading {
         });
 
   @override
-  CreateFailure get badResponse => (error) => ForumInfoFailure(error);
+  CreateFailure get badResponse => (error) => ForumInfoFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, info) => ForumInfoSuccess(request, info);
+      (info) => ForumInfoSuccess(this, info);
 }
 
 class ForumInfoSuccess extends APISuccess with StopLoading {
@@ -51,7 +51,7 @@ class ForumInfoSuccess extends APISuccess with StopLoading {
 }
 
 class ForumInfoFailure extends APIFailure with StopLoading {
-  ForumInfoFailure(String error) : super(error);
+  ForumInfoFailure(request, String error) : super(request, error);
 }
 
 abstract class ForumStoryRequest extends APIRequest with StartLoading {
@@ -76,11 +76,11 @@ class ForumStoryNewRequest extends ForumStoryRequest {
       : super(completer, forum, mode, nexttime, current);
 
   @override
-  CreateFailure get badResponse => (error) => ForumStoryNewFailure(error);
+  CreateFailure get badResponse => (error) => ForumStoryNewFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, result) => ForumStoryNewSuccess(request, result);
+      (result) => ForumStoryNewSuccess(this, result);
 }
 
 class ForumStoryRefreshRequest extends ForumStoryRequest {
@@ -89,11 +89,11 @@ class ForumStoryRefreshRequest extends ForumStoryRequest {
       : super(completer, forum, mode, 0, current);
 
   @override
-  CreateFailure get badResponse => (error) => ForumStoryRefreshFailure(error);
+  CreateFailure get badResponse => (error) => ForumStoryRefreshFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, result) => ForumStoryRefreshSuccess(request, result);
+      (result) => ForumStoryRefreshSuccess(this, result);
 }
 
 class ForumStoryLoadMoreRequest extends ForumStoryRequest {
@@ -102,11 +102,11 @@ class ForumStoryLoadMoreRequest extends ForumStoryRequest {
       : super(completer, forum, mode, nexttime, 0);
 
   @override
-  CreateFailure get badResponse => (error) => ForumStoryLoadMoreFailure(error);
+  CreateFailure get badResponse => (error) => ForumStoryLoadMoreFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, result) => ForumStoryLoadMoreSuccess(request, result);
+      (result) => ForumStoryLoadMoreSuccess(this, result);
 }
 
 class ForumStorySuccess extends APISuccess with StopLoading {
@@ -116,7 +116,7 @@ class ForumStorySuccess extends APISuccess with StopLoading {
 }
 
 class ForumStoryFailure extends APIFailure with StopLoading {
-  ForumStoryFailure(String error) : super(error);
+  ForumStoryFailure(request, String error) : super(request, error);
 }
 
 class ForumStoryNewSuccess extends ForumStorySuccess {
@@ -125,7 +125,7 @@ class ForumStoryNewSuccess extends ForumStorySuccess {
 }
 
 class ForumStoryNewFailure extends ForumStoryFailure {
-  ForumStoryNewFailure(String error) : super(error);
+  ForumStoryNewFailure(request, String error) : super(request, error);
 }
 
 class ForumStoryRefreshSuccess extends ForumStorySuccess with StopLoading {
@@ -134,7 +134,7 @@ class ForumStoryRefreshSuccess extends ForumStorySuccess with StopLoading {
 }
 
 class ForumStoryRefreshFailure extends ForumStoryFailure {
-  ForumStoryRefreshFailure(String error) : super(error);
+  ForumStoryRefreshFailure(request, String error) : super(request, error);
 }
 
 class ForumStoryLoadMoreSuccess extends ForumStorySuccess {
@@ -143,7 +143,7 @@ class ForumStoryLoadMoreSuccess extends ForumStorySuccess {
 }
 
 class ForumStoryLoadMoreFailure extends ForumStoryFailure {
-  ForumStoryLoadMoreFailure(String error) : super(error);
+  ForumStoryLoadMoreFailure(request, String error) : super(request, error);
 }
 
 class ForumStoryCheckNewRequest extends APIRequest {
@@ -157,11 +157,11 @@ class ForumStoryCheckNewRequest extends APIRequest {
         });
 
   @override
-  CreateFailure get badResponse => (error) => ForumStoryCheckNewFailure(error);
+  CreateFailure get badResponse => (error) => ForumStoryCheckNewFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, result) => ForumStoryCheckNewSuccess(request, result);
+      (result) => ForumStoryCheckNewSuccess(this, result);
 }
 
 class ForumStoryCheckNewSuccess extends APISuccess {
@@ -170,5 +170,5 @@ class ForumStoryCheckNewSuccess extends APISuccess {
 }
 
 class ForumStoryCheckNewFailure extends APIFailure {
-  ForumStoryCheckNewFailure(String error) : super(error);
+  ForumStoryCheckNewFailure(request, String error) : super(request, error);
 }

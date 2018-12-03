@@ -135,16 +135,25 @@ abstract class StoryListModel extends FetchedListModel {
   @override
   Widget headerForSection(BuildContext context, {int section}) {
     int newCount = storyList?.newcount ?? 0;
-    if (newCount > 0) {
+    String error = storyList?.lastError;
+    if (error != null && error != "") {
+      return Container(
+          color: Colors.red[500],
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "网络错误：$error  请稍后下拉更新重试",
+            style: const TextStyle(color: Colors.white),
+          ));
+    } else if (newCount > 0) {
       return GestureDetector(
           onTap: () {
             scrollController.jumpTo(0.0);
             handleRefresh(context);
           },
           child: Container(
-              height: 36.0,
               color: Colors.blue[500],
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               alignment: Alignment.centerLeft,
               child: Text(
                 "$newCount条新信息",

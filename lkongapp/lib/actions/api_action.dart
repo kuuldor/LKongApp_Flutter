@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'base_action.dart';
 
-typedef APISuccess CreateSuccess(APIRequest request, dynamic param);
+typedef APISuccess CreateSuccess(dynamic param);
 typedef APIFailure CreateFailure(String error);
 
 abstract class APIRequest extends AsyncRequest<bool> {
@@ -24,6 +24,7 @@ class APISuccess extends APIResponse {
 }
 
 class APIFailure extends APIResponse {
+  final APIRequest request;
   final String error;
-  APIFailure(this.error);
+  APIFailure(this. request, this.error);
 }

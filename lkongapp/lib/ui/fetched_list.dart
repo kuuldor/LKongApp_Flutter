@@ -123,23 +123,23 @@ abstract class FetchedListModel extends GroupedListModel {
     listIsReady(context);
 
     Widget listView;
-    if (lastError == null) {
-      listView = super.buildGroupedListView(context);
-    } else {
-      final theme = LKModeledApp.modelOf(context).theme;
+    // if (lastError == null) {
+    listView = super.buildGroupedListView(context);
+    // } else {
+    //   final theme = LKModeledApp.modelOf(context).theme;
 
-      listView = SingleChildScrollView(
-        controller: _scrollController,
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Text(
-            "网络错误：\n$lastError\n\n请稍后下拉更新重试",
-            style: theme.themeData.textTheme.subhead
-                .copyWith(color: Colors.red, fontSize: 24.0),
-          ),
-        ),
-      );
-    }
+    //   listView = SingleChildScrollView(
+    //     controller: _scrollController,
+    //     child: Container(
+    //       height: MediaQuery.of(context).size.height,
+    //       child: Text(
+    //         "网络错误：\n$lastError\n\n请稍后下拉更新重试",
+    //         style: theme.themeData.textTheme.subhead
+    //             .copyWith(color: Colors.red, fontSize: 24.0),
+    //       ),
+    //     ),
+    //   );
+    // }
     return RefreshIndicator(
         onRefresh: () => handleRefresh(context), child: listView);
   }

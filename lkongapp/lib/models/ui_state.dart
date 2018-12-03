@@ -46,6 +46,7 @@ abstract class ContentCache
   ContentCache._();
   factory ContentCache([updates(ContentCacheBuilder b)]) =>
       _$ContentCache((b) => b
+        ..forumInfo.replace(ForumInfo())
         ..homeList.replace(StoryFetchList())
         ..update(updates));
 
@@ -62,16 +63,19 @@ abstract class StoryFetchList
   StoryFetchList._();
   factory StoryFetchList([updates(StoryFetchListBuilder b)]) =>
       _$StoryFetchList((b) => b
-        // ..loading = false
+        ..loading = false
         ..current = 0
         ..nexttime = 0
         ..newcount = 0
         ..update(updates));
 
-  // bool get loading;
+  bool get loading;
   int get nexttime;
   int get current;
   int get newcount;
+
+  @nullable
+  String get lastError;
 
   BuiltList<Story> get stories;
 }
@@ -80,11 +84,17 @@ abstract class StoryPageList
     implements Built<StoryPageList, StoryPageListBuilder> {
   @nullable
   StoryInfoResult get storyInfo;
+  bool get loading;
+  BuiltMap<int, StoryPage> get pages;
+
+  @nullable
+  String get lastError;
 
   StoryPageList._();
   factory StoryPageList([updates(StoryPageListBuilder b)]) =>
-      _$StoryPageList((b) => b..update(updates));
-  BuiltMap<int, StoryPage> get pages;
+      _$StoryPageList((b) => b
+        ..loading = false
+        ..update(updates));
 }
 
 abstract class StoryPage implements Built<StoryPage, StoryPageBuilder> {
@@ -96,9 +106,13 @@ abstract class StoryPage implements Built<StoryPage, StoryPageBuilder> {
 
 abstract class ForumInfo implements Built<ForumInfo, ForumInfoBuilder> {
   ForumInfo._();
-  factory ForumInfo([updates(ForumInfoBuilder b)]) =>
-      _$ForumInfo((b) => b..update(updates));
+  factory ForumInfo([updates(ForumInfoBuilder b)]) => _$ForumInfo((b) => b
+    ..loading = false
+    ..update(updates));
 
+  bool get loading;
+  @nullable
+  String get lastError;
   BuiltList<Forum> get forums;
   BuiltList<Forum> get sysplanes;
   BuiltList<Forum> get planes;

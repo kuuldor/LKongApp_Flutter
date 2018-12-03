@@ -26,11 +26,11 @@ class HomeListNewRequest extends HomeListRequest {
       : super(completer, threadOnly, nexttime, current);
 
   @override
-  CreateFailure get badResponse => (error) => HomeListNewFailure(error);
+  CreateFailure get badResponse => (error) => HomeListNewFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, list) => HomeListNewSuccess(request, list);
+      (list) => HomeListNewSuccess(this, list);
 }
 
 class HomeListRefreshRequest extends HomeListRequest {
@@ -41,11 +41,11 @@ class HomeListRefreshRequest extends HomeListRequest {
       : super(completer, threadOnly, 0, current);
 
   @override
-  CreateFailure get badResponse => (error) => HomeListRefreshFailure(error);
+  CreateFailure get badResponse => (error) => HomeListRefreshFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, list) => HomeListRefreshSuccess(request, list);
+      (list) => HomeListRefreshSuccess(this, list);
 }
 
 class HomeListLoadMoreRequest extends HomeListRequest {
@@ -56,11 +56,11 @@ class HomeListLoadMoreRequest extends HomeListRequest {
       : super(completer, threadOnly, nexttime, 0);
 
   @override
-  CreateFailure get badResponse => (error) => HomeListLoadMoreFailure(error);
+  CreateFailure get badResponse => (error) => HomeListLoadMoreFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, list) => HomeListLoadMoreSuccess(request, list);
+      (list) => HomeListLoadMoreSuccess(this, list);
 }
 
 class HomeListSuccess extends APISuccess with StopLoading {
@@ -70,7 +70,7 @@ class HomeListSuccess extends APISuccess with StopLoading {
 }
 
 class HomeListFailure extends APIFailure with StopLoading {
-  HomeListFailure(String error) : super(error);
+  HomeListFailure(request, String error) : super(request, error);
 }
 
 class HomeListNewSuccess extends HomeListSuccess {
@@ -78,7 +78,7 @@ class HomeListNewSuccess extends HomeListSuccess {
 }
 
 class HomeListNewFailure extends HomeListFailure {
-  HomeListNewFailure(String error) : super(error);
+  HomeListNewFailure(request, String error) : super(request, error);
 }
 
 class HomeListRefreshSuccess extends HomeListSuccess with StopLoading {
@@ -86,7 +86,7 @@ class HomeListRefreshSuccess extends HomeListSuccess with StopLoading {
 }
 
 class HomeListRefreshFailure extends HomeListFailure {
-  HomeListRefreshFailure(String error) : super(error);
+  HomeListRefreshFailure(request, String error) : super(request, error);
 }
 
 class HomeListLoadMoreSuccess extends HomeListSuccess {
@@ -94,7 +94,7 @@ class HomeListLoadMoreSuccess extends HomeListSuccess {
 }
 
 class HomeListLoadMoreFailure extends HomeListFailure {
-  HomeListLoadMoreFailure(String error) : super(error);
+  HomeListLoadMoreFailure(request, String error) : super(request, error);
 }
 
 class HomeListCheckNewRequest extends APIRequest {
@@ -106,11 +106,11 @@ class HomeListCheckNewRequest extends APIRequest {
         });
 
   @override
-  CreateFailure get badResponse => (error) => HomeListCheckNewFailure(error);
+  CreateFailure get badResponse => (error) => HomeListCheckNewFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, result) => HomeListCheckNewSuccess(request, result);
+      (result) => HomeListCheckNewSuccess(this, result);
 }
 
 class HomeListCheckNewSuccess extends APISuccess {
@@ -119,7 +119,7 @@ class HomeListCheckNewSuccess extends APISuccess {
 }
 
 class HomeListCheckNewFailure extends APIFailure {
-  HomeListCheckNewFailure(String error) : super(error);
+  HomeListCheckNewFailure(request, String error) : super(request, error);
 }
 
 class StoryContentRequest extends APIRequest with StartLoading {
@@ -133,11 +133,11 @@ class StoryContentRequest extends APIRequest with StartLoading {
         });
 
   @override
-  CreateFailure get badResponse => (error) => StoryContentFailure(error);
+  CreateFailure get badResponse => (error) => StoryContentFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, list) => StoryContentSuccess(request, list);
+      (list) => StoryContentSuccess(this, list);
 }
 
 class StoryContentSuccess extends APISuccess with StopLoading {
@@ -147,7 +147,7 @@ class StoryContentSuccess extends APISuccess with StopLoading {
 }
 
 class StoryContentFailure extends APIFailure with StopLoading {
-  StoryContentFailure(String error) : super(error);
+  StoryContentFailure(request, String error) : super(request, error);
 }
 
 class StoryInfoRequest extends APIRequest with StartLoading {
@@ -159,11 +159,11 @@ class StoryInfoRequest extends APIRequest with StartLoading {
         });
 
   @override
-  CreateFailure get badResponse => (error) => StoryInfoFailure(error);
+  CreateFailure get badResponse => (error) => StoryInfoFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, list) => StoryInfoSuccess(request, list);
+      (list) => StoryInfoSuccess(this, list);
 }
 
 class StoryInfoSuccess extends APISuccess with StopLoading {
@@ -173,5 +173,5 @@ class StoryInfoSuccess extends APISuccess with StopLoading {
 }
 
 class StoryInfoFailure extends APIFailure with StopLoading {
-  StoryInfoFailure(String error) : super(error);
+  StoryInfoFailure(request, String error) : super(request, error);
 }

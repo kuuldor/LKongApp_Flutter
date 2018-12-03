@@ -355,7 +355,11 @@ Future<Map> apiDispatch(api, Map parameters) {
 
 APIResponse createResponseAction(APIRequest action, Map response) {
   String api = action.api;
-  APIResponse result = APIFailure("Unimplemented API \"$api\"");
+  APIResponse result = APIFailure(action, "Unimplemented API \"$api\"");
+
+  if (response == null) {
+    return result;
+  }
 
   String error = response["error"];
   if (error != null) {
@@ -368,7 +372,7 @@ APIResponse createResponseAction(APIRequest action, Map response) {
   }
 
   var output = response["result"];
-  return action.goodResponse(action, output);
+  return action.goodResponse(output);
 
   if (api == HOMELIST_API) {
     HomeListResult list = response["result"] as HomeListResult;

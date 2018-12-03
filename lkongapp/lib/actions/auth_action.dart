@@ -12,11 +12,10 @@ class LoginRequest extends APIRequest with StartLoading {
       : super(completer: completer, api: LOGIN_API, parameters: {"user": user});
 
   @override
-  CreateFailure get badResponse => (error) => LoginFailure(error);
+  CreateFailure get badResponse => (error) => LoginFailure(this, error);
 
   @override
-  CreateSuccess get goodResponse =>
-      (request, user) => LoginSuccess(request, user);
+  CreateSuccess get goodResponse => (user) => LoginSuccess(this, user);
 }
 
 class LoginSuccess extends APISuccess with StopLoading {
@@ -26,7 +25,7 @@ class LoginSuccess extends APISuccess with StopLoading {
 }
 
 class LoginFailure extends APIFailure with StopLoading {
-  LoginFailure(String error) : super(error);
+  LoginFailure(request, String error) : super(request, error);
 }
 
 class UserInfoRequest extends APIRequest with StartLoading {
@@ -39,11 +38,11 @@ class UserInfoRequest extends APIRequest with StartLoading {
             parameters: {"id": user.uid, "forceRenew": true});
 
   @override
-  CreateFailure get badResponse => (error) => UserInfoFailure(error);
+  CreateFailure get badResponse => (error) => UserInfoFailure(this, error);
 
   @override
   CreateSuccess get goodResponse =>
-      (request, userInfo) => UserInfoSuccess(request, userInfo);
+      (userInfo) => UserInfoSuccess(this, userInfo);
 }
 
 class UserInfoSuccess extends APISuccess with StopLoading {
@@ -53,7 +52,7 @@ class UserInfoSuccess extends APISuccess with StopLoading {
 }
 
 class UserInfoFailure extends APIFailure with StopLoading {
-  UserInfoFailure(String error) : super(error);
+  UserInfoFailure(request, String error) : super(request, error);
 }
 
 class LogoutRequest extends APIRequest with StartLoading {
@@ -61,11 +60,10 @@ class LogoutRequest extends APIRequest with StartLoading {
       : super(completer: completer, api: LOGOUT_API, parameters: {});
 
   @override
-  CreateFailure get badResponse => (error) => LogoutFailure(error);
+  CreateFailure get badResponse => (error) => LogoutFailure(this, error);
 
   @override
-  CreateSuccess get goodResponse =>
-      (request, ignored) => LogoutSuccess(request);
+  CreateSuccess get goodResponse => (ignored) => LogoutSuccess(this);
 }
 
 class LogoutSuccess extends APISuccess with StopLoading {
@@ -73,5 +71,5 @@ class LogoutSuccess extends APISuccess with StopLoading {
 }
 
 class LogoutFailure extends APIFailure with StopLoading {
-  LogoutFailure(String error) : super(error);
+  LogoutFailure(request, String error) : super(request, error);
 }

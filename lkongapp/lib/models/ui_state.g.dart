@@ -367,19 +367,32 @@ class ContentCacheBuilder
 
 class _$StoryFetchList extends StoryFetchList {
   @override
+  final bool loading;
+  @override
   final int nexttime;
   @override
   final int current;
   @override
   final int newcount;
   @override
+  final String lastError;
+  @override
   final BuiltList<Story> stories;
 
   factory _$StoryFetchList([void updates(StoryFetchListBuilder b)]) =>
       (new StoryFetchListBuilder()..update(updates)).build();
 
-  _$StoryFetchList._({this.nexttime, this.current, this.newcount, this.stories})
+  _$StoryFetchList._(
+      {this.loading,
+      this.nexttime,
+      this.current,
+      this.newcount,
+      this.lastError,
+      this.stories})
       : super._() {
+    if (loading == null) {
+      throw new BuiltValueNullFieldError('StoryFetchList', 'loading');
+    }
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('StoryFetchList', 'nexttime');
     }
@@ -406,26 +419,34 @@ class _$StoryFetchList extends StoryFetchList {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is StoryFetchList &&
+        loading == other.loading &&
         nexttime == other.nexttime &&
         current == other.current &&
         newcount == other.newcount &&
+        lastError == other.lastError &&
         stories == other.stories;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, nexttime.hashCode), current.hashCode),
-            newcount.hashCode),
+        $jc(
+            $jc(
+                $jc($jc($jc(0, loading.hashCode), nexttime.hashCode),
+                    current.hashCode),
+                newcount.hashCode),
+            lastError.hashCode),
         stories.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('StoryFetchList')
+          ..add('loading', loading)
           ..add('nexttime', nexttime)
           ..add('current', current)
           ..add('newcount', newcount)
+          ..add('lastError', lastError)
           ..add('stories', stories))
         .toString();
   }
@@ -434,6 +455,10 @@ class _$StoryFetchList extends StoryFetchList {
 class StoryFetchListBuilder
     implements Builder<StoryFetchList, StoryFetchListBuilder> {
   _$StoryFetchList _$v;
+
+  bool _loading;
+  bool get loading => _$this._loading;
+  set loading(bool loading) => _$this._loading = loading;
 
   int _nexttime;
   int get nexttime => _$this._nexttime;
@@ -447,6 +472,10 @@ class StoryFetchListBuilder
   int get newcount => _$this._newcount;
   set newcount(int newcount) => _$this._newcount = newcount;
 
+  String _lastError;
+  String get lastError => _$this._lastError;
+  set lastError(String lastError) => _$this._lastError = lastError;
+
   ListBuilder<Story> _stories;
   ListBuilder<Story> get stories =>
       _$this._stories ??= new ListBuilder<Story>();
@@ -456,9 +485,11 @@ class StoryFetchListBuilder
 
   StoryFetchListBuilder get _$this {
     if (_$v != null) {
+      _loading = _$v.loading;
       _nexttime = _$v.nexttime;
       _current = _$v.current;
       _newcount = _$v.newcount;
+      _lastError = _$v.lastError;
       _stories = _$v.stories?.toBuilder();
       _$v = null;
     }
@@ -484,9 +515,11 @@ class StoryFetchListBuilder
     try {
       _$result = _$v ??
           new _$StoryFetchList._(
+              loading: loading,
               nexttime: nexttime,
               current: current,
               newcount: newcount,
+              lastError: lastError,
               stories: stories.build());
     } catch (_) {
       String _$failedField;
@@ -508,12 +541,20 @@ class _$StoryPageList extends StoryPageList {
   @override
   final StoryInfoResult storyInfo;
   @override
+  final bool loading;
+  @override
   final BuiltMap<int, StoryPage> pages;
+  @override
+  final String lastError;
 
   factory _$StoryPageList([void updates(StoryPageListBuilder b)]) =>
       (new StoryPageListBuilder()..update(updates)).build();
 
-  _$StoryPageList._({this.storyInfo, this.pages}) : super._() {
+  _$StoryPageList._({this.storyInfo, this.loading, this.pages, this.lastError})
+      : super._() {
+    if (loading == null) {
+      throw new BuiltValueNullFieldError('StoryPageList', 'loading');
+    }
     if (pages == null) {
       throw new BuiltValueNullFieldError('StoryPageList', 'pages');
     }
@@ -531,19 +572,25 @@ class _$StoryPageList extends StoryPageList {
     if (identical(other, this)) return true;
     return other is StoryPageList &&
         storyInfo == other.storyInfo &&
-        pages == other.pages;
+        loading == other.loading &&
+        pages == other.pages &&
+        lastError == other.lastError;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc(0, storyInfo.hashCode), pages.hashCode));
+    return $jf($jc(
+        $jc($jc($jc(0, storyInfo.hashCode), loading.hashCode), pages.hashCode),
+        lastError.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('StoryPageList')
           ..add('storyInfo', storyInfo)
-          ..add('pages', pages))
+          ..add('loading', loading)
+          ..add('pages', pages)
+          ..add('lastError', lastError))
         .toString();
   }
 }
@@ -558,17 +605,27 @@ class StoryPageListBuilder
   set storyInfo(StoryInfoResultBuilder storyInfo) =>
       _$this._storyInfo = storyInfo;
 
+  bool _loading;
+  bool get loading => _$this._loading;
+  set loading(bool loading) => _$this._loading = loading;
+
   MapBuilder<int, StoryPage> _pages;
   MapBuilder<int, StoryPage> get pages =>
       _$this._pages ??= new MapBuilder<int, StoryPage>();
   set pages(MapBuilder<int, StoryPage> pages) => _$this._pages = pages;
+
+  String _lastError;
+  String get lastError => _$this._lastError;
+  set lastError(String lastError) => _$this._lastError = lastError;
 
   StoryPageListBuilder();
 
   StoryPageListBuilder get _$this {
     if (_$v != null) {
       _storyInfo = _$v.storyInfo?.toBuilder();
+      _loading = _$v.loading;
       _pages = _$v.pages?.toBuilder();
+      _lastError = _$v.lastError;
       _$v = null;
     }
     return this;
@@ -593,12 +650,16 @@ class StoryPageListBuilder
     try {
       _$result = _$v ??
           new _$StoryPageList._(
-              storyInfo: _storyInfo?.build(), pages: pages.build());
+              storyInfo: _storyInfo?.build(),
+              loading: loading,
+              pages: pages.build(),
+              lastError: lastError);
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'storyInfo';
         _storyInfo?.build();
+
         _$failedField = 'pages';
         pages.build();
       } catch (e) {
@@ -704,6 +765,10 @@ class StoryPageBuilder implements Builder<StoryPage, StoryPageBuilder> {
 
 class _$ForumInfo extends ForumInfo {
   @override
+  final bool loading;
+  @override
+  final String lastError;
+  @override
   final BuiltList<Forum> forums;
   @override
   final BuiltList<Forum> sysplanes;
@@ -715,8 +780,17 @@ class _$ForumInfo extends ForumInfo {
   factory _$ForumInfo([void updates(ForumInfoBuilder b)]) =>
       (new ForumInfoBuilder()..update(updates)).build();
 
-  _$ForumInfo._({this.forums, this.sysplanes, this.planes, this.info})
+  _$ForumInfo._(
+      {this.loading,
+      this.lastError,
+      this.forums,
+      this.sysplanes,
+      this.planes,
+      this.info})
       : super._() {
+    if (loading == null) {
+      throw new BuiltValueNullFieldError('ForumInfo', 'loading');
+    }
     if (forums == null) {
       throw new BuiltValueNullFieldError('ForumInfo', 'forums');
     }
@@ -742,6 +816,8 @@ class _$ForumInfo extends ForumInfo {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is ForumInfo &&
+        loading == other.loading &&
+        lastError == other.lastError &&
         forums == other.forums &&
         sysplanes == other.sysplanes &&
         planes == other.planes &&
@@ -751,13 +827,20 @@ class _$ForumInfo extends ForumInfo {
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, forums.hashCode), sysplanes.hashCode), planes.hashCode),
+        $jc(
+            $jc(
+                $jc($jc($jc(0, loading.hashCode), lastError.hashCode),
+                    forums.hashCode),
+                sysplanes.hashCode),
+            planes.hashCode),
         info.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('ForumInfo')
+          ..add('loading', loading)
+          ..add('lastError', lastError)
           ..add('forums', forums)
           ..add('sysplanes', sysplanes)
           ..add('planes', planes)
@@ -768,6 +851,14 @@ class _$ForumInfo extends ForumInfo {
 
 class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
   _$ForumInfo _$v;
+
+  bool _loading;
+  bool get loading => _$this._loading;
+  set loading(bool loading) => _$this._loading = loading;
+
+  String _lastError;
+  String get lastError => _$this._lastError;
+  set lastError(String lastError) => _$this._lastError = lastError;
 
   ListBuilder<Forum> _forums;
   ListBuilder<Forum> get forums => _$this._forums ??= new ListBuilder<Forum>();
@@ -791,6 +882,8 @@ class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
 
   ForumInfoBuilder get _$this {
     if (_$v != null) {
+      _loading = _$v.loading;
+      _lastError = _$v.lastError;
       _forums = _$v.forums?.toBuilder();
       _sysplanes = _$v.sysplanes?.toBuilder();
       _planes = _$v.planes?.toBuilder();
@@ -819,6 +912,8 @@ class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
     try {
       _$result = _$v ??
           new _$ForumInfo._(
+              loading: loading,
+              lastError: lastError,
               forums: forums.build(),
               sysplanes: sysplanes.build(),
               planes: planes.build(),

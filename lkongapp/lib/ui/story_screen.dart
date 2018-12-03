@@ -85,22 +85,22 @@ class StoryContentState extends State<StoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return buildConnectedWidget(context, StoryContentModel.fromStore,
-        (viewModel) {
+    return buildConnectedWidget(
+        context, StoryContentModel.fromStateAndStore(this), (viewModel) {
       return viewModel._buildContentView(context, this);
     });
   }
 }
 
 class StoryContentModel {
-  final BuiltMap<int, StoryPageList> repo;
+  final StoryPageList story;
   final bool loading;
   final String lastError;
 
   StoryContentModel({
     @required this.loading,
     @required this.lastError,
-    @required this.repo,
+    @required this.story,
     @required this.loadContent,
     @required this.loadInfo,
   });
@@ -110,29 +110,31 @@ class StoryContentModel {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  static StoryContentModel fromStore(Store<AppState> store) {
-    return StoryContentModel(
-        loading: store.state.isLoading,
-        lastError: store.state.uiState.content.lastError,
-        repo: store.state.uiState.content.storyRepo,
-        loadContent: (storyId, page) {
-          store.dispatch(StoryContentRequest(null, storyId, page));
-        },
-        loadInfo: (storyId) {
-          store.dispatch(StoryInfoRequest(null, storyId));
-        });
-  }
+  static final fromStateAndStore = (StoryContentState state) =>
+      (Store<AppState> store) => StoryContentModel(
+          loading:
+              store.state.uiState.content.storyRepo[state.storyId]?.loading ??
+                  false,
+          lastError:
+              store.state.uiState.content.storyRepo[state.storyId]?.lastError,
+          story: store.state.uiState.content.storyRepo[state.storyId],
+          loadContent: (storyId, page) {
+            store.dispatch(StoryContentRequest(null, storyId, page));
+          },
+          loadInfo: (storyId) {
+            store.dispatch(StoryInfoRequest(null, storyId));
+          });
 
   @override
   bool operator ==(other) {
     return other is StoryContentModel &&
-        other.repo == repo &&
+        other.story == story &&
         other.loading == loading &&
         other.lastError == lastError;
   }
 
   @override
-  int get hashCode => hash2(loading, repo);
+  int get hashCode => hash2(loading, story);
 
   var _scrollController = ScrollController();
 
@@ -142,7 +144,6 @@ class StoryContentModel {
     StoryInfoResult info;
 
     BuiltList<Comment> comments;
-    var story = repo[storyId];
     if (story != null) {
       info = story.storyInfo;
       StoryPage page = story.pages[pageNo];
@@ -151,7 +152,6 @@ class StoryContentModel {
         comments = page.comments;
       }
     }
-    
 
     if (info == null && lastError == null) {
       if (!loading) {

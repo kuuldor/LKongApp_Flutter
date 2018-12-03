@@ -32,7 +32,7 @@ class ForumListModel extends FetchedListModel {
   final String lastError;
 
   final Future<Null> Function(BuildContext, Forum) onForumTap;
-  
+
   @override
   bool operator ==(other) {
     return other is ForumListModel &&
@@ -84,8 +84,8 @@ class ForumListModel extends FetchedListModel {
 
   static ForumListModel fromStore(Store<AppState> store) {
     return ForumListModel(
-      loading: store.state.isLoading,
-      lastError: store.state.uiState.content.lastError,
+      loading: store.state.uiState.content.forumInfo.loading,
+      lastError: store.state.uiState.content.forumInfo.lastError,
       repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
         store.dispatch(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));

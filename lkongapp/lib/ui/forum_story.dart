@@ -75,8 +75,10 @@ class ForumStoryModel extends StoryListModel {
 
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
-            loading: store.state.isLoading,
-            lastError: store.state.uiState.content.lastError,
+            loading:
+                store.state.uiState.content.forumRepo[state.forum.fid].loading,
+            lastError: store
+                .state.uiState.content.forumRepo[state.forum.fid].lastError,
             storyList: store.state.uiState.content.forumRepo[state.forum.fid],
             forumId: state.forum.fid,
             mode: state.mode,
@@ -128,6 +130,4 @@ class ForumStoryModel extends StoryListModel {
       body: super.buildStoryListView(context, state),
     );
   }
-
- 
 }

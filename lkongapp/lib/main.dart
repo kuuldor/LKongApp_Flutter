@@ -19,8 +19,15 @@ class LKongApp extends StatelessWidget {
   final store = Store<AppState>(
     appReducer,
     initialState: AppState(),
-    middleware: []..addAll(createStoreMiddleware()),
-    // ..add(LoggingMiddleware.printer())
+    middleware: []
+      ..addAll(createStoreMiddleware()),
+      // ..add(LoggingMiddleware.printer(formatter: (
+      //   dynamic state,
+      //   dynamic action,
+      //   DateTime timestamp,
+      // ) {
+      //   return "{Action: $action, ts: ${new DateTime.now()}}";
+      // })),
     distinct: true,
   );
 
