@@ -8,7 +8,7 @@ class StoryItem extends StatelessWidget {
   final GestureTapCallback onTap;
   final Story story;
 
-  static final storyItemKey = (int id) => Key('__story_item_${id}__');
+  static final storyItemKey = (id) => Key('__story_item_${id}__');
 
   StoryItem({
     @required this.onTap,
@@ -26,6 +26,7 @@ class StoryItem extends StatelessWidget {
     }
     titleStyle = titleStyle.apply(color: theme.darkTextColor);
     return ListTile(
+      key: storyItemKey(story.id),
       onTap: onTap,
       title: Column(children: <Widget>[
         Row(

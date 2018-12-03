@@ -7,7 +7,7 @@ class CommentItem extends StatelessWidget {
   // final GestureTapCallback onTap;
   final Comment comment;
 
-  static final storyItemKey = (int id) => Key('__story_item_${id}__');
+  static final commentItemKey = (int id) => Key('__comment_item_${id}__');
 
   CommentItem({
     // @required this.onTap,
@@ -31,6 +31,7 @@ class CommentItem extends StatelessWidget {
     }
 
     return ListTile(
+      key: commentItemKey(comment.id),
       // onTap: onTap,
       title: Column(children: <Widget>[
         Row(

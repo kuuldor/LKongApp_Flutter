@@ -145,15 +145,18 @@ _homeListSucceeded(HomeListRequestType type) =>
                 ..stories.replace(data);
               break;
             case HomeListRequestType.Refresh:
+              var newsSet = data.map((story) => story.id).toSet();
+
               b
                 ..newcount = 0
+                ..stories.where((story) => !newsSet.contains(story.id))
                 ..stories.insertAll(0, data);
               break;
             case HomeListRequestType.LoadMore:
               b..stories.addAll(data);
               break;
           }
-        }
+        } 
         return b;
       });
     };

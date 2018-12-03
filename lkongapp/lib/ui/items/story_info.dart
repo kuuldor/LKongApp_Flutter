@@ -7,7 +7,7 @@ class StoryInfoItem extends StatelessWidget {
   // final GestureTapCallback onTap;
   final StoryInfoResult info;
 
-  static final storyItemKey = (int id) => Key('__story_info_${id}__');
+  static final storyItemKey = (id) => Key('__story_info_${id}__');
 
   StoryInfoItem({
     // @required this.onTap,
@@ -19,6 +19,7 @@ class StoryInfoItem extends StatelessWidget {
     return info == null
         ? Container()
         : ListTile(
+            key: storyItemKey(info.id),
             // onTap: onTap,
             title: Column(children: <Widget>[
               Container(

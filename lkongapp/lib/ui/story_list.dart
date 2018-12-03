@@ -62,7 +62,6 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
 
   @override
   void dispose() {
-    print("State $this disposed");
     super.dispose();
     cancelTimer();
   }
@@ -140,11 +139,7 @@ abstract class StoryListModel extends FetchedListModel {
       return GestureDetector(
           onTap: () {
             scrollController.jumpTo(0.0);
-            if (newCount > 50) {
-              handleFetchFromScratch(context);
-            } else {
-              handleRefresh(context);
-            }
+            handleRefresh(context);
           },
           child: Container(
               height: 36.0,

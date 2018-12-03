@@ -95,9 +95,11 @@ class StoryContentState extends State<StoryScreen> {
 class StoryContentModel {
   final BuiltMap<int, StoryPageList> repo;
   final bool loading;
+  final String lastError;
 
   StoryContentModel({
     @required this.loading,
+    @required this.lastError,
     @required this.repo,
     @required this.loadContent,
     @required this.loadInfo,
@@ -111,6 +113,7 @@ class StoryContentModel {
   static StoryContentModel fromStore(Store<AppState> store) {
     return StoryContentModel(
         loading: store.state.isLoading,
+        lastError: store.state.uiState.content.lastError,
         repo: store.state.uiState.content.storyRepo,
         loadContent: (storyId, page) {
           store.dispatch(StoryContentRequest(null, storyId, page));
@@ -124,7 +127,8 @@ class StoryContentModel {
   bool operator ==(other) {
     return other is StoryContentModel &&
         other.repo == repo &&
-        other.loading == loading;
+        other.loading == loading &&
+        other.lastError == lastError;
   }
 
   @override
@@ -147,13 +151,14 @@ class StoryContentModel {
         comments = page.comments;
       }
     }
+    
 
-    if (info == null) {
+    if (info == null && lastError == null) {
       if (!loading) {
         loadInfo(storyId);
       }
     }
-    if (comments == null) {
+    if (comments == null && lastError == null) {
       if (!loading) {
         loadContent(storyId, pageNo);
       }

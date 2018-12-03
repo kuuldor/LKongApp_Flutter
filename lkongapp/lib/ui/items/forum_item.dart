@@ -8,7 +8,7 @@ class ForumItem extends StatelessWidget {
   final Forum forum;
   final ForumInfoResult info;
 
-  static final forumItemKey = (int id) => Key('__forum_item_${id}__');
+  static final forumItemKey = (id) => Key('__forum_item_${id}__');
 
   ForumItem({
     @required this.onTap,
@@ -19,6 +19,7 @@ class ForumItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      key: forumItemKey(forum.fid),
       onTap: onTap,
       title: Column(children: <Widget>[
         Row(
