@@ -61,7 +61,16 @@ abstract class FetchedListModel extends GroupedListModel {
             handleLoadMore(context);
           }
           item = Container(
-              height: 84.0, child: Center(child: CircularProgressIndicator()));
+              height: 84.0,
+              child: Center(
+                  child: lastError == null
+                      ? CircularProgressIndicator()
+                      : RaisedButton(
+                          child: const Text('点击重试'),
+                          onPressed: () {
+                            handleLoadMore(context);
+                          },
+                        )));
         }
       } else {
         assert(item == null, "Section $section is not defined");
@@ -88,11 +97,7 @@ abstract class FetchedListModel extends GroupedListModel {
   SliverAppBar get appBar => null;
 
   Future<Null> handleRefresh(BuildContext context) async {
-    if (lastError == null) {
-      dispatchAction(context)(refreshRequest);
-    } else {
-      dispatchAction(context)(fetchFromScratchRequest);
-    }
+    dispatchAction(context)(refreshRequest);
   }
 
   Future<Null> handleFetchFromScratch(BuildContext context) async {

@@ -82,6 +82,7 @@ abstract class StoryListModel extends FetchedListModel {
       } else {
         postId = parseLKTypeId(story.id);
       }
+      dispatchAction(context)(StoryInfoRequest(null, int.parse(storyId)));
       dispatchAction(context)(
           UINavigationPush(context, LKongAppRoutes.story, false, (context) {
         return StoryScreen(

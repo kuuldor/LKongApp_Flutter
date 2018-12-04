@@ -27,7 +27,7 @@ BuiltMap<int, StoryPageList> _storyInfoRequested(
 
   if (action.story != null) {
     int threadId = action.story;
-    newRepo = _buildStoryPages(newRepo, threadId);
+    newRepo = _buildStoryPages(newRepo, threadId, forceNew: true);
   }
   return newRepo;
 }
@@ -86,9 +86,9 @@ BuiltMap<int, StoryPageList> _storyRequestFailed(
 }
 
 BuiltMap<int, StoryPageList> _buildStoryPages(
-    BuiltMap<int, StoryPageList> newRepo, int threadId) {
+    BuiltMap<int, StoryPageList> newRepo, int threadId, {bool forceNew: false}) {
   StoryPageList storyContents = newRepo[threadId];
-  if (storyContents == null) {
+  if (forceNew || storyContents == null) {
     newRepo = newRepo
         .rebuild((b) => b..addEntries([MapEntry(threadId, StoryPageList())]));
     storyContents = newRepo[threadId];
