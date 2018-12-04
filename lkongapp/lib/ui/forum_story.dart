@@ -77,8 +77,7 @@ class ForumStoryModel extends StoryListModel {
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
-            lastError: store
-                .state.uiState.content.forumRepo[state.forum.fid].lastError,
+            lastError: store.state.uiState.content.lastError,
             storyList: store.state.uiState.content.forumRepo[state.forum.fid],
             forumId: state.forum.fid,
             mode: state.mode,

@@ -115,8 +115,7 @@ class StoryContentModel {
           loading:
               store.state.uiState.content.storyRepo[state.storyId]?.loading ??
                   false,
-          lastError:
-              store.state.uiState.content.storyRepo[state.storyId]?.lastError,
+          lastError: store.state.uiState.content.lastError,
           story: store.state.uiState.content.storyRepo[state.storyId],
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));

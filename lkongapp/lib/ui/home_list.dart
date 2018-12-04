@@ -47,7 +47,7 @@ class HomeListModel extends StoryListModel {
   static HomeListModel fromStore(Store<AppState> store) {
     return HomeListModel(
       loading: store.state.uiState.content.homeList.loading,
-      lastError: store.state.uiState.content.homeList.lastError,
+      lastError: store.state.uiState.content.lastError,
       storyList: store.state.uiState.content.homeList,
       threadOnlyHome: store.state.persistState.appConfig.accountSettings
           .currentSetting.threadOnlyHome,

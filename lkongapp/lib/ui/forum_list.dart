@@ -85,7 +85,7 @@ class ForumListModel extends FetchedListModel {
   static ForumListModel fromStore(Store<AppState> store) {
     return ForumListModel(
       loading: store.state.uiState.content.forumInfo.loading,
-      lastError: store.state.uiState.content.forumInfo.lastError,
+      lastError: store.state.uiState.content.lastError,
       repo: store.state.uiState.content.forumInfo,
       onForumTap: (BuildContext context, Forum forum) {
         store.dispatch(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
