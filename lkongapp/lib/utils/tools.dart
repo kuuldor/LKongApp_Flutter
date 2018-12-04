@@ -43,7 +43,7 @@ String stripHtmlTag(String string) {
   string = string.replaceAll(tagPattern, "");
   string = string.replaceAll(spacePattern, " ");
   string = HtmlUnescape().convert(string);
-  
+
   return string.trim();
 }
 
@@ -102,6 +102,7 @@ _parseImageAndText(BuildContext context,
       if (src.startsWith("http") || src.startsWith("https")) {
         widgetList.add(CachedNetworkImage(
           imageUrl: src,
+          imageOnError: "assets/image_placeholder.png",
           fit: BoxFit.cover,
         ));
       } else if (src.startsWith('data:image')) {

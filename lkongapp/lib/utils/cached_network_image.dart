@@ -21,6 +21,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 class CachedNetworkImage extends StatefulWidget {
   static List<Object> _registeredErrors = <Object>[];
 
+  final imageOnError;
+
   /// Creates a widget that displays a [placeholder] while an [imageUrl] is loading
   /// then cross-fades to display the [imageUrl].
   /// Optional [httpHeaders] can be used for example for authentication on the server.
@@ -46,6 +48,7 @@ class CachedNetworkImage extends StatefulWidget {
     this.repeat: ImageRepeat.noRepeat,
     this.matchTextDirection: false,
     this.httpHeaders,
+    this.imageOnError,
   })  : assert(imageUrl != null),
         assert(fadeOutDuration != null),
         assert(fadeOutCurve != null),
@@ -269,7 +272,7 @@ class _CachedNetworkImageState extends State<CachedNetworkImage>
     if (widget.imageUrl != oldWidget.imageUrl ||
         widget.placeholder != widget.placeholder) {
       _imageProvider = new CachedNetworkImageProvider(widget.imageUrl,
-          errorListener: _imageLoadingFailed);
+          errorListener: _imageLoadingFailed, imageOnError: widget.imageOnError);
 
       _resolveImage();
     }
