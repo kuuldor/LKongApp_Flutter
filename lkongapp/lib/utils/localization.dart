@@ -11,7 +11,7 @@ class LKongLocalizations {
   }
 
   String get appTitle => "龙空";
-  String get defaultSignature => "正在使用龙空Android ";
+  String get defaultSignature => "正在使用龙空Flutter App";
 }
 
 class LKongLocalizationsDelegate

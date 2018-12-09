@@ -77,7 +77,8 @@ class ForumStoryModel extends StoryListModel {
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
-            lastError: store.state.uiState.content.lastError,
+            lastError: store
+                .state.uiState.content.forumRepo[state.forum.fid].lastError,
             storyList: store.state.uiState.content.forumRepo[state.forum.fid],
             forumId: state.forum.fid,
             mode: state.mode,
@@ -94,6 +95,10 @@ class ForumStoryModel extends StoryListModel {
 
   @override
   APIRequest get loadMoreRequest {
+    if (storyList.nexttime == 0) {
+      return null;
+    }
+
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
@@ -104,6 +109,10 @@ class ForumStoryModel extends StoryListModel {
 
   @override
   APIRequest get refreshRequest {
+    if (storyList.current == 0) {
+      return null;
+    }
+    
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');

@@ -9,6 +9,8 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/utils/http_session.dart';
 
+import 'package:lkongapp/utils/globals.dart';
+
 const LOGIN_API = "LOGIN";
 const LOGOUT_API = "LOGOUT";
 const HOMELIST_API = "HOMELIST";
@@ -19,8 +21,9 @@ const FORUM_INFO_API = "FORUMINFO";
 const FORUM_THREADS_API = "FORUMTHREADS";
 const FORUM_CHECKNEW_API = "FORUM_CHECKNEW";
 const USERINFO_API = "USERINFO";
-
-HttpSession session = HttpSession(baseURL: 'http://lkong.cn');
+const FOLLOWLIST_API = "FOLLOWLIST";
+const PUNCHCARD_API = "PUNCHCARD";
+const MYDATA_API = "MYDATA";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -66,7 +69,15 @@ Future<Map> _handleHttp(
       }
 
       // print(json.decode(data));
-      result = dataParser(data);
+      try {
+        result = dataParser(data);
+      } catch (e) {
+        print(e.toString());
+        result = json.decode(data);
+        if (result["error"] == null) {
+          result = {"error": e.toString()};
+        }
+      }
 
       if (result == null) {
         result = {"error": 'API没有返回信息'};
@@ -168,10 +179,10 @@ Future<Map> getStoriesForForum(Map args) {
   var urlString = endpoint["forumStories"] + "$forumId" + modeString;
   var params = getTimeParameter(nexttime, current);
 
-  return fetchStories<ForumStoryResult>(
+  return fetchStories<StoryListResult>(
       urlString,
       params,
-      ForumStoryResult.fromJson,
+      StoryListResult.fromJson,
       (stories) => reverse
           ? stories.rebuild((b) => b..data.replace(stories.data.reversed))
           : stories);
@@ -209,10 +220,10 @@ Future<Map> getHomeList(Map args) {
   var urlString = endpoint["stories"] + (threadOnly ? 'thread' : '');
   var params = getTimeParameter(nexttime, current);
 
-  return fetchStories<HomeListResult>(
+  return fetchStories<StoryListResult>(
       urlString,
       params,
-      HomeListResult.fromJson,
+      StoryListResult.fromJson,
       (stories) =>
           stories.rebuild((b) => b..data.replace(stories.data.reversed)));
 }
@@ -292,6 +303,73 @@ Future<Map> getUserInfo(Map args) {
       dataParser: _parseResponseBody(UserInfo.fromJson));
 }
 
+Future<Map> getFollowList() {
+  final httpAction = session.get("");
+  return _handleHttp(
+    httpAction,
+    dataParser: _parseResponseBody(FollowList.fromJson),
+    preProcessor: (data) {
+      var result = data;
+      RegExp divPattern =
+          RegExp("<div\\s+id=\"setfollows\".*?>\\{\"uid\":.*?\\}</div>");
+      final divMatch = divPattern.firstMatch(data);
+      if (divMatch != null) {
+        String divHtml = divMatch.group(0);
+        RegExp jsonPattern = RegExp("\\{.*?\\}");
+        final jsonMatch = jsonPattern.firstMatch(divHtml);
+        if (jsonMatch != null) {
+          result = jsonMatch.group(0);
+        }
+      }
+      return result;
+    },
+  );
+}
+
+Future<Map> punchCard() {
+  var urlString = endpoint["punchCard"];
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(PunchCardResult.fromJson));
+}
+
+Future<Map> getPersonalData(Map args) {
+  int nexttime = args["nexttime"] ?? 0;
+  int current = args["current"] ?? 0;
+  int mode = args["mode"];
+
+  assert(mode != null, "Must speicfy mode");
+
+  String modeString;
+  Function(String) parser;
+
+  switch (mode) {
+    case 0:
+      modeString = "favorite";
+      parser = StoryListResult.fromJson;
+      break;
+    case 1:
+      modeString = "atme";
+      parser = (json) {
+        var result = StoryListResult.fromJson(json);
+        result = result.rebuild((b) => b..data.replace(result.data.reversed));
+        return result;
+      };
+      break;
+    case 2:
+    case 3:
+  }
+
+  var params = getTimeParameter(nexttime, current);
+  var urlString = endpoint["atMe"] + modeString + querify(params);
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(parser),
+      preProcessor: numMapperBuiler(["uid", "score", "extcredits"]));
+}
+
 String Function(String) numMapperBuiler(List<String> fields) {
   String Function(String) processor;
   processor = (String data) {
@@ -309,7 +387,12 @@ String Function(String) numMapperBuiler(List<String> fields) {
   return processor;
 }
 
-Future<Map> apiDispatch(api, Map parameters) {
+Future<Map> apiDispatch(api, Map parameters) async {
+  if (session.initialized == false) {
+    return Future.delayed(
+        Duration(milliseconds: 500), () => apiDispatch(api, parameters));
+  }
+
   if (api == LOGIN_API) {
     return login(parameters);
   }
@@ -350,6 +433,18 @@ Future<Map> apiDispatch(api, Map parameters) {
     return getUserInfo(parameters);
   }
 
+  if (api == FOLLOWLIST_API) {
+    return getFollowList();
+  }
+
+  if (api == PUNCHCARD_API) {
+    return punchCard();
+  }
+
+  if (api == MYDATA_API) {
+    return getPersonalData(parameters);
+  }
+
   return Future<Map>(null);
 }
 
@@ -375,7 +470,7 @@ APIResponse createResponseAction(APIRequest action, Map response) {
   return action.goodResponse(output);
 
   if (api == HOMELIST_API) {
-    HomeListResult list = response["result"] as HomeListResult;
+    StoryListResult list = response["result"] as StoryListResult;
     return HomeListSuccess(action, list);
   }
 

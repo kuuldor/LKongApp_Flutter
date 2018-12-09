@@ -5,36 +5,39 @@ import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
 import 'package:lkongapp/models/serializers.dart';
-
+import 'personal_stuff.dart';
 part 'story_result.g.dart';
 
-abstract class HomeListResult
-    implements Built<HomeListResult, HomeListResultBuilder> {
-  HomeListResult._();
+abstract class StoryListResult
+    implements Built<StoryListResult, StoryListResultBuilder> {
+  StoryListResult._();
 
-  factory HomeListResult([updates(HomeListResultBuilder b)]) = _$HomeListResult;
+  factory StoryListResult([updates(StoryListResultBuilder b)]) =
+      _$StoryListResult;
+
+  @BuiltValueField(wireName: 'data')
+  BuiltList<Story> get data;
   @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
   @nullable
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
-  @BuiltValueField(wireName: 'data')
-  BuiltList<Story> get data;
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
+
   String toJson() {
     return json
-        .encode(serializers.serializeWith(HomeListResult.serializer, this));
+        .encode(serializers.serializeWith(StoryListResult.serializer, this));
   }
 
-  static HomeListResult fromJson(String jsonString) {
+  static StoryListResult fromJson(String jsonString) {
     return serializers.deserializeWith(
-        HomeListResult.serializer, json.decode(jsonString));
+        StoryListResult.serializer, json.decode(jsonString));
   }
 
-  static Serializer<HomeListResult> get serializer =>
-      _$homeListResultSerializer;
+  static Serializer<StoryListResult> get serializer =>
+      _$storyListResultSerializer;
 }
 
 abstract class Story implements Built<Story, StoryBuilder> {
@@ -103,41 +106,6 @@ abstract class Story implements Built<Story, StoryBuilder> {
   }
 
   static Serializer<Story> get serializer => _$storySerializer;
-}
-
-abstract class ForumStoryResult
-    implements Built<ForumStoryResult, ForumStoryResultBuilder> {
-  ForumStoryResult._();
-
-  factory ForumStoryResult([updates(ForumStoryResultBuilder b)]) =
-      _$ForumStoryResult;
-
-  @BuiltValueField(wireName: 'data')
-  BuiltList<Story> get data;
-  @nullable
-  @BuiltValueField(wireName: 'nexttime')
-  int get nexttime;
-  @nullable
-  @BuiltValueField(wireName: 'curtime')
-  int get curtime;
-  @BuiltValueField(wireName: 'tmp')
-  String get tmp;
-  @nullable
-  @BuiltValueField(wireName: 'isend')
-  int get isend;
-
-  String toJson() {
-    return json
-        .encode(serializers.serializeWith(ForumStoryResult.serializer, this));
-  }
-
-  static ForumStoryResult fromJson(String jsonString) {
-    return serializers.deserializeWith(
-        ForumStoryResult.serializer, json.decode(jsonString));
-  }
-
-  static Serializer<ForumStoryResult> get serializer =>
-      _$forumStoryResultSerializer;
 }
 
 abstract class StoryInfoResult
@@ -288,37 +256,4 @@ abstract class Comment implements Built<Comment, CommentBuilder> {
   }
 
   static Serializer<Comment> get serializer => _$commentSerializer;
-}
-
-abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
-  Ratelog._();
-
-  factory Ratelog([updates(RatelogBuilder b)]) = _$Ratelog;
-
-  @BuiltValueField(wireName: '_id')
-  BuiltMap<String, String> get id;
-  @BuiltValueField(wireName: 'dateline')
-  String get dateline;
-  @BuiltValueField(wireName: 'extcredits')
-  int get extcredits;
-  @BuiltValueField(wireName: 'pid')
-  int get pid;
-  @BuiltValueField(wireName: 'reason')
-  String get reason;
-  @BuiltValueField(wireName: 'score')
-  int get score;
-  @BuiltValueField(wireName: 'uid')
-  int get uid;
-  @BuiltValueField(wireName: 'username')
-  String get username;
-  String toJson() {
-    return json.encode(serializers.serializeWith(Ratelog.serializer, this));
-  }
-
-  static Ratelog fromJson(String jsonString) {
-    return serializers.deserializeWith(
-        Ratelog.serializer, json.decode(jsonString));
-  }
-
-  static Serializer<Ratelog> get serializer => _$ratelogSerializer;
 }

@@ -41,10 +41,10 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
   @override
   void initState() {
     super.initState();
-    createTimer();
+    startTimer();
   }
 
-  void createTimer() {
+  void startTimer() {
     cancelTimer();
     checkNewTimer = Timer.periodic(Duration(seconds: timerPeriod), (timer) {
       if (checkNewCallback != null) {
@@ -110,7 +110,13 @@ abstract class StoryListModel extends FetchedListModel {
 
   @mustCallSuper
   @override
-  void listIsReady(BuildContext context) {}
+  void listIsReady(BuildContext context) {
+    if (startTimer != null) {
+      startTimer();
+    }
+  }
+
+  Function startTimer;
 
   @override
   Widget createListItem(BuildContext context, int index) {
@@ -126,6 +132,11 @@ abstract class StoryListModel extends FetchedListModel {
 
   Widget buildStoryListView(BuildContext context, StoryListState state) {
     if (itemCount != null && itemCount > 0) {
+      if (startTimer == null) {
+        startTimer = () {
+          state.startTimer();
+        };
+      }
       state.setCheckNewCallback(() {
         handleCheckNew(context);
       });
@@ -143,7 +154,7 @@ abstract class StoryListModel extends FetchedListModel {
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           alignment: Alignment.centerLeft,
           child: Text(
-            "网络错误：$error  请稍后下拉更新重试",
+            "网络错误：$error。请稍后重试",
             style: const TextStyle(color: Colors.white),
           ));
     } else if (newCount > 0) {

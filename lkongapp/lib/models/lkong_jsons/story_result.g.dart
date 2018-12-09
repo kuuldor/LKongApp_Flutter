@@ -19,27 +19,24 @@ part of 'story_result.dart';
 // ignore_for_file: unnecessary_new
 // ignore_for_file: test_types_in_equals
 
-Serializer<HomeListResult> _$homeListResultSerializer =
-    new _$HomeListResultSerializer();
+Serializer<StoryListResult> _$storyListResultSerializer =
+    new _$StoryListResultSerializer();
 Serializer<Story> _$storySerializer = new _$StorySerializer();
-Serializer<ForumStoryResult> _$forumStoryResultSerializer =
-    new _$ForumStoryResultSerializer();
 Serializer<StoryInfoResult> _$storyInfoResultSerializer =
     new _$StoryInfoResultSerializer();
 Serializer<StoryContentResult> _$storyContentResultSerializer =
     new _$StoryContentResultSerializer();
 Serializer<Comment> _$commentSerializer = new _$CommentSerializer();
-Serializer<Ratelog> _$ratelogSerializer = new _$RatelogSerializer();
 
-class _$HomeListResultSerializer
-    implements StructuredSerializer<HomeListResult> {
+class _$StoryListResultSerializer
+    implements StructuredSerializer<StoryListResult> {
   @override
-  final Iterable<Type> types = const [HomeListResult, _$HomeListResult];
+  final Iterable<Type> types = const [StoryListResult, _$StoryListResult];
   @override
-  final String wireName = 'HomeListResult';
+  final String wireName = 'StoryListResult';
 
   @override
-  Iterable serialize(Serializers serializers, HomeListResult object,
+  Iterable serialize(Serializers serializers, StoryListResult object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
       'data',
@@ -66,9 +63,9 @@ class _$HomeListResultSerializer
   }
 
   @override
-  HomeListResult deserialize(Serializers serializers, Iterable serialized,
+  StoryListResult deserialize(Serializers serializers, Iterable serialized,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = new HomeListResultBuilder();
+    final result = new StoryListResultBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -76,6 +73,12 @@ class _$HomeListResultSerializer
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
+        case 'data':
+          result.data.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(BuiltList, const [const FullType(Story)]))
+              as BuiltList);
+          break;
         case 'nexttime':
           result.nexttime = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
@@ -83,12 +86,6 @@ class _$HomeListResultSerializer
         case 'curtime':
           result.curtime = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
-          break;
-        case 'data':
-          result.data.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(Story)]))
-              as BuiltList);
           break;
         case 'tmp':
           result.tmp = serializers.deserialize(value,
@@ -274,86 +271,6 @@ class _$StorySerializer implements StructuredSerializer<Story> {
           break;
         case 'replynum':
           result.replynum = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$ForumStoryResultSerializer
-    implements StructuredSerializer<ForumStoryResult> {
-  @override
-  final Iterable<Type> types = const [ForumStoryResult, _$ForumStoryResult];
-  @override
-  final String wireName = 'ForumStoryResult';
-
-  @override
-  Iterable serialize(Serializers serializers, ForumStoryResult object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      'data',
-      serializers.serialize(object.data,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(Story)])),
-      'tmp',
-      serializers.serialize(object.tmp, specifiedType: const FullType(String)),
-    ];
-    if (object.nexttime != null) {
-      result
-        ..add('nexttime')
-        ..add(serializers.serialize(object.nexttime,
-            specifiedType: const FullType(int)));
-    }
-    if (object.curtime != null) {
-      result
-        ..add('curtime')
-        ..add(serializers.serialize(object.curtime,
-            specifiedType: const FullType(int)));
-    }
-    if (object.isend != null) {
-      result
-        ..add('isend')
-        ..add(serializers.serialize(object.isend,
-            specifiedType: const FullType(int)));
-    }
-
-    return result;
-  }
-
-  @override
-  ForumStoryResult deserialize(Serializers serializers, Iterable serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new ForumStoryResultBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final dynamic value = iterator.current;
-      switch (key) {
-        case 'data':
-          result.data.replace(serializers.deserialize(value,
-                  specifiedType:
-                      const FullType(BuiltList, const [const FullType(Story)]))
-              as BuiltList);
-          break;
-        case 'nexttime':
-          result.nexttime = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'curtime':
-          result.curtime = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'tmp':
-          result.tmp = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'isend':
-          result.isend = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
       }
@@ -757,158 +674,72 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
   }
 }
 
-class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
+class _$StoryListResult extends StoryListResult {
   @override
-  final Iterable<Type> types = const [Ratelog, _$Ratelog];
-  @override
-  final String wireName = 'Ratelog';
-
-  @override
-  Iterable serialize(Serializers serializers, Ratelog object,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      '_id',
-      serializers.serialize(object.id,
-          specifiedType: const FullType(BuiltMap,
-              const [const FullType(String), const FullType(String)])),
-      'dateline',
-      serializers.serialize(object.dateline,
-          specifiedType: const FullType(String)),
-      'extcredits',
-      serializers.serialize(object.extcredits,
-          specifiedType: const FullType(int)),
-      'pid',
-      serializers.serialize(object.pid, specifiedType: const FullType(int)),
-      'reason',
-      serializers.serialize(object.reason,
-          specifiedType: const FullType(String)),
-      'score',
-      serializers.serialize(object.score, specifiedType: const FullType(int)),
-      'uid',
-      serializers.serialize(object.uid, specifiedType: const FullType(int)),
-      'username',
-      serializers.serialize(object.username,
-          specifiedType: const FullType(String)),
-    ];
-
-    return result;
-  }
-
-  @override
-  Ratelog deserialize(Serializers serializers, Iterable serialized,
-      {FullType specifiedType = FullType.unspecified}) {
-    final result = new RatelogBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current as String;
-      iterator.moveNext();
-      final dynamic value = iterator.current;
-      switch (key) {
-        case '_id':
-          result.id.replace(serializers.deserialize(value,
-              specifiedType: const FullType(BuiltMap, const [
-                const FullType(String),
-                const FullType(String)
-              ])) as BuiltMap);
-          break;
-        case 'dateline':
-          result.dateline = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'extcredits':
-          result.extcredits = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'pid':
-          result.pid = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'reason':
-          result.reason = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-        case 'score':
-          result.score = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'uid':
-          result.uid = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'username':
-          result.username = serializers.deserialize(value,
-              specifiedType: const FullType(String)) as String;
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$HomeListResult extends HomeListResult {
+  final BuiltList<Story> data;
   @override
   final int nexttime;
   @override
   final int curtime;
   @override
-  final BuiltList<Story> data;
-  @override
   final String tmp;
 
-  factory _$HomeListResult([void updates(HomeListResultBuilder b)]) =>
-      (new HomeListResultBuilder()..update(updates)).build();
+  factory _$StoryListResult([void updates(StoryListResultBuilder b)]) =>
+      (new StoryListResultBuilder()..update(updates)).build();
 
-  _$HomeListResult._({this.nexttime, this.curtime, this.data, this.tmp})
+  _$StoryListResult._({this.data, this.nexttime, this.curtime, this.tmp})
       : super._() {
     if (data == null) {
-      throw new BuiltValueNullFieldError('HomeListResult', 'data');
+      throw new BuiltValueNullFieldError('StoryListResult', 'data');
     }
     if (tmp == null) {
-      throw new BuiltValueNullFieldError('HomeListResult', 'tmp');
+      throw new BuiltValueNullFieldError('StoryListResult', 'tmp');
     }
   }
 
   @override
-  HomeListResult rebuild(void updates(HomeListResultBuilder b)) =>
+  StoryListResult rebuild(void updates(StoryListResultBuilder b)) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  HomeListResultBuilder toBuilder() =>
-      new HomeListResultBuilder()..replace(this);
+  StoryListResultBuilder toBuilder() =>
+      new StoryListResultBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is HomeListResult &&
+    return other is StoryListResult &&
+        data == other.data &&
         nexttime == other.nexttime &&
         curtime == other.curtime &&
-        data == other.data &&
         tmp == other.tmp;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc($jc(0, nexttime.hashCode), curtime.hashCode), data.hashCode),
+        $jc($jc($jc(0, data.hashCode), nexttime.hashCode), curtime.hashCode),
         tmp.hashCode));
   }
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('HomeListResult')
+    return (newBuiltValueToStringHelper('StoryListResult')
+          ..add('data', data)
           ..add('nexttime', nexttime)
           ..add('curtime', curtime)
-          ..add('data', data)
           ..add('tmp', tmp))
         .toString();
   }
 }
 
-class HomeListResultBuilder
-    implements Builder<HomeListResult, HomeListResultBuilder> {
-  _$HomeListResult _$v;
+class StoryListResultBuilder
+    implements Builder<StoryListResult, StoryListResultBuilder> {
+  _$StoryListResult _$v;
+
+  ListBuilder<Story> _data;
+  ListBuilder<Story> get data => _$this._data ??= new ListBuilder<Story>();
+  set data(ListBuilder<Story> data) => _$this._data = data;
 
   int _nexttime;
   int get nexttime => _$this._nexttime;
@@ -918,21 +749,17 @@ class HomeListResultBuilder
   int get curtime => _$this._curtime;
   set curtime(int curtime) => _$this._curtime = curtime;
 
-  ListBuilder<Story> _data;
-  ListBuilder<Story> get data => _$this._data ??= new ListBuilder<Story>();
-  set data(ListBuilder<Story> data) => _$this._data = data;
-
   String _tmp;
   String get tmp => _$this._tmp;
   set tmp(String tmp) => _$this._tmp = tmp;
 
-  HomeListResultBuilder();
+  StoryListResultBuilder();
 
-  HomeListResultBuilder get _$this {
+  StoryListResultBuilder get _$this {
     if (_$v != null) {
+      _data = _$v.data?.toBuilder();
       _nexttime = _$v.nexttime;
       _curtime = _$v.curtime;
-      _data = _$v.data?.toBuilder();
       _tmp = _$v.tmp;
       _$v = null;
     }
@@ -940,27 +767,27 @@ class HomeListResultBuilder
   }
 
   @override
-  void replace(HomeListResult other) {
+  void replace(StoryListResult other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$HomeListResult;
+    _$v = other as _$StoryListResult;
   }
 
   @override
-  void update(void updates(HomeListResultBuilder b)) {
+  void update(void updates(StoryListResultBuilder b)) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$HomeListResult build() {
-    _$HomeListResult _$result;
+  _$StoryListResult build() {
+    _$StoryListResult _$result;
     try {
       _$result = _$v ??
-          new _$HomeListResult._(
+          new _$StoryListResult._(
+              data: data.build(),
               nexttime: nexttime,
               curtime: curtime,
-              data: data.build(),
               tmp: tmp);
     } catch (_) {
       String _$failedField;
@@ -969,7 +796,7 @@ class HomeListResultBuilder
         data.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'HomeListResult', _$failedField, e.toString());
+            'StoryListResult', _$failedField, e.toString());
       }
       rethrow;
     }
@@ -1283,151 +1110,6 @@ class StoryBuilder implements Builder<Story, StoryBuilder> {
             tAuthorid: tAuthorid,
             tReplynum: tReplynum,
             replynum: replynum);
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$ForumStoryResult extends ForumStoryResult {
-  @override
-  final BuiltList<Story> data;
-  @override
-  final int nexttime;
-  @override
-  final int curtime;
-  @override
-  final String tmp;
-  @override
-  final int isend;
-
-  factory _$ForumStoryResult([void updates(ForumStoryResultBuilder b)]) =>
-      (new ForumStoryResultBuilder()..update(updates)).build();
-
-  _$ForumStoryResult._(
-      {this.data, this.nexttime, this.curtime, this.tmp, this.isend})
-      : super._() {
-    if (data == null) {
-      throw new BuiltValueNullFieldError('ForumStoryResult', 'data');
-    }
-    if (tmp == null) {
-      throw new BuiltValueNullFieldError('ForumStoryResult', 'tmp');
-    }
-  }
-
-  @override
-  ForumStoryResult rebuild(void updates(ForumStoryResultBuilder b)) =>
-      (toBuilder()..update(updates)).build();
-
-  @override
-  ForumStoryResultBuilder toBuilder() =>
-      new ForumStoryResultBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is ForumStoryResult &&
-        data == other.data &&
-        nexttime == other.nexttime &&
-        curtime == other.curtime &&
-        tmp == other.tmp &&
-        isend == other.isend;
-  }
-
-  @override
-  int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc($jc($jc(0, data.hashCode), nexttime.hashCode),
-                curtime.hashCode),
-            tmp.hashCode),
-        isend.hashCode));
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper('ForumStoryResult')
-          ..add('data', data)
-          ..add('nexttime', nexttime)
-          ..add('curtime', curtime)
-          ..add('tmp', tmp)
-          ..add('isend', isend))
-        .toString();
-  }
-}
-
-class ForumStoryResultBuilder
-    implements Builder<ForumStoryResult, ForumStoryResultBuilder> {
-  _$ForumStoryResult _$v;
-
-  ListBuilder<Story> _data;
-  ListBuilder<Story> get data => _$this._data ??= new ListBuilder<Story>();
-  set data(ListBuilder<Story> data) => _$this._data = data;
-
-  int _nexttime;
-  int get nexttime => _$this._nexttime;
-  set nexttime(int nexttime) => _$this._nexttime = nexttime;
-
-  int _curtime;
-  int get curtime => _$this._curtime;
-  set curtime(int curtime) => _$this._curtime = curtime;
-
-  String _tmp;
-  String get tmp => _$this._tmp;
-  set tmp(String tmp) => _$this._tmp = tmp;
-
-  int _isend;
-  int get isend => _$this._isend;
-  set isend(int isend) => _$this._isend = isend;
-
-  ForumStoryResultBuilder();
-
-  ForumStoryResultBuilder get _$this {
-    if (_$v != null) {
-      _data = _$v.data?.toBuilder();
-      _nexttime = _$v.nexttime;
-      _curtime = _$v.curtime;
-      _tmp = _$v.tmp;
-      _isend = _$v.isend;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(ForumStoryResult other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
-    _$v = other as _$ForumStoryResult;
-  }
-
-  @override
-  void update(void updates(ForumStoryResultBuilder b)) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  _$ForumStoryResult build() {
-    _$ForumStoryResult _$result;
-    try {
-      _$result = _$v ??
-          new _$ForumStoryResult._(
-              data: data.build(),
-              nexttime: nexttime,
-              curtime: curtime,
-              tmp: tmp,
-              isend: isend);
-    } catch (_) {
-      String _$failedField;
-      try {
-        _$failedField = 'data';
-        data.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            'ForumStoryResult', _$failedField, e.toString());
-      }
-      rethrow;
-    }
     replace(_$result);
     return _$result;
   }
@@ -2318,211 +2000,6 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'Comment', _$failedField, e.toString());
-      }
-      rethrow;
-    }
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$Ratelog extends Ratelog {
-  @override
-  final BuiltMap<String, String> id;
-  @override
-  final String dateline;
-  @override
-  final int extcredits;
-  @override
-  final int pid;
-  @override
-  final String reason;
-  @override
-  final int score;
-  @override
-  final int uid;
-  @override
-  final String username;
-
-  factory _$Ratelog([void updates(RatelogBuilder b)]) =>
-      (new RatelogBuilder()..update(updates)).build();
-
-  _$Ratelog._(
-      {this.id,
-      this.dateline,
-      this.extcredits,
-      this.pid,
-      this.reason,
-      this.score,
-      this.uid,
-      this.username})
-      : super._() {
-    if (id == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'id');
-    }
-    if (dateline == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'dateline');
-    }
-    if (extcredits == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'extcredits');
-    }
-    if (pid == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'pid');
-    }
-    if (reason == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'reason');
-    }
-    if (score == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'score');
-    }
-    if (uid == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'uid');
-    }
-    if (username == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'username');
-    }
-  }
-
-  @override
-  Ratelog rebuild(void updates(RatelogBuilder b)) =>
-      (toBuilder()..update(updates)).build();
-
-  @override
-  RatelogBuilder toBuilder() => new RatelogBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is Ratelog &&
-        id == other.id &&
-        dateline == other.dateline &&
-        extcredits == other.extcredits &&
-        pid == other.pid &&
-        reason == other.reason &&
-        score == other.score &&
-        uid == other.uid &&
-        username == other.username;
-  }
-
-  @override
-  int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc(
-                $jc(
-                    $jc(
-                        $jc($jc($jc(0, id.hashCode), dateline.hashCode),
-                            extcredits.hashCode),
-                        pid.hashCode),
-                    reason.hashCode),
-                score.hashCode),
-            uid.hashCode),
-        username.hashCode));
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper('Ratelog')
-          ..add('id', id)
-          ..add('dateline', dateline)
-          ..add('extcredits', extcredits)
-          ..add('pid', pid)
-          ..add('reason', reason)
-          ..add('score', score)
-          ..add('uid', uid)
-          ..add('username', username))
-        .toString();
-  }
-}
-
-class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
-  _$Ratelog _$v;
-
-  MapBuilder<String, String> _id;
-  MapBuilder<String, String> get id =>
-      _$this._id ??= new MapBuilder<String, String>();
-  set id(MapBuilder<String, String> id) => _$this._id = id;
-
-  String _dateline;
-  String get dateline => _$this._dateline;
-  set dateline(String dateline) => _$this._dateline = dateline;
-
-  int _extcredits;
-  int get extcredits => _$this._extcredits;
-  set extcredits(int extcredits) => _$this._extcredits = extcredits;
-
-  int _pid;
-  int get pid => _$this._pid;
-  set pid(int pid) => _$this._pid = pid;
-
-  String _reason;
-  String get reason => _$this._reason;
-  set reason(String reason) => _$this._reason = reason;
-
-  int _score;
-  int get score => _$this._score;
-  set score(int score) => _$this._score = score;
-
-  int _uid;
-  int get uid => _$this._uid;
-  set uid(int uid) => _$this._uid = uid;
-
-  String _username;
-  String get username => _$this._username;
-  set username(String username) => _$this._username = username;
-
-  RatelogBuilder();
-
-  RatelogBuilder get _$this {
-    if (_$v != null) {
-      _id = _$v.id?.toBuilder();
-      _dateline = _$v.dateline;
-      _extcredits = _$v.extcredits;
-      _pid = _$v.pid;
-      _reason = _$v.reason;
-      _score = _$v.score;
-      _uid = _$v.uid;
-      _username = _$v.username;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(Ratelog other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
-    _$v = other as _$Ratelog;
-  }
-
-  @override
-  void update(void updates(RatelogBuilder b)) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  _$Ratelog build() {
-    _$Ratelog _$result;
-    try {
-      _$result = _$v ??
-          new _$Ratelog._(
-              id: id.build(),
-              dateline: dateline,
-              extcredits: extcredits,
-              pid: pid,
-              reason: reason,
-              score: score,
-              uid: uid,
-              username: username);
-    } catch (_) {
-      String _$failedField;
-      try {
-        _$failedField = 'id';
-        id.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            'Ratelog', _$failedField, e.toString());
       }
       rethrow;
     }

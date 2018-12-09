@@ -28,19 +28,21 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(AppTheme.serializer)
       ..add(AuthState.serializer)
       ..add(Comment.serializer)
+      ..add(FollowList.serializer)
       ..add(Forum.serializer)
       ..add(ForumInfoResult.serializer)
       ..add(ForumListResult.serializer)
-      ..add(ForumStoryResult.serializer)
-      ..add(HomeListResult.serializer)
       ..add(PersistentState.serializer)
+      ..add(PunchCardResult.serializer)
       ..add(Ratelog.serializer)
       ..add(Story.serializer)
       ..add(StoryContentResult.serializer)
       ..add(StoryInfoResult.serializer)
+      ..add(StoryListResult.serializer)
       ..add(ThemeSetting.serializer)
       ..add(UIState.serializer)
       ..add(User.serializer)
+      ..add(UserData.serializer)
       ..add(UserInfo.serializer)
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(AppTheme)]),
@@ -61,8 +63,17 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(BuiltList, const [const FullType(Story)]),
           () => new ListBuilder<Story>())
       ..addBuilderFactory(
-          const FullType(BuiltList, const [const FullType(Story)]),
-          () => new ListBuilder<Story>())
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(String)]),
+          () => new ListBuilder<String>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(String)]),
           () => new ListBuilder<String>())
@@ -70,10 +81,6 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(Forum)]),
           () => new MapBuilder<String, Forum>())
-      ..addBuilderFactory(
-          const FullType(
-              BuiltMap, const [const FullType(String), const FullType(String)]),
-          () => new MapBuilder<String, String>())
       ..addBuilderFactory(
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(String)]),

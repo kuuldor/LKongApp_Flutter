@@ -46,12 +46,14 @@ class ForumItem extends StatelessWidget {
                 ),
               ),
             ),
-            Column(
-              children: <Widget>[
-                Icon(Icons.message),
-                Text("${info != null ? info.todayposts : 0}"),
-              ],
-            ),
+            info != null
+                ? Column(
+                    children: <Widget>[
+                      Icon(Icons.message),
+                      Text("${info.todayposts}"),
+                    ],
+                  )
+                : Container(),
           ],
         ),
       ]),

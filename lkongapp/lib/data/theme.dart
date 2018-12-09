@@ -22,7 +22,7 @@ final defaultTheme = {
     "text": "#111",
     "lightText": "#999",
     "mediumText": "#666",
-    "darkText": "#333",
+    "darkText": "#111",
     "barText": "#FFF",
     "link": "#0099CC",
     "linkTap": "rgba(51, 51, 51, 0.5)"
@@ -32,14 +32,14 @@ final defaultTheme = {
 final nightTheme = {
   "name": "默认夜间",
   "colors": {
-    "main": "#222",
+    "main": "#567",
     "paper": "#111",
     "headerBG": "#282828",
     "quoteBG": "#333",
     "text": "#EEE",
     "lightText": "#666",
     "mediumText": "#999",
-    "darkText": "#CCC",
+    "darkText": "#EEE",
     "barText": "#FFF",
     "link": "#0099CC",
     "linkTap": "rgba(204, 204, 204, 0.5)"

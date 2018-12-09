@@ -42,9 +42,12 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   factory AppSetting([updates(AppSettingBuilder b)]) => _$AppSetting((b) {
         b
           ..saveCredential = true
+          ..autoLogin = true
+          ..autoPunch = true
           ..version = '0.1'
           ..copyright = '2017 Akeysoft'
           ..nightMode = false
+          ..showForumInfo = false
           ..themeSetting.replace(ThemeSetting())
           ..shakeToShiftNightMode = true
           ..swipeThreshold = 80
@@ -65,6 +68,10 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
 
   @BuiltValueField(wireName: 'saveCredential')
   bool get saveCredential;
+  @BuiltValueField(wireName: 'autoLogin')
+  bool get autoLogin;
+  @BuiltValueField(wireName: 'autoPunch')
+  bool get autoPunch;
   @BuiltValueField(wireName: 'version')
   String get version;
   @BuiltValueField(wireName: 'copyright')
@@ -101,6 +108,8 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   bool get backgroundFetch;
   @BuiltValueField(wireName: 'cacheSize')
   int get cacheSize;
+  @BuiltValueField(wireName: 'showForumInfo')
+  bool get showForumInfo;
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));
   }
@@ -157,7 +166,7 @@ abstract class AccountSettings
 
   @BuiltValueField(wireName: 'currentSetting')
   AccountSetting get currentSetting;
-  
+
   @BuiltValueField(wireName: 'accounts')
   BuiltMap<int, AccountSetting> get accounts;
   String toJson() {
@@ -180,14 +189,11 @@ abstract class AccountSetting
 
   factory AccountSetting([updates(AccountSettingBuilder b)]) =>
       _$AccountSetting((b) => b
-        ..autoPunch = true
         ..homePage = 0
         ..threadOnlyHome = false
         ..signature = LKongLocalizations().defaultSignature
         ..update(updates));
 
-  @BuiltValueField(wireName: 'autoPunch')
-  bool get autoPunch;
   @BuiltValueField(wireName: 'homePage')
   int get homePage;
   @BuiltValueField(wireName: 'threadOnlyHome')

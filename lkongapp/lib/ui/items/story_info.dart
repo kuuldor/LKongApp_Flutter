@@ -30,7 +30,7 @@ class StoryInfoItem extends StatelessWidget {
                       child: Text(
                         stripHtmlTag(info.subject),
                         style: Theme.of(context).textTheme.title.copyWith(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                            fontSize: 24, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],

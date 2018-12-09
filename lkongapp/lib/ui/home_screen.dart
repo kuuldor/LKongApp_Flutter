@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:lkongapp/ui/atme_screen.dart';
+import 'package:lkongapp/ui/favorite_screen.dart';
 import 'package:lkongapp/ui/home_list.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/ui/search_screen.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
@@ -17,11 +21,11 @@ const pages = [
     "icon": Icons.home,
   },
   {
-    "title": '板块',
+    "title": '版块',
     "icon": Icons.dashboard,
   },
   {
-    "title": '书签',
+    "title": '收藏',
     "icon": Icons.bookmark,
   },
   {
@@ -45,16 +49,13 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
     return buildConnectedWidget<PageModel>(context, PageModel.fromStore,
         (viewModel) {
       if (!viewModel.isAuthed) {
-        // viewModel.showLoginScreen(context);
+        //viewModel.showLoginScreen(context);
       }
       return Scaffold(
-        appBar: AppBar(
-          title: Text(pages[viewModel.page]["title"]),
-        ),
-        drawer: AppDrawerBuilder(),
         body: PageView(
           children: [
             Container(
@@ -64,13 +65,13 @@ class HomeScreen extends StatelessWidget {
               child: ForumList(),
             ),
             Container(
-              child: Text('书签'),
+              child: FavoriteScreen(),
             ),
             Container(
-              child: Text('通知'),
+              child: AtMeScreen(),
             ),
             Container(
-              child: Text('搜索'),
+              child: SearchScreen(),
             ),
           ],
           controller: pageController,

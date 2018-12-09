@@ -266,8 +266,12 @@ _parseDocumentBody(
     BuildContext context, dom.Element body, List<Widget> widgetList) {
   List<TextSpan> textList = List<TextSpan>();
   dom.NodeList docBodyChildren = body.nodes;
-  TextStyle defaultStyle =
-      Theme.of(context).textTheme.title.apply(fontWeightDelta: -1);
+
+  final theme = LKModeledApp.modelOf(context).theme;
+  TextStyle defaultStyle = Theme.of(context)
+      .textTheme
+      .title
+      .apply(fontWeightDelta: -1, color: theme.darkTextColor);
 
   if (docBodyChildren.length > 0)
     docBodyChildren.forEach((e) => _parseImageAndText(context,

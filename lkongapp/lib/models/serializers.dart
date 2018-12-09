@@ -23,9 +23,8 @@ part 'serializers.g.dart';
   AccountSettings,
   AccountSetting,
   AppTheme,
-  HomeListResult,
   Story,
-  ForumStoryResult,
+  StoryListResult,
   ForumListResult,
   Forum,
   StoryInfoResult,
@@ -33,6 +32,9 @@ part 'serializers.g.dart';
   StoryContentResult,
   Comment,
   Ratelog,
+  FollowList,
+  PunchCardResult,
+  UserData,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

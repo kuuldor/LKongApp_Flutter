@@ -115,7 +115,8 @@ class StoryContentModel {
           loading:
               store.state.uiState.content.storyRepo[state.storyId]?.loading ??
                   false,
-          lastError: store.state.uiState.content.lastError,
+          lastError:
+              store.state.uiState.content.storyRepo[state.storyId]?.lastError,
           story: store.state.uiState.content.storyRepo[state.storyId],
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
@@ -188,14 +189,25 @@ class StoryContentModel {
             ),
           ),
         ));
-        for (int i = 0; i < comments.length; i++) {
-          var comment = comments[i];
+        if (lastError != null) {
+          tiles.add(Container(
+              color: Colors.red[500],
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "错误：$lastError",
+                style: const TextStyle(color: Colors.white),
+              )));
+        } else {
+          for (int i = 0; i < comments.length; i++) {
+            var comment = comments[i];
 
-          Widget item = CommentItem(
-            comment: comment,
-            // onTap: () => onStoryTap(context, story),
-          );
-          tiles.add(wrapTile(item));
+            Widget item = CommentItem(
+              comment: comment,
+              // onTap: () => onStoryTap(context, story),
+            );
+            tiles.add(wrapTile(item));
+          }
         }
       }
       return tiles;

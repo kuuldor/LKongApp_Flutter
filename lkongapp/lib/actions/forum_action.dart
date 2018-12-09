@@ -110,7 +110,7 @@ class ForumStoryLoadMoreRequest extends ForumStoryRequest {
 }
 
 class ForumStorySuccess extends APISuccess with StopLoading {
-  final ForumStoryResult result;
+  final StoryListResult result;
 
   ForumStorySuccess(request, this.result) : super(request);
 }
@@ -120,7 +120,7 @@ class ForumStoryFailure extends APIFailure with StopLoading {
 }
 
 class ForumStoryNewSuccess extends ForumStorySuccess {
-  ForumStoryNewSuccess(request, ForumStoryResult result)
+  ForumStoryNewSuccess(request, StoryListResult result)
       : super(request, result);
 }
 
@@ -129,7 +129,7 @@ class ForumStoryNewFailure extends ForumStoryFailure {
 }
 
 class ForumStoryRefreshSuccess extends ForumStorySuccess with StopLoading {
-  ForumStoryRefreshSuccess(request, ForumStoryResult result)
+  ForumStoryRefreshSuccess(request, StoryListResult result)
       : super(request, result);
 }
 
@@ -138,7 +138,7 @@ class ForumStoryRefreshFailure extends ForumStoryFailure {
 }
 
 class ForumStoryLoadMoreSuccess extends ForumStorySuccess {
-  ForumStoryLoadMoreSuccess(request, ForumStoryResult result)
+  ForumStoryLoadMoreSuccess(request, StoryListResult result)
       : super(request, result);
 }
 

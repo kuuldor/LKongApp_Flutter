@@ -64,7 +64,7 @@ class HomeListLoadMoreRequest extends HomeListRequest {
 }
 
 class HomeListSuccess extends APISuccess with StopLoading {
-  final HomeListResult list;
+  final StoryListResult list;
 
   HomeListSuccess(request, this.list) : super(request);
 }
@@ -74,7 +74,7 @@ class HomeListFailure extends APIFailure with StopLoading {
 }
 
 class HomeListNewSuccess extends HomeListSuccess {
-  HomeListNewSuccess(request, HomeListResult list) : super(request, list);
+  HomeListNewSuccess(request, StoryListResult list) : super(request, list);
 }
 
 class HomeListNewFailure extends HomeListFailure {
@@ -82,7 +82,7 @@ class HomeListNewFailure extends HomeListFailure {
 }
 
 class HomeListRefreshSuccess extends HomeListSuccess with StopLoading {
-  HomeListRefreshSuccess(request, HomeListResult list) : super(request, list);
+  HomeListRefreshSuccess(request, StoryListResult list) : super(request, list);
 }
 
 class HomeListRefreshFailure extends HomeListFailure {
@@ -90,7 +90,7 @@ class HomeListRefreshFailure extends HomeListFailure {
 }
 
 class HomeListLoadMoreSuccess extends HomeListSuccess {
-  HomeListLoadMoreSuccess(request, HomeListResult list) : super(request, list);
+  HomeListLoadMoreSuccess(request, StoryListResult list) : super(request, list);
 }
 
 class HomeListLoadMoreFailure extends HomeListFailure {

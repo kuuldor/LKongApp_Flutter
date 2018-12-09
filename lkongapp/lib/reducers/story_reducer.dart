@@ -6,6 +6,8 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
 
+import 'fetchlist_reducer.dart';
+
 final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
   TypedReducer<BuiltMap<int, StoryPageList>, StoryContentRequest>(
       _storyContentRequested),
@@ -27,7 +29,8 @@ BuiltMap<int, StoryPageList> _storyInfoRequested(
 
   if (action.story != null) {
     int threadId = action.story;
-    newRepo = _buildStoryPages(newRepo, threadId, forceNew: true);
+    newRepo = _buildStoryPages(newRepo, threadId, forceNew: true).rebuild((b) =>
+        b.updateValue(threadId, (v) => v.rebuild((b) => b..loading = true)));
   }
   return newRepo;
 }
@@ -86,7 +89,8 @@ BuiltMap<int, StoryPageList> _storyRequestFailed(
 }
 
 BuiltMap<int, StoryPageList> _buildStoryPages(
-    BuiltMap<int, StoryPageList> newRepo, int threadId, {bool forceNew: false}) {
+    BuiltMap<int, StoryPageList> newRepo, int threadId,
+    {bool forceNew: false}) {
   StoryPageList storyContents = newRepo[threadId];
   if (forceNew || storyContents == null) {
     newRepo = newRepo
@@ -109,8 +113,9 @@ BuiltMap<int, StoryPageList> _storyContentRequested(
     if (storyContents.pages[action.page] == null) {
       newRepo = newRepo.rebuild((b) => b.updateValue(
           threadId,
-          (v) => v.rebuild(
-              (b) => b..pages.addEntries([MapEntry(action.page, page)]))));
+          (v) => v.rebuild((b) => b
+            ..loading = true
+            ..pages.addEntries([MapEntry(action.page, page)]))));
     }
   }
   return newRepo;
@@ -147,11 +152,11 @@ final homeListReducer = combineReducers<StoryFetchList>([
   TypedReducer<StoryFetchList, HomeListFailure>(_homeListFailed),
   TypedReducer<StoryFetchList, HomeListCheckNewFailure>(_homeListFailed),
   TypedReducer<StoryFetchList, HomeListNewSuccess>(
-      _homeListSucceeded(HomeListRequestType.New)),
+      _homeListSucceeded(FetchListRequestType.New)),
   TypedReducer<StoryFetchList, HomeListRefreshSuccess>(
-      _homeListSucceeded(HomeListRequestType.Refresh)),
+      _homeListSucceeded(FetchListRequestType.Refresh)),
   TypedReducer<StoryFetchList, HomeListLoadMoreSuccess>(
-      _homeListSucceeded(HomeListRequestType.LoadMore)),
+      _homeListSucceeded(FetchListRequestType.LoadMore)),
   TypedReducer<StoryFetchList, HomeListCheckNewSuccess>(
       _homeListNewCountChecked),
 ]);
@@ -160,62 +165,17 @@ StoryFetchList _homeListNewCountChecked(
     StoryFetchList list, HomeListCheckNewSuccess action) {
   var result = action.result;
 
-  return list.rebuild((b) => b.newcount = result);
+  return fetchListNewCountChecked(list, result);
 }
 
 StoryFetchList _homeListLoading(StoryFetchList list, HomeListRequest action) {
-  return list.rebuild((b) => b..loading = true);
+  return fetchListLoading(list);
 }
 
 StoryFetchList _homeListFailed(StoryFetchList list, APIFailure action) {
-  return list.rebuild((b) => b
-    ..loading = false
-    ..lastError = action.error);
+  return fetchListFailed(list, action.error);
 }
 
-enum HomeListRequestType {
-  New,
-  Refresh,
-  LoadMore,
-}
-
-_homeListSucceeded(HomeListRequestType type) =>
-    (StoryFetchList list, HomeListSuccess action) {
-      return list.rebuild((b) {
-        // b..loading = false;
-        var data = action.list.data;
-        if (data.length > 0) {
-          int nexttime = type != HomeListRequestType.Refresh
-              ? action.list.nexttime
-              : list.nexttime;
-          int current = type != HomeListRequestType.LoadMore
-              ? action.list.curtime
-              : list.current;
-
-          b
-            ..loading = false
-            ..lastError = null
-            ..nexttime = nexttime
-            ..current = current;
-          switch (type) {
-            case HomeListRequestType.New:
-              b
-                ..newcount = 0
-                ..stories.replace(data);
-              break;
-            case HomeListRequestType.Refresh:
-              var newsSet = data.map((story) => story.id).toSet();
-
-              b
-                ..newcount = 0
-                ..stories.where((story) => !newsSet.contains(story.id))
-                ..stories.insertAll(0, data);
-              break;
-            case HomeListRequestType.LoadMore:
-              b..stories.addAll(data);
-              break;
-          }
-        }
-        return b;
-      });
-    };
+_homeListSucceeded(FetchListRequestType type) =>
+    (StoryFetchList list, HomeListSuccess action) =>
+        fetchListSucceeded(type, list, action.list);

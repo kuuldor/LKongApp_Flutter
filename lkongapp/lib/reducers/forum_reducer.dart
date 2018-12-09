@@ -1,5 +1,6 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:lkongapp/models/lkong_jsons/story_result.dart';
+import 'package:lkongapp/reducers/fetchlist_reducer.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
 
@@ -32,11 +33,13 @@ ForumInfo _forumListSucceeded(ForumInfo forumRepo, ForumListSuccess action) {
   var list = action.list;
   var newRepo = forumRepo;
   if (list != null && list.isok) {
+    var syswm = newRepo.sysplanes.map((f) => f.fid).toSet();
+
     newRepo = newRepo.rebuild((b) => b
       ..loading = false
       ..lastError = null
       ..forums.replace(list.forumList)
-      ..sysplanes.replace(list.sysweimian));
+      ..sysplanes.addAll(list.sysweimian.where((f) => !syswm.contains(f.fid))));
   }
 
   return newRepo;
@@ -71,25 +74,27 @@ final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryCheckNewSuccess>(
       _forumStoryNewCountChecked),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewSuccess>(
-      _forumStorySucceeded(ForumStoryRequestType.New)),
+      _forumStorySucceeded(FetchListRequestType.New)),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryRefreshSuccess>(
-      _forumStorySucceeded(ForumStoryRequestType.Refresh)),
+      _forumStorySucceeded(FetchListRequestType.Refresh)),
   TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryLoadMoreSuccess>(
-      _forumStorySucceeded(ForumStoryRequestType.LoadMore)),
+      _forumStorySucceeded(FetchListRequestType.LoadMore)),
 ]);
 
 BuiltMap<int, StoryFetchList> _forumStoryRequested(
     BuiltMap<int, StoryFetchList> repo, ForumStoryRequest action) {
-  return repo.rebuild((b) =>
-      b.updateValue(action.forum, (v) => v.rebuild((b) => b..loading = true)));
+  return repo
+      .rebuild((b) => b.updateValue(action.forum, (v) => fetchListLoading(v)));
 }
 
 BuiltMap<int, StoryFetchList> _forumStoryNew(
     BuiltMap<int, StoryFetchList> repo, ForumStoryNewRequest action) {
   var emptyLoadingList = StoryFetchList();
   return repo.rebuild((b) => b.updateValue(
-      action.forum, (v) => emptyLoadingList,
-      ifAbsent: () => emptyLoadingList));
+        action.forum,
+        (v) => emptyLoadingList,
+        ifAbsent: () => emptyLoadingList,
+      ));
 }
 
 BuiltMap<int, StoryFetchList> _forumStoryNewCountChecked(
@@ -97,14 +102,13 @@ BuiltMap<int, StoryFetchList> _forumStoryNewCountChecked(
   var newRepo = repo;
   var request = action.request as ForumStoryCheckNewRequest;
   if (request != null) {
-    int fid = request.forum;
+    final fid = request.forum;
+    final result = action.result;
+    final value =
+        fetchListNewCountChecked(newRepo[fid] ?? StoryFetchList(), result);
 
-    var result = action.result;
-    final update = (StoryFetchListBuilder b) => b.newcount = result;
-
-    newRepo = newRepo.rebuild((b) => b.updateValue(
-        fid, (v) => v.rebuild(update),
-        ifAbsent: () => StoryFetchList().rebuild(update)));
+    newRepo = newRepo.rebuild(
+        (b) => b.updateValue(fid, (v) => value, ifAbsent: () => value));
   }
   return newRepo;
 }
@@ -135,63 +139,26 @@ BuiltMap<int, StoryFetchList> _forumRequestFailed(
     BuiltMap<int, StoryFetchList> repo, int fid, APIFailure action) {
   var newRepo = repo;
   if (fid != null) {
-    newRepo = newRepo.rebuild((b) => b.updateValue(
-        fid,
-        (v) => v.rebuild((b) => b
-          ..loading = false
-          ..lastError = action.error),
-        ifAbsent: () =>
-            StoryFetchList().rebuild((b) => b.lastError = action.error)));
+    final error = action.error;
+    final value = fetchListFailed(newRepo[fid] ?? StoryFetchList(), error);
+    newRepo = newRepo.rebuild(
+        (b) => b.updateValue(fid, (v) => value, ifAbsent: () => value));
   }
 
   return newRepo;
 }
 
-_forumStorySucceeded(ForumStoryRequestType type) =>
+_forumStorySucceeded(FetchListRequestType type) =>
     (BuiltMap<int, StoryFetchList> repo, ForumStorySuccess action) {
       var request = action.request as ForumStoryRequest;
       var result = action.result;
       var newRepo = repo;
-      var list = result.data;
+      int fid = request.forum;
+      final value =
+          fetchListSucceeded(type, newRepo[fid] ?? StoryFetchList(), result);
 
-      if (request != null && list != null && list.length > 0) {
-        int fid = request.forum;
-        final update = (StoryFetchListBuilder b) {
-          int nexttime = type != ForumStoryRequestType.Refresh
-              ? result.nexttime
-              : b.nexttime;
-          int current = type != ForumStoryRequestType.LoadMore
-              ? result.curtime
-              : b.current;
+      newRepo = newRepo.rebuild(
+          (b) => b.updateValue(fid, (v) => value, ifAbsent: () => value));
 
-          b
-            ..loading = false
-            ..lastError = null
-            ..nexttime = nexttime
-            ..current = current;
-          switch (type) {
-            case ForumStoryRequestType.New:
-              b
-                ..newcount = 0
-                ..stories.replace(list);
-              break;
-            case ForumStoryRequestType.Refresh:
-              var newsSet = list.map((story) => story.id).toSet();
-
-              b
-                ..newcount = 0
-                ..stories.where((story) => !newsSet.contains(story.id))
-                ..stories.insertAll(0, list);
-
-              break;
-            case ForumStoryRequestType.LoadMore:
-              b..stories.addAll(list);
-              break;
-          }
-        };
-        newRepo = newRepo.rebuild((b) => b.updateValue(
-            fid, (v) => v.rebuild(update),
-            ifAbsent: () => StoryFetchList().rebuild(update)));
-      }
       return newRepo;
     };

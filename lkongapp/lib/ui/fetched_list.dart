@@ -117,7 +117,7 @@ abstract class FetchedListModel extends GroupedListModel {
 
   Widget buildListView(BuildContext context) {
     if (itemCount == null || itemCount == 0) {
-      if (loading) {
+      if (loading == true) {
         return Center(child: CircularProgressIndicator());
       } else if (lastError == null) {
         handleFetchFromScratch(context);

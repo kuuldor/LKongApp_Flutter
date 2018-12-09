@@ -31,3 +31,8 @@ class ChangeSetting {
   ChangeSetting(this.change);
 }
 
+class SaveConfig {
+  final AppConfig newConfig;
+
+  SaveConfig(this.newConfig);
+}

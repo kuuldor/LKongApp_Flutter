@@ -210,6 +210,8 @@ class _$ContentCache extends ContentCache {
   final ForumInfo forumInfo;
   @override
   final BuiltMap<int, StoryFetchList> forumRepo;
+  @override
+  final BuiltMap<int, UserData> userData;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
@@ -219,7 +221,8 @@ class _$ContentCache extends ContentCache {
       this.homeList,
       this.storyRepo,
       this.forumInfo,
-      this.forumRepo})
+      this.forumRepo,
+      this.userData})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
@@ -232,6 +235,9 @@ class _$ContentCache extends ContentCache {
     }
     if (forumRepo == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'forumRepo');
+    }
+    if (userData == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'userData');
     }
   }
 
@@ -250,17 +256,20 @@ class _$ContentCache extends ContentCache {
         homeList == other.homeList &&
         storyRepo == other.storyRepo &&
         forumInfo == other.forumInfo &&
-        forumRepo == other.forumRepo;
+        forumRepo == other.forumRepo &&
+        userData == other.userData;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
-                storyRepo.hashCode),
-            forumInfo.hashCode),
-        forumRepo.hashCode));
+            $jc(
+                $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
+                    storyRepo.hashCode),
+                forumInfo.hashCode),
+            forumRepo.hashCode),
+        userData.hashCode));
   }
 
   @override
@@ -270,7 +279,8 @@ class _$ContentCache extends ContentCache {
           ..add('homeList', homeList)
           ..add('storyRepo', storyRepo)
           ..add('forumInfo', forumInfo)
-          ..add('forumRepo', forumRepo))
+          ..add('forumRepo', forumRepo)
+          ..add('userData', userData))
         .toString();
   }
 }
@@ -305,6 +315,12 @@ class ContentCacheBuilder
   set forumRepo(MapBuilder<int, StoryFetchList> forumRepo) =>
       _$this._forumRepo = forumRepo;
 
+  MapBuilder<int, UserData> _userData;
+  MapBuilder<int, UserData> get userData =>
+      _$this._userData ??= new MapBuilder<int, UserData>();
+  set userData(MapBuilder<int, UserData> userData) =>
+      _$this._userData = userData;
+
   ContentCacheBuilder();
 
   ContentCacheBuilder get _$this {
@@ -314,6 +330,7 @@ class ContentCacheBuilder
       _storyRepo = _$v.storyRepo?.toBuilder();
       _forumInfo = _$v.forumInfo?.toBuilder();
       _forumRepo = _$v.forumRepo?.toBuilder();
+      _userData = _$v.userData?.toBuilder();
       _$v = null;
     }
     return this;
@@ -342,7 +359,8 @@ class ContentCacheBuilder
               homeList: homeList.build(),
               storyRepo: storyRepo.build(),
               forumInfo: forumInfo.build(),
-              forumRepo: forumRepo.build());
+              forumRepo: forumRepo.build(),
+              userData: userData.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -354,6 +372,8 @@ class ContentCacheBuilder
         forumInfo.build();
         _$failedField = 'forumRepo';
         forumRepo.build();
+        _$failedField = 'userData';
+        userData.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'ContentCache', _$failedField, e.toString());

@@ -30,6 +30,7 @@ class AppDrawerViewModel {
   final AuthState authState;
   final User user;
   final UserInfo info;
+  final bool loading;
   final Function(BuildContext, String) pushScreen;
 
   @override
@@ -47,6 +48,7 @@ class AppDrawerViewModel {
     @required this.authState,
     @required this.info,
     @required this.user,
+    @required this.loading,
     @required this.pushScreen,
   });
 
@@ -54,11 +56,10 @@ class AppDrawerViewModel {
     AuthState state = store.state.persistState.authState;
     var _user = selectUser(store);
     var _info = _user?.userInfo;
-    if (_user != null && _info == null) {
-      store.dispatch(UserInfoRequest(null, _user));
-    }
+
     return AppDrawerViewModel(
         authState: state,
+        loading: store.state.isLoading,
         user: _user,
         info: _info,
         pushScreen: (context, screen) {
@@ -80,6 +81,10 @@ class AppDrawer extends StatelessWidget {
     User user = viewModel.user;
     UserInfo info = viewModel.info;
     bool isAuthed = viewModel.authState.isAuthed;
+
+    if (!viewModel.loading && user != null && info == null) {
+      dispatchAction(context)(UserInfoRequest(null, user));
+    }
 
     var nameLine = <Widget>[Text(user?.identity ?? "")];
 

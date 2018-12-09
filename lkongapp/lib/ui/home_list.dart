@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
@@ -27,7 +28,12 @@ class HomeList extends StatefulWidget {
 class HomeListState extends StoryListState<HomeList> {
   @override
   Widget build(BuildContext context) {
-    return buildWidgetWithVMFactory(context, HomeListModel.fromStore);
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('首页'),
+        ),
+        drawer: AppDrawerBuilder(),
+        body: buildWidgetWithVMFactory(context, HomeListModel.fromStore));
   }
 }
 
@@ -47,7 +53,7 @@ class HomeListModel extends StoryListModel {
   static HomeListModel fromStore(Store<AppState> store) {
     return HomeListModel(
       loading: store.state.uiState.content.homeList.loading,
-      lastError: store.state.uiState.content.lastError,
+      lastError: store.state.uiState.content.homeList.lastError,
       storyList: store.state.uiState.content.homeList,
       threadOnlyHome: store.state.persistState.appConfig.accountSettings
           .currentSetting.threadOnlyHome,
@@ -65,6 +71,9 @@ class HomeListModel extends StoryListModel {
 
   @override
   APIRequest get loadMoreRequest {
+    if (storyList.nexttime == 0) {
+      return null;
+    }
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
@@ -75,6 +84,9 @@ class HomeListModel extends StoryListModel {
 
   @override
   APIRequest get refreshRequest {
+    if (storyList.current == 0) {
+      return null;
+    }
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');

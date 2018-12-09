@@ -22,6 +22,8 @@ class LoginState extends State<LoginScreen> {
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
 
+  static final GlobalKey<LoginState> scaffoldKey = GlobalKey<LoginState>();
+
   @override
   Widget build(BuildContext context) {
     return buildConnectedWidget(context, LoginViewModel.fromStore,
@@ -111,7 +113,7 @@ class LoginState extends State<LoginScreen> {
         key: _formKey,
         child: ListView(
           shrinkWrap: true,
-          padding: EdgeInsets.only(left: 24.0, right: 24.0),
+          padding: EdgeInsets.only(left: 24.0, right: 24.0, top: 44.0),
           children: <Widget>[
             logo,
             SizedBox(height: 48.0),
@@ -147,6 +149,8 @@ class LoginState extends State<LoginScreen> {
       stackChildren.add(form);
 
       return Scaffold(
+        key: scaffoldKey,
+        appBar: AppBar(title: Text("登录")),
         body: Stack(
           children: stackChildren,
         ),

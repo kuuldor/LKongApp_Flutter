@@ -18,7 +18,18 @@ bool _setLoaded(bool state, action) {
   return false;
 }
 
-AppConfig appConfigReducer(AppConfig config, action) {
-  return config.rebuild(
-      (b) => b..setting.replace(settingsReducer(config.setting, action)));
+final appConfigReducer = combineReducers<AppConfig>([
+  TypedReducer<AppConfig, SaveConfig>(_saveConfig),
+  _appConfigReducer,
+]);
+
+AppConfig _saveConfig(AppConfig config, SaveConfig action) {
+  return action.newConfig;
+}
+
+AppConfig _appConfigReducer(AppConfig config, action) {
+  return config.rebuild((b) => b
+    ..setting.replace(settingsReducer(config.setting, action))
+    ..accountSettings
+        .replace(accountSettingReducer(config.accountSettings, action)));
 }

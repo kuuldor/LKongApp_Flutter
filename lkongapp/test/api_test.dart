@@ -4,8 +4,23 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lkongapp/models/user.dart';
 import 'package:lkongapp/middlewares/api.dart';
+import 'package:lkongapp/utils/globals.dart';
+
+Future<Null> loginTest() async {
+  UserBuilder builder = UserBuilder()
+    ..identity = 'lkongapp@outlook.com'
+    ..password = 'xxxxxxxxxxxx';
+
+  User user = builder.build();
+
+  await login({"user": user}).then((map) {
+    expect(map['success'], true);
+  });
+}
 
 void main() {
+  initGlobals(testing: true);
+
   test('Login Test', () async {
     UserBuilder builder = UserBuilder()
       ..identity = 'lkongapp@outlook.com'
@@ -76,6 +91,36 @@ void main() {
       expect(map['error'], null);
     });
     await getForumInfo({"id": 1024}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+  });
+
+  test('Get Follow List Test', () async {
+    await getFollowList().then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+  });
+
+  test('Punch Card Test', () async {
+    await loginTest();
+
+    await punchCard().then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+  });
+
+  test('Get Personal Data Test', () async {
+    await loginTest();
+
+    await getPersonalData({"mode": 0}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+
+    await getPersonalData({"mode": 1}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });

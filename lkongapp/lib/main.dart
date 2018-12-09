@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
@@ -9,26 +11,40 @@ import 'package:redux_logging/redux_logging.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/middlewares/middlewares.dart';
 import 'package:lkongapp/reducers/reducers.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:lkongapp/ui/screens.dart';
+import 'package:lkongapp/utils/globals.dart' as globals;
 
-void main() => runApp(new LKongApp());
+void main() {
+  globals.initGlobals();
+  runApp(new LKongApp());
+}
 
 class LKongApp extends StatelessWidget {
   // This widget is the root of your application.
-  final store = Store<AppState>(
+  static final store = Store<AppState>(
     appReducer,
     initialState: AppState(),
-    middleware: []
-      ..addAll(createStoreMiddleware()),
-      // ..add(LoggingMiddleware.printer(formatter: (
-      //   dynamic state,
-      //   dynamic action,
-      //   DateTime timestamp,
-      // ) {
-      //   return "{Action: $action, ts: ${new DateTime.now()}}";
-      // })),
+    middleware: []..addAll(createStoreMiddleware()),
+    // ..add(LoggingMiddleware.printer(formatter: (
+    //   dynamic state,
+    //   dynamic action,
+    //   DateTime timestamp,
+    // ) {
+    //   return "{Action: $action, ts: ${new DateTime.now()}}";
+    // })),
     distinct: true,
+  );
+
+  final Timer autoPunchTimer = Timer.periodic(
+    Duration(hours: 12),
+    (timer) {
+      if (selectSetting(store).autoPunch) {
+        final user = selectUser(store);
+        store.dispatch(PunchCardRequest(null, user));
+      }
+    },
   );
 
   @override

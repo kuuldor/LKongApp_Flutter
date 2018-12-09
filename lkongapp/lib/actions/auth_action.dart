@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:lkongapp/models/lkong_jsons/follow_list.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/middlewares/api.dart';
 import 'base_action.dart';
@@ -72,4 +73,58 @@ class LogoutSuccess extends APISuccess with StopLoading {
 
 class LogoutFailure extends APIFailure with StopLoading {
   LogoutFailure(request, String error) : super(request, error);
+}
+
+class FollowListRequest extends APIRequest with StartLoading {
+  User user;
+
+  FollowListRequest(Completer completer, this.user)
+      : super(
+            completer: completer,
+            api: FOLLOWLIST_API,
+            parameters: {});
+
+  @override
+  CreateFailure get badResponse => (error) => FollowListFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (followList) => FollowListSuccess(this, followList);
+}
+
+class FollowListSuccess extends APISuccess with StopLoading {
+  final FollowList followList;
+
+  FollowListSuccess(request, this.followList) : super(request);
+}
+
+class FollowListFailure extends APIFailure with StopLoading {
+  FollowListFailure(request, String error) : super(request, error);
+}
+
+class PunchCardRequest extends APIRequest with StartLoading {
+  User user;
+
+  PunchCardRequest(Completer completer, this.user)
+      : super(
+            completer: completer,
+            api: PUNCHCARD_API,
+            parameters: {});
+
+  @override
+  CreateFailure get badResponse => (error) => PunchCardFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => PunchCardSuccess(this, result);
+}
+
+class PunchCardSuccess extends APISuccess with StopLoading {
+  final PunchCardResult result;
+
+  PunchCardSuccess(request, this.result) : super(request);
+}
+
+class PunchCardFailure extends APIFailure with StopLoading {
+  PunchCardFailure(request, String error) : super(request, error);
 }

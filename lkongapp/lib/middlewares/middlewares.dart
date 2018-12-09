@@ -1,10 +1,13 @@
 library middlewares;
 
+import 'dart:async';
+
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 
 import 'persist.dart';
 import 'api.dart';
@@ -52,6 +55,20 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
   if (action is LoginSuccess) {
     User user = action.user;
     store.dispatch(UserInfoRequest(null, user));
+    if (selectSetting(store).autoPunch) {
+      store.dispatch(PunchCardRequest(null, user));
+    }
+    store.dispatch(FollowListRequest(null, user));
+  }
+
+  if (action is RehydrateSuccess) {
+    Future.delayed(Duration(milliseconds: 10), () {
+      final setting = selectSetting(store);
+      final user = selectUser(store);
+      if (user != null && setting.autoLogin) {
+        store.dispatch(LoginRequest(null, user));
+      }
+    });
   }
 
   if (passon) {

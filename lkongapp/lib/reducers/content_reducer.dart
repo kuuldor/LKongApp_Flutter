@@ -8,9 +8,10 @@ import 'package:lkongapp/models/models.dart';
 
 import 'story_reducer.dart';
 import 'forum_reducer.dart';
+import 'userdata_reducer.dart';
 
 final contentReducer = combineReducers<ContentCache>([
-    TypedReducer<ContentCache, APIRequest>(_contentRequested),
+  TypedReducer<ContentCache, APIRequest>(_contentRequested),
   TypedReducer<ContentCache, APIFailure>(_contentRequestFailed),
   TypedReducer<ContentCache, APISuccess>(_contentRequestSucceed),
   TypedReducer<ContentCache, LoginSuccess>(_loginoutSucceeded),
@@ -39,5 +40,6 @@ ContentCache _contentReducer(ContentCache content, action) {
     ..homeList.replace(homeListReducer(content.homeList, action))
     ..storyRepo.replace(storyContentsReducer(content.storyRepo, action))
     ..forumInfo.replace(forumContentsReducer(content.forumInfo, action))
+    ..userData.replace(userDataReducer(content.userData, action))
     ..forumRepo.replace(forumRepoReducer(content.forumRepo, action)));
 }

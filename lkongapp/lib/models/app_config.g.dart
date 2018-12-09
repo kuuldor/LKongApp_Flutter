@@ -89,6 +89,12 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
       'saveCredential',
       serializers.serialize(object.saveCredential,
           specifiedType: const FullType(bool)),
+      'autoLogin',
+      serializers.serialize(object.autoLogin,
+          specifiedType: const FullType(bool)),
+      'autoPunch',
+      serializers.serialize(object.autoPunch,
+          specifiedType: const FullType(bool)),
       'version',
       serializers.serialize(object.version,
           specifiedType: const FullType(String)),
@@ -143,6 +149,9 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
       'cacheSize',
       serializers.serialize(object.cacheSize,
           specifiedType: const FullType(int)),
+      'showForumInfo',
+      serializers.serialize(object.showForumInfo,
+          specifiedType: const FullType(bool)),
     ];
 
     return result;
@@ -161,6 +170,14 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
       switch (key) {
         case 'saveCredential':
           result.saveCredential = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'autoLogin':
+          result.autoLogin = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'autoPunch':
+          result.autoPunch = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
         case 'version':
@@ -234,6 +251,10 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         case 'cacheSize':
           result.cacheSize = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'showForumInfo':
+          result.showForumInfo = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
           break;
       }
     }
@@ -359,9 +380,6 @@ class _$AccountSettingSerializer
   Iterable serialize(Serializers serializers, AccountSetting object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'autoPunch',
-      serializers.serialize(object.autoPunch,
-          specifiedType: const FullType(bool)),
       'homePage',
       serializers.serialize(object.homePage,
           specifiedType: const FullType(int)),
@@ -387,10 +405,6 @@ class _$AccountSettingSerializer
       iterator.moveNext();
       final dynamic value = iterator.current;
       switch (key) {
-        case 'autoPunch':
-          result.autoPunch = serializers.deserialize(value,
-              specifiedType: const FullType(bool)) as bool;
-          break;
         case 'homePage':
           result.homePage = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
@@ -524,6 +538,10 @@ class _$AppSetting extends AppSetting {
   @override
   final bool saveCredential;
   @override
+  final bool autoLogin;
+  @override
+  final bool autoPunch;
+  @override
   final String version;
   @override
   final String copyright;
@@ -559,12 +577,16 @@ class _$AppSetting extends AppSetting {
   final bool backgroundFetch;
   @override
   final int cacheSize;
+  @override
+  final bool showForumInfo;
 
   factory _$AppSetting([void updates(AppSettingBuilder b)]) =>
       (new AppSettingBuilder()..update(updates)).build();
 
   _$AppSetting._(
       {this.saveCredential,
+      this.autoLogin,
+      this.autoPunch,
       this.version,
       this.copyright,
       this.themeSetting,
@@ -582,10 +604,17 @@ class _$AppSetting extends AppSetting {
       this.loadAvatar,
       this.avatarDisplaySize,
       this.backgroundFetch,
-      this.cacheSize})
+      this.cacheSize,
+      this.showForumInfo})
       : super._() {
     if (saveCredential == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'saveCredential');
+    }
+    if (autoLogin == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'autoLogin');
+    }
+    if (autoPunch == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'autoPunch');
     }
     if (version == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'version');
@@ -641,6 +670,9 @@ class _$AppSetting extends AppSetting {
     if (cacheSize == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'cacheSize');
     }
+    if (showForumInfo == null) {
+      throw new BuiltValueNullFieldError('AppSetting', 'showForumInfo');
+    }
   }
 
   @override
@@ -655,6 +687,8 @@ class _$AppSetting extends AppSetting {
     if (identical(other, this)) return true;
     return other is AppSetting &&
         saveCredential == other.saveCredential &&
+        autoLogin == other.autoLogin &&
+        autoPunch == other.autoPunch &&
         version == other.version &&
         copyright == other.copyright &&
         themeSetting == other.themeSetting &&
@@ -672,7 +706,8 @@ class _$AppSetting extends AppSetting {
         loadAvatar == other.loadAvatar &&
         avatarDisplaySize == other.avatarDisplaySize &&
         backgroundFetch == other.backgroundFetch &&
-        cacheSize == other.cacheSize;
+        cacheSize == other.cacheSize &&
+        showForumInfo == other.showForumInfo;
   }
 
   @override
@@ -695,40 +730,34 @@ class _$AppSetting extends AppSetting {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc(
-                                                                                0,
-                                                                                saveCredential
-                                                                                    .hashCode),
-                                                                            version
-                                                                                .hashCode),
-                                                                        copyright
-                                                                            .hashCode),
-                                                                    themeSetting
-                                                                        .hashCode),
-                                                                nightMode
-                                                                    .hashCode),
-                                                            shakeToShiftNightMode
-                                                                .hashCode),
-                                                        swipeThreshold
-                                                            .hashCode),
-                                                    lockOrientation.hashCode),
-                                                fontSize.hashCode),
-                                            allowCopy.hashCode),
-                                        loadInSamePage.hashCode),
-                                    hideBlacklisterPost.hashCode),
-                                showDetailTime.hashCode),
-                            uploadImageAPI.hashCode),
-                        noImageMode.hashCode),
-                    loadAvatar.hashCode),
-                avatarDisplaySize.hashCode),
-            backgroundFetch.hashCode),
-        cacheSize.hashCode));
+                                                                            $jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode),
+                                                                                version.hashCode),
+                                                                            copyright.hashCode),
+                                                                        themeSetting.hashCode),
+                                                                    nightMode.hashCode),
+                                                                shakeToShiftNightMode.hashCode),
+                                                            swipeThreshold.hashCode),
+                                                        lockOrientation.hashCode),
+                                                    fontSize.hashCode),
+                                                allowCopy.hashCode),
+                                            loadInSamePage.hashCode),
+                                        hideBlacklisterPost.hashCode),
+                                    showDetailTime.hashCode),
+                                uploadImageAPI.hashCode),
+                            noImageMode.hashCode),
+                        loadAvatar.hashCode),
+                    avatarDisplaySize.hashCode),
+                backgroundFetch.hashCode),
+            cacheSize.hashCode),
+        showForumInfo.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('AppSetting')
           ..add('saveCredential', saveCredential)
+          ..add('autoLogin', autoLogin)
+          ..add('autoPunch', autoPunch)
           ..add('version', version)
           ..add('copyright', copyright)
           ..add('themeSetting', themeSetting)
@@ -746,7 +775,8 @@ class _$AppSetting extends AppSetting {
           ..add('loadAvatar', loadAvatar)
           ..add('avatarDisplaySize', avatarDisplaySize)
           ..add('backgroundFetch', backgroundFetch)
-          ..add('cacheSize', cacheSize))
+          ..add('cacheSize', cacheSize)
+          ..add('showForumInfo', showForumInfo))
         .toString();
   }
 }
@@ -758,6 +788,14 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   bool get saveCredential => _$this._saveCredential;
   set saveCredential(bool saveCredential) =>
       _$this._saveCredential = saveCredential;
+
+  bool _autoLogin;
+  bool get autoLogin => _$this._autoLogin;
+  set autoLogin(bool autoLogin) => _$this._autoLogin = autoLogin;
+
+  bool _autoPunch;
+  bool get autoPunch => _$this._autoPunch;
+  set autoPunch(bool autoPunch) => _$this._autoPunch = autoPunch;
 
   String _version;
   String get version => _$this._version;
@@ -842,11 +880,18 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   int get cacheSize => _$this._cacheSize;
   set cacheSize(int cacheSize) => _$this._cacheSize = cacheSize;
 
+  bool _showForumInfo;
+  bool get showForumInfo => _$this._showForumInfo;
+  set showForumInfo(bool showForumInfo) =>
+      _$this._showForumInfo = showForumInfo;
+
   AppSettingBuilder();
 
   AppSettingBuilder get _$this {
     if (_$v != null) {
       _saveCredential = _$v.saveCredential;
+      _autoLogin = _$v.autoLogin;
+      _autoPunch = _$v.autoPunch;
       _version = _$v.version;
       _copyright = _$v.copyright;
       _themeSetting = _$v.themeSetting?.toBuilder();
@@ -865,6 +910,7 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
       _avatarDisplaySize = _$v.avatarDisplaySize;
       _backgroundFetch = _$v.backgroundFetch;
       _cacheSize = _$v.cacheSize;
+      _showForumInfo = _$v.showForumInfo;
       _$v = null;
     }
     return this;
@@ -890,6 +936,8 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
       _$result = _$v ??
           new _$AppSetting._(
               saveCredential: saveCredential,
+              autoLogin: autoLogin,
+              autoPunch: autoPunch,
               version: version,
               copyright: copyright,
               themeSetting: themeSetting.build(),
@@ -907,7 +955,8 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
               loadAvatar: loadAvatar,
               avatarDisplaySize: avatarDisplaySize,
               backgroundFetch: backgroundFetch,
-              cacheSize: cacheSize);
+              cacheSize: cacheSize,
+              showForumInfo: showForumInfo);
     } catch (_) {
       String _$failedField;
       try {
@@ -1158,8 +1207,6 @@ class AccountSettingsBuilder
 
 class _$AccountSetting extends AccountSetting {
   @override
-  final bool autoPunch;
-  @override
   final int homePage;
   @override
   final bool threadOnlyHome;
@@ -1169,12 +1216,8 @@ class _$AccountSetting extends AccountSetting {
   factory _$AccountSetting([void updates(AccountSettingBuilder b)]) =>
       (new AccountSettingBuilder()..update(updates)).build();
 
-  _$AccountSetting._(
-      {this.autoPunch, this.homePage, this.threadOnlyHome, this.signature})
+  _$AccountSetting._({this.homePage, this.threadOnlyHome, this.signature})
       : super._() {
-    if (autoPunch == null) {
-      throw new BuiltValueNullFieldError('AccountSetting', 'autoPunch');
-    }
     if (homePage == null) {
       throw new BuiltValueNullFieldError('AccountSetting', 'homePage');
     }
@@ -1198,7 +1241,6 @@ class _$AccountSetting extends AccountSetting {
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is AccountSetting &&
-        autoPunch == other.autoPunch &&
         homePage == other.homePage &&
         threadOnlyHome == other.threadOnlyHome &&
         signature == other.signature;
@@ -1206,16 +1248,13 @@ class _$AccountSetting extends AccountSetting {
 
   @override
   int get hashCode {
-    return $jf($jc(
-        $jc($jc($jc(0, autoPunch.hashCode), homePage.hashCode),
-            threadOnlyHome.hashCode),
+    return $jf($jc($jc($jc(0, homePage.hashCode), threadOnlyHome.hashCode),
         signature.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('AccountSetting')
-          ..add('autoPunch', autoPunch)
           ..add('homePage', homePage)
           ..add('threadOnlyHome', threadOnlyHome)
           ..add('signature', signature))
@@ -1226,10 +1265,6 @@ class _$AccountSetting extends AccountSetting {
 class AccountSettingBuilder
     implements Builder<AccountSetting, AccountSettingBuilder> {
   _$AccountSetting _$v;
-
-  bool _autoPunch;
-  bool get autoPunch => _$this._autoPunch;
-  set autoPunch(bool autoPunch) => _$this._autoPunch = autoPunch;
 
   int _homePage;
   int get homePage => _$this._homePage;
@@ -1248,7 +1283,6 @@ class AccountSettingBuilder
 
   AccountSettingBuilder get _$this {
     if (_$v != null) {
-      _autoPunch = _$v.autoPunch;
       _homePage = _$v.homePage;
       _threadOnlyHome = _$v.threadOnlyHome;
       _signature = _$v.signature;
@@ -1274,7 +1308,6 @@ class AccountSettingBuilder
   _$AccountSetting build() {
     final _$result = _$v ??
         new _$AccountSetting._(
-            autoPunch: autoPunch,
             homePage: homePage,
             threadOnlyHome: threadOnlyHome,
             signature: signature);

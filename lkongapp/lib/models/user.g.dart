@@ -20,6 +20,7 @@ part of 'user.dart';
 // ignore_for_file: test_types_in_equals
 
 Serializer<User> _$userSerializer = new _$UserSerializer();
+Serializer<UserData> _$userDataSerializer = new _$UserDataSerializer();
 Serializer<UserInfo> _$userInfoSerializer = new _$UserInfoSerializer();
 
 class _$UserSerializer implements StructuredSerializer<User> {
@@ -86,6 +87,86 @@ class _$UserSerializer implements StructuredSerializer<User> {
         case 'userInfo':
           result.userInfo.replace(serializers.deserialize(value,
               specifiedType: const FullType(UserInfo)) as UserInfo);
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$UserDataSerializer implements StructuredSerializer<UserData> {
+  @override
+  final Iterable<Type> types = const [UserData, _$UserData];
+  @override
+  final String wireName = 'UserData';
+
+  @override
+  Iterable serialize(Serializers serializers, UserData object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'userid',
+      serializers.serialize(object.uid, specifiedType: const FullType(int)),
+    ];
+    if (object.followList != null) {
+      result
+        ..add('followList')
+        ..add(serializers.serialize(object.followList,
+            specifiedType: const FullType(FollowList)));
+    }
+    if (object.punchCard != null) {
+      result
+        ..add('punchCard')
+        ..add(serializers.serialize(object.punchCard,
+            specifiedType: const FullType(PunchCardResult)));
+    }
+    if (object.favorites != null) {
+      result
+        ..add('favorites')
+        ..add(serializers.serialize(object.favorites,
+            specifiedType: const FullType(StoryFetchList)));
+    }
+    if (object.atMe != null) {
+      result
+        ..add('atMe')
+        ..add(serializers.serialize(object.atMe,
+            specifiedType: const FullType(StoryFetchList)));
+    }
+
+    return result;
+  }
+
+  @override
+  UserData deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new UserDataBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'userid':
+          result.uid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'followList':
+          result.followList.replace(serializers.deserialize(value,
+              specifiedType: const FullType(FollowList)) as FollowList);
+          break;
+        case 'punchCard':
+          result.punchCard.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(PunchCardResult))
+              as PunchCardResult);
+          break;
+        case 'favorites':
+          result.favorites.replace(serializers.deserialize(value,
+              specifiedType: const FullType(StoryFetchList)) as StoryFetchList);
+          break;
+        case 'atMe':
+          result.atMe.replace(serializers.deserialize(value,
+              specifiedType: const FullType(StoryFetchList)) as StoryFetchList);
           break;
       }
     }
@@ -669,6 +750,159 @@ class UserBuilder implements Builder<User, UserBuilder> {
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'User', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$UserData extends UserData {
+  @override
+  final int uid;
+  @override
+  final FollowList followList;
+  @override
+  final PunchCardResult punchCard;
+  @override
+  final StoryFetchList favorites;
+  @override
+  final StoryFetchList atMe;
+
+  factory _$UserData([void updates(UserDataBuilder b)]) =>
+      (new UserDataBuilder()..update(updates)).build();
+
+  _$UserData._(
+      {this.uid, this.followList, this.punchCard, this.favorites, this.atMe})
+      : super._() {
+    if (uid == null) {
+      throw new BuiltValueNullFieldError('UserData', 'uid');
+    }
+  }
+
+  @override
+  UserData rebuild(void updates(UserDataBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  UserDataBuilder toBuilder() => new UserDataBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is UserData &&
+        uid == other.uid &&
+        followList == other.followList &&
+        punchCard == other.punchCard &&
+        favorites == other.favorites &&
+        atMe == other.atMe;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc($jc($jc(0, uid.hashCode), followList.hashCode),
+                punchCard.hashCode),
+            favorites.hashCode),
+        atMe.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('UserData')
+          ..add('uid', uid)
+          ..add('followList', followList)
+          ..add('punchCard', punchCard)
+          ..add('favorites', favorites)
+          ..add('atMe', atMe))
+        .toString();
+  }
+}
+
+class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
+  _$UserData _$v;
+
+  int _uid;
+  int get uid => _$this._uid;
+  set uid(int uid) => _$this._uid = uid;
+
+  FollowListBuilder _followList;
+  FollowListBuilder get followList =>
+      _$this._followList ??= new FollowListBuilder();
+  set followList(FollowListBuilder followList) =>
+      _$this._followList = followList;
+
+  PunchCardResultBuilder _punchCard;
+  PunchCardResultBuilder get punchCard =>
+      _$this._punchCard ??= new PunchCardResultBuilder();
+  set punchCard(PunchCardResultBuilder punchCard) =>
+      _$this._punchCard = punchCard;
+
+  StoryFetchListBuilder _favorites;
+  StoryFetchListBuilder get favorites =>
+      _$this._favorites ??= new StoryFetchListBuilder();
+  set favorites(StoryFetchListBuilder favorites) =>
+      _$this._favorites = favorites;
+
+  StoryFetchListBuilder _atMe;
+  StoryFetchListBuilder get atMe =>
+      _$this._atMe ??= new StoryFetchListBuilder();
+  set atMe(StoryFetchListBuilder atMe) => _$this._atMe = atMe;
+
+  UserDataBuilder();
+
+  UserDataBuilder get _$this {
+    if (_$v != null) {
+      _uid = _$v.uid;
+      _followList = _$v.followList?.toBuilder();
+      _punchCard = _$v.punchCard?.toBuilder();
+      _favorites = _$v.favorites?.toBuilder();
+      _atMe = _$v.atMe?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(UserData other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$UserData;
+  }
+
+  @override
+  void update(void updates(UserDataBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$UserData build() {
+    _$UserData _$result;
+    try {
+      _$result = _$v ??
+          new _$UserData._(
+              uid: uid,
+              followList: _followList?.build(),
+              punchCard: _punchCard?.build(),
+              favorites: _favorites?.build(),
+              atMe: _atMe?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'followList';
+        _followList?.build();
+        _$failedField = 'punchCard';
+        _punchCard?.build();
+        _$failedField = 'favorites';
+        _favorites?.build();
+        _$failedField = 'atMe';
+        _atMe?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'UserData', _$failedField, e.toString());
       }
       rethrow;
     }

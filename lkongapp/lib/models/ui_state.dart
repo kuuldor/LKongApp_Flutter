@@ -56,6 +56,7 @@ abstract class ContentCache
   BuiltMap<int, StoryPageList> get storyRepo;
   ForumInfo get forumInfo;
   BuiltMap<int, StoryFetchList> get forumRepo;
+  BuiltMap<int, UserData> get userData;
 }
 
 abstract class StoryFetchList

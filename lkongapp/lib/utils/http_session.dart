@@ -1,8 +1,49 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HttpSession {
   Map<String, String> cookies = {};
+
+  final _storageFileName = 'coookie.jar';
+
+  final bool persist;
+
+  bool initialized = false;
+
+  void saveCookies() {
+    if (!persist) return;
+    
+    getApplicationDocumentsDirectory().then((Directory appDocDir) {
+      String appStoragePath = getStorageFile(appDocDir);
+
+      String cookieJ = json.encode(cookies);
+      File(appStoragePath).writeAsString(cookieJ);
+    }).catchError((e) {
+      print(e.toString());
+    });
+  }
+
+  String getStorageFile(Directory appDocDir) =>
+      appDocDir.path + "/" + _storageFileName;
+
+  void loadCookies() {
+    if (!persist) return;
+
+    getApplicationDocumentsDirectory().then((Directory appDocDir) {
+      String appStoragePath = getStorageFile(appDocDir);
+      return File(appStoragePath).readAsString();
+    }).then((String cookieJ) {
+      cookies = Map<String, String>.from(json.decode(cookieJ));
+      initialized = true;
+    }).catchError((e) {
+      print(e.toString());
+      initialized = true;
+    });
+  }
 
   final String baseURL;
   http.Client client = http.Client();
@@ -18,7 +59,9 @@ class HttpSession {
     return line;
   }
 
-  HttpSession({@required this.baseURL});
+  HttpSession({@required this.baseURL, this.persist}) {
+    loadCookies();
+  }
 
   Future<http.Response> get(String path) async {
     String url = baseURL + path;
@@ -63,6 +106,7 @@ class HttpSession {
     if (rawCookie != null) {
       print("Recv Cookie: $rawCookie");
       parseCookie(rawCookie);
+      saveCookies();
     }
   }
 }

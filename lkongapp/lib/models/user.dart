@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/models.dart';
 
 import 'package:lkongapp/models/serializers.dart';
 
@@ -40,6 +42,40 @@ abstract class User implements Built<User, UserBuilder> {
   }
 
   static Serializer<User> get serializer => _$userSerializer;
+}
+
+abstract class UserData implements Built<UserData, UserDataBuilder> {
+  UserData._();
+
+  factory UserData([updates(UserDataBuilder b)]) => _$UserData((b) => b
+    ..uid = -1
+    ..update(updates));
+
+  @BuiltValueField(wireName: 'userid')
+  int get uid;
+
+  @nullable
+  FollowList get followList;
+
+  @nullable
+  PunchCardResult get punchCard;
+
+  @nullable
+  StoryFetchList get favorites;
+
+  @nullable
+  StoryFetchList get atMe;
+
+  String toJson() {
+    return json.encode(serializers.serializeWith(UserData.serializer, this));
+  }
+
+  static UserData fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        UserData.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<UserData> get serializer => _$userDataSerializer;
 }
 
 abstract class UserInfo implements Built<UserInfo, UserInfoBuilder> {
