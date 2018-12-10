@@ -35,6 +35,8 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(PersistentState.serializer)
       ..add(PunchCardResult.serializer)
       ..add(Ratelog.serializer)
+      ..add(SearchForumResult.serializer)
+      ..add(SearchUserResult.serializer)
       ..add(Story.serializer)
       ..add(StoryContentResult.serializer)
       ..add(StoryInfoResult.serializer)
@@ -56,6 +58,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Forum)]),
           () => new ListBuilder<Forum>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(ForumInfoResult)]),
+          () => new ListBuilder<ForumInfoResult>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Ratelog)]),
           () => new ListBuilder<Ratelog>())
@@ -81,6 +86,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(Forum)]),
           () => new MapBuilder<String, Forum>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(UserInfo)]),
+          () => new ListBuilder<UserInfo>())
       ..addBuilderFactory(
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(String)]),

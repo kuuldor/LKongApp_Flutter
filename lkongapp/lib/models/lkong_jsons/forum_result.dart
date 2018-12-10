@@ -68,6 +68,7 @@ abstract class ForumInfoResult
   factory ForumInfoResult([updates(ForumInfoResultBuilder b)]) =
       _$ForumInfoResult;
 
+  @nullable
   @BuiltValueField(wireName: 'type')
   String get type;
   @BuiltValueField(wireName: 'fid')
@@ -76,18 +77,24 @@ abstract class ForumInfoResult
   String get name;
   @BuiltValueField(wireName: 'description')
   String get description;
+  @nullable
   @BuiltValueField(wireName: 'status')
   String get status;
+  @nullable
   @BuiltValueField(wireName: 'sortbydateline')
   int get sortbydateline;
+  @nullable
   @BuiltValueField(wireName: 'threads')
   String get threads;
+  @nullable
   @BuiltValueField(wireName: 'todayposts')
   int get todayposts;
   @BuiltValueField(wireName: 'fansnum')
   int get fansnum;
+  @nullable
   @BuiltValueField(wireName: 'blackboard')
   String get blackboard;
+  @nullable
   @BuiltValueField(wireName: 'moderators')
   BuiltList<String> get moderators;
   @nullable
@@ -96,6 +103,7 @@ abstract class ForumInfoResult
   @nullable
   @BuiltValueField(wireName: 'verifymessage')
   String get verifymessage;
+  @nullable
   @BuiltValueField(wireName: 'isadmin')
   int get isadmin;
   @nullable
@@ -106,6 +114,7 @@ abstract class ForumInfoResult
   BuiltMap<String, Forum> get links;
   @BuiltValueField(wireName: 'id')
   String get id;
+  @nullable
   @BuiltValueField(wireName: 'isok')
   bool get isok;
   @nullable

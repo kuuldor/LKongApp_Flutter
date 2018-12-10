@@ -126,6 +126,22 @@ void main() {
     });
   });
 
+  test('Search Test', () async {
+    await searchLKong({"search": "iOS", "type": 0}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+    await searchLKong({"search": "小说", "type": 1}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+    await searchLKong({"search": "小说", "type": 2}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+
+  });
+
   test('Logout Test', () async {
     await logout().then((map) {
       print(map.toString());

@@ -24,6 +24,7 @@ const USERINFO_API = "USERINFO";
 const FOLLOWLIST_API = "FOLLOWLIST";
 const PUNCHCARD_API = "PUNCHCARD";
 const MYDATA_API = "MYDATA";
+const SEARCH_API = "SEARCH";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -359,6 +360,9 @@ Future<Map> getPersonalData(Map args) {
       break;
     case 2:
     case 3:
+    default:
+      assert(false, "Unsupported Data mode $mode");
+      break;
   }
 
   var params = getTimeParameter(nexttime, current);
@@ -368,6 +372,45 @@ Future<Map> getPersonalData(Map args) {
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
       preProcessor: numMapperBuiler(["uid", "score", "extcredits"]));
+}
+
+Future<Map> searchLKong(Map args) {
+  int nexttime = args["nexttime"] ?? 0;
+  int type = args["type"];
+  String searchString = args["search"];
+
+  assert(type != null, "Must speicfy type");
+
+  String searchTypePrefix;
+  Function(String) parser;
+
+  switch (type) {
+    case 0:
+      searchTypePrefix = "";
+      parser = StoryListResult.fromJson;
+      break;
+    case 1:
+      searchTypePrefix = "@";
+      parser = SearchUserResult.fromJson;
+      break;
+    case 2:
+      searchTypePrefix = "#";
+      parser = SearchForumResult.fromJson;
+      break;
+    default:
+      assert(false, "Invalid Search Type $type");
+      break;
+  }
+
+  var params = getTimeParameter(nexttime, 0);
+  var urlString = endpoint["search"] +
+      Uri.encodeComponent(searchTypePrefix + searchString) +
+      querify(params);
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(parser),
+      preProcessor: numMapperBuiler(["uid", "fid", "fansnum", "replynum"]));
 }
 
 String Function(String) numMapperBuiler(List<String> fields) {
@@ -443,6 +486,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == MYDATA_API) {
     return getPersonalData(parameters);
+  }
+
+  if (api == SEARCH_API) {
+    return searchLKong(parameters);
   }
 
   return Future<Map>(null);

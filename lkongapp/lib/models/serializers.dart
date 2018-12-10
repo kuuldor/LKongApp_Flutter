@@ -35,6 +35,8 @@ part 'serializers.g.dart';
   FollowList,
   PunchCardResult,
   UserData,
+  SearchUserResult,
+  SearchForumResult,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

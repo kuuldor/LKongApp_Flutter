@@ -9,6 +9,7 @@ import 'package:lkongapp/models/models.dart';
 import 'story_reducer.dart';
 import 'forum_reducer.dart';
 import 'userdata_reducer.dart';
+import 'search_reducer.dart';
 
 final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIRequest>(_contentRequested),
@@ -41,5 +42,6 @@ ContentCache _contentReducer(ContentCache content, action) {
     ..storyRepo.replace(storyContentsReducer(content.storyRepo, action))
     ..forumInfo.replace(forumContentsReducer(content.forumInfo, action))
     ..userData.replace(userDataReducer(content.userData, action))
+    ..searchResult.replace(searchResultReducer(content.searchResult, action))
     ..forumRepo.replace(forumRepoReducer(content.forumRepo, action)));
 }

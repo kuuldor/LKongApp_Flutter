@@ -157,8 +157,6 @@ class _$ForumInfoResultSerializer
   Iterable serialize(Serializers serializers, ForumInfoResult object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'type',
-      serializers.serialize(object.type, specifiedType: const FullType(String)),
       'fid',
       serializers.serialize(object.fid, specifiedType: const FullType(int)),
       'name',
@@ -166,34 +164,54 @@ class _$ForumInfoResultSerializer
       'description',
       serializers.serialize(object.description,
           specifiedType: const FullType(String)),
-      'status',
-      serializers.serialize(object.status,
-          specifiedType: const FullType(String)),
-      'sortbydateline',
-      serializers.serialize(object.sortbydateline,
-          specifiedType: const FullType(int)),
-      'threads',
-      serializers.serialize(object.threads,
-          specifiedType: const FullType(String)),
-      'todayposts',
-      serializers.serialize(object.todayposts,
-          specifiedType: const FullType(int)),
       'fansnum',
       serializers.serialize(object.fansnum, specifiedType: const FullType(int)),
-      'blackboard',
-      serializers.serialize(object.blackboard,
-          specifiedType: const FullType(String)),
-      'moderators',
-      serializers.serialize(object.moderators,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(String)])),
-      'isadmin',
-      serializers.serialize(object.isadmin, specifiedType: const FullType(int)),
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(String)),
-      'isok',
-      serializers.serialize(object.isok, specifiedType: const FullType(bool)),
     ];
+    if (object.type != null) {
+      result
+        ..add('type')
+        ..add(serializers.serialize(object.type,
+            specifiedType: const FullType(String)));
+    }
+    if (object.status != null) {
+      result
+        ..add('status')
+        ..add(serializers.serialize(object.status,
+            specifiedType: const FullType(String)));
+    }
+    if (object.sortbydateline != null) {
+      result
+        ..add('sortbydateline')
+        ..add(serializers.serialize(object.sortbydateline,
+            specifiedType: const FullType(int)));
+    }
+    if (object.threads != null) {
+      result
+        ..add('threads')
+        ..add(serializers.serialize(object.threads,
+            specifiedType: const FullType(String)));
+    }
+    if (object.todayposts != null) {
+      result
+        ..add('todayposts')
+        ..add(serializers.serialize(object.todayposts,
+            specifiedType: const FullType(int)));
+    }
+    if (object.blackboard != null) {
+      result
+        ..add('blackboard')
+        ..add(serializers.serialize(object.blackboard,
+            specifiedType: const FullType(String)));
+    }
+    if (object.moderators != null) {
+      result
+        ..add('moderators')
+        ..add(serializers.serialize(object.moderators,
+            specifiedType:
+                const FullType(BuiltList, const [const FullType(String)])));
+    }
     if (object.verify != null) {
       result
         ..add('verify')
@@ -205,6 +223,12 @@ class _$ForumInfoResultSerializer
         ..add('verifymessage')
         ..add(serializers.serialize(object.verifymessage,
             specifiedType: const FullType(String)));
+    }
+    if (object.isadmin != null) {
+      result
+        ..add('isadmin')
+        ..add(serializers.serialize(object.isadmin,
+            specifiedType: const FullType(int)));
     }
     if (object.linktitle != null) {
       result
@@ -218,6 +242,12 @@ class _$ForumInfoResultSerializer
         ..add(serializers.serialize(object.links,
             specifiedType: const FullType(BuiltMap,
                 const [const FullType(String), const FullType(Forum)])));
+    }
+    if (object.isok != null) {
+      result
+        ..add('isok')
+        ..add(serializers.serialize(object.isok,
+            specifiedType: const FullType(bool)));
     }
     if (object.jointype != null) {
       result
@@ -672,9 +702,6 @@ class _$ForumInfoResult extends ForumInfoResult {
       this.ismem,
       this.isgroup})
       : super._() {
-    if (type == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'type');
-    }
     if (fid == null) {
       throw new BuiltValueNullFieldError('ForumInfoResult', 'fid');
     }
@@ -684,35 +711,11 @@ class _$ForumInfoResult extends ForumInfoResult {
     if (description == null) {
       throw new BuiltValueNullFieldError('ForumInfoResult', 'description');
     }
-    if (status == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'status');
-    }
-    if (sortbydateline == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'sortbydateline');
-    }
-    if (threads == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'threads');
-    }
-    if (todayposts == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'todayposts');
-    }
     if (fansnum == null) {
       throw new BuiltValueNullFieldError('ForumInfoResult', 'fansnum');
     }
-    if (blackboard == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'blackboard');
-    }
-    if (moderators == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'moderators');
-    }
-    if (isadmin == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'isadmin');
-    }
     if (id == null) {
       throw new BuiltValueNullFieldError('ForumInfoResult', 'id');
-    }
-    if (isok == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'isok');
     }
   }
 
@@ -980,7 +983,7 @@ class ForumInfoResultBuilder
               todayposts: todayposts,
               fansnum: fansnum,
               blackboard: blackboard,
-              moderators: moderators.build(),
+              moderators: _moderators?.build(),
               verify: verify,
               verifymessage: verifymessage,
               isadmin: isadmin,
@@ -996,7 +999,7 @@ class ForumInfoResultBuilder
       String _$failedField;
       try {
         _$failedField = 'moderators';
-        moderators.build();
+        _moderators?.build();
 
         _$failedField = 'links';
         _links?.build();

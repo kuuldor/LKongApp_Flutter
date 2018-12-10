@@ -38,11 +38,11 @@ abstract class FetchedListModel extends GroupedListModel {
         return itemCount + extraCell;
       }
 
-      assert(true, "Section $section is not defined");
+      assert(false, "Section $section is not defined");
       return 0;
     }
 
-    assert(true, "Should Override countOfItemsInSection");
+    assert(false, "Should Override countOfItemsInSection");
 
     return null;
   }
@@ -84,7 +84,7 @@ abstract class FetchedListModel extends GroupedListModel {
       ]);
     }
 
-    assert(true, "Should Override cellForSectionAndIndex");
+    assert(false, "Should Override cellForSectionAndIndex");
     return null;
   }
 
@@ -97,11 +97,17 @@ abstract class FetchedListModel extends GroupedListModel {
   SliverAppBar get appBar => null;
 
   Future<Null> handleRefresh(BuildContext context) async {
-    dispatchAction(context)(refreshRequest);
+    var request = refreshRequest;
+    if (request != null) {
+      dispatchAction(context)(request);
+    }
   }
 
   Future<Null> handleFetchFromScratch(BuildContext context) async {
-    dispatchAction(context)(fetchFromScratchRequest);
+    var request = fetchFromScratchRequest;
+    if (request != null) {
+      dispatchAction(context)(request);
+    }
   }
 
   Future<Null> handleLoadMore(BuildContext context) async {
@@ -145,7 +151,12 @@ abstract class FetchedListModel extends GroupedListModel {
     //     ),
     //   );
     // }
-    return RefreshIndicator(
-        onRefresh: () => handleRefresh(context), child: listView);
+
+    if (refreshRequest == null) {
+      return listView;
+    } else {
+      return RefreshIndicator(
+          onRefresh: () => handleRefresh(context), child: listView);
+    }
   }
 }

@@ -48,6 +48,7 @@ abstract class ContentCache
       _$ContentCache((b) => b
         ..forumInfo.replace(ForumInfo())
         ..homeList.replace(StoryFetchList())
+        ..searchResult.replace(SearchResult())
         ..update(updates));
 
   @nullable
@@ -57,6 +58,31 @@ abstract class ContentCache
   ForumInfo get forumInfo;
   BuiltMap<int, StoryFetchList> get forumRepo;
   BuiltMap<int, UserData> get userData;
+  SearchResult get searchResult;
+}
+
+abstract class SearchResult
+    implements Built<SearchResult, SearchResultBuilder> {
+  SearchResult._();
+  factory SearchResult([updates(SearchResultBuilder b)]) =>
+      _$SearchResult((b) => b
+        ..loading = false
+        ..searchString = ""
+        ..searchType = -1
+        ..update(updates));
+
+  @nullable
+  String get lastError;
+  bool get loading;
+  String get searchString;
+  int get searchType;
+
+  @nullable
+  StoryFetchList get stories;
+  @nullable
+  SearchUserResult get users;
+  @nullable
+  SearchForumResult get forums;
 }
 
 abstract class StoryFetchList

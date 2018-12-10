@@ -212,6 +212,8 @@ class _$ContentCache extends ContentCache {
   final BuiltMap<int, StoryFetchList> forumRepo;
   @override
   final BuiltMap<int, UserData> userData;
+  @override
+  final SearchResult searchResult;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
@@ -222,7 +224,8 @@ class _$ContentCache extends ContentCache {
       this.storyRepo,
       this.forumInfo,
       this.forumRepo,
-      this.userData})
+      this.userData,
+      this.searchResult})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
@@ -238,6 +241,9 @@ class _$ContentCache extends ContentCache {
     }
     if (userData == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'userData');
+    }
+    if (searchResult == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'searchResult');
     }
   }
 
@@ -257,7 +263,8 @@ class _$ContentCache extends ContentCache {
         storyRepo == other.storyRepo &&
         forumInfo == other.forumInfo &&
         forumRepo == other.forumRepo &&
-        userData == other.userData;
+        userData == other.userData &&
+        searchResult == other.searchResult;
   }
 
   @override
@@ -265,11 +272,13 @@ class _$ContentCache extends ContentCache {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
-                    storyRepo.hashCode),
-                forumInfo.hashCode),
-            forumRepo.hashCode),
-        userData.hashCode));
+                $jc(
+                    $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
+                        storyRepo.hashCode),
+                    forumInfo.hashCode),
+                forumRepo.hashCode),
+            userData.hashCode),
+        searchResult.hashCode));
   }
 
   @override
@@ -280,7 +289,8 @@ class _$ContentCache extends ContentCache {
           ..add('storyRepo', storyRepo)
           ..add('forumInfo', forumInfo)
           ..add('forumRepo', forumRepo)
-          ..add('userData', userData))
+          ..add('userData', userData)
+          ..add('searchResult', searchResult))
         .toString();
   }
 }
@@ -321,6 +331,12 @@ class ContentCacheBuilder
   set userData(MapBuilder<int, UserData> userData) =>
       _$this._userData = userData;
 
+  SearchResultBuilder _searchResult;
+  SearchResultBuilder get searchResult =>
+      _$this._searchResult ??= new SearchResultBuilder();
+  set searchResult(SearchResultBuilder searchResult) =>
+      _$this._searchResult = searchResult;
+
   ContentCacheBuilder();
 
   ContentCacheBuilder get _$this {
@@ -331,6 +347,7 @@ class ContentCacheBuilder
       _forumInfo = _$v.forumInfo?.toBuilder();
       _forumRepo = _$v.forumRepo?.toBuilder();
       _userData = _$v.userData?.toBuilder();
+      _searchResult = _$v.searchResult?.toBuilder();
       _$v = null;
     }
     return this;
@@ -360,7 +377,8 @@ class ContentCacheBuilder
               storyRepo: storyRepo.build(),
               forumInfo: forumInfo.build(),
               forumRepo: forumRepo.build(),
-              userData: userData.build());
+              userData: userData.build(),
+              searchResult: searchResult.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -374,9 +392,195 @@ class ContentCacheBuilder
         forumRepo.build();
         _$failedField = 'userData';
         userData.build();
+        _$failedField = 'searchResult';
+        searchResult.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'ContentCache', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$SearchResult extends SearchResult {
+  @override
+  final String lastError;
+  @override
+  final bool loading;
+  @override
+  final String searchString;
+  @override
+  final int searchType;
+  @override
+  final StoryFetchList stories;
+  @override
+  final SearchUserResult users;
+  @override
+  final SearchForumResult forums;
+
+  factory _$SearchResult([void updates(SearchResultBuilder b)]) =>
+      (new SearchResultBuilder()..update(updates)).build();
+
+  _$SearchResult._(
+      {this.lastError,
+      this.loading,
+      this.searchString,
+      this.searchType,
+      this.stories,
+      this.users,
+      this.forums})
+      : super._() {
+    if (loading == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'loading');
+    }
+    if (searchString == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'searchString');
+    }
+    if (searchType == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'searchType');
+    }
+  }
+
+  @override
+  SearchResult rebuild(void updates(SearchResultBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  SearchResultBuilder toBuilder() => new SearchResultBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is SearchResult &&
+        lastError == other.lastError &&
+        loading == other.loading &&
+        searchString == other.searchString &&
+        searchType == other.searchType &&
+        stories == other.stories &&
+        users == other.users &&
+        forums == other.forums;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc($jc($jc(0, lastError.hashCode), loading.hashCode),
+                        searchString.hashCode),
+                    searchType.hashCode),
+                stories.hashCode),
+            users.hashCode),
+        forums.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('SearchResult')
+          ..add('lastError', lastError)
+          ..add('loading', loading)
+          ..add('searchString', searchString)
+          ..add('searchType', searchType)
+          ..add('stories', stories)
+          ..add('users', users)
+          ..add('forums', forums))
+        .toString();
+  }
+}
+
+class SearchResultBuilder
+    implements Builder<SearchResult, SearchResultBuilder> {
+  _$SearchResult _$v;
+
+  String _lastError;
+  String get lastError => _$this._lastError;
+  set lastError(String lastError) => _$this._lastError = lastError;
+
+  bool _loading;
+  bool get loading => _$this._loading;
+  set loading(bool loading) => _$this._loading = loading;
+
+  String _searchString;
+  String get searchString => _$this._searchString;
+  set searchString(String searchString) => _$this._searchString = searchString;
+
+  int _searchType;
+  int get searchType => _$this._searchType;
+  set searchType(int searchType) => _$this._searchType = searchType;
+
+  StoryFetchListBuilder _stories;
+  StoryFetchListBuilder get stories =>
+      _$this._stories ??= new StoryFetchListBuilder();
+  set stories(StoryFetchListBuilder stories) => _$this._stories = stories;
+
+  SearchUserResultBuilder _users;
+  SearchUserResultBuilder get users =>
+      _$this._users ??= new SearchUserResultBuilder();
+  set users(SearchUserResultBuilder users) => _$this._users = users;
+
+  SearchForumResultBuilder _forums;
+  SearchForumResultBuilder get forums =>
+      _$this._forums ??= new SearchForumResultBuilder();
+  set forums(SearchForumResultBuilder forums) => _$this._forums = forums;
+
+  SearchResultBuilder();
+
+  SearchResultBuilder get _$this {
+    if (_$v != null) {
+      _lastError = _$v.lastError;
+      _loading = _$v.loading;
+      _searchString = _$v.searchString;
+      _searchType = _$v.searchType;
+      _stories = _$v.stories?.toBuilder();
+      _users = _$v.users?.toBuilder();
+      _forums = _$v.forums?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(SearchResult other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$SearchResult;
+  }
+
+  @override
+  void update(void updates(SearchResultBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$SearchResult build() {
+    _$SearchResult _$result;
+    try {
+      _$result = _$v ??
+          new _$SearchResult._(
+              lastError: lastError,
+              loading: loading,
+              searchString: searchString,
+              searchType: searchType,
+              stories: _stories?.build(),
+              users: _users?.build(),
+              forums: _forums?.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'stories';
+        _stories?.build();
+        _$failedField = 'users';
+        _users?.build();
+        _$failedField = 'forums';
+        _forums?.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'SearchResult', _$failedField, e.toString());
       }
       rethrow;
     }
