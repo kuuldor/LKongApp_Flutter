@@ -56,6 +56,7 @@ class HomeScreen extends StatelessWidget {
         //viewModel.showLoginScreen(context);
       }
       return Scaffold(
+        drawer: AppDrawerBuilder(),
         body: PageView(
           children: [
             Container(

@@ -7,6 +7,7 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/story_screen.dart';
+import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
@@ -33,15 +34,10 @@ class FavoriteScreenState extends StoryListState<FavoriteScreen> {
   FavoriteScreenState();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('收藏'),
-        ),
-        drawer: AppDrawerBuilder(),
-        body: buildWidgetWithVMFactory(
-          context,
-          FavoriteScreenModel.fromStateAndStore(this),
-        ));
+    return buildWidgetWithVMFactory(
+      context,
+      FavoriteScreenModel.fromStateAndStore(this),
+    );
   }
 }
 
@@ -57,6 +53,14 @@ class FavoriteScreenModel extends StoryListModel {
     @required this.storyList,
     @required this.uid,
   });
+
+  @override
+  SliverAppBar get appBar => SliverAppBar(
+        leading: DrawerButton(),
+        title: Text('收藏'),
+        floating: false,
+        pinned: true,
+      );
 
   static final fromStateAndStore = (FavoriteScreenState state) =>
       (Store<AppState> store) => FavoriteScreenModel(

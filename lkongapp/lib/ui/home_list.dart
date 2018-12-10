@@ -6,6 +6,7 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/story_screen.dart';
+import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
@@ -28,12 +29,7 @@ class HomeList extends StatefulWidget {
 class HomeListState extends StoryListState<HomeList> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('首页'),
-        ),
-        drawer: AppDrawerBuilder(),
-        body: buildWidgetWithVMFactory(context, HomeListModel.fromStore));
+    return buildWidgetWithVMFactory(context, HomeListModel.fromStore);
   }
 }
 
@@ -59,6 +55,14 @@ class HomeListModel extends StoryListModel {
           .currentSetting.threadOnlyHome,
     );
   }
+
+  @override
+  SliverAppBar get appBar => SliverAppBar(
+        leading: DrawerButton(),
+        title: Text('首页'),
+        floating: false,
+        pinned: true,
+      );
 
   @override
   APIRequest get fetchFromScratchRequest {

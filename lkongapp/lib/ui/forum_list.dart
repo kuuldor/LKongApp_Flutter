@@ -9,6 +9,7 @@ import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
+import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -23,12 +24,7 @@ class ForumList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return buildConnectedWidget(context, ForumListModel.fromStore, (viewModel) {
-      return Scaffold(
-          appBar: AppBar(
-            title: Text('版块'),
-          ),
-          drawer: AppDrawerBuilder(),
-          body: viewModel.buildListView(context));
+      return viewModel.buildListView(context);
     });
   }
 }
@@ -41,6 +37,14 @@ class ForumListModel extends FetchedListModel {
   String get lastError => repo.lastError;
 
   final Future<Null> Function(BuildContext, Forum) onForumTap;
+
+  @override
+  SliverAppBar get appBar => SliverAppBar(
+        leading: DrawerButton(),
+        title: Text('版块'),
+        floating: false,
+        pinned: true,
+      );
 
   @override
   bool operator ==(other) {

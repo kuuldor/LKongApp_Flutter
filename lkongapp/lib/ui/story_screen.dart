@@ -302,14 +302,19 @@ class StoryContentModel {
               };
               return Container(
                 height: rowHeight,
-                child: ListTile(
-                  leading: Radio<int>(
-                    value: i,
-                    groupValue: pageNo - 1,
-                    onChanged: turnPage,
-                  ),
-                  title: Text("第${i + 1}页（${i * 20 + 1}楼 —— ${(i + 1) * 20}楼）"),
-                  onTap: () => turnPage(i),
+                child: Row(
+                  children: <Widget>[
+                    Radio<int>(
+                      value: i,
+                      groupValue: pageNo - 1,
+                      onChanged: turnPage,
+                    ),
+                    FlatButton(
+                      child: Text(
+                          "第${i + 1}页（${i * 20 + 1}楼 —— ${(i + 1) * 20}楼）"),
+                      onPressed: () => turnPage(i),
+                    )
+                  ],
                 ),
               );
             }),
