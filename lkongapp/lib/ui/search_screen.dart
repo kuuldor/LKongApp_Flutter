@@ -104,7 +104,7 @@ class SearchScreenState extends StoryListState<SearchScreen> {
           hintStyle: TextStyle(color: Colors.white70)),
       onChanged: (s) => setSearchString(s),
       onSubmitted: (s) {
-        startSearch(s, searchType);
+        startSearch(s, searchTypeStory);
       },
     );
   }
@@ -255,7 +255,7 @@ class SearchScreenModel extends FetchedListModel {
 
       Forum forum = Forum().rebuild((b) => b
         ..fid = info.fid
-        ..name = html2Text(info.name));
+        ..name = stripHtmlTag(info.name));
       item = ForumItem(
         forum: forum,
         info: info,

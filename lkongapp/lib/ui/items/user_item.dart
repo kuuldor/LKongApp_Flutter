@@ -38,7 +38,7 @@ class UserItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      html2Text(user.username),
+                      stripHtmlTag(user.username),
                       style: Theme.of(context).textTheme.title,
                     ),
                     // Text(timeAgoSinceDate(parseDatetime(forum.dateline))),
@@ -57,7 +57,7 @@ class UserItem extends StatelessWidget {
         ),
       ]),
       subtitle: user != null && user.customstatus.length > 0
-          ? Text(html2Text(user.customstatus), maxLines: 8)
+          ? Text(stripHtmlTag(user.customstatus), maxLines: 8)
           : null,
     );
   }

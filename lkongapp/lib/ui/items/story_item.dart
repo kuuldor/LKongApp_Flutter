@@ -67,7 +67,7 @@ class StoryItem extends StatelessWidget {
         ),
       ]),
       subtitle: story.message != null
-          ? Text(html2Text(story.message), maxLines: 4)
+          ? Text(stripHtmlTag(story.message), maxLines: 4)
           : null,
     );
   }
