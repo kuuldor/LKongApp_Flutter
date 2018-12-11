@@ -6,10 +6,12 @@ import 'package:lkongapp/models/user.dart';
 import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/utils/globals.dart';
 
+import 'test_user.dart' as TestUser;
+
 Future<Null> loginTest() async {
   UserBuilder builder = UserBuilder()
-    ..identity = 'lkongapp@outlook.com'
-    ..password = 'xxxxxxxxxxxx';
+    ..identity = TestUser.user['identity']
+    ..password = TestUser.user['password'];
 
   User user = builder.build();
 
@@ -23,8 +25,8 @@ void main() {
 
   test('Login Test', () async {
     UserBuilder builder = UserBuilder()
-      ..identity = 'lkongapp@outlook.com'
-      ..password = 'xxxxxxxxxxxx';
+      ..identity = TestUser.user['identity']
+      ..password = TestUser.user['password'];
 
     User user = builder.build();
     final Completer<Null> completer = Completer<Null>();
@@ -139,7 +141,6 @@ void main() {
       print(map.toString());
       print(session.cookies.toString());
     });
-
   });
 
   test('Logout Test', () async {
