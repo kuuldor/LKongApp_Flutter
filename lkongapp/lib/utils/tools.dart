@@ -159,6 +159,9 @@ _parseImageAndText(BuildContext context,
       } else if (e.localName == "p") {
         nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
         nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+      } else if (e.localName == "div") {
+        nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
+        nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
       }
 
       //Handle elements to be converted to widget. Otherwise just append to widget/text list
