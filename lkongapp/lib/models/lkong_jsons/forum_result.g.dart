@@ -161,9 +161,6 @@ class _$ForumInfoResultSerializer
       serializers.serialize(object.fid, specifiedType: const FullType(int)),
       'name',
       serializers.serialize(object.name, specifiedType: const FullType(String)),
-      'description',
-      serializers.serialize(object.description,
-          specifiedType: const FullType(String)),
       'fansnum',
       serializers.serialize(object.fansnum, specifiedType: const FullType(int)),
       'id',
@@ -173,6 +170,12 @@ class _$ForumInfoResultSerializer
       result
         ..add('type')
         ..add(serializers.serialize(object.type,
+            specifiedType: const FullType(String)));
+    }
+    if (object.description != null) {
+      result
+        ..add('description')
+        ..add(serializers.serialize(object.description,
             specifiedType: const FullType(String)));
     }
     if (object.status != null) {
@@ -707,9 +710,6 @@ class _$ForumInfoResult extends ForumInfoResult {
     }
     if (name == null) {
       throw new BuiltValueNullFieldError('ForumInfoResult', 'name');
-    }
-    if (description == null) {
-      throw new BuiltValueNullFieldError('ForumInfoResult', 'description');
     }
     if (fansnum == null) {
       throw new BuiltValueNullFieldError('ForumInfoResult', 'fansnum');

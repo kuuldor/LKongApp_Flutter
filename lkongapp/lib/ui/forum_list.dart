@@ -10,6 +10,7 @@ import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
+import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -30,13 +31,11 @@ class ForumList extends StatelessWidget {
 }
 
 class ForumListModel extends FetchedListModel {
-  final ForumInfo repo;
+  final ForumLists repo;
   final List<int> followed;
   final bool showInfo;
   bool get loading => repo.loading;
   String get lastError => repo.lastError;
-
-  final Future<Null> Function(BuildContext, Forum) onForumTap;
 
   @override
   SliverAppBar get appBar => SliverAppBar(
@@ -61,7 +60,6 @@ class ForumListModel extends FetchedListModel {
     @required this.repo,
     @required this.showInfo,
     @required this.followed,
-    @required this.onForumTap,
   });
 
   @override
@@ -105,18 +103,6 @@ class ForumListModel extends FetchedListModel {
       repo: store.state.uiState.content.forumInfo,
       followed: userData?.followList?.fid?.map((f) => int.parse(f))?.toList(),
       showInfo: selectSetting(store).showForumInfo,
-      onForumTap: (BuildContext context, Forum forum) {
-        store.dispatch(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
-
-        return Future(() {
-          store.dispatch(UINavigationPush(
-              context, LKongAppRoutes.forumStory, false, (context) {
-            return ForumStory(
-              forum: forum,
-            );
-          }));
-        });
-      },
     );
   }
 

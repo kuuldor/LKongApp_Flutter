@@ -1,25 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/theme.dart';
+import 'package:lkongapp/models/user.dart';
 import 'package:lkongapp/utils/utils.dart';
 
-class ForumItem extends StatelessWidget {
+class UserItem extends StatelessWidget {
   final GestureTapCallback onTap;
-  final Forum forum;
-  final ForumInfoResult info;
+  final UserInfo user;
 
-  static final forumItemKey = (id) => Key('__forum_item_${id}__');
+  static final userItemKey = (id) => Key('__user_item_${id}__');
 
-  ForumItem({
+  UserItem({
     @required this.onTap,
-    @required this.forum,
-    this.info,
+    @required this.user,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      key: forumItemKey(forum.fid),
+      key: userItemKey(user.uid),
       onTap: onTap,
       title: Column(children: <Widget>[
         Row(
@@ -27,8 +27,8 @@ class ForumItem extends StatelessWidget {
             CircleAvatar(
               backgroundColor: Colors.transparent,
               backgroundImage: CachedNetworkImageProvider(
-                  avatarForForumID(forum.fid),
-                  imageOnError: "assets/image_placeholder.png"),
+                  avatarForUserID(user.uid),
+                  imageOnError: "assets/noavatar.png"),
               radius: 24.0,
             ),
             Expanded(
@@ -38,7 +38,7 @@ class ForumItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      forum.name,
+                      html2Text(user.username),
                       style: Theme.of(context).textTheme.title,
                     ),
                     // Text(timeAgoSinceDate(parseDatetime(forum.dateline))),
@@ -46,19 +46,18 @@ class ForumItem extends StatelessWidget {
                 ),
               ),
             ),
-            info != null && info.todayposts != null
+            user.verify == true
                 ? Column(
                     children: <Widget>[
-                      Icon(Icons.message),
-                      Text("${info.todayposts}"),
+                      Icon(Icons.verified_user, color: htmlColor("#ff8833"),),
                     ],
                   )
                 : Container(),
           ],
         ),
       ]),
-      subtitle: info != null && info.description != null
-          ? Text(html2Text(info.description), maxLines: 8)
+      subtitle: user != null && user.customstatus.length > 0
+          ? Text(html2Text(user.customstatus), maxLines: 8)
           : null,
     );
   }

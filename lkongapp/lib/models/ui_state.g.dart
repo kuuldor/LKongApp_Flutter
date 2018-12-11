@@ -207,7 +207,7 @@ class _$ContentCache extends ContentCache {
   @override
   final BuiltMap<int, StoryPageList> storyRepo;
   @override
-  final ForumInfo forumInfo;
+  final ForumLists forumInfo;
   @override
   final BuiltMap<int, StoryFetchList> forumRepo;
   @override
@@ -314,10 +314,10 @@ class ContentCacheBuilder
   set storyRepo(MapBuilder<int, StoryPageList> storyRepo) =>
       _$this._storyRepo = storyRepo;
 
-  ForumInfoBuilder _forumInfo;
-  ForumInfoBuilder get forumInfo =>
-      _$this._forumInfo ??= new ForumInfoBuilder();
-  set forumInfo(ForumInfoBuilder forumInfo) => _$this._forumInfo = forumInfo;
+  ForumListsBuilder _forumInfo;
+  ForumListsBuilder get forumInfo =>
+      _$this._forumInfo ??= new ForumListsBuilder();
+  set forumInfo(ForumListsBuilder forumInfo) => _$this._forumInfo = forumInfo;
 
   MapBuilder<int, StoryFetchList> _forumRepo;
   MapBuilder<int, StoryFetchList> get forumRepo =>
@@ -441,6 +441,15 @@ class _$SearchResult extends SearchResult {
     }
     if (searchType == null) {
       throw new BuiltValueNullFieldError('SearchResult', 'searchType');
+    }
+    if (stories == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'stories');
+    }
+    if (users == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'users');
+    }
+    if (forums == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'forums');
     }
   }
 
@@ -566,18 +575,18 @@ class SearchResultBuilder
               loading: loading,
               searchString: searchString,
               searchType: searchType,
-              stories: _stories?.build(),
-              users: _users?.build(),
-              forums: _forums?.build());
+              stories: stories.build(),
+              users: users.build(),
+              forums: forums.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'stories';
-        _stories?.build();
+        stories.build();
         _$failedField = 'users';
-        _users?.build();
+        users.build();
         _$failedField = 'forums';
-        _forums?.build();
+        forums.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'SearchResult', _$failedField, e.toString());
@@ -987,7 +996,7 @@ class StoryPageBuilder implements Builder<StoryPage, StoryPageBuilder> {
   }
 }
 
-class _$ForumInfo extends ForumInfo {
+class _$ForumLists extends ForumLists {
   @override
   final bool loading;
   @override
@@ -1001,10 +1010,10 @@ class _$ForumInfo extends ForumInfo {
   @override
   final BuiltMap<int, ForumInfoResult> info;
 
-  factory _$ForumInfo([void updates(ForumInfoBuilder b)]) =>
-      (new ForumInfoBuilder()..update(updates)).build();
+  factory _$ForumLists([void updates(ForumListsBuilder b)]) =>
+      (new ForumListsBuilder()..update(updates)).build();
 
-  _$ForumInfo._(
+  _$ForumLists._(
       {this.loading,
       this.lastError,
       this.forums,
@@ -1013,33 +1022,33 @@ class _$ForumInfo extends ForumInfo {
       this.info})
       : super._() {
     if (loading == null) {
-      throw new BuiltValueNullFieldError('ForumInfo', 'loading');
+      throw new BuiltValueNullFieldError('ForumLists', 'loading');
     }
     if (forums == null) {
-      throw new BuiltValueNullFieldError('ForumInfo', 'forums');
+      throw new BuiltValueNullFieldError('ForumLists', 'forums');
     }
     if (sysplanes == null) {
-      throw new BuiltValueNullFieldError('ForumInfo', 'sysplanes');
+      throw new BuiltValueNullFieldError('ForumLists', 'sysplanes');
     }
     if (planes == null) {
-      throw new BuiltValueNullFieldError('ForumInfo', 'planes');
+      throw new BuiltValueNullFieldError('ForumLists', 'planes');
     }
     if (info == null) {
-      throw new BuiltValueNullFieldError('ForumInfo', 'info');
+      throw new BuiltValueNullFieldError('ForumLists', 'info');
     }
   }
 
   @override
-  ForumInfo rebuild(void updates(ForumInfoBuilder b)) =>
+  ForumLists rebuild(void updates(ForumListsBuilder b)) =>
       (toBuilder()..update(updates)).build();
 
   @override
-  ForumInfoBuilder toBuilder() => new ForumInfoBuilder()..replace(this);
+  ForumListsBuilder toBuilder() => new ForumListsBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is ForumInfo &&
+    return other is ForumLists &&
         loading == other.loading &&
         lastError == other.lastError &&
         forums == other.forums &&
@@ -1062,7 +1071,7 @@ class _$ForumInfo extends ForumInfo {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper('ForumInfo')
+    return (newBuiltValueToStringHelper('ForumLists')
           ..add('loading', loading)
           ..add('lastError', lastError)
           ..add('forums', forums)
@@ -1073,8 +1082,8 @@ class _$ForumInfo extends ForumInfo {
   }
 }
 
-class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
-  _$ForumInfo _$v;
+class ForumListsBuilder implements Builder<ForumLists, ForumListsBuilder> {
+  _$ForumLists _$v;
 
   bool _loading;
   bool get loading => _$this._loading;
@@ -1102,9 +1111,9 @@ class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
       _$this._info ??= new MapBuilder<int, ForumInfoResult>();
   set info(MapBuilder<int, ForumInfoResult> info) => _$this._info = info;
 
-  ForumInfoBuilder();
+  ForumListsBuilder();
 
-  ForumInfoBuilder get _$this {
+  ForumListsBuilder get _$this {
     if (_$v != null) {
       _loading = _$v.loading;
       _lastError = _$v.lastError;
@@ -1118,24 +1127,24 @@ class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
   }
 
   @override
-  void replace(ForumInfo other) {
+  void replace(ForumLists other) {
     if (other == null) {
       throw new ArgumentError.notNull('other');
     }
-    _$v = other as _$ForumInfo;
+    _$v = other as _$ForumLists;
   }
 
   @override
-  void update(void updates(ForumInfoBuilder b)) {
+  void update(void updates(ForumListsBuilder b)) {
     if (updates != null) updates(this);
   }
 
   @override
-  _$ForumInfo build() {
-    _$ForumInfo _$result;
+  _$ForumLists build() {
+    _$ForumLists _$result;
     try {
       _$result = _$v ??
-          new _$ForumInfo._(
+          new _$ForumLists._(
               loading: loading,
               lastError: lastError,
               forums: forums.build(),
@@ -1155,7 +1164,7 @@ class ForumInfoBuilder implements Builder<ForumInfo, ForumInfoBuilder> {
         info.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            'ForumInfo', _$failedField, e.toString());
+            'ForumLists', _$failedField, e.toString());
       }
       rethrow;
     }

@@ -223,6 +223,7 @@ abstract class Comment implements Built<Comment, CommentBuilder> {
   int get authorid;
   @BuiltValueField(wireName: 'isme')
   int get isme;
+  @nullable
   @BuiltValueField(wireName: 'notgroup')
   int get notgroup;
   @BuiltValueField(wireName: 'pid')

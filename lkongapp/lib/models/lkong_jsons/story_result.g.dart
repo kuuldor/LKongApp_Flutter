@@ -543,9 +543,6 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           specifiedType: const FullType(int)),
       'isme',
       serializers.serialize(object.isme, specifiedType: const FullType(int)),
-      'notgroup',
-      serializers.serialize(object.notgroup,
-          specifiedType: const FullType(int)),
       'pid',
       serializers.serialize(object.pid, specifiedType: const FullType(int)),
       'first',
@@ -562,6 +559,12 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
       'lou',
       serializers.serialize(object.lou, specifiedType: const FullType(int)),
     ];
+    if (object.notgroup != null) {
+      result
+        ..add('notgroup')
+        ..add(serializers.serialize(object.notgroup,
+            specifiedType: const FullType(int)));
+    }
     if (object.tid != null) {
       result
         ..add('tid')
@@ -1712,9 +1715,6 @@ class _$Comment extends Comment {
     }
     if (isme == null) {
       throw new BuiltValueNullFieldError('Comment', 'isme');
-    }
-    if (notgroup == null) {
-      throw new BuiltValueNullFieldError('Comment', 'notgroup');
     }
     if (pid == null) {
       throw new BuiltValueNullFieldError('Comment', 'pid');

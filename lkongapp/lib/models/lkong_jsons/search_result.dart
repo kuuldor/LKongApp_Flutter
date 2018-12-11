@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:built_collection/built_collection.dart';
@@ -15,8 +14,10 @@ abstract class SearchUserResult
     implements Built<SearchUserResult, SearchUserResultBuilder> {
   SearchUserResult._();
 
-  factory SearchUserResult([updates(SearchUserResultBuilder b)]) =
-      _$SearchUserResult;
+  factory SearchUserResult([updates(SearchUserResultBuilder b)]) =>
+      _$SearchUserResult((b) => b
+        ..tmp = ""
+        ..nexttime = 0);
 
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
@@ -38,13 +39,14 @@ abstract class SearchUserResult
       _$searchUserResultSerializer;
 }
 
-
 abstract class SearchForumResult
     implements Built<SearchForumResult, SearchForumResultBuilder> {
   SearchForumResult._();
 
-  factory SearchForumResult([updates(SearchForumResultBuilder b)]) =
-      _$SearchForumResult;
+  factory SearchForumResult([updates(SearchForumResultBuilder b)]) =>
+      _$SearchForumResult((b) => b
+        ..tmp = ""
+        ..nexttime = 0);
 
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
@@ -66,6 +68,3 @@ abstract class SearchForumResult
   static Serializer<SearchForumResult> get serializer =>
       _$searchForumResultSerializer;
 }
-
-
-

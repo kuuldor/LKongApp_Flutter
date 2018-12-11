@@ -46,7 +46,7 @@ abstract class ContentCache
   ContentCache._();
   factory ContentCache([updates(ContentCacheBuilder b)]) =>
       _$ContentCache((b) => b
-        ..forumInfo.replace(ForumInfo())
+        ..forumInfo.replace(ForumLists())
         ..homeList.replace(StoryFetchList())
         ..searchResult.replace(SearchResult())
         ..update(updates));
@@ -55,7 +55,7 @@ abstract class ContentCache
   String get lastError;
   StoryFetchList get homeList;
   BuiltMap<int, StoryPageList> get storyRepo;
-  ForumInfo get forumInfo;
+  ForumLists get forumInfo;
   BuiltMap<int, StoryFetchList> get forumRepo;
   BuiltMap<int, UserData> get userData;
   SearchResult get searchResult;
@@ -69,6 +69,9 @@ abstract class SearchResult
         ..loading = false
         ..searchString = ""
         ..searchType = -1
+        ..stories.replace(StoryFetchList())
+        ..users.replace(SearchUserResult())
+        ..forums.replace(SearchForumResult())
         ..update(updates));
 
   @nullable
@@ -77,11 +80,10 @@ abstract class SearchResult
   String get searchString;
   int get searchType;
 
-  @nullable
   StoryFetchList get stories;
-  @nullable
+
   SearchUserResult get users;
-  @nullable
+
   SearchForumResult get forums;
 }
 
@@ -131,9 +133,9 @@ abstract class StoryPage implements Built<StoryPage, StoryPageBuilder> {
   BuiltList<Comment> get comments;
 }
 
-abstract class ForumInfo implements Built<ForumInfo, ForumInfoBuilder> {
-  ForumInfo._();
-  factory ForumInfo([updates(ForumInfoBuilder b)]) => _$ForumInfo((b) => b
+abstract class ForumLists implements Built<ForumLists, ForumListsBuilder> {
+  ForumLists._();
+  factory ForumLists([updates(ForumListsBuilder b)]) => _$ForumLists((b) => b
     ..loading = false
     ..update(updates));
 

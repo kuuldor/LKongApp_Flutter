@@ -1,5 +1,7 @@
 import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/fetched_list.dart';
+import 'package:lkongapp/ui/items/forum_item.dart';
+import 'package:lkongapp/ui/items/user_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:material_search/material_search.dart';
@@ -75,6 +77,11 @@ class SearchScreenState extends StoryListState<SearchScreen> {
   void initState() {
     super.initState();
     _controller.text = searchString;
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        setSearching(false);
+      }
+    });
   }
 
   void startSearch(String s, int type) {
@@ -236,6 +243,24 @@ class SearchScreenModel extends FetchedListModel {
         story: story,
         onTap: () => onStoryTap(context, story),
       );
+    } else if (searchResult.searchType == searchTypeUser) {
+      UserInfo user = searchResult.users.user[index];
+
+      item = UserItem(
+        user: user,
+        onTap: () {},
+      );
+    } else if (searchResult.searchType == searchTypeForum) {
+      ForumInfoResult info = searchResult.forums.forumInfo[index];
+
+      Forum forum = Forum().rebuild((b) => b
+        ..fid = info.fid
+        ..name = html2Text(info.name));
+      item = ForumItem(
+        forum: forum,
+        info: info,
+        onTap: () => onForumTap(context, forum),
+      );
     }
 
     return item;
@@ -297,9 +322,7 @@ class SearchScreenModel extends FetchedListModel {
   @override
   Widget buildListView(BuildContext context) {
     var placeHolder;
-    if (itemCount == null ||
-        itemCount == 0 ||
-        searchString != searchResult.searchString ||
+    if (searchString != searchResult.searchString ||
         searchType != searchResult.searchType) {
       if (loading != true && lastError == null) {
         handleFetchFromScratch(context);

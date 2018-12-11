@@ -7,20 +7,20 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
 
-final forumContentsReducer = combineReducers<ForumInfo>([
-  TypedReducer<ForumInfo, ForumListRequest>(_forumRequestSent),
-  TypedReducer<ForumInfo, ForumInfoRequest>(_forumRequestSent),
-  TypedReducer<ForumInfo, ForumListSuccess>(_forumListSucceeded),
-  TypedReducer<ForumInfo, ForumInfoSuccess>(_forumInfoSucceeded),
-  TypedReducer<ForumInfo, ForumListFailure>(_forumFaileded),
-  TypedReducer<ForumInfo, ForumInfoFailure>(_forumFaileded),
+final forumContentsReducer = combineReducers<ForumLists>([
+  TypedReducer<ForumLists, ForumListRequest>(_forumRequestSent),
+  TypedReducer<ForumLists, ForumInfoRequest>(_forumRequestSent),
+  TypedReducer<ForumLists, ForumListSuccess>(_forumListSucceeded),
+  TypedReducer<ForumLists, ForumInfoSuccess>(_forumInfoSucceeded),
+  TypedReducer<ForumLists, ForumListFailure>(_forumFaileded),
+  TypedReducer<ForumLists, ForumInfoFailure>(_forumFaileded),
 ]);
 
-ForumInfo _forumRequestSent(ForumInfo forumRepo, action) {
+ForumLists _forumRequestSent(ForumLists forumRepo, action) {
   return forumRepo.rebuild((b) => b..loading = true);
 }
 
-ForumInfo _forumFaileded(ForumInfo forumRepo, APIFailure action) {
+ForumLists _forumFaileded(ForumLists forumRepo, APIFailure action) {
   var newRepo = forumRepo;
   newRepo = newRepo.rebuild((b) => b
     ..loading = false
@@ -29,7 +29,7 @@ ForumInfo _forumFaileded(ForumInfo forumRepo, APIFailure action) {
   return newRepo;
 }
 
-ForumInfo _forumListSucceeded(ForumInfo forumRepo, ForumListSuccess action) {
+ForumLists _forumListSucceeded(ForumLists forumRepo, ForumListSuccess action) {
   var list = action.list;
   var newRepo = forumRepo;
   if (list != null && list.isok) {
@@ -45,7 +45,7 @@ ForumInfo _forumListSucceeded(ForumInfo forumRepo, ForumListSuccess action) {
   return newRepo;
 }
 
-ForumInfo _forumInfoSucceeded(ForumInfo forumRepo, ForumInfoSuccess action) {
+ForumLists _forumInfoSucceeded(ForumLists forumRepo, ForumInfoSuccess action) {
   var result = action.result;
   var newRepo = forumRepo;
   if (result != null && result.isok) {

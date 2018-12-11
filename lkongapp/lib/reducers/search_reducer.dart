@@ -63,27 +63,25 @@ SearchResult _searchResultFailed(SearchResult repo, SearchFailure action) {
 
 SearchForumResult searchForumSucceeded(
     SearchForumResult forums, SearchForumResult result) {
-  return forums != null
-      ? forums.rebuild((b) => b
-        ..nexttime = result.nexttime
-        ..forumInfo.addAll(result.forumInfo ?? []))
-      : result;
+  int nexttime = result.forumInfo.length > 0 ? result.nexttime : 0;
+  return forums.rebuild((b) => b
+    ..nexttime = nexttime
+    ..forumInfo.addAll(result.forumInfo ?? []));
 }
 
 SearchUserResult searchUserSucceeded(
     SearchUserResult users, SearchUserResult result) {
-  return users != null
-      ? users.rebuild((b) => b
-        ..nexttime = result.nexttime
-        ..user.addAll(result.user ?? []))
-      : users;
+  int nexttime = result.user.length > 0 ? result.nexttime : 0;
+  return users.rebuild((b) => b
+    ..nexttime = nexttime
+    ..user.addAll(result.user ?? []));
 }
 
 StoryFetchList searchStorySucceeded(
     StoryFetchList list, StoryListResult result) {
-  var ret = list ?? StoryFetchList();
-  return ret.rebuild((b) => b
-    ..nexttime = result.nexttime
+  int nexttime = result.data.length > 0 ? result.nexttime : 0;
+  return list.rebuild((b) => b
+    ..nexttime = nexttime
     ..stories.addAll(result.data ?? []));
 }
 
