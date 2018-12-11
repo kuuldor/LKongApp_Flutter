@@ -13,7 +13,7 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
-
+import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 
 abstract class StoryListState<T extends StatefulWidget> extends State<T> {
@@ -72,27 +72,6 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
 }
 
 abstract class StoryListModel extends FetchedListModel {
-  final Future<Null> Function(BuildContext context, Story story) onStoryTap =
-      (BuildContext context, Story story) {
-    return Future(() {
-      String storyId = story.tid;
-      String postId = "0";
-      if (storyId == null) {
-        storyId = parseLKTypeId(story.id);
-      } else {
-        postId = parseLKTypeId(story.id);
-      }
-      dispatchAction(context)(StoryInfoRequest(null, int.parse(storyId)));
-      dispatchAction(context)(
-          UINavigationPush(context, LKongAppRoutes.story, false, (context) {
-        return StoryScreen(
-          storyId: int.parse(storyId),
-          postId: int.parse(postId),
-        );
-      }));
-    });
-  };
-
   APIRequest get checkNewRequest;
 
   StoryFetchList get storyList;

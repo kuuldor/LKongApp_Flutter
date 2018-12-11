@@ -81,11 +81,10 @@ SearchUserResult searchUserSucceeded(
 
 StoryFetchList searchStorySucceeded(
     StoryFetchList list, StoryListResult result) {
-  return list != null
-      ? list.rebuild((b) => b
-        ..nexttime = result.nexttime
-        ..stories.addAll(result.data ?? []))
-      : result;
+  var ret = list ?? StoryFetchList();
+  return ret.rebuild((b) => b
+    ..nexttime = result.nexttime
+    ..stories.addAll(result.data ?? []));
 }
 
 SearchResult _searchResultSucceeded(SearchResult repo, SearchSuccess action) {
