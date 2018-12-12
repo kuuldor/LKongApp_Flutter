@@ -136,7 +136,7 @@ _parseImageAndText(BuildContext context,
                   fontSizeFactor: double.parse(value) / 3.0);
               break;
             case "color":
-              baseTextStyle = baseTextStyle.apply(color: htmlColor(value));
+              baseTextStyle = baseTextStyle.apply(color: htmlColor(value, nightRev: theme.isNightMode));
               break;
           }
         });

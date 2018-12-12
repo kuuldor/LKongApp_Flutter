@@ -15,10 +15,10 @@ AppTheme defaultTheme = AppTheme().rebuild((b) => b
   ..colors.addAll(themeData.defaultTheme["colors"]));
 
 AppTheme nightTheme = AppTheme().rebuild((b) => b
-      ..name = themeData.nightTheme["name"]
-      ..colors.addAll(themeData.nightTheme["colors"]));
-    
-Color htmlColor(String html) {
+  ..name = themeData.nightTheme["name"]
+  ..colors.addAll(themeData.nightTheme["colors"]));
+
+Color htmlColor(String html, {bool nightRev: false}) {
   Color color;
   html = html.trim();
   RegExp hexPattern = RegExp('#(([0-9A-F]{3}){1,2})', caseSensitive: false);
@@ -27,7 +27,39 @@ Color htmlColor(String html) {
       caseSensitive: false);
 
   if (hexPattern.hasMatch(html)) {
-    String hexStr = hexPattern.firstMatch(html).group(1);
+    String hexStr = hexPattern.firstMatch(html).group(1).toUpperCase();
+    if (nightRev) {
+      final quickMap = {
+        "0": "F",
+        "1": "E",
+        "2": "D",
+        "3": "C",
+        "4": "B",
+        "5": "A",
+        "6": "9",
+        "7": "8",
+        "8": "7",
+        "9": "6",
+        "A": "5",
+        "B": "4",
+        "C": "3",
+        "D": "2",
+        "E": "1",
+        "F": "0"
+      };
+      bool allSame = true;
+      String rev = quickMap[hexStr[0]];
+      for (int i = 1; i < hexStr.length; i++) {
+        if (hexStr[i] != hexStr[0]) {
+          allSame = false;
+          break;
+        }
+        rev += quickMap[hexStr[i]];
+      }
+      if (allSame) {
+        hexStr = rev;
+      }
+    }
     if (hexStr.length == 3) {
       hexStr =
           hexStr[0] + hexStr[0] + hexStr[1] + hexStr[1] + hexStr[2] + hexStr[2];
@@ -42,8 +74,20 @@ Color htmlColor(String html) {
     String b = match.group(3);
     String o = match.group(4);
 
-    color = Color.fromRGBO(
-        int.parse(r), int.parse(g), int.parse(b), double.parse(o));
+    int red = int.parse(r);
+    int green = int.parse(g);
+    int blue = int.parse(b);
+
+    if (nightRev) {
+      if (red == green && green == blue) {
+        int rev = 255 - red;
+        red = rev;
+        green = rev;
+        blue = rev;
+      }
+    }
+
+    color = Color.fromRGBO(red, green, blue, double.parse(o));
   } else {
     color = Color(0);
   }
