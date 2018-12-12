@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'package:color/color.dart' as Colour;
 
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
@@ -19,7 +20,8 @@ AppTheme nightTheme = AppTheme().rebuild((b) => b
   ..colors.addAll(themeData.nightTheme["colors"]));
 
 Color htmlColor(String html, {bool nightRev: false}) {
-  Color color;
+  double opacity = 1.0;
+  Colour.Color color;
   html = html.trim();
   RegExp hexPattern = RegExp('#(([0-9A-F]{3}){1,2})', caseSensitive: false);
   RegExp rgboPattern = RegExp(
@@ -27,46 +29,14 @@ Color htmlColor(String html, {bool nightRev: false}) {
       caseSensitive: false);
 
   if (hexPattern.hasMatch(html)) {
-    String hexStr = hexPattern.firstMatch(html).group(1).toUpperCase();
-    if (nightRev) {
-      final quickMap = {
-        "0": "F",
-        "1": "E",
-        "2": "D",
-        "3": "C",
-        "4": "B",
-        "5": "A",
-        "6": "9",
-        "7": "8",
-        "8": "7",
-        "9": "6",
-        "A": "5",
-        "B": "4",
-        "C": "3",
-        "D": "2",
-        "E": "1",
-        "F": "0"
-      };
-      bool allSame = true;
-      String rev = quickMap[hexStr[0]];
-      for (int i = 1; i < hexStr.length; i++) {
-        if (hexStr[i] != hexStr[0]) {
-          allSame = false;
-          break;
-        }
-        rev += quickMap[hexStr[i]];
-      }
-      if (allSame) {
-        hexStr = rev;
-      }
-    }
+    String hexStr = hexPattern.firstMatch(html).group(1);
+
     if (hexStr.length == 3) {
       hexStr =
           hexStr[0] + hexStr[0] + hexStr[1] + hexStr[1] + hexStr[2] + hexStr[2];
     }
-    hexStr = 'FF' + hexStr;
-    int hexInt = int.parse(hexStr, radix: 16);
-    color = Color(hexInt);
+
+    color = Colour.Color.hex(hexStr);
   } else if (rgboPattern.hasMatch(html)) {
     Match match = rgboPattern.firstMatch(html);
     String r = match.group(1);
@@ -87,12 +57,20 @@ Color htmlColor(String html, {bool nightRev: false}) {
       }
     }
 
-    color = Color.fromRGBO(red, green, blue, double.parse(o));
+    opacity = double.parse(o);
+    color = Colour.Color.rgb(red, green, blue);
   } else {
-    color = Color(0);
+    color = Colour.Color.rgb(0, 0, 0);
   }
 
-  return color;
+  if (nightRev) {
+    Colour.HslColor hsl = color.toHslColor();
+    color = Colour.Color.hsl(hsl.h, hsl.s, 100 - hsl.l);
+  }
+
+  Colour.RgbColor rgb = color.toRgbColor();
+
+  return Color.fromRGBO(rgb.r, rgb.g, rgb.b, opacity);
 }
 
 abstract class AppTheme implements Built<AppTheme, AppThemeBuilder> {

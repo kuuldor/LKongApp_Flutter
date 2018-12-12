@@ -27,6 +27,7 @@ dependencies:
   flutter_sticky_header : ^0.3.4
   flutter_cupertino_settings: any
   material_search: ^0.2.8
+  color: any
 
 
   # The following adds the Cupertino Icons font to your application.
