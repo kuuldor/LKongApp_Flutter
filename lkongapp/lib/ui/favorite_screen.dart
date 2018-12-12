@@ -65,11 +65,11 @@ class FavoriteScreenModel extends StoryListModel {
   static final fromStateAndStore = (FavoriteScreenState state) =>
       (Store<AppState> store) => FavoriteScreenModel(
             loading: store.state.uiState.content.userData[selectUID(store)]
-                .favorites?.loading,
+                ?.favorites?.loading,
             lastError: store.state.uiState.content.userData[selectUID(store)]
-                .favorites?.lastError,
+                ?.favorites?.lastError,
             storyList: store
-                .state.uiState.content.userData[selectUID(store)].favorites,
+                .state.uiState.content.userData[selectUID(store)]?.favorites,
             uid: selectUID(store),
           );
 

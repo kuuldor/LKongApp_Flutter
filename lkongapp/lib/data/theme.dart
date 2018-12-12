@@ -32,7 +32,7 @@ final defaultTheme = {
 final nightTheme = {
   "name": "默认夜间",
   "colors": {
-    "main": "#567",
+    "main": "#456",
     "paper": "#111",
     "headerBG": "#282828",
     "quoteBG": "#333",

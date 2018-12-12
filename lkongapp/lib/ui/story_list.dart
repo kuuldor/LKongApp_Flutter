@@ -77,7 +77,7 @@ abstract class StoryListModel extends FetchedListModel {
   StoryFetchList get storyList;
 
   @override
-  int get itemCount => storyList?.stories?.length;
+  int get itemCount => storyList?.stories?.length ?? 0;
 
   Future<Null> handleCheckNew(BuildContext context) async {
     var request = checkNewRequest;
@@ -110,7 +110,7 @@ abstract class StoryListModel extends FetchedListModel {
   }
 
   Widget buildStoryListView(BuildContext context, StoryListState state) {
-    if (itemCount != null && itemCount > 0) {
+    if (itemCount > 0) {
       if (startTimer == null) {
         startTimer = () {
           state.startTimer();

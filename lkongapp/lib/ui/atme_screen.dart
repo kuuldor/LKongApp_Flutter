@@ -63,11 +63,11 @@ class AtMeScreenModel extends StoryListModel {
   static final fromStateAndStore =
       (AtMeScreenState state) => (Store<AppState> store) => AtMeScreenModel(
             loading: store
-                .state.uiState.content.userData[selectUID(store)].atMe?.loading,
+                .state.uiState.content.userData[selectUID(store)]?.atMe?.loading,
             lastError: store.state.uiState.content.userData[selectUID(store)]
-                .atMe?.lastError,
+                ?.atMe?.lastError,
             storyList:
-                store.state.uiState.content.userData[selectUID(store)].atMe,
+                store.state.uiState.content.userData[selectUID(store)]?.atMe,
             uid: selectUID(store),
           );
 
@@ -80,7 +80,7 @@ class AtMeScreenModel extends StoryListModel {
 
   @override
   APIRequest get loadMoreRequest {
-    if (storyList.nexttime == 0) {
+    if (storyList == null || storyList.nexttime == 0) {
       return null;
     }
 
@@ -106,6 +106,9 @@ class AtMeScreenModel extends StoryListModel {
   @override
   Widget buildStoryListView(BuildContext context, StoryListState aState) {
     var state = aState as AtMeScreenState;
+    if (uid == -1) {
+      return super.buildGroupedListView(context);
+    }
     return super.buildStoryListView(context, state);
   }
 }

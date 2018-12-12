@@ -86,11 +86,13 @@ class SearchScreenState extends StoryListState<SearchScreen> {
 
   void startSearch(String s, int type) {
     _focusNode.unfocus();
-    setState(() {
-      searchString = s;
-      searchType = type;
-      isSearching = true;
-    });
+    if (s.length > 0) {
+      setState(() {
+        searchString = s;
+        searchType = type;
+        isSearching = true;
+      });
+    }
   }
 
   Widget buildTitleBar(BuildContext context) {
