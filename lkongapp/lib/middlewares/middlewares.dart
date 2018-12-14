@@ -54,7 +54,7 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
   //Filter all the actions and do dispatch another action if necessary
   if (action is LoginSuccess) {
     User user = action.user;
-    store.dispatch(UserInfoRequest(null, user));
+    store.dispatch(UserInfoRequest(null, user.uid));
     if (selectSetting(store).autoPunch) {
       store.dispatch(PunchCardRequest(null, user));
     }

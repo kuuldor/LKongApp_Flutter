@@ -70,7 +70,7 @@ Future<Map> _handleHttp(
         data = response.body;
       }
 
-      // print(json.decode(data));
+      // print(data);
       try {
         result = dataParser(data);
       } catch (e) {
@@ -302,7 +302,8 @@ Future<Map> getUserInfo(Map args) {
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
-      dataParser: _parseResponseBody(UserInfo.fromJson));
+      dataParser: _parseResponseBody(UserInfo.fromJson),
+      preProcessor: numMapperBuiler(["gender"]));
 }
 
 Future<Map> getFollowList() {

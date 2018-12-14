@@ -83,7 +83,7 @@ class AppDrawer extends StatelessWidget {
     bool isAuthed = viewModel.authState.isAuthed;
 
     if (!viewModel.loading && user != null && info == null) {
-      dispatchAction(context)(UserInfoRequest(null, user));
+      dispatchAction(context)(UserInfoRequest(null, user.uid));
     }
 
     var nameLine = <Widget>[Text(user?.identity ?? "")];

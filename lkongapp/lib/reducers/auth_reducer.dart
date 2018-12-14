@@ -36,8 +36,13 @@ AuthState _loginFailed(AuthState state, action) {
 
 AuthState _userInfoSucceeded(AuthState state, UserInfoSuccess action) {
   UserInfo info = action.userInfo;
-  return state.rebuild((b) => b.userRepo.updateValue(
-      info.uid, (v) => v.rebuild((b) => b..userInfo.replace(info))));
+  final user = state.userRepo[info.uid];
+  var newState = state;
+  if (user != null) {
+    newState = newState.rebuild((b) => b.userRepo.updateValue(
+        info.uid, (v) => v.rebuild((b) => b..userInfo.replace(info))));
+  }
+  return newState;
 }
 
 AuthState _userInfoFailed(AuthState state, UserInfoFailure action) {
@@ -50,4 +55,3 @@ AuthState _logoutSucceeded(AuthState state, action) {
     ..currentUser = -1
     ..error = null);
 }
-

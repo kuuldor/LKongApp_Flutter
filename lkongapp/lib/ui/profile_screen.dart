@@ -4,6 +4,7 @@ import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/items/user_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
+import 'package:lkongapp/ui/tools/user_icon.dart';
 import 'package:material_search/material_search.dart';
 import 'dart:async';
 
@@ -25,10 +26,11 @@ import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 
+const fetchTypeNone = -1;
 const fetchTypeStory = 0;
 const fetchTypeFans = 1;
 const fetchTypeFollow = 2;
-const fetchTypeDigest = 2;
+const fetchTypeDigest = 3;
 
 class ProfileScreen extends StatefulWidget {
   final UserInfo user;
@@ -47,7 +49,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   final _scrollController = ScrollController();
 
   ProfileScreenState({
-    this.fetchType: fetchTypeStory,
+    this.fetchType: fetchTypeNone,
     @required this.user,
   });
 
@@ -89,8 +91,10 @@ class ProfileScreenModel extends FetchedListModel {
 
   static final fromStateAndStore = (ProfileScreenState state) =>
       (Store<AppState> store) => ProfileScreenModel(
-            loading: store.state.uiState.content.searchResult.loading,
-            lastError: store.state.uiState.content.searchResult.lastError,
+            loading:
+                store.state.uiState.content.profiles[state.user.uid]?.loading,
+            lastError:
+                store.state.uiState.content.profiles[state.user.uid]?.lastError,
             profile: store.state.uiState.content.profiles[state.user.uid],
             fetchType: state.fetchType,
             user: state.user,
@@ -167,8 +171,13 @@ class ProfileScreenModel extends FetchedListModel {
     return SliverAppBar(
       expandedHeight: 240.0,
       flexibleSpace: FlexibleSpaceBar(
-          centerTitle: true,
-          title: Text(stripHtmlTag(user.username)),
+          title: Row(
+            children: <Widget>[
+              Text(stripHtmlTag(user.username)),
+              Padding(
+                  padding: EdgeInsets.only(left: 8.0), child: verifyIcon(user)),
+            ],
+          ),
           background: Stack(
             fit: StackFit.expand,
             children: <Widget>[
@@ -183,12 +192,29 @@ class ProfileScreenModel extends FetchedListModel {
                   Container(
                       padding: EdgeInsets.only(left: 24.0, top: 8.0),
                       alignment: Alignment.centerLeft,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: CachedNetworkImageProvider(
-                            avatarForUserID(user.uid),
-                            imageOnError: "assets/noavatar.png"),
-                        radius: 48.0,
+                      child: Row(
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: CachedNetworkImageProvider(
+                                avatarForUserID(user.uid),
+                                imageOnError: "assets/noavatar.png"),
+                            radius: 48.0,
+                          ),
+                          Expanded(
+                            child: Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: user.verifymessage != null
+                                    ? Text(
+                                        stripHtmlTag(user.verifymessage),
+                                        style: theme.themeData.textTheme.title
+                                            .copyWith(
+                                                fontSize: 22,
+                                                color: Colors.white),
+                                      )
+                                    : Container()),
+                          ),
+                        ],
                       ))
                 ],
               )
@@ -243,18 +269,76 @@ class ProfileScreenModel extends FetchedListModel {
 
   @override
   Widget headerForSection(BuildContext context, {int section}) {
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    var list = <Widget>[];
     String error = lastError;
-    if (error != null && error != "") {
-      return Container(
+    if (error != null && error.length > 0) {
+      list.add(Container(
           color: Colors.red[500],
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           alignment: Alignment.centerLeft,
           child: Text(
             "网络错误：$error。请稍后重试",
             style: const TextStyle(color: Colors.white),
-          ));
+          )));
     }
-    return null;
+
+    if (profile != null) {
+      list.add(Container(
+          height: 48.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                  child: OutlineButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('主题'),
+                    Text("${profile.user.threads}")
+                  ],
+                ),
+                onPressed: () {},
+              )),
+              Expanded(
+                  child: OutlineButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('粉丝'),
+                    Text("${profile.user.fansnum}")
+                  ],
+                ),
+                onPressed: () {},
+              )),
+              Expanded(
+                  child: OutlineButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('关注'),
+                    Text("${profile.user.followuidnum}")
+                  ],
+                ),
+                onPressed: () {},
+              )),
+              Expanded(
+                  child: OutlineButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('精华'),
+                    Text("${profile.user.digestposts}")
+                  ],
+                ),
+                onPressed: () {},
+              )),
+            ],
+          )));
+    }
+    return Column(
+      children: list,
+    );
   }
 
   @override
@@ -299,10 +383,14 @@ class ProfileScreenModel extends FetchedListModel {
   Widget buildListView(BuildContext context) {
     if (profile == null) {
       if (loading != true && lastError == null) {
-        handleFetchFromScratch(context);
+        handleFetchUserInfo(context);
       }
     }
 
-    return super.buildGroupedListView(context);
+    return Scaffold(body: super.buildListView(context));
+  }
+
+  void handleFetchUserInfo(BuildContext context) {
+    dispatchAction(context)(UserInfoRequest(null, user.uid));
   }
 }

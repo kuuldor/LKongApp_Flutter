@@ -10,6 +10,7 @@ import 'story_reducer.dart';
 import 'forum_reducer.dart';
 import 'userdata_reducer.dart';
 import 'search_reducer.dart';
+import 'profile_reducer.dart';
 
 final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIRequest>(_contentRequested),
@@ -43,5 +44,6 @@ ContentCache _contentReducer(ContentCache content, action) {
     ..forumInfo.replace(forumContentsReducer(content.forumInfo, action))
     ..userData.replace(userDataReducer(content.userData, action))
     ..searchResult.replace(searchResultReducer(content.searchResult, action))
+    ..profiles.replace(profileReducer(content.profiles, action))
     ..forumRepo.replace(forumRepoReducer(content.forumRepo, action)));
 }

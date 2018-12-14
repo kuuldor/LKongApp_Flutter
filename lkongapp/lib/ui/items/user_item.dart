@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/models/user.dart';
+import 'package:lkongapp/ui/tools/user_icon.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 class UserItem extends StatelessWidget {
@@ -46,13 +47,7 @@ class UserItem extends StatelessWidget {
                 ),
               ),
             ),
-            user.verify == true
-                ? Column(
-                    children: <Widget>[
-                      Icon(Icons.verified_user, color: htmlColor("#ff8833"),),
-                    ],
-                  )
-                : Container(),
+            verifyIcon(user),
           ],
         ),
       ]),

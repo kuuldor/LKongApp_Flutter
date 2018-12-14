@@ -37,11 +37,6 @@ BuiltMap<int, UserData> _punchCardSucceeded(
         ifAbsent: () => UserData().rebuild(update)));
 }
 
-enum GetMyDataRequestType {
-  New,
-  Refresh,
-  LoadMore,
-}
 final _favoriteReducer = combineReducers<BuiltMap<int, UserData>>([
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesNewRequest>(
       _getMyFavoritesNew),

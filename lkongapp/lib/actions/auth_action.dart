@@ -30,13 +30,13 @@ class LoginFailure extends APIFailure with StopLoading {
 }
 
 class UserInfoRequest extends APIRequest with StartLoading {
-  User user;
+  int user;
 
   UserInfoRequest(Completer completer, this.user)
       : super(
             completer: completer,
             api: USERINFO_API,
-            parameters: {"id": user.uid, "forceRenew": true});
+            parameters: {"id": user, "forceRenew": true});
 
   @override
   CreateFailure get badResponse => (error) => UserInfoFailure(this, error);
@@ -79,10 +79,7 @@ class FollowListRequest extends APIRequest with StartLoading {
   User user;
 
   FollowListRequest(Completer completer, this.user)
-      : super(
-            completer: completer,
-            api: FOLLOWLIST_API,
-            parameters: {});
+      : super(completer: completer, api: FOLLOWLIST_API, parameters: {});
 
   @override
   CreateFailure get badResponse => (error) => FollowListFailure(this, error);
@@ -106,17 +103,13 @@ class PunchCardRequest extends APIRequest with StartLoading {
   User user;
 
   PunchCardRequest(Completer completer, this.user)
-      : super(
-            completer: completer,
-            api: PUNCHCARD_API,
-            parameters: {});
+      : super(completer: completer, api: PUNCHCARD_API, parameters: {});
 
   @override
   CreateFailure get badResponse => (error) => PunchCardFailure(this, error);
 
   @override
-  CreateSuccess get goodResponse =>
-      (result) => PunchCardSuccess(this, result);
+  CreateSuccess get goodResponse => (result) => PunchCardSuccess(this, result);
 }
 
 class PunchCardSuccess extends APISuccess with StopLoading {
