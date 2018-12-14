@@ -98,6 +98,9 @@ abstract class StoryListModel extends FetchedListModel {
   Function startTimer;
 
   @override
+  bool get initLoaded => storyList != null && storyList.current != 0;
+
+  @override
   Widget createListItem(BuildContext context, int index) {
     Story story = storyList.stories[index];
 

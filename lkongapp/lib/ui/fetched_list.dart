@@ -18,6 +18,8 @@ abstract class FetchedListModel extends GroupedListModel {
   bool get loading;
   String get lastError;
 
+  bool get initLoaded;
+
   // Total count of items, including different sections
   int get itemCount;
 
@@ -123,7 +125,7 @@ abstract class FetchedListModel extends GroupedListModel {
 
   @override
   Widget fillupForEmptyView(BuildContext context) {
-    if ((itemCount == null || itemCount == 0) && loading == true) {
+    if (!initLoaded && loading == true) {
       return Center(child: CircularProgressIndicator());
     } else {
       return null;
@@ -131,32 +133,14 @@ abstract class FetchedListModel extends GroupedListModel {
   }
 
   Widget buildListView(BuildContext context) {
-    if (itemCount == null || itemCount == 0) {
-      if (lastError == null) {
-        handleFetchFromScratch(context);
-      }
+    if (!initLoaded && loading != true && lastError == null) {
+      handleFetchFromScratch(context);
     }
 
     listIsReady(context);
 
     Widget listView;
-    // if (lastError == null) {
     listView = super.buildGroupedListView(context);
-    // } else {
-    //   final theme = LKModeledApp.modelOf(context).theme;
-
-    //   listView = SingleChildScrollView(
-    //     controller: _scrollController,
-    //     child: Container(
-    //       height: MediaQuery.of(context).size.height,
-    //       child: Text(
-    //         "网络错误：\n$lastError\n\n请稍后下拉更新重试",
-    //         style: theme.themeData.textTheme.subhead
-    //             .copyWith(color: Colors.red, fontSize: 24.0),
-    //       ),
-    //     ),
-    //   );
-    // }
 
     if (refreshRequest == null) {
       return listView;

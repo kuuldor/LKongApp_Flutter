@@ -214,8 +214,16 @@ class SearchScreenModel extends FetchedListModel {
   @override
   int get itemCount {
     int count;
+    int type = searchResult.searchType;
+    BuiltList list = getSearchList(type);
+    count = list?.length ?? 0;
+
+    return count;
+  }
+
+  BuiltList getSearchList(int type) {
     BuiltList list;
-    switch (searchResult.searchType) {
+    switch (type) {
       case searchTypeStory:
         list = searchResult?.stories?.stories;
         break;
@@ -226,9 +234,23 @@ class SearchScreenModel extends FetchedListModel {
         list = searchResult?.forums?.forumInfo;
         break;
     }
-    count = list?.length ?? 0;
+    return list;
+  }
 
-    return count;
+  getSearchResult(int type) {
+    var result;
+    switch (type) {
+      case searchTypeStory:
+        result = searchResult?.stories;
+        break;
+      case searchTypeUser:
+        result = searchResult?.users;
+        break;
+      case searchTypeForum:
+        result = searchResult?.forums;
+        break;
+    }
+    return result;
   }
 
   @override
@@ -236,22 +258,26 @@ class SearchScreenModel extends FetchedListModel {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     var item;
 
+    final list = getSearchList(searchResult.searchType);
+    final object = list[index];
+    assert(object != null, "$list doesn't have ojbect at $index");
+
     if (searchResult.searchType == searchTypeStory) {
-      Story story = searchResult.stories.stories[index];
+      Story story = object as Story;
 
       item = StoryItem(
         story: story,
         onTap: () => onStoryTap(context, story),
       );
     } else if (searchResult.searchType == searchTypeUser) {
-      UserInfo user = searchResult.users.user[index];
+      UserInfo user = object as UserInfo;
 
       item = UserItem(
         user: user,
         onTap: () => onUserTap(context, user),
       );
     } else if (searchResult.searchType == searchTypeForum) {
-      ForumInfoResult info = searchResult.forums.forumInfo[index];
+      ForumInfoResult info = object as ForumInfoResult;
 
       Forum forum = Forum().rebuild((b) => b
         ..fid = info.fid
@@ -291,18 +317,8 @@ class SearchScreenModel extends FetchedListModel {
 
   @override
   APIRequest get loadMoreRequest {
-    int nexttime;
-    switch (searchType) {
-      case searchTypeStory:
-        nexttime = searchResult.stories?.nexttime;
-        break;
-      case searchTypeUser:
-        nexttime = searchResult.users?.nexttime;
-        break;
-      case searchTypeForum:
-        nexttime = searchResult.forums?.nexttime;
-        break;
-    }
+    final result = getSearchResult(searchType);
+    int nexttime = result?.nexttime;
 
     if (nexttime == null || nexttime == 0) {
       return null;
@@ -321,23 +337,29 @@ class SearchScreenModel extends FetchedListModel {
 
   @override
   Widget buildListView(BuildContext context) {
-    var placeHolder;
-    if (searchString != searchResult.searchString ||
-        searchType != searchResult.searchType) {
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    if (!initLoaded) {
       if (loading != true && lastError == null) {
         handleFetchFromScratch(context);
       }
-      placeHolder = Center(child: CircularProgressIndicator());
     }
-
-    if (placeHolder != null) {
-      return SliverList(
-        delegate: SliverChildListDelegate(
-          [placeHolder],
+    final fillup = fillupForEmptyView(context);
+    if (fillup != null) {
+      return SliverFillRemaining(
+        child: Container(
+          color: theme.themeData.backgroundColor,
+          child: fillup,
         ),
       );
     }
 
     return super.builderSection(context, 0);
+  }
+
+  @override
+  bool get initLoaded {
+    return searchString == searchResult.searchString &&
+        searchType == searchResult.searchType &&
+        getSearchResult(searchType) != null;
   }
 }

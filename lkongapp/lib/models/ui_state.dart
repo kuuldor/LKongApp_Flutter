@@ -69,10 +69,6 @@ abstract class Profile implements Built<Profile, ProfileBuilder> {
   factory Profile([updates(ProfileBuilder b)]) => _$Profile((b) => b
     ..loading = false
     ..user.replace(UserInfo())
-    ..stories.replace(StoryFetchList())
-    ..fans.replace(SearchUserResult())
-    ..digests.replace(StoryFetchList())
-    ..follows.replace(SearchUserResult())
     ..update(updates));
 
   @nullable
@@ -81,12 +77,13 @@ abstract class Profile implements Built<Profile, ProfileBuilder> {
 
   UserInfo get user;
 
+  @nullable
   StoryFetchList get stories;
-
+  @nullable
   SearchUserResult get fans;
-
+  @nullable
   StoryFetchList get digests;
-
+  @nullable
   SearchUserResult get follows;
 }
 
@@ -98,9 +95,6 @@ abstract class SearchResult
         ..loading = false
         ..searchString = ""
         ..searchType = -1
-        ..stories.replace(StoryFetchList())
-        ..users.replace(SearchUserResult())
-        ..forums.replace(SearchForumResult())
         ..update(updates));
 
   @nullable
@@ -108,11 +102,11 @@ abstract class SearchResult
   bool get loading;
   String get searchString;
   int get searchType;
-
+  @nullable
   StoryFetchList get stories;
-
+  @nullable
   SearchUserResult get users;
-
+  @nullable
   SearchForumResult get forums;
 }
 

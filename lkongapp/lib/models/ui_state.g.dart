@@ -459,18 +459,6 @@ class _$Profile extends Profile {
     if (user == null) {
       throw new BuiltValueNullFieldError('Profile', 'user');
     }
-    if (stories == null) {
-      throw new BuiltValueNullFieldError('Profile', 'stories');
-    }
-    if (fans == null) {
-      throw new BuiltValueNullFieldError('Profile', 'fans');
-    }
-    if (digests == null) {
-      throw new BuiltValueNullFieldError('Profile', 'digests');
-    }
-    if (follows == null) {
-      throw new BuiltValueNullFieldError('Profile', 'follows');
-    }
   }
 
   @override
@@ -594,23 +582,23 @@ class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
               lastError: lastError,
               loading: loading,
               user: user.build(),
-              stories: stories.build(),
-              fans: fans.build(),
-              digests: digests.build(),
-              follows: follows.build());
+              stories: _stories?.build(),
+              fans: _fans?.build(),
+              digests: _digests?.build(),
+              follows: _follows?.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'user';
         user.build();
         _$failedField = 'stories';
-        stories.build();
+        _stories?.build();
         _$failedField = 'fans';
-        fans.build();
+        _fans?.build();
         _$failedField = 'digests';
-        digests.build();
+        _digests?.build();
         _$failedField = 'follows';
-        follows.build();
+        _follows?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'Profile', _$failedField, e.toString());
@@ -658,15 +646,6 @@ class _$SearchResult extends SearchResult {
     }
     if (searchType == null) {
       throw new BuiltValueNullFieldError('SearchResult', 'searchType');
-    }
-    if (stories == null) {
-      throw new BuiltValueNullFieldError('SearchResult', 'stories');
-    }
-    if (users == null) {
-      throw new BuiltValueNullFieldError('SearchResult', 'users');
-    }
-    if (forums == null) {
-      throw new BuiltValueNullFieldError('SearchResult', 'forums');
     }
   }
 
@@ -792,18 +771,18 @@ class SearchResultBuilder
               loading: loading,
               searchString: searchString,
               searchType: searchType,
-              stories: stories.build(),
-              users: users.build(),
-              forums: forums.build());
+              stories: _stories?.build(),
+              users: _users?.build(),
+              forums: _forums?.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'stories';
-        stories.build();
+        _stories?.build();
         _$failedField = 'users';
-        users.build();
+        _users?.build();
         _$failedField = 'forums';
-        forums.build();
+        _forums?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'SearchResult', _$failedField, e.toString());

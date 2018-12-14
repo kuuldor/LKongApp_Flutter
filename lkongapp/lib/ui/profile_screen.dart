@@ -155,6 +155,13 @@ class ProfileScreenModel extends FetchedListModel {
   }
 
   @override
+  bool get initLoaded {
+    final result = getFetchResult(fetchType);
+
+    return result != null;
+  }
+
+  @override
   SliverAppBar buildAppBar(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     return SliverAppBar(

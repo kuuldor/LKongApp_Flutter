@@ -64,7 +64,8 @@ SearchResult _searchResultFailed(SearchResult repo, SearchFailure action) {
 SearchForumResult searchForumSucceeded(
     SearchForumResult forums, SearchForumResult result) {
   int nexttime = result.forumInfo.length > 0 ? result.nexttime : 0;
-  return forums.rebuild((b) => b
+  final list = forums ?? SearchForumResult();
+  return list.rebuild((b) => b
     ..nexttime = nexttime
     ..forumInfo.addAll(result.forumInfo ?? []));
 }
@@ -72,7 +73,8 @@ SearchForumResult searchForumSucceeded(
 SearchUserResult searchUserSucceeded(
     SearchUserResult users, SearchUserResult result) {
   int nexttime = result.user.length > 0 ? result.nexttime : 0;
-  return users.rebuild((b) => b
+  final list = users ?? SearchUserResult();
+  return list.rebuild((b) => b
     ..nexttime = nexttime
     ..user.addAll(result.user ?? []));
 }
@@ -80,7 +82,8 @@ SearchUserResult searchUserSucceeded(
 StoryFetchList searchStorySucceeded(
     StoryFetchList list, StoryListResult result) {
   int nexttime = result.data.length > 0 ? result.nexttime : 0;
-  return list.rebuild((b) => b
+  final newlist = list ?? StoryFetchList();
+  return newlist.rebuild((b) => b
     ..nexttime = nexttime
     ..stories.addAll(result.data ?? []));
 }

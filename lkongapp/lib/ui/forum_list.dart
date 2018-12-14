@@ -193,7 +193,7 @@ class ForumListModel extends FetchedListModel {
 
     switch (section) {
       case 0:
-        if (followed != null && followed.length > 0) {
+        if (repo.forums != null && followed != null && followed.length > 0) {
           headerText = '我的关注';
         }
         break;
@@ -228,4 +228,7 @@ class ForumListModel extends FetchedListModel {
     // No need to implement this. Only used by one-section list
     return null;
   }
+
+  @override
+  bool get initLoaded => repo.forums.length > 0;
 }
