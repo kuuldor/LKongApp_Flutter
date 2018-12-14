@@ -91,7 +91,7 @@ class AtMeScreenModel extends StoryListModel {
 
   @override
   APIRequest get refreshRequest {
-    if (storyList.current == 0) {
+    if (storyList == null || storyList.current == 0) {
       return null;
     }
 

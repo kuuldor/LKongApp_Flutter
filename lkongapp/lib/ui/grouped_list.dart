@@ -21,7 +21,10 @@ abstract class GroupedListModel {
   Widget cellForSectionAndIndex(BuildContext context,
       {@required int section, @required int index});
 
+  Widget fillupForEmptyView(BuildContext context) => null;
+
   List<Widget> buildSlivers(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     List<Widget> slivers = new List<Widget>();
 
     SliverAppBar bar = buildAppBar(context);
@@ -33,6 +36,12 @@ abstract class GroupedListModel {
       slivers.add(builderSection(context, i));
     }
 
+    slivers.add(SliverFillRemaining(
+      child: Container(
+        color: theme.backgroundColor,
+        child: fillupForEmptyView(context),
+      ),
+    ));
     return slivers;
   }
 

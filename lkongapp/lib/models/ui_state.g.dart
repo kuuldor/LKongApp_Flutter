@@ -214,6 +214,8 @@ class _$ContentCache extends ContentCache {
   final BuiltMap<int, UserData> userData;
   @override
   final SearchResult searchResult;
+  @override
+  final BuiltMap<int, Profile> profiles;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
@@ -225,7 +227,8 @@ class _$ContentCache extends ContentCache {
       this.forumInfo,
       this.forumRepo,
       this.userData,
-      this.searchResult})
+      this.searchResult,
+      this.profiles})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
@@ -244,6 +247,9 @@ class _$ContentCache extends ContentCache {
     }
     if (searchResult == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'searchResult');
+    }
+    if (profiles == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'profiles');
     }
   }
 
@@ -264,7 +270,8 @@ class _$ContentCache extends ContentCache {
         forumInfo == other.forumInfo &&
         forumRepo == other.forumRepo &&
         userData == other.userData &&
-        searchResult == other.searchResult;
+        searchResult == other.searchResult &&
+        profiles == other.profiles;
   }
 
   @override
@@ -273,12 +280,14 @@ class _$ContentCache extends ContentCache {
         $jc(
             $jc(
                 $jc(
-                    $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
-                        storyRepo.hashCode),
-                    forumInfo.hashCode),
-                forumRepo.hashCode),
-            userData.hashCode),
-        searchResult.hashCode));
+                    $jc(
+                        $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
+                            storyRepo.hashCode),
+                        forumInfo.hashCode),
+                    forumRepo.hashCode),
+                userData.hashCode),
+            searchResult.hashCode),
+        profiles.hashCode));
   }
 
   @override
@@ -290,7 +299,8 @@ class _$ContentCache extends ContentCache {
           ..add('forumInfo', forumInfo)
           ..add('forumRepo', forumRepo)
           ..add('userData', userData)
-          ..add('searchResult', searchResult))
+          ..add('searchResult', searchResult)
+          ..add('profiles', profiles))
         .toString();
   }
 }
@@ -337,6 +347,12 @@ class ContentCacheBuilder
   set searchResult(SearchResultBuilder searchResult) =>
       _$this._searchResult = searchResult;
 
+  MapBuilder<int, Profile> _profiles;
+  MapBuilder<int, Profile> get profiles =>
+      _$this._profiles ??= new MapBuilder<int, Profile>();
+  set profiles(MapBuilder<int, Profile> profiles) =>
+      _$this._profiles = profiles;
+
   ContentCacheBuilder();
 
   ContentCacheBuilder get _$this {
@@ -348,6 +364,7 @@ class ContentCacheBuilder
       _forumRepo = _$v.forumRepo?.toBuilder();
       _userData = _$v.userData?.toBuilder();
       _searchResult = _$v.searchResult?.toBuilder();
+      _profiles = _$v.profiles?.toBuilder();
       _$v = null;
     }
     return this;
@@ -378,7 +395,8 @@ class ContentCacheBuilder
               forumInfo: forumInfo.build(),
               forumRepo: forumRepo.build(),
               userData: userData.build(),
-              searchResult: searchResult.build());
+              searchResult: searchResult.build(),
+              profiles: profiles.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -394,9 +412,208 @@ class ContentCacheBuilder
         userData.build();
         _$failedField = 'searchResult';
         searchResult.build();
+        _$failedField = 'profiles';
+        profiles.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'ContentCache', _$failedField, e.toString());
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$Profile extends Profile {
+  @override
+  final String lastError;
+  @override
+  final bool loading;
+  @override
+  final UserInfo user;
+  @override
+  final StoryFetchList stories;
+  @override
+  final SearchUserResult fans;
+  @override
+  final StoryFetchList digests;
+  @override
+  final SearchUserResult follows;
+
+  factory _$Profile([void updates(ProfileBuilder b)]) =>
+      (new ProfileBuilder()..update(updates)).build();
+
+  _$Profile._(
+      {this.lastError,
+      this.loading,
+      this.user,
+      this.stories,
+      this.fans,
+      this.digests,
+      this.follows})
+      : super._() {
+    if (loading == null) {
+      throw new BuiltValueNullFieldError('Profile', 'loading');
+    }
+    if (user == null) {
+      throw new BuiltValueNullFieldError('Profile', 'user');
+    }
+    if (stories == null) {
+      throw new BuiltValueNullFieldError('Profile', 'stories');
+    }
+    if (fans == null) {
+      throw new BuiltValueNullFieldError('Profile', 'fans');
+    }
+    if (digests == null) {
+      throw new BuiltValueNullFieldError('Profile', 'digests');
+    }
+    if (follows == null) {
+      throw new BuiltValueNullFieldError('Profile', 'follows');
+    }
+  }
+
+  @override
+  Profile rebuild(void updates(ProfileBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  ProfileBuilder toBuilder() => new ProfileBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is Profile &&
+        lastError == other.lastError &&
+        loading == other.loading &&
+        user == other.user &&
+        stories == other.stories &&
+        fans == other.fans &&
+        digests == other.digests &&
+        follows == other.follows;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc(
+                $jc(
+                    $jc($jc($jc(0, lastError.hashCode), loading.hashCode),
+                        user.hashCode),
+                    stories.hashCode),
+                fans.hashCode),
+            digests.hashCode),
+        follows.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('Profile')
+          ..add('lastError', lastError)
+          ..add('loading', loading)
+          ..add('user', user)
+          ..add('stories', stories)
+          ..add('fans', fans)
+          ..add('digests', digests)
+          ..add('follows', follows))
+        .toString();
+  }
+}
+
+class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
+  _$Profile _$v;
+
+  String _lastError;
+  String get lastError => _$this._lastError;
+  set lastError(String lastError) => _$this._lastError = lastError;
+
+  bool _loading;
+  bool get loading => _$this._loading;
+  set loading(bool loading) => _$this._loading = loading;
+
+  UserInfoBuilder _user;
+  UserInfoBuilder get user => _$this._user ??= new UserInfoBuilder();
+  set user(UserInfoBuilder user) => _$this._user = user;
+
+  StoryFetchListBuilder _stories;
+  StoryFetchListBuilder get stories =>
+      _$this._stories ??= new StoryFetchListBuilder();
+  set stories(StoryFetchListBuilder stories) => _$this._stories = stories;
+
+  SearchUserResultBuilder _fans;
+  SearchUserResultBuilder get fans =>
+      _$this._fans ??= new SearchUserResultBuilder();
+  set fans(SearchUserResultBuilder fans) => _$this._fans = fans;
+
+  StoryFetchListBuilder _digests;
+  StoryFetchListBuilder get digests =>
+      _$this._digests ??= new StoryFetchListBuilder();
+  set digests(StoryFetchListBuilder digests) => _$this._digests = digests;
+
+  SearchUserResultBuilder _follows;
+  SearchUserResultBuilder get follows =>
+      _$this._follows ??= new SearchUserResultBuilder();
+  set follows(SearchUserResultBuilder follows) => _$this._follows = follows;
+
+  ProfileBuilder();
+
+  ProfileBuilder get _$this {
+    if (_$v != null) {
+      _lastError = _$v.lastError;
+      _loading = _$v.loading;
+      _user = _$v.user?.toBuilder();
+      _stories = _$v.stories?.toBuilder();
+      _fans = _$v.fans?.toBuilder();
+      _digests = _$v.digests?.toBuilder();
+      _follows = _$v.follows?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(Profile other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$Profile;
+  }
+
+  @override
+  void update(void updates(ProfileBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$Profile build() {
+    _$Profile _$result;
+    try {
+      _$result = _$v ??
+          new _$Profile._(
+              lastError: lastError,
+              loading: loading,
+              user: user.build(),
+              stories: stories.build(),
+              fans: fans.build(),
+              digests: digests.build(),
+              follows: follows.build());
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'user';
+        user.build();
+        _$failedField = 'stories';
+        stories.build();
+        _$failedField = 'fans';
+        fans.build();
+        _$failedField = 'digests';
+        digests.build();
+        _$failedField = 'follows';
+        follows.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'Profile', _$failedField, e.toString());
       }
       rethrow;
     }

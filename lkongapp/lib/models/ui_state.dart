@@ -57,8 +57,37 @@ abstract class ContentCache
   BuiltMap<int, StoryPageList> get storyRepo;
   ForumLists get forumInfo;
   BuiltMap<int, StoryFetchList> get forumRepo;
+  //Private data for login user
   BuiltMap<int, UserData> get userData;
   SearchResult get searchResult;
+  //Public data for all users
+  BuiltMap<int, Profile> get profiles;
+}
+
+abstract class Profile implements Built<Profile, ProfileBuilder> {
+  Profile._();
+  factory Profile([updates(ProfileBuilder b)]) => _$Profile((b) => b
+    ..loading = false
+    ..user.replace(UserInfo())
+    ..stories.replace(StoryFetchList())
+    ..fans.replace(SearchUserResult())
+    ..digests.replace(StoryFetchList())
+    ..follows.replace(SearchUserResult())
+    ..update(updates));
+
+  @nullable
+  String get lastError;
+  bool get loading;
+
+  UserInfo get user;
+
+  StoryFetchList get stories;
+
+  SearchUserResult get fans;
+
+  StoryFetchList get digests;
+
+  SearchUserResult get follows;
 }
 
 abstract class SearchResult

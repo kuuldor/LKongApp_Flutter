@@ -74,13 +74,14 @@ class ProfileScreenState extends State<ProfileScreen> {
 
 class ProfileScreenModel extends FetchedListModel {
   final UserInfo user;
-  // final Profile profile;
+  final Profile profile;
   final bool loading;
   final String lastError;
   final int fetchType;
 
   ProfileScreenModel({
     @required this.user,
+    @required this.profile,
     @required this.loading,
     @required this.lastError,
     @required this.fetchType,
@@ -90,7 +91,7 @@ class ProfileScreenModel extends FetchedListModel {
       (Store<AppState> store) => ProfileScreenModel(
             loading: store.state.uiState.content.searchResult.loading,
             lastError: store.state.uiState.content.searchResult.lastError,
-            // profile: store.state.uiState.content.profile,
+            profile: store.state.uiState.content.profiles[state.user.uid],
             fetchType: state.fetchType,
             user: state.user,
           );
@@ -109,24 +110,48 @@ class ProfileScreenModel extends FetchedListModel {
   @override
   int get itemCount {
     int count;
-    BuiltList list;
-    switch (fetchType) {
-      case fetchTypeStory:
-        // list = profile?.stories?.stories;
-        break;
-      case fetchTypeFans:
-        // list = profile?.fans?.user;
-        break;
-      case fetchTypeFollow:
-        // list = profile?.follows?.user;
-        break;
-      case fetchTypeDigest:
-        // list = profile?.digests?.stories;
-        break;
-    }
+    BuiltList list = getFetchList(fetchType);
     count = list?.length ?? 0;
 
     return count;
+  }
+
+  BuiltList getFetchList(int type) {
+    BuiltList list;
+    switch (type) {
+      case fetchTypeStory:
+        list = profile?.stories?.stories;
+        break;
+      case fetchTypeFans:
+        list = profile?.fans?.user;
+        break;
+      case fetchTypeFollow:
+        list = profile?.follows?.user;
+        break;
+      case fetchTypeDigest:
+        list = profile?.digests?.stories;
+        break;
+    }
+    return list;
+  }
+
+  getFetchResult(int type) {
+    var result;
+    switch (type) {
+      case fetchTypeStory:
+        result = profile?.stories;
+        break;
+      case fetchTypeFans:
+        result = profile?.fans;
+        break;
+      case fetchTypeFollow:
+        result = profile?.follows;
+        break;
+      case fetchTypeDigest:
+        result = profile?.digests;
+        break;
+    }
+    return result;
   }
 
   @override
@@ -172,29 +197,33 @@ class ProfileScreenModel extends FetchedListModel {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     var item;
 
+    final list = getFetchList(fetchType);
+    final object = list[index];
+    assert(object != null, "$list doesn't have item at index $index");
+
     if (fetchType == fetchTypeStory) {
-      Story story;
+      Story story = object as Story;
 
       item = StoryItem(
         story: story,
         onTap: () => onStoryTap(context, story),
       );
     } else if (fetchType == fetchTypeFans) {
-      UserInfo fan;
+      UserInfo fan = object as UserInfo;
 
       item = UserItem(
         user: fan,
         onTap: () {},
       );
     } else if (fetchType == fetchTypeFollow) {
-      UserInfo follow;
+      UserInfo follow = object as UserInfo;
 
       item = UserItem(
         user: follow,
         onTap: () {},
       );
     } else if (fetchType == fetchTypeDigest) {
-      Story digest;
+      Story digest = object as Story;
 
       item = StoryItem(
         story: digest,
@@ -231,21 +260,8 @@ class ProfileScreenModel extends FetchedListModel {
 
   @override
   APIRequest get loadMoreRequest {
-    int nexttime;
-    switch (fetchType) {
-      case fetchTypeStory:
-        // nexttime = profile.stories?.nexttime;
-        break;
-      case fetchTypeFans:
-        // nexttime = profile.fans?.nexttime;
-        break;
-      case fetchTypeFollow:
-        // nexttime = profile.follows?.nexttime;
-        break;
-      case fetchTypeDigest:
-        // nexttime = profile.digests?.nexttime;
-        break;
-    }
+    final result = getFetchResult(fetchType);
+    int nexttime = result?.nexttime;
 
     if (nexttime == null || nexttime == 0) {
       return null;
@@ -264,45 +280,22 @@ class ProfileScreenModel extends FetchedListModel {
   void listIsReady(BuildContext context) {}
 
   @override
-  Widget buildListView(BuildContext context) {
-    var placeHolder;
-    // if (profile == null) {
-    //   if (loading != true && lastError == null) {
-    //     handleFetchFromScratch(context);
-    //   }
-    //   placeHolder = Center(child: CircularProgressIndicator());
-    // }
-
-    if (placeHolder != null) {
-      return SliverList(
-        delegate: SliverChildListDelegate(
-          [placeHolder],
-        ),
-      );
+  Widget fillupForEmptyView(BuildContext context) {
+    if (profile == null && lastError == null) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return null;
     }
-
-    return super.buildGroupedListView(context);
   }
 
   @override
-  List<Widget> buildSlivers(BuildContext context) {
-    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    List<Widget> slivers = new List<Widget>();
-
-    SliverAppBar bar = buildAppBar(context);
-    if (bar != null) {
-      slivers.add(bar);
+  Widget buildListView(BuildContext context) {
+    if (profile == null) {
+      if (loading != true && lastError == null) {
+        handleFetchFromScratch(context);
+      }
     }
 
-    for (int i = 0; i < numberOfSections; i++) {
-      slivers.add(builderSection(context, i));
-    }
-
-    slivers.add(SliverFillRemaining(
-      child: Container(
-        color: theme.themeData.backgroundColor,
-      ),
-    ));
-    return slivers;
+    return super.buildGroupedListView(context);
   }
 }

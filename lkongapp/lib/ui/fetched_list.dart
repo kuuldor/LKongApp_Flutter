@@ -121,13 +121,19 @@ abstract class FetchedListModel extends GroupedListModel {
   void listIsReady(BuildContext context);
   Widget createListItem(BuildContext context, int index);
 
+  @override
+  Widget fillupForEmptyView(BuildContext context) {
+    if ((itemCount == null || itemCount == 0) && loading == true) {
+      return Center(child: CircularProgressIndicator());
+    } else {
+      return null;
+    }
+  }
+
   Widget buildListView(BuildContext context) {
     if (itemCount == null || itemCount == 0) {
-      if (loading == true) {
-        return Center(child: CircularProgressIndicator());
-      } else if (lastError == null) {
+      if (lastError == null) {
         handleFetchFromScratch(context);
-        return Container();
       }
     }
 

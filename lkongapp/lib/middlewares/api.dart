@@ -25,6 +25,7 @@ const FOLLOWLIST_API = "FOLLOWLIST";
 const PUNCHCARD_API = "PUNCHCARD";
 const MYDATA_API = "MYDATA";
 const SEARCH_API = "SEARCH";
+const USER_PROFILE_API = "USER_PROFILE";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -32,7 +33,7 @@ const endpoint = {
   "userInfo": "/index.php?mod=ajax&action=userconfig",
   "threadInfo": "/index.php?mod=ajax&action=threadconfig",
   "stories": "/index.php?mod=data&sars=index/",
-  "userStories": "/index.php?mod=data&sars=user/",
+  "userProfile": "/index.php?mod=data&sars=user/",
   "forumList": "/index.php?mod=ajax&action=forumlist",
   "forumInfo": "/index.php?mod=ajax&action=forumconfig",
   "square": "/index.php?mod=ajax&action=square",
