@@ -94,7 +94,7 @@ abstract class FetchedListModel extends GroupedListModel {
   }
 
   @override
-  SliverAppBar get appBar => null;
+  SliverAppBar buildAppBar(BuildContext context) => null;
 
   Future<Null> handleRefresh(BuildContext context) async {
     var request = refreshRequest;

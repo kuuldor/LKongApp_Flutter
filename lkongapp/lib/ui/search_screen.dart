@@ -25,8 +25,6 @@ import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 
-import 'story_list.dart';
-
 const searchTypeStory = 0;
 const searchTypeUser = 1;
 const searchTypeForum = 2;
@@ -40,7 +38,7 @@ class SearchScreen extends StatefulWidget {
   }
 }
 
-class SearchScreenState extends StoryListState<SearchScreen> {
+class SearchScreenState extends State<SearchScreen> {
   String searchString;
   int searchType;
   bool isSearching;
@@ -250,7 +248,7 @@ class SearchScreenModel extends FetchedListModel {
 
       item = UserItem(
         user: user,
-        onTap: () {},
+        onTap: () => onUserTap(context, user),
       );
     } else if (searchResult.searchType == searchTypeForum) {
       ForumInfoResult info = searchResult.forums.forumInfo[index];

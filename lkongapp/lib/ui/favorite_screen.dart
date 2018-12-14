@@ -55,7 +55,7 @@ class FavoriteScreenModel extends StoryListModel {
   });
 
   @override
-  SliverAppBar get appBar => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
         leading: DrawerButton(),
         title: Text('收藏'),
         floating: false,

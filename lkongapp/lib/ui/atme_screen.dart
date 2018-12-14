@@ -53,7 +53,7 @@ class AtMeScreenModel extends StoryListModel {
   });
 
   @override
-  SliverAppBar get appBar => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
         leading: DrawerButton(),
         title: Text('通知'),
         floating: false,
@@ -62,8 +62,8 @@ class AtMeScreenModel extends StoryListModel {
 
   static final fromStateAndStore =
       (AtMeScreenState state) => (Store<AppState> store) => AtMeScreenModel(
-            loading: store
-                .state.uiState.content.userData[selectUID(store)]?.atMe?.loading,
+            loading: store.state.uiState.content.userData[selectUID(store)]
+                ?.atMe?.loading,
             lastError: store.state.uiState.content.userData[selectUID(store)]
                 ?.atMe?.lastError,
             storyList:

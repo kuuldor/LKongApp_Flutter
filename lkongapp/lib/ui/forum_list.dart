@@ -38,7 +38,7 @@ class ForumListModel extends FetchedListModel {
   String get lastError => repo.lastError;
 
   @override
-  SliverAppBar get appBar => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
         leading: DrawerButton(),
         title: Text('版块'),
         floating: false,
@@ -199,7 +199,7 @@ class ForumListModel extends FetchedListModel {
         break;
       case 1:
         if (repo.forums != null && repo.forums.length > 0) {
-          headerText = '其他版块';
+          headerText = '版块列表';
         }
         break;
       case 2:

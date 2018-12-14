@@ -10,7 +10,7 @@ import 'package:lkongapp/actions/actions.dart';
 abstract class GroupedListModel {
   var scrollController = ScrollController();
 
-  SliverAppBar get appBar;
+  SliverAppBar buildAppBar(BuildContext context);
 
   int get numberOfSections;
 
@@ -24,7 +24,7 @@ abstract class GroupedListModel {
   List<Widget> buildSlivers(BuildContext context) {
     List<Widget> slivers = new List<Widget>();
 
-    SliverAppBar bar = appBar;
+    SliverAppBar bar = buildAppBar(context);
     if (bar != null) {
       slivers.add(bar);
     }

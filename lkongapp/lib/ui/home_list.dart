@@ -57,7 +57,7 @@ class HomeListModel extends StoryListModel {
   }
 
   @override
-  SliverAppBar get appBar => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
         leading: DrawerButton(),
         title: Text('首页'),
         floating: false,

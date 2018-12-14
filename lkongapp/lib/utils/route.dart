@@ -4,4 +4,5 @@ class LKongAppRoutes {
   static final story = "/story";
   static final forumStory = "/forum_story";
   static final settings = "/settings";
+  static final profile = "/profile";
 }
