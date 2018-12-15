@@ -58,7 +58,7 @@ class StoryItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  stripHtmlTag(story.subject),
+                  story.subject,
                   style: titleStyle,
                 ),
               ),

@@ -59,6 +59,7 @@ abstract class Story implements Built<Story, StoryBuilder> {
   @nullable
   @BuiltValueField(wireName: 'closed')
   int get closed;
+  @nullable
   @BuiltValueField(wireName: 'uid')
   int get uid;
 

@@ -8,7 +8,7 @@ import 'package:lkongapp/utils/globals.dart';
 
 import 'test_user.dart' as TestUser;
 
-Future<Null> loginTest() async {
+Future<Null> loginTestAccount() async {
   UserBuilder builder = UserBuilder()
     ..identity = TestUser.user['identity']
     ..password = TestUser.user['password'];
@@ -106,7 +106,7 @@ void main() {
   });
 
   test('Punch Card Test', () async {
-    await loginTest();
+    await loginTestAccount();
 
     await punchCard().then((map) {
       print(map.toString());
@@ -115,7 +115,7 @@ void main() {
   });
 
   test('Get Personal Data Test', () async {
-    await loginTest();
+    await loginTestAccount();
 
     await getPersonalData({"mode": 0}).then((map) {
       print(map.toString());
@@ -138,6 +138,25 @@ void main() {
       print(session.cookies.toString());
     });
     await searchLKong({"search": "小说", "type": 2}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+  });
+
+  test('UserProfile Test', () async {
+    await getUserProfile({"uid": 445098, "type": 0}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+    await getUserProfile({"uid": 445098, "type": 1}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+    await getUserProfile({"uid": 445098, "type": 2}).then((map) {
+      print(map.toString());
+      print(session.cookies.toString());
+    });
+    await getUserProfile({"uid": 445098, "type": 3}).then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });

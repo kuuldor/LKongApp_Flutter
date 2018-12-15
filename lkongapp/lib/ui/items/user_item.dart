@@ -25,13 +25,7 @@ class UserItem extends StatelessWidget {
       title: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              backgroundImage: CachedNetworkImageProvider(
-                  avatarForUserID(user.uid),
-                  imageOnError: "assets/noavatar.png"),
-              radius: 24.0,
-            ),
+            userAvatar(user.uid, 48.0),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -39,7 +33,7 @@ class UserItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      stripHtmlTag(user.username),
+                      user.username,
                       style: Theme.of(context).textTheme.title,
                     ),
                     // Text(timeAgoSinceDate(parseDatetime(forum.dateline))),
@@ -52,7 +46,7 @@ class UserItem extends StatelessWidget {
         ),
       ]),
       subtitle: user != null && user.customstatus.length > 0
-          ? Text(stripHtmlTag(user.customstatus), maxLines: 8)
+          ? Text(user.customstatus, maxLines: 8)
           : null,
     );
   }

@@ -193,7 +193,10 @@ class ForumListModel extends FetchedListModel {
 
     switch (section) {
       case 0:
-        if (repo.forums != null && followed != null && followed.length > 0) {
+        if (repo.forums != null &&
+            repo.forums.length > 0 &&
+            followed != null &&
+            followed.length > 0) {
           headerText = '我的关注';
         }
         break;

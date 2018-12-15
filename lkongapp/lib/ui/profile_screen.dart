@@ -53,7 +53,7 @@ class ProfileScreenState extends State<ProfileScreen> {
     @required this.user,
   });
 
-  void setProfileType(int newType) {
+  void setFetchType(int newType) {
     setState(() {
       fetchType = newType;
     });
@@ -75,18 +75,19 @@ class ProfileScreenState extends State<ProfileScreen> {
 }
 
 class ProfileScreenModel extends FetchedListModel {
-  final UserInfo user;
   final Profile profile;
   final bool loading;
   final String lastError;
-  final int fetchType;
+  final ProfileScreenState state;
+
+  final Function(int) changeFetchType;
 
   ProfileScreenModel({
-    @required this.user,
     @required this.profile,
     @required this.loading,
     @required this.lastError,
-    @required this.fetchType,
+    @required this.state,
+    @required this.changeFetchType,
   });
 
   static final fromStateAndStore = (ProfileScreenState state) =>
@@ -96,20 +97,24 @@ class ProfileScreenModel extends FetchedListModel {
             lastError:
                 store.state.uiState.content.profiles[state.user.uid]?.lastError,
             profile: store.state.uiState.content.profiles[state.user.uid],
-            fetchType: state.fetchType,
-            user: state.user,
+            state: state,
+            changeFetchType: (int newType) => state.setFetchType(newType),
           );
+
+  int get fetchType => state.fetchType;
+  UserInfo get user => state.user;
 
   @override
   bool operator ==(other) {
     return other is ProfileScreenModel &&
         loading == other.loading &&
         lastError == other.lastError &&
-        user.uid == other.user.uid;
+        state == other.state &&
+        profile == other.profile;
   }
 
   @override
-  int get hashCode => hash3(user.uid, loading, lastError);
+  int get hashCode => hashObjects([state, loading, lastError, profile]);
 
   @override
   int get itemCount {
@@ -173,7 +178,7 @@ class ProfileScreenModel extends FetchedListModel {
       flexibleSpace: FlexibleSpaceBar(
           title: Row(
             children: <Widget>[
-              Text(stripHtmlTag(user.username)),
+              Text(user.username),
               Padding(
                   padding: EdgeInsets.only(left: 8.0), child: verifyIcon(user)),
             ],
@@ -194,19 +199,13 @@ class ProfileScreenModel extends FetchedListModel {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: <Widget>[
-                          CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            backgroundImage: CachedNetworkImageProvider(
-                                avatarForUserID(user.uid),
-                                imageOnError: "assets/noavatar.png"),
-                            radius: 48.0,
-                          ),
+                          userAvatar(user.uid, 96.0),
                           Expanded(
                             child: Padding(
                                 padding: EdgeInsets.only(left: 8.0),
                                 child: user.verifymessage != null
                                     ? Text(
-                                        stripHtmlTag(user.verifymessage),
+                                        user.verifymessage,
                                         style: theme.themeData.textTheme.title
                                             .copyWith(
                                                 fontSize: 22,
@@ -288,52 +287,34 @@ class ProfileScreenModel extends FetchedListModel {
           height: 48.0,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                  child: OutlineButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('主题'),
-                    Text("${profile.user.threads}")
-                  ],
-                ),
-                onPressed: () {},
-              )),
-              Expanded(
-                  child: OutlineButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('粉丝'),
-                    Text("${profile.user.fansnum}")
-                  ],
-                ),
-                onPressed: () {},
-              )),
-              Expanded(
-                  child: OutlineButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('关注'),
-                    Text("${profile.user.followuidnum}")
-                  ],
-                ),
-                onPressed: () {},
-              )),
-              Expanded(
-                  child: OutlineButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('精华'),
-                    Text("${profile.user.digestposts}")
-                  ],
-                ),
-                onPressed: () {},
-              )),
-            ],
+            children: [
+              {'title': '主题', 'num': profile.user.threads, 'type': 0},
+              {'title': '粉丝', 'num': profile.user.fansnum, 'type': 1},
+              {'title': '关注', 'num': profile.user.followuidnum, 'type': 2},
+              {'title': '精华', 'num': profile.user.digestposts, 'type': 3},
+            ]
+                .map(
+                  (item) => Expanded(
+                        child: FlatButton(
+                          shape: OutlineInputBorder(
+                            borderSide: BorderSide(color: theme.textColor),
+                          ),
+                          disabledColor: theme.mainColor,
+                          disabledTextColor: theme.lightTextColor,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(item['title']),
+                              Text("${item['num']}")
+                            ],
+                          ),
+                          onPressed: fetchType != item['type']
+                              ? () => changeFetchType(item['type'])
+                              : null,
+                        ),
+                      ),
+                )
+                .toList(),
           )));
     }
     return Column(

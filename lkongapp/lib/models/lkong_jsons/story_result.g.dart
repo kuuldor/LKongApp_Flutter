@@ -106,8 +106,6 @@ class _$StorySerializer implements StructuredSerializer<Story> {
       'username',
       serializers.serialize(object.username,
           specifiedType: const FullType(String)),
-      'uid',
-      serializers.serialize(object.uid, specifiedType: const FullType(int)),
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(String)),
     ];
@@ -121,6 +119,12 @@ class _$StorySerializer implements StructuredSerializer<Story> {
       result
         ..add('closed')
         ..add(serializers.serialize(object.closed,
+            specifiedType: const FullType(int)));
+    }
+    if (object.uid != null) {
+      result
+        ..add('uid')
+        ..add(serializers.serialize(object.uid,
             specifiedType: const FullType(int)));
     }
     if (object.fid != null) {
@@ -864,9 +868,6 @@ class _$Story extends Story {
     }
     if (username == null) {
       throw new BuiltValueNullFieldError('Story', 'username');
-    }
-    if (uid == null) {
-      throw new BuiltValueNullFieldError('Story', 'uid');
     }
     if (id == null) {
       throw new BuiltValueNullFieldError('Story', 'id');

@@ -281,7 +281,7 @@ class SearchScreenModel extends FetchedListModel {
 
       Forum forum = Forum().rebuild((b) => b
         ..fid = info.fid
-        ..name = stripHtmlTag(info.name));
+        ..name = info.name);
       item = ForumItem(
         forum: forum,
         info: info,

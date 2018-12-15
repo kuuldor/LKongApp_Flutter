@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
@@ -7,8 +8,7 @@ import 'package:built_value/built_value.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/actions/actions.dart';
-import 'package:lkongapp/utils/http_session.dart';
-
+import 'package:lkongapp/utils/tools.dart';
 import 'package:lkongapp/utils/globals.dart';
 
 const LOGIN_API = "LOGIN";
@@ -160,7 +160,11 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
       result = {"result": stories};
     }
     return result;
-  }, preProcessor: numMapperBuiler(["uid"]));
+  },
+      preProcessor: combinedProcessorBuilder([
+        numMapperBuiler(["uid"]),
+        tagStripperBuiler(["subject"])
+      ]));
 }
 
 Future<Map> getStoriesForForum(Map args) {
@@ -266,7 +270,8 @@ Future<Map> getStoryInfo(Map args) {
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
-      dataParser: _parseResponseBody(StoryInfoResult.fromJson));
+      dataParser: _parseResponseBody(StoryInfoResult.fromJson),
+      preProcessor: tagStripperBuiler(["subject"]));
 }
 
 Future<Map> getForumList() {
@@ -287,7 +292,10 @@ Future<Map> getForumInfo(Map args) {
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(ForumInfoResult.fromJson),
-      preProcessor: numMapperBuiler(["membernum", "todayposts"]));
+      preProcessor: combinedProcessorBuilder([
+        numMapperBuiler(["membernum", "todayposts"]),
+        tagStripperBuiler(["description"])
+      ]));
 }
 
 Future<Map> getUserInfo(Map args) {
@@ -373,7 +381,10 @@ Future<Map> getPersonalData(Map args) {
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
-      preProcessor: numMapperBuiler(["uid", "score", "extcredits"]));
+      preProcessor: combinedProcessorBuilder([
+        numMapperBuiler(["uid", "score", "extcredits"]),
+        tagStripperBuiler(["subject"])
+      ]));
 }
 
 Future<Map> searchLKong(Map args) {
@@ -412,7 +423,67 @@ Future<Map> searchLKong(Map args) {
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
-      preProcessor: numMapperBuiler(["uid", "fid", "fansnum", "replynum"]));
+      preProcessor: combinedProcessorBuilder([
+        numMapperBuiler(["uid", "fid", "fansnum", "replynum"]),
+        tagStripperBuiler(["subject", "username", "name", "verifymessage"])
+      ]));
+}
+
+Future<Map> getUserProfile(Map args) {
+  int nexttime = args["nexttime"] ?? 0;
+  int uid = args["uid"];
+  int type = args["type"];
+
+  assert(uid != null, "Must speicfy userID");
+  assert(type != null, "Must speicfy fetch Type");
+
+  String typeString;
+  Function(String) parser;
+
+  switch (type) {
+    case 0:
+      typeString = "thread";
+      parser = StoryListResult.fromJson;
+      break;
+    case 1:
+      typeString = "fans";
+      parser = SearchUserResult.fromJson;
+      break;
+    case 2:
+      typeString = "follow";
+      parser = SearchUserResult.fromJson;
+      break;
+    case 3:
+      typeString = "digest";
+      parser = StoryListResult.fromJson;
+      break;
+    default:
+      assert(false, "Unsupported Data mode $type");
+      break;
+  }
+
+  var params = getTimeParameter(nexttime, 0);
+  var urlString = endpoint["userProfile"] + "$uid/$typeString" + querify(params);
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(parser),
+      preProcessor: tagStripperBuiler(["subject"]));
+}
+
+String Function(String) combinedProcessorBuilder(
+    List<String Function(String)> processors) {
+  String Function(String) processor;
+  processor = (String data) {
+    String processed = data;
+
+    processors.forEach((processor) {
+      processed = processor(processed);
+    });
+
+    return processed;
+  };
+  return processor;
 }
 
 String Function(String) numMapperBuiler(List<String> fields) {
@@ -425,6 +496,31 @@ String Function(String) numMapperBuiler(List<String> fields) {
     fields.forEach((field) {
       RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(\\d+)\"");
       processed = processed.replaceAllMapped(pattern, numMapper);
+    });
+
+    return processed;
+  };
+  return processor;
+}
+
+String Function(String) tagStripperBuiler(List<String> fields) {
+  String Function(String) processor;
+  processor = (String data) {
+    String processed = data;
+    final stripTag = (String string) {
+      RegExp tagPattern = RegExp(r'<[!\\/a-z].*?>');
+      RegExp spacePattern = RegExp(r'\\n');
+
+      string = string.replaceAll(tagPattern, "");
+      string = string.replaceAll(spacePattern, "");
+      string = HtmlUnescape().convert(string);
+      return string.trim();
+    };
+    final tagStripper = (Match m) => "${m[1]}:\"${stripTag(m[2])}\",";
+
+    fields.forEach((field) {
+      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(.*?)\",");
+      processed = processed.replaceAllMapped(pattern, tagStripper);
     });
 
     return processed;
@@ -492,6 +588,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == SEARCH_API) {
     return searchLKong(parameters);
+  }
+
+  if (api == USER_PROFILE_API) {
+    return getUserProfile(parameters);
   }
 
   return Future<Map>(null);

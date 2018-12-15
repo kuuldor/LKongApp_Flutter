@@ -113,16 +113,16 @@ abstract class StoryListModel extends FetchedListModel {
   }
 
   Widget buildStoryListView(BuildContext context, StoryListState state) {
-    if (itemCount > 0) {
-      if (startTimer == null) {
-        startTimer = () {
-          state.startTimer();
-        };
-      }
-      state.setCheckNewCallback(() {
-        handleCheckNew(context);
-      });
-    }
+    // if (itemCount > 0) {
+    //   if (startTimer == null) {
+    //     startTimer = () {
+    //       state.startTimer();
+    //     };
+    //   }
+    //   state.setCheckNewCallback(() {
+    //     handleCheckNew(context);
+    //   });
+    // }
     return buildListView(context);
   }
 
