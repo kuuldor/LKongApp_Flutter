@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/lkong_jsons/story_result.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
@@ -63,6 +64,35 @@ StoryFetchList fetchListSucceeded(
           b..stories.addAll(data);
           break;
       }
+    }
+    return b;
+  });
+}
+
+SearchUserResult fetchUserSucceeded(
+    FetchListRequestType type, SearchUserResult list, SearchUserResult result) {
+  return list.rebuild((SearchUserResultBuilder b) {
+    var data = result.user;
+    int nexttime = type != FetchListRequestType.Refresh
+        ? (data != null && data.length > 0 ? result.nexttime : 0)
+        : b.nexttime;
+    int current =
+        type != FetchListRequestType.LoadMore ? result.curtime : b.curtime;
+
+    b
+      ..nexttime = (nexttime ?? 0)
+      ..curtime = (current ?? 0);
+
+    switch (type) {
+      case FetchListRequestType.New:
+        b..user.replace(data);
+        break;
+
+      case FetchListRequestType.LoadMore:
+        b..user.addAll(data ?? []);
+        break;
+      default:
+        break;
     }
     return b;
   });

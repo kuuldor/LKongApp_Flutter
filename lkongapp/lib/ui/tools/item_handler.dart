@@ -44,7 +44,7 @@ final Future<Null> Function(BuildContext, Forum) onForumTap =
 
 final Future<Null> Function(BuildContext, UserInfo) onUserTap =
     (BuildContext context, UserInfo user) {
-  dispatchAction(context)(UserInfoRequest(null, user.uid));
+  // dispatchAction(context)(UserInfoRequest(null, user.uid));
 
   return Future(() {
     dispatchAction(context)(

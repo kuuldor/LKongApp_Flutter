@@ -1,3 +1,4 @@
+import 'package:lkongapp/actions/profile_action.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
@@ -165,9 +166,7 @@ class ProfileScreenModel extends FetchedListModel {
 
   @override
   bool get initLoaded {
-    final result = getFetchResult(fetchType);
-
-    return result != null;
+    return fetchType == fetchTypeNone || getFetchResult(fetchType) != null;
   }
 
   @override
@@ -245,14 +244,14 @@ class ProfileScreenModel extends FetchedListModel {
 
       item = UserItem(
         user: fan,
-        onTap: () {},
+        onTap: () => onUserTap(context, fan),
       );
     } else if (fetchType == fetchTypeFollow) {
       UserInfo follow = object as UserInfo;
 
       item = UserItem(
         user: follow,
-        onTap: () {},
+        onTap: () => onUserTap(context, follow),
       );
     } else if (fetchType == fetchTypeDigest) {
       Story digest = object as Story;
@@ -276,9 +275,12 @@ class ProfileScreenModel extends FetchedListModel {
           color: Colors.red[500],
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           alignment: Alignment.centerLeft,
-          child: Text(
-            "网络错误：$error。请稍后重试",
-            style: const TextStyle(color: Colors.white),
+          child: GestureDetector(
+            child: Text(
+              "网络错误：$error。请稍后点击此处重试",
+              style: const TextStyle(color: Colors.white),
+            ),
+            onTap: () => handleFetchUserInfo(context),
           )));
     }
 
@@ -296,6 +298,7 @@ class ProfileScreenModel extends FetchedListModel {
                 .map(
                   (item) => Expanded(
                         child: FlatButton(
+                          color: theme.pageColor,
                           shape: OutlineInputBorder(
                             borderSide: BorderSide(color: theme.textColor),
                           ),
@@ -305,7 +308,7 @@ class ProfileScreenModel extends FetchedListModel {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(item['title']),
-                              Text("${item['num']}")
+                              Text("${item['num'] ?? 0}")
                             ],
                           ),
                           onPressed: fetchType != item['type']
@@ -326,8 +329,7 @@ class ProfileScreenModel extends FetchedListModel {
   APIRequest get fetchFromScratchRequest {
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {});
-    // return ProfileNewRequest(completer, searchString, fetchType);
-    return null;
+    return ProfileNewRequest(completer, user.uid, fetchType);
   }
 
   @override
@@ -341,8 +343,7 @@ class ProfileScreenModel extends FetchedListModel {
 
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {});
-    // return ProfileLoadMoreRequest(completer, searchString, fetchType, nexttime);
-    return null;
+    return ProfileLoadMoreRequest(completer, user.uid, fetchType, nexttime);
   }
 
   @override

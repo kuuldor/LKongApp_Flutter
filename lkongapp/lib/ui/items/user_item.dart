@@ -45,9 +45,17 @@ class UserItem extends StatelessWidget {
           ],
         ),
       ]),
-      subtitle: user != null && user.customstatus.length > 0
-          ? Text(user.customstatus, maxLines: 8)
-          : null,
+      subtitle:
+          user != null && (user.customstatus != null || user.sightml != null)
+              ? (user.customstatus != null && user.customstatus.length > 0
+                  ? Text(user.customstatus, maxLines: 8)
+                  : (user.sightml != null && user.sightml.length > 0
+                      ? Text(
+                          user.sightml,
+                          maxLines: 8,
+                        )
+                      : null))
+              : null,
     );
   }
 }
