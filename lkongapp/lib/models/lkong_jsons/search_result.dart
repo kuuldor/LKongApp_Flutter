@@ -21,8 +21,12 @@ abstract class SearchUserResult
 
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
+  @nullable
+  @BuiltValueField(wireName: 'curtime')
+  int get curtime;
   @BuiltValueField(wireName: 'data')
   BuiltList<UserInfo> get user;
   String toJson() {
