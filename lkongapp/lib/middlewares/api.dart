@@ -510,9 +510,11 @@ String Function(String) tagStripperBuiler(List<String> fields) {
     final stripTag = (String string) {
       RegExp tagPattern = RegExp(r'<[!\\/a-z].*?>');
       RegExp spacePattern = RegExp(r'\\n');
+      RegExp escapePattern = RegExp(r'\\\\');
 
       string = string.replaceAll(tagPattern, "");
       string = string.replaceAll(spacePattern, "");
+      string = string.replaceAll(escapePattern, "\\");
       string = HtmlUnescape().convert(string);
       return string.trim();
     };
