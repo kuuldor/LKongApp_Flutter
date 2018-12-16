@@ -71,7 +71,14 @@ class StoryItem extends StatelessWidget {
       if (story.message != null) {
         subtitle = Text(stripHtmlTag(story.message), maxLines: 4);
       }
-    } else if (story.isquote) {
+    } else {
+      String message;
+      if (story.isquote) {
+        message = story.message;
+      } else {
+        message =
+            "<blockquote><a href='' dataitem='name_${story.tAuthor}'>@${story.tAuthor}</a><br><b>${story.subject}</b></a></blockquote><div>${story.message}</div>";
+      }
       title = Column(children: <Widget>[
         Row(
           children: <Widget>[
@@ -97,7 +104,7 @@ class StoryItem extends StatelessWidget {
               Expanded(
                 child: comment2Widget(
                   context,
-                  story.message,
+                  message,
                   style: Theme.of(context),
                 ),
               ),

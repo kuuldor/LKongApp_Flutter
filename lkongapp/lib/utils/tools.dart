@@ -173,8 +173,9 @@ _parseImageAndText(BuildContext context,
         // nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
       } else if (e.localName == "div" && cls != "lkong_quobes") {
         if (e.nodes.length == 1) {
-          final child = e.nodes.elementAt(0) as dom.Element;
-          if (child == null || child.localName != "div") {
+          final child = e.nodes.elementAt(0);
+          if (!(child is dom.Element) ||
+              (child as dom.Element).localName != "div") {
             nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
             // nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
           }
