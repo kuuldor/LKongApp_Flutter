@@ -5,6 +5,8 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 
+import 'package:lkongapp/ui/tools/item_handler.dart';
+
 class CommentItem extends StatelessWidget {
   // final GestureTapCallback onTap;
   final Comment comment;
@@ -200,7 +202,24 @@ class CommentItem extends StatelessWidget {
           height: 12.0,
         ),
         buildRateLog(context, comment.ratelog),
-        Container(),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.thumbs_up_down),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: Icon(Icons.message),
+                onPressed: () {
+                  onReplyButtonTap(context, comment: comment);
+                },
+              ),
+            ],
+          ),
+        ),
       ]),
     );
   }

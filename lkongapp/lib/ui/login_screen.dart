@@ -57,11 +57,10 @@ class LoginState extends State<LoginScreen> {
         controller: emailController,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
-        validator: (val) => val.isEmpty || val.trim().length == 0
-            ? 'Please enter your email'
-            : null,
+        validator: (val) =>
+            val.isEmpty || val.trim().length == 0 ? '请输入登录邮箱' : null,
         decoration: InputDecoration(
-          hintText: 'Email',
+          hintText: '登录邮箱',
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
         ),
@@ -73,11 +72,10 @@ class LoginState extends State<LoginScreen> {
         autocorrect: false,
         autofocus: false,
         obscureText: true,
-        validator: (val) => val.isEmpty || val.trim().length == 0
-            ? 'Please enter your password'
-            : null,
+        validator: (val) =>
+            val.isEmpty || val.trim().length == 0 ? '请输入密码' : null,
         decoration: InputDecoration(
-          hintText: 'Password',
+          hintText: '密码',
           contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
         ),

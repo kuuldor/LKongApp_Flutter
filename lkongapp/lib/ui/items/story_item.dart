@@ -77,7 +77,7 @@ class StoryItem extends StatelessWidget {
         message = story.message;
       } else {
         message =
-            "<blockquote><a href='' dataitem='name_${story.tAuthor}'>@${story.tAuthor}</a><br><b>${story.subject}</b></a></blockquote><div>${story.message}</div>";
+            "<blockquote><a href='' dataitem='name_${story.tAuthor}'>@${story.tAuthor}</a>：<b>${story.subject}</b></a></blockquote><div>${story.message}</div>";
       }
       title = Column(children: <Widget>[
         Row(

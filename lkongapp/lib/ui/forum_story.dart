@@ -14,6 +14,7 @@ import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
+import 'package:lkongapp/ui/tools/item_handler.dart';
 
 import 'package:lkongapp/ui/connected_widget.dart';
 
@@ -62,14 +63,14 @@ class ForumStoryModel extends StoryListModel {
   final StoryFetchList storyList;
   final bool loading;
   final String lastError;
-  final int forumId;
+  final Forum forum;
   final int mode;
 
   ForumStoryModel({
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
-    @required this.forumId,
+    @required this.forum,
     @required this.mode,
   });
 
@@ -80,7 +81,7 @@ class ForumStoryModel extends StoryListModel {
             lastError: store
                 .state.uiState.content.forumRepo[state.forum.fid].lastError,
             storyList: store.state.uiState.content.forumRepo[state.forum.fid],
-            forumId: state.forum.fid,
+            forum: state.forum,
             mode: state.mode,
           );
 
@@ -90,7 +91,7 @@ class ForumStoryModel extends StoryListModel {
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
-    return ForumStoryNewRequest(completer, forumId, mode, 0, 0);
+    return ForumStoryNewRequest(completer, forum.fid, mode, 0, 0);
   }
 
   @override
@@ -104,7 +105,7 @@ class ForumStoryModel extends StoryListModel {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return ForumStoryLoadMoreRequest(
-        completer, forumId, mode, storyList.nexttime);
+        completer, forum.fid, mode, storyList.nexttime);
   }
 
   @override
@@ -112,14 +113,29 @@ class ForumStoryModel extends StoryListModel {
     if (storyList.current == 0) {
       return null;
     }
-    
+
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
     return ForumStoryRefreshRequest(
-        completer, forumId, mode, storyList.current);
+        completer, forum.fid, mode, storyList.current);
   }
+
+  @override
+  SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
+        title: Text(forum.name),
+        floating: false,
+        pinned: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.create),
+            onPressed: () {
+              onPostButtonTap(context, forum);
+            },
+          ),
+        ],
+      );
 
   @override
   APIRequest get checkNewRequest {
@@ -127,14 +143,13 @@ class ForumStoryModel extends StoryListModel {
     completer.future.then((success) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
-    return ForumStoryCheckNewRequest(completer, forumId, storyList.current);
+    return ForumStoryCheckNewRequest(completer, forum.fid, storyList.current);
   }
 
   @override
   Widget buildStoryListView(BuildContext context, StoryListState aState) {
     var state = aState as ForumStoryState;
     return Scaffold(
-      appBar: AppBar(title: Text(state.forum.name)),
       body: super.buildStoryListView(context, state),
     );
   }

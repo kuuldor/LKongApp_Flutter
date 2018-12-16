@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/models.dart';
+import 'package:lkongapp/ui/compose_screen.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/profile_screen.dart';
 import 'package:lkongapp/ui/story_screen.dart';
@@ -55,3 +56,41 @@ final Future<Null> Function(BuildContext, UserInfo) onUserTap =
     }));
   });
 };
+
+final onReplyButtonTap = (BuildContext context,
+        {Comment comment, StoryInfoResult story}) =>
+    Future(() => dispatchAction(context)(
+            UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
+          var replyTo;
+          ReplyType replyType;
+          if (comment != null) {
+            replyTo = comment;
+            replyType = ReplyType.Comment;
+          } else if (story != null) {
+            replyTo = story;
+            replyType = ReplyType.Story;
+          } else {
+            assert(false, "Must Specify replyTo");
+          }
+          return ComposeScreen(
+            replyTo: replyTo,
+            replyType: replyType,
+          );
+        })));
+
+final onPostButtonTap = (BuildContext context, Forum forum) => Future(() =>
+    dispatchAction(context)(
+        UINavigationPush(context, LKongAppRoutes.post, false, (context) {
+      var replyTo;
+      ReplyType replyType;
+      if (forum != null) {
+        replyTo = forum;
+        replyType = ReplyType.Forum;
+      } else {
+        assert(false, "Must Specify forum to post to");
+      }
+      return ComposeScreen(
+        replyTo: replyTo,
+        replyType: replyType,
+      );
+    })));

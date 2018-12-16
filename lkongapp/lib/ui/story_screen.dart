@@ -15,7 +15,7 @@ import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
-
+import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 
 class StoryScreen extends StatefulWidget {
@@ -229,8 +229,10 @@ class StoryContentModel {
       ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {},
+        child: const Icon(Icons.create),
+        onPressed: () {
+          onReplyButtonTap(context, story: story.storyInfo);
+        },
       ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
