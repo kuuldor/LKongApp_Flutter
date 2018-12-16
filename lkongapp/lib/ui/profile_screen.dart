@@ -103,7 +103,7 @@ class ProfileScreenModel extends FetchedListModel {
           );
 
   int get fetchType => state.fetchType;
-  UserInfo get user => state.user;
+  UserInfo get user => profile?.user;
 
   @override
   bool operator ==(other) {
@@ -177,7 +177,7 @@ class ProfileScreenModel extends FetchedListModel {
       flexibleSpace: FlexibleSpaceBar(
           title: Row(
             children: <Widget>[
-              Text(user.username),
+              Text(user?.username ?? ""),
               Padding(
                   padding: EdgeInsets.only(left: 8.0), child: verifyIcon(user)),
             ],
@@ -198,11 +198,11 @@ class ProfileScreenModel extends FetchedListModel {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: <Widget>[
-                          userAvatar(user.uid, 96.0),
+                          buildUserAvatar(context, state.user.uid, 96.0),
                           Expanded(
                             child: Padding(
                                 padding: EdgeInsets.only(left: 8.0),
-                                child: user.verifymessage != null
+                                child: user?.verifymessage != null
                                     ? Text(
                                         user.verifymessage,
                                         style: theme.themeData.textTheme.title
@@ -373,6 +373,6 @@ class ProfileScreenModel extends FetchedListModel {
   }
 
   void handleFetchUserInfo(BuildContext context) {
-    dispatchAction(context)(UserInfoRequest(null, user.uid));
+    dispatchAction(context)(UserInfoRequest(null, state.user.uid));
   }
 }

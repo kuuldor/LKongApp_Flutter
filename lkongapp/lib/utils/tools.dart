@@ -12,13 +12,15 @@ import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:lkongapp/data/theme.dart' as themeData;
+import 'package:lkongapp/ui/tools/item_handler.dart';
 //here goes the function
 
 dispatchAction(BuildContext context) =>
     (action) => StoreProvider.of<AppState>(context).dispatch(action);
 
-Widget userAvatar(int uid, double size) {
-  return CircleAvatar(
+Widget buildUserAvatar(BuildContext context, int uid, double size,
+    {bool clickable: false}) {
+  final avatar = CircleAvatar(
     backgroundColor: Colors.transparent,
     backgroundImage: uid != null && uid > 0
         ? CachedNetworkImageProvider(avatarForUserID(uid),
@@ -26,6 +28,15 @@ Widget userAvatar(int uid, double size) {
         : AssetImage("assets/noavatar.png"),
     radius: size / 2,
   );
+
+  return clickable
+      ? GestureDetector(
+          child: avatar,
+          onTap: () {
+            onUserTap(context, UserInfo().rebuild((b) => b..uid = uid));
+          },
+        )
+      : avatar;
 }
 
 String html2Text(String htmlString) {
@@ -136,7 +147,8 @@ _parseImageAndText(BuildContext context,
                   fontSizeFactor: double.parse(value) / 3.0);
               break;
             case "color":
-              baseTextStyle = baseTextStyle.apply(color: htmlColor(value, nightRev: theme.isNightMode));
+              baseTextStyle = baseTextStyle.apply(
+                  color: htmlColor(value, nightRev: theme.isNightMode));
               break;
           }
         });

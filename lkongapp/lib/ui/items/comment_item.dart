@@ -136,13 +136,13 @@ class CommentItem extends StatelessWidget {
           )));
     }
 
-    return ListTile(
+    return Container(
       key: commentItemKey(comment.id),
-      // onTap: onTap,
-      title: Column(children: <Widget>[
+      padding: EdgeInsets.symmetric(horizontal: 12.0),
+      child: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            userAvatar(comment.authorid, 36.0),
+            buildUserAvatar(context, comment.authorid, 36.0, clickable: true),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(left: 8.0),

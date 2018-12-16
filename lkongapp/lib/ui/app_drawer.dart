@@ -120,7 +120,8 @@ class AppDrawer extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  userAvatar(isAuthed ? user?.uid : null, 64.0),
+                  buildUserAvatar(context, isAuthed ? user?.uid : null, 64.0,
+                      clickable: true),
                 ],
               ),
               Container(
