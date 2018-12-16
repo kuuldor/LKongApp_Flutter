@@ -136,7 +136,7 @@ _parseImageAndText(BuildContext context,
         baseTextStyle = baseTextStyle.copyWith(fontStyle: FontStyle.italic);
       } else if (e.localName == "strong" || e.localName == "b") {
         baseTextStyle = baseTextStyle.copyWith(fontWeight: FontWeight.bold);
-      } else if (e.localName == "blockquote") {
+      } else if (e.localName == "blockquote" || cls == "lkong_quobes") {
         baseTextStyle =
             baseTextStyle.apply(fontSizeFactor: 0.85, color: Colors.blueGrey);
       } else if (e.localName == "font") {
@@ -170,14 +170,19 @@ _parseImageAndText(BuildContext context,
         nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
       } else if (e.localName == "p") {
         nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
-        nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
-      } else if (e.localName == "div") {
-        nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
-        nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+        // nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+      } else if (e.localName == "div" && cls != "lkong_quobes") {
+        if (e.nodes.length == 1) {
+          final child = e.nodes.elementAt(0) as dom.Element;
+          if (child == null || child.localName != "div") {
+            nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
+            // nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+          }
+        }
       }
 
       //Handle elements to be converted to widget. Otherwise just append to widget/text list
-      if (e.localName == "blockquote") {
+      if (e.localName == "blockquote" || cls == "lkong_quobes") {
         _cleanUpTextList(nodeWidgets, nodeTextList);
         widgetList.add(
           Card(

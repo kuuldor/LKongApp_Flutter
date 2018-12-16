@@ -58,7 +58,9 @@ class ForumItem extends StatelessWidget {
         ),
       ]),
       subtitle: info != null && info.description != null
-          ? Text(info.description, maxLines: 8)
+          ? Container(
+              padding: EdgeInsetsDirectional.only(top: 8.0),
+              child: Text(info.description, maxLines: 8))
           : null,
     );
   }

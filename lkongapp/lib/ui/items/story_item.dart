@@ -18,17 +18,19 @@ class StoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = LKModeledApp.modelOf(context).theme;
-    var titleStyle = Theme.of(context).textTheme.title;
-    if (story.digest != null && story.digest != 0) {
-      titleStyle = titleStyle.apply(fontWeightDelta: 1);
-    } else {
-      titleStyle = titleStyle.apply(fontWeightDelta: -1);
-    }
-    titleStyle = titleStyle.apply(color: theme.darkTextColor);
-    return ListTile(
-      key: storyItemKey(story.id),
-      onTap: onTap,
-      title: Column(children: <Widget>[
+
+    Widget title;
+    Widget subtitle;
+
+    if (story.isthread != false) {
+      var titleStyle = Theme.of(context).textTheme.title;
+      if (story.digest != null && story.digest != 0) {
+        titleStyle = titleStyle.apply(fontWeightDelta: 1);
+      } else {
+        titleStyle = titleStyle.apply(fontWeightDelta: -1);
+      }
+      titleStyle = titleStyle.apply(color: theme.darkTextColor);
+      title = Column(children: <Widget>[
         Row(
           children: <Widget>[
             buildUserAvatar(context, story.uid, 36.0),
@@ -65,10 +67,51 @@ class StoryItem extends StatelessWidget {
             ],
           ),
         ),
-      ]),
-      subtitle: story.message != null
-          ? Text(stripHtmlTag(story.message), maxLines: 4)
-          : null,
+      ]);
+      if (story.message != null) {
+        subtitle = Text(stripHtmlTag(story.message), maxLines: 4);
+      }
+    } else if (story.isquote) {
+      title = Column(children: <Widget>[
+        Row(
+          children: <Widget>[
+            buildUserAvatar(context, story.uid, 36.0),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(story.username),
+                    Text(timeAgoSinceDate(parseDatetime(story.dateline))),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: comment2Widget(
+                  context,
+                  story.message,
+                  style: Theme.of(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ]);
+    }
+
+    return ListTile(
+      key: storyItemKey(story.id),
+      onTap: onTap,
+      title: title,
+      subtitle: subtitle,
     );
   }
 }
