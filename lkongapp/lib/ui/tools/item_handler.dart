@@ -57,23 +57,26 @@ final Future<Null> Function(BuildContext, UserInfo) onUserTap =
   });
 };
 
-final onReplyButtonTap = (BuildContext context,
-        {Comment comment, StoryInfoResult story}) =>
+final onReplyButtonTap = (
+  BuildContext context, {
+  Comment comment,
+  @required StoryInfoResult story,
+}) =>
     Future(() => dispatchAction(context)(
             UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
-          var replyTo;
           ReplyType replyType;
-          if (comment != null) {
-            replyTo = comment;
-            replyType = ReplyType.Comment;
-          } else if (story != null) {
-            replyTo = story;
-            replyType = ReplyType.Story;
+          if (story != null) {
+            if (comment != null) {
+              replyType = ReplyType.Comment;
+            } else {
+              replyType = ReplyType.Story;
+            }
           } else {
-            assert(false, "Must Specify replyTo");
+            assert(false, "Must Specify story");
           }
           return ComposeScreen(
-            replyTo: replyTo,
+            comment: comment,
+            story: story,
             replyType: replyType,
           );
         })));
@@ -81,16 +84,14 @@ final onReplyButtonTap = (BuildContext context,
 final onPostButtonTap = (BuildContext context, Forum forum) => Future(() =>
     dispatchAction(context)(
         UINavigationPush(context, LKongAppRoutes.post, false, (context) {
-      var replyTo;
       ReplyType replyType;
       if (forum != null) {
-        replyTo = forum;
         replyType = ReplyType.Forum;
       } else {
         assert(false, "Must Specify forum to post to");
       }
       return ComposeScreen(
-        replyTo: replyTo,
+        forum: forum,
         replyType: replyType,
       );
     })));

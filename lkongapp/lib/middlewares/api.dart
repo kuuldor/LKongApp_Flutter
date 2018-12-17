@@ -26,6 +26,7 @@ const PUNCHCARD_API = "PUNCHCARD";
 const MYDATA_API = "MYDATA";
 const SEARCH_API = "SEARCH";
 const USER_PROFILE_API = "USER_PROFILE";
+const REPLY_API = "REPLY";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -463,12 +464,60 @@ Future<Map> getUserProfile(Map args) {
   }
 
   var params = getTimeParameter(nexttime, 0);
-  var urlString = endpoint["userProfile"] + "$uid/$typeString" + querify(params);
+  var urlString =
+      endpoint["userProfile"] + "$uid/$typeString" + querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
       preProcessor: tagStripperBuiler(["subject"]));
+}
+
+Future<Map> replyWithParameter(Map args) {
+  Map params = Map();
+
+  ReplyType type = args["type"];
+  StoryInfoResult story = args["story"];
+  Comment comment = args["comment"];
+  Forum forum = args["forum"];
+  String subject = args["subject"];
+  String content = args["content"];
+
+  params["content"] = content;
+  switch (type) {
+    case ReplyType.Forum:
+      params["type"] = "new";
+      params["fid"] = "${forum.fid}";
+      params["title"] = subject;
+      break;
+    case ReplyType.Story:
+      params["type"] = "reply";
+      params["tid"] = "${story.tid}";
+      params["myrequestid"] = "thread_${story.tid}";
+      break;
+    case ReplyType.Comment:
+      params["type"] = "reply";
+      params["tid"] = "${story.tid}";
+      params["replyid"] = "${comment.id}";
+      params["myrequestid"] = "post_${comment.id}";
+      break;
+    case ReplyType.EditStory:
+      params["type"] = "edit";
+      params["tid"] = "${story.tid}";
+      params["pid"] = "${comment.id}";
+      params["title"] = subject;
+      params["ac"] = "thread";
+      break;
+    case ReplyType.EditComment:
+      params["type"] = "edit";
+      params["tid"] = "${story.tid}";
+      params["pid"] = "${comment.id}";
+      params["ac"] = "post";
+      break;
+  }
+
+  var httpAction = session.post(endpoint["reply"], data: params);
+  return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
 String Function(String) combinedProcessorBuilder(
@@ -594,6 +643,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == USER_PROFILE_API) {
     return getUserProfile(parameters);
+  }
+
+  if (api == REPLY_API) {
+    return replyWithParameter(parameters);
   }
 
   return Future<Map>(null);

@@ -22,3 +22,14 @@ class IconMessage extends StatelessWidget {
     );
   }
 }
+
+showToast(ScaffoldState scaffold, String msg,
+    {Color background, Color textColor}) {
+  scaffold.showSnackBar(SnackBar(
+    backgroundColor: background,
+    content: Text(
+      msg,
+      style: TextStyle(color: textColor),
+    ),
+  ));
+}

@@ -8,13 +8,13 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 
 class CommentItem extends StatelessWidget {
-  // final GestureTapCallback onTap;
+  final GestureTapCallback onTap;
   final Comment comment;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
 
   CommentItem({
-    // @required this.onTap,
+    @required this.onTap,
     @required this.comment,
   });
 
@@ -213,9 +213,7 @@ class CommentItem extends StatelessWidget {
               ),
               IconButton(
                 icon: Icon(Icons.message),
-                onPressed: () {
-                  onReplyButtonTap(context, comment: comment);
-                },
+                onPressed: onTap,
               ),
             ],
           ),

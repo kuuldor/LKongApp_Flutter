@@ -204,7 +204,11 @@ class StoryContentModel {
 
             Widget item = CommentItem(
               comment: comment,
-              // onTap: () => onStoryTap(context, story),
+              onTap: () => onReplyButtonTap(
+                    context,
+                    comment: comment,
+                    story: story.storyInfo,
+                  ),
             );
             tiles.add(wrapTile(item));
           }

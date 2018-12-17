@@ -18,6 +18,9 @@ import 'package:lkongapp/ui/tools/item_handler.dart';
 dispatchAction(BuildContext context) =>
     (action) => StoreProvider.of<AppState>(context).dispatch(action);
 
+AppState stateOf(BuildContext context) =>
+    StoreProvider.of<AppState>(context).state;
+
 Widget buildUserAvatar(BuildContext context, int uid, double size,
     {bool clickable: false}) {
   final avatar = CircleAvatar(
