@@ -208,7 +208,7 @@ class CommentItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               IconButton(
-                icon: Icon(Icons.thumbs_up_down),
+                icon: Icon(Icons.thumb_up),
                 onPressed: () {},
               ),
               IconButton(
