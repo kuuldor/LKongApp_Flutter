@@ -8,8 +8,7 @@ import 'package:lkongapp/ui/profile_screen.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/utils/utils.dart';
 
-final Future<Null> Function(BuildContext context, Story story) onStoryTap =
-    (BuildContext context, Story story) {
+Future<Null> onStoryTap(BuildContext context, Story story) {
   return Future(() {
     String storyId = story.tid;
     String postId = "0";
@@ -27,10 +26,9 @@ final Future<Null> Function(BuildContext context, Story story) onStoryTap =
       );
     }));
   });
-};
+}
 
-final Future<Null> Function(BuildContext, Forum) onForumTap =
-    (BuildContext context, Forum forum) {
+Future<Null> onForumTap(BuildContext context, Forum forum) {
   dispatchAction(context)(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
 
   return Future(() {
@@ -41,10 +39,9 @@ final Future<Null> Function(BuildContext, Forum) onForumTap =
       );
     }));
   });
-};
+}
 
-final Future<Null> Function(BuildContext, UserInfo) onUserTap =
-    (BuildContext context, UserInfo user) {
+Future<Null> onUserTap(BuildContext context, UserInfo user) {
   // dispatchAction(context)(UserInfoRequest(null, user.uid));
 
   return Future(() {
@@ -55,9 +52,9 @@ final Future<Null> Function(BuildContext, UserInfo) onUserTap =
       );
     }));
   });
-};
+}
 
-final onReplyButtonTap = (
+onReplyButtonTap(
   BuildContext context, {
   Comment comment,
   @required StoryInfoResult story,
@@ -81,17 +78,41 @@ final onReplyButtonTap = (
           );
         })));
 
-final onPostButtonTap = (BuildContext context, Forum forum) => Future(() =>
-    dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.post, false, (context) {
-      ReplyType replyType;
-      if (forum != null) {
-        replyType = ReplyType.Forum;
-      } else {
-        assert(false, "Must Specify forum to post to");
-      }
-      return ComposeScreen(
-        forum: forum,
-        replyType: replyType,
-      );
-    })));
+onEditButtonTap(
+  BuildContext context, {
+  Comment comment,
+  @required StoryInfoResult story,
+}) =>
+    Future(() => dispatchAction(context)(
+            UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
+          ReplyType replyType;
+          if (story != null && comment != null) {
+            if (comment.lou == 1) {
+              replyType = ReplyType.EditStory;
+            } else {
+              replyType = ReplyType.EditComment;
+            }
+          } else {
+            assert(false, "Must Specify story");
+          }
+          return ComposeScreen(
+            comment: comment,
+            story: story,
+            replyType: replyType,
+          );
+        })));
+
+onPostButtonTap(BuildContext context, Forum forum) =>
+    Future(() => dispatchAction(context)(
+            UINavigationPush(context, LKongAppRoutes.post, false, (context) {
+          ReplyType replyType;
+          if (forum != null) {
+            replyType = ReplyType.Forum;
+          } else {
+            assert(false, "Must Specify forum to post to");
+          }
+          return ComposeScreen(
+            forum: forum,
+            replyType: replyType,
+          );
+        })));

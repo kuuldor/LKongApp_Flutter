@@ -93,11 +93,13 @@ class StoryContentState extends State<StoryScreen> {
 }
 
 class StoryContentModel {
+  final int uid;
   final StoryPageList story;
   final bool loading;
   final String lastError;
 
   StoryContentModel({
+    @required this.uid,
     @required this.loading,
     @required this.lastError,
     @required this.story,
@@ -108,10 +110,11 @@ class StoryContentModel {
   final Future<Null> Function(int storyId, int page) loadContent;
   final Future<Null> Function(int storyId) loadInfo;
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static final fromStateAndStore = (StoryContentState state) =>
       (Store<AppState> store) => StoryContentModel(
+          uid: store.state.persistState.authState.currentUser,
           loading:
               store.state.uiState.content.storyRepo[state.storyId]?.loading ??
                   false,
@@ -203,12 +206,9 @@ class StoryContentModel {
             var comment = comments[i];
 
             Widget item = CommentItem(
+              uid: uid,
               comment: comment,
-              onTap: () => onReplyButtonTap(
-                    context,
-                    comment: comment,
-                    story: story.storyInfo,
-                  ),
+              onTap: (action) => onCommentAction(context, comment, action),
             );
             tiles.add(wrapTile(item));
           }
@@ -217,6 +217,8 @@ class StoryContentModel {
       return tiles;
     };
 
+    var actions = <Widget>[];
+
     return Scaffold(
       key: _scaffoldKey,
       body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
@@ -224,6 +226,7 @@ class StoryContentModel {
           title: Text("帖子"),
           floating: true,
           pinned: false,
+          actions: actions,
         ),
         SliverList(
           delegate: SliverChildListDelegate(
@@ -233,7 +236,7 @@ class StoryContentModel {
       ]),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.create),
+        child: const Icon(Icons.add),
         onPressed: () {
           onReplyButtonTap(context, story: story.storyInfo);
         },
@@ -281,6 +284,28 @@ class StoryContentModel {
         ),
       ),
     );
+  }
+
+  void onCommentAction(
+      BuildContext context, Comment comment, CommentAction action) {
+    switch (action) {
+      case CommentAction.Reply:
+        onReplyButtonTap(
+          context,
+          comment: comment,
+          story: story.storyInfo,
+        );
+        break;
+      case CommentAction.Edit:
+        onEditButtonTap(
+          context,
+          comment: comment,
+          story: story.storyInfo,
+        );
+        break;
+      case CommentAction.UpVote:
+        break;
+    }
   }
 
   void showPageSelector(BuildContext context, int totalPages, int pageNo,

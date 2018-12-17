@@ -7,15 +7,23 @@ import 'package:lkongapp/utils/utils.dart';
 
 import 'package:lkongapp/ui/tools/item_handler.dart';
 
+enum CommentAction {
+  Reply,
+  Edit,
+  UpVote,
+}
+
 class CommentItem extends StatelessWidget {
-  final GestureTapCallback onTap;
+  final Function(CommentAction) onTap;
   final Comment comment;
+  final int uid;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
 
   CommentItem({
     @required this.onTap,
     @required this.comment,
+    @required this.uid,
   });
 
   Widget buildRateLog(BuildContext context, BuiltList<Ratelog> ratelog) {
@@ -138,6 +146,32 @@ class CommentItem extends StatelessWidget {
           )));
     }
 
+    var actionButtons = <Widget>[
+      IconButton(
+        icon: Icon(Icons.thumb_up),
+        onPressed: () {
+          onTap(CommentAction.UpVote);
+        },
+      ),
+      IconButton(
+        icon: Icon(Icons.message),
+        onPressed: () {
+          onTap(CommentAction.Reply);
+        },
+      ),
+    ];
+
+    if (comment.authorid == uid) {
+      actionButtons.insert(
+          0,
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              onTap(CommentAction.Edit);
+            },
+          ));
+    }
+
     return Container(
       key: commentItemKey(comment.id),
       padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -206,16 +240,7 @@ class CommentItem extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.thumb_up),
-                onPressed: () {},
-              ),
-              IconButton(
-                icon: Icon(Icons.message),
-                onPressed: onTap,
-              ),
-            ],
+            children: actionButtons,
           ),
         ),
       ]),

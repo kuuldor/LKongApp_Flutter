@@ -27,9 +27,13 @@ class ComposeState extends State<ComposeScreen> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static final String signatureLink = "http://lkong.cn/";
+  static final String signatureLink = "http://lkong.cn/thread/1722140";
   static final String signaturePattern =
-      r"<br>-- <a href='.*?' dataitem='signature'>.*?</a>";
+      "<br>--<a target='_blank' href='.*?'.*?>.*?</a>";
+  static final String editorPattern =
+      r"<i class=.pstatus.>.*?</i><br\s*[/]?><br\s*[/]?>";
+  static final String quotaPattern =
+      "<blockquote class=.lkquote.>.*?</blockquote>";
 
   final subjectController = TextEditingController();
   final contentController = TextEditingController();
@@ -47,9 +51,9 @@ class ComposeState extends State<ComposeScreen> {
           .accountSettings
           .currentSetting
           .signature;
-      RegExp dotPattern = RegExp(r'(\.\*\?)(.*)(\.\*\?)');
+      RegExp dotPattern = RegExp('\'(\.\*\?)\'(\.\*\?)(.*)(\.\*\?)');
       final signature = signaturePattern.replaceAllMapped(
-          dotPattern, (Match m) => "$signatureLink${m[2]}$signatureRaw");
+          dotPattern, (Match m) => "'$signatureLink'${m[3]}$signatureRaw");
 
       content += signature;
     }
@@ -66,8 +70,14 @@ class ComposeState extends State<ComposeScreen> {
   }
 
   String stripSignature(String content) {
-    RegExp pattern = RegExp(signaturePattern);
-    return content.replaceFirstMapped(pattern, (Match m) => "");
+    content =
+        content.replaceFirstMapped(RegExp(signaturePattern), (Match m) => "");
+    content =
+        content.replaceFirstMapped(RegExp(editorPattern), (Match m) => "");
+    content = content.replaceFirstMapped(
+        RegExp(quotaPattern, multiLine: true), (Match m) => "");
+    content = content.replaceAllMapped(RegExp(r"<br>"), (Match m) => "\n");
+    return content;
   }
 
   void sendMessage(BuildContext context) {
@@ -132,7 +142,7 @@ class ComposeState extends State<ComposeScreen> {
         break;
       case ReplyType.EditComment:
         final comment = widget.comment;
-        contentController.text = comment.message;
+        contentController.text = stripSignature(comment.message);
         title = "编辑：${comment.lou}楼";
         break;
     }
