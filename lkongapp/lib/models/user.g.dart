@@ -268,6 +268,12 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
         ..add(serializers.serialize(object.extcredits1,
             specifiedType: const FullType(int)));
     }
+    if (object.extcredits2 != null) {
+      result
+        ..add('extcredits2')
+        ..add(serializers.serialize(object.extcredits2,
+            specifiedType: const FullType(int)));
+    }
     if (object.extcredits3 != null) {
       result
         ..add('extcredits3')
@@ -507,6 +513,10 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
           break;
         case 'extcredits1':
           result.extcredits1 = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'extcredits2':
+          result.extcredits2 = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
         case 'extcredits3':
@@ -932,6 +942,8 @@ class _$UserInfo extends UserInfo {
   @override
   final int extcredits1;
   @override
+  final int extcredits2;
+  @override
   final int extcredits3;
   @override
   final int extcredits4;
@@ -1006,6 +1018,7 @@ class _$UserInfo extends UserInfo {
       this.blacknum,
       this.digestposts,
       this.extcredits1,
+      this.extcredits2,
       this.extcredits3,
       this.extcredits4,
       this.extcredits5,
@@ -1062,6 +1075,7 @@ class _$UserInfo extends UserInfo {
         blacknum == other.blacknum &&
         digestposts == other.digestposts &&
         extcredits1 == other.extcredits1 &&
+        extcredits2 == other.extcredits2 &&
         extcredits3 == other.extcredits3 &&
         extcredits4 == other.extcredits4 &&
         extcredits5 == other.extcredits5 &&
@@ -1111,7 +1125,7 @@ class _$UserInfo extends UserInfo {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc(0, blacklists.hashCode), customstatus.hashCode), email.hashCode), gender.hashCode), invite.hashCode), phonenum.hashCode), regdate.hashCode), sightml.hashCode), uid.hashCode), username.hashCode), me.hashCode), fansnum.hashCode), followuidnum.hashCode), blacknum.hashCode), digestposts.hashCode), extcredits1.hashCode), extcredits3.hashCode), extcredits4.hashCode), extcredits5.hashCode), extcredits6.hashCode), extcredits7.hashCode), extcredits8.hashCode), fanscount.hashCode), followfidcount.hashCode),
+                                                                            $jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc($jc(0, blacklists.hashCode), customstatus.hashCode), email.hashCode), gender.hashCode), invite.hashCode), phonenum.hashCode), regdate.hashCode), sightml.hashCode), uid.hashCode), username.hashCode), me.hashCode), fansnum.hashCode), followuidnum.hashCode), blacknum.hashCode), digestposts.hashCode), extcredits1.hashCode), extcredits2.hashCode), extcredits3.hashCode), extcredits4.hashCode), extcredits5.hashCode), extcredits6.hashCode), extcredits7.hashCode), extcredits8.hashCode), fanscount.hashCode), followfidcount.hashCode),
                                                                                 followfidnum.hashCode),
                                                                             oltime.hashCode),
                                                                         posts.hashCode),
@@ -1152,6 +1166,7 @@ class _$UserInfo extends UserInfo {
           ..add('blacknum', blacknum)
           ..add('digestposts', digestposts)
           ..add('extcredits1', extcredits1)
+          ..add('extcredits2', extcredits2)
           ..add('extcredits3', extcredits3)
           ..add('extcredits4', extcredits4)
           ..add('extcredits5', extcredits5)
@@ -1249,6 +1264,10 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
   int _extcredits1;
   int get extcredits1 => _$this._extcredits1;
   set extcredits1(int extcredits1) => _$this._extcredits1 = extcredits1;
+
+  int _extcredits2;
+  int get extcredits2 => _$this._extcredits2;
+  set extcredits2(int extcredits2) => _$this._extcredits2 = extcredits2;
 
   int _extcredits3;
   int get extcredits3 => _$this._extcredits3;
@@ -1382,6 +1401,7 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
       _blacknum = _$v.blacknum;
       _digestposts = _$v.digestposts;
       _extcredits1 = _$v.extcredits1;
+      _extcredits2 = _$v.extcredits2;
       _extcredits3 = _$v.extcredits3;
       _extcredits4 = _$v.extcredits4;
       _extcredits5 = _$v.extcredits5;
@@ -1447,6 +1467,7 @@ class UserInfoBuilder implements Builder<UserInfo, UserInfoBuilder> {
             blacknum: blacknum,
             digestposts: digestposts,
             extcredits1: extcredits1,
+            extcredits2: extcredits2,
             extcredits3: extcredits3,
             extcredits4: extcredits4,
             extcredits5: extcredits5,
