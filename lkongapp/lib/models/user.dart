@@ -132,6 +132,9 @@ abstract class UserInfo implements Built<UserInfo, UserInfoBuilder> {
   @BuiltValueField(wireName: 'extcredits1')
   int get extcredits1;
   @nullable
+  @BuiltValueField(wireName: 'extcredits2')
+  int get extcredits2;
+  @nullable
   @BuiltValueField(wireName: 'extcredits3')
   int get extcredits3;
   @nullable

@@ -172,6 +172,18 @@ class ProfileScreenModel extends FetchedListModel {
   @override
   SliverAppBar buildAppBar(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    String infoText = "";
+    if (user?.regdate != null) {
+      infoText +=
+          "注册于: ${stringFromDate(dateFromString(user.regdate), format: 'yyyy-MM-dd')}";
+      if (user.extcredits2 != null) {
+        infoText += "   龙币: ${user.extcredits2}";
+      }
+      if (user.extcredits3 != null) {
+        infoText += "   龙晶: ${user.extcredits3}";
+      }
+    }
+
     return SliverAppBar(
       expandedHeight: 240.0,
       flexibleSpace: FlexibleSpaceBar(
@@ -191,7 +203,7 @@ class ProfileScreenModel extends FetchedListModel {
               Column(
                 children: <Widget>[
                   Container(
-                    height: 80.0,
+                    height: 64.0,
                   ),
                   Container(
                       padding: EdgeInsets.only(left: 24.0, top: 8.0),
@@ -207,13 +219,29 @@ class ProfileScreenModel extends FetchedListModel {
                                         user.verifymessage,
                                         style: theme.themeData.textTheme.title
                                             .copyWith(
-                                                fontSize: 22,
+                                                fontSize: 24 -
+                                                    (user.verifymessage.length >
+                                                                15
+                                                            ? (user.verifymessage
+                                                                        .length -
+                                                                    15) ~/
+                                                                5
+                                                            : 0)
+                                                        .toDouble(),
                                                 color: Colors.white),
+                                        maxLines: 3,
                                       )
                                     : Container()),
                           ),
                         ],
-                      ))
+                      )),
+                  Container(
+                    padding: EdgeInsets.only(left: 24.0, top: 8.0),
+                    alignment: Alignment.centerLeft,
+                    child: Text(infoText,
+                        style: theme.themeData.textTheme.title
+                            .copyWith(color: Colors.white)),
+                  ),
                 ],
               )
             ],
@@ -357,7 +385,7 @@ class ProfileScreenModel extends FetchedListModel {
     if (profile == null && lastError == null) {
       return Center(child: CircularProgressIndicator());
     } else {
-      return null;
+      return super.fillupForEmptyView(context);
     }
   }
 

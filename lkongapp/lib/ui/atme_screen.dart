@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
+import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
@@ -30,16 +31,60 @@ class AtMeScreen extends StatefulWidget {
   }
 }
 
+enum AtMeScreenType {
+  atMe,
+  notif,
+  rate,
+  message,
+}
+
 class AtMeScreenState extends StoryListState<AtMeScreen> {
-  AtMeScreenState();
+  AtMeScreenType type;
+  AtMeScreenState({this.type: AtMeScreenType.atMe});
+
+  void changeScreenType(AtMeScreenType newType) {
+    setState(() {
+      type = newType;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return buildWidgetWithVMFactory(
-        context, AtMeScreenModel.fromStateAndStore(this));
+    return buildConnectedWidget(
+        context, NotifScreenModel.fromStateAndStore(this), (viewModel) {
+      return viewModel.buildNotifView(context);
+    });
   }
 }
 
-class AtMeScreenModel extends StoryListModel {
+abstract class NotifScreenModel {
+  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
+        leading: DrawerButton(),
+        title: Text('通知'),
+        floating: false,
+        pinned: true,
+      );
+
+  static NotifScreenModel createViewModel(
+      AtMeScreenState state, Store<AppState> store) {
+    NotifScreenModel ret;
+    switch (state.type) {
+      case AtMeScreenType.atMe:
+        ret = AtMeScreenModel.fromStore(store);
+        break;
+      default:
+        break;
+    }
+    return ret;
+  }
+
+  static final fromStateAndStore = (AtMeScreenState state) =>
+      (Store<AppState> store) => createViewModel(state, store);
+
+  Widget buildNotifView(BuildContext context);
+}
+
+class AtMeScreenModel extends StoryListModel with NotifScreenModel {
   final StoryFetchList storyList;
   final bool loading;
   final String lastError;
@@ -53,23 +98,16 @@ class AtMeScreenModel extends StoryListModel {
   });
 
   @override
-  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
-        leading: DrawerButton(),
-        title: Text('通知'),
-        floating: false,
-        pinned: true,
-      );
+  SliverAppBar buildAppBar(BuildContext context) => super.buildAppBar(context);
 
-  static final fromStateAndStore =
-      (AtMeScreenState state) => (Store<AppState> store) => AtMeScreenModel(
-            loading: store.state.uiState.content.userData[selectUID(store)]
-                ?.atMe?.loading,
-            lastError: store.state.uiState.content.userData[selectUID(store)]
-                ?.atMe?.lastError,
-            storyList:
-                store.state.uiState.content.userData[selectUID(store)]?.atMe,
-            uid: selectUID(store),
-          );
+  static final fromStore = (Store<AppState> store) => AtMeScreenModel(
+        loading: store
+            .state.uiState.content.userData[selectUID(store)]?.atMe?.loading,
+        lastError: store
+            .state.uiState.content.userData[selectUID(store)]?.atMe?.lastError,
+        storyList: store.state.uiState.content.userData[selectUID(store)]?.atMe,
+        uid: selectUID(store),
+      );
 
   @override
   APIRequest get fetchFromScratchRequest {
@@ -104,11 +142,15 @@ class AtMeScreenModel extends StoryListModel {
   APIRequest get checkNewRequest => null;
 
   @override
-  Widget buildStoryListView(BuildContext context, StoryListState aState) {
-    var state = aState as AtMeScreenState;
+  Widget buildListView(BuildContext context) {
     if (uid == -1) {
       return super.buildGroupedListView(context);
     }
-    return super.buildStoryListView(context, state);
+    return super.buildListView(context);
+  }
+
+  @override
+  Widget buildNotifView(BuildContext context) {
+    return buildListView(context);
   }
 }

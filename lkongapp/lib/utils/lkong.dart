@@ -42,8 +42,8 @@ DateTime parseDatetime(String dateline) {
 
 // final UniversalTimeFormat = "yyyy-MM-dd'T'HH:mm:ssZ";
 // final DefaultTimeZone = "Asia/Shanghai";
-final DefaultTimeZone = "+0800";
-final LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
+const DefaultTimeZone = "+0800";
+const LKongTimeFormat = "yyyy-MM-dd HH:mm:ss";
 final RegExp _tmzFormat = RegExp(r'([zZ]|([-+])(\d\d)(\d\d)?)$');
 DateTime dateFromString(String dateStr) {
   if (!_tmzFormat.hasMatch(dateStr)) {
@@ -57,11 +57,11 @@ DateTime dateFromString(String dateStr) {
   return date;
 }
 
-String stringFromDate(DateTime date) {
+String stringFromDate(DateTime date, {String format: LKongTimeFormat}) {
   String dateStr = "";
   if (date != null) {
-    final format = DateFormat(LKongTimeFormat);
-    dateStr = format.format(date);
+    final dfmt = DateFormat(format);
+    dateStr = dfmt.format(date);
   }
 
   return dateStr;
