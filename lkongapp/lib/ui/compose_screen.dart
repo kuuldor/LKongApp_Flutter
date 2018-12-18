@@ -51,9 +51,9 @@ class ComposeState extends State<ComposeScreen> {
           .accountSettings
           .currentSetting
           .signature;
-      RegExp dotPattern = RegExp('\'(\.\*\?)\'(\.\*\?)(.*)(\.\*\?)');
+      RegExp dotPattern = RegExp(r"'(\.\*\?)\'(\.\*\?)>(\.\*\?)");
       final signature = signaturePattern.replaceAllMapped(
-          dotPattern, (Match m) => "'$signatureLink'${m[3]}$signatureRaw");
+          dotPattern, (Match m) => "'$signatureLink'>$signatureRaw");
 
       content += signature;
     }
