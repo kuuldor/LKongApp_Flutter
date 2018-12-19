@@ -559,22 +559,20 @@ String Function(String) tagStripperBuiler(List<String> fields) {
     final stripTag = (String string) {
       RegExp tagPattern = RegExp(r'<[!\\/a-z].*?>');
       RegExp spacePattern = RegExp(r'\\n');
-      RegExp escapePattern = RegExp(r'\\');
+      RegExp escapePattern = RegExp(r'\\\\');
 
       string = string.replaceAll(tagPattern, "");
       string = string.replaceAll(spacePattern, "");
-      string = string.replaceAll(escapePattern, r"\");
-      string = string.replaceAll(escapePattern, r"\");
+      string = string.replaceAll(escapePattern, r"\\");
       string = HtmlUnescape().convert(string);
       string = string.replaceAll('"', r'\"');
-      string = string.replaceAll(escapePattern, r"\");
 
       return string.trim();
     };
-    final tagStripper = (Match m) => "${m[1]}:\"${stripTag(m[2])}\",";
+    final tagStripper = (Match m) => "${m[1]}:\"${stripTag(m[2])}\"${m[3]}";
 
     fields.forEach((field) {
-      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(.*?)\",");
+      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(.*?)\"([,}])");
       processed = processed.replaceAllMapped(pattern, tagStripper);
     });
 

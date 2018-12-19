@@ -75,10 +75,49 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
+enum MenuAction {
+  follow,
+  unfollow,
+  chat,
+  block,
+  unblock,
+  showAll,
+  manageBlackList,
+  uploadAvatar,
+}
+
+class Choice {
+  const Choice({this.title, this.icon, this.action});
+
+  final String title;
+  final IconData icon;
+  final MenuAction action;
+}
+
+final allMenus = const <Choice>[
+  const Choice(title: '加关注', icon: Icons.visibility, action: MenuAction.follow),
+  const Choice(
+      title: '解除关注', icon: Icons.visibility_off, action: MenuAction.unfollow),
+  const Choice(title: '发消息', icon: Icons.textsms, action: MenuAction.chat),
+  const Choice(title: '加入黑名单', icon: Icons.report, action: MenuAction.block),
+  const Choice(
+      title: '解除黑名单', icon: Icons.report_off, action: MenuAction.unblock),
+  const Choice(
+      title: '全部帖子', icon: Icons.library_books, action: MenuAction.showAll),
+  const Choice(
+      title: '管理黑名单',
+      icon: Icons.recent_actors,
+      action: MenuAction.manageBlackList),
+  const Choice(
+      title: '上传头像', icon: Icons.add_a_photo, action: MenuAction.uploadAvatar),
+];
+
 class ProfileScreenModel extends FetchedListModel {
   final Profile profile;
   final bool loading;
   final String lastError;
+  final int uid;
+  final FollowList followList;
   final ProfileScreenState state;
 
   final Function(int) changeFetchType;
@@ -89,6 +128,8 @@ class ProfileScreenModel extends FetchedListModel {
     @required this.lastError,
     @required this.state,
     @required this.changeFetchType,
+    @required this.uid,
+    @required this.followList,
   });
 
   static final fromStateAndStore = (ProfileScreenState state) =>
@@ -99,6 +140,8 @@ class ProfileScreenModel extends FetchedListModel {
                 store.state.uiState.content.profiles[state.user.uid]?.lastError,
             profile: store.state.uiState.content.profiles[state.user.uid],
             state: state,
+            uid: selectUID(store),
+            followList: selectUserData(store).followList,
             changeFetchType: (int newType) => state.setFetchType(newType),
           );
 
@@ -164,9 +207,70 @@ class ProfileScreenModel extends FetchedListModel {
     return result;
   }
 
+  int getFetchCount(int type) {
+    var result;
+    switch (type) {
+      case fetchTypeStory:
+        result = profile?.user?.threads;
+        break;
+      case fetchTypeFans:
+        result = profile?.user?.fansnum;
+        break;
+      case fetchTypeFollow:
+        result = profile?.user?.followuidnum;
+        break;
+      case fetchTypeDigest:
+        result = profile?.user?.digestposts;
+        break;
+    }
+    return result ?? 0;
+  }
+
   @override
   bool get initLoaded {
     return fetchType == fetchTypeNone || getFetchResult(fetchType) != null;
+  }
+
+  List<Choice> filterMenus() {
+    var menus;
+    int profileUID = profile?.user?.uid;
+    //Show all is the splitter of menus for others and self
+    int index =
+        allMenus.indexWhere((item) => item.action == MenuAction.showAll);
+
+    if (uid == profileUID) {
+      menus = allMenus.skip(index).toList();
+    } else if (followList != null) {
+      bool followed = followList.uid.contains("$profileUID");
+      bool blocked = followList.black.contains("$profileUID");
+      menus = allMenus.getRange(0, index + 1).where((item) {
+        switch (item.action) {
+          case MenuAction.follow:
+            return !followed;
+            break;
+          case MenuAction.unfollow:
+            return followed;
+            break;
+          case MenuAction.block:
+            return !blocked;
+            break;
+          case MenuAction.unblock:
+            return blocked;
+            break;
+          default:
+            break;
+        }
+        return true;
+      }).toList();
+    } else {
+      menus = <Choice>[];
+    }
+
+    return menus;
+  }
+
+  void menuSelected(MenuAction action) {
+    print("Menu Selcected for ${action.toString()}");
   }
 
   @override
@@ -184,8 +288,45 @@ class ProfileScreenModel extends FetchedListModel {
       }
     }
 
+    List<Choice> menus = filterMenus();
+    var actions = <Widget>[];
+    int menuOnBar = 0;
+    if (menus.length > 3) {
+      menuOnBar = 2;
+      actions.add(
+        IconButton(
+          icon: Icon(menus[0].icon),
+          onPressed: () {
+            menuSelected(menus[0].action);
+          },
+        ),
+      );
+      actions.add(
+        IconButton(
+          icon: Icon(menus[1].icon),
+          onPressed: () {
+            menuSelected(menus[1].action);
+          },
+        ),
+      );
+    }
+
+    actions.add(
+      PopupMenuButton<MenuAction>(
+        onSelected: menuSelected,
+        itemBuilder: (BuildContext context) {
+          return menus.skip(menuOnBar).map((Choice menuItem) {
+            return PopupMenuItem<MenuAction>(
+              value: menuItem.action,
+              child: Text(menuItem.title),
+            );
+          }).toList();
+        },
+      ),
+    );
+
     return SliverAppBar(
-      expandedHeight: 240.0,
+      expandedHeight: 320.0,
       flexibleSpace: FlexibleSpaceBar(
           centerTitle: true,
           title: Text(user?.username ?? ""),
@@ -199,18 +340,27 @@ class ProfileScreenModel extends FetchedListModel {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(left: 48.0, right: 48.0),
-                    height: 72.0,
+                    padding: EdgeInsets.only(
+                        left: 48.0,
+                        right: user?.verifymessage != null &&
+                                user.verifymessage.length < 12
+                            ? 48.0
+                            : 32.0),
+                    height: 120.0,
                     alignment: Alignment.bottomCenter,
                     child: user?.verifymessage != null
                         ? Text(
                             user.verifymessage,
                             style: theme.themeData.textTheme.title.copyWith(
                                 fontSize: 20 -
-                                    (user.verifymessage.length ~/ 20)
+                                    (user.verifymessage.length > 24
+                                            ? (user.verifymessage.length -
+                                                    24) ~/
+                                                12
+                                            : 0)
                                         .toDouble(),
                                 color: Colors.white),
-                            maxLines: 2,
+                            maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                           )
                         : Container(),
@@ -246,6 +396,7 @@ class ProfileScreenModel extends FetchedListModel {
           )),
       floating: false,
       pinned: true,
+      actions: actions,
     );
   }
 
@@ -316,9 +467,9 @@ class ProfileScreenModel extends FetchedListModel {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              {'title': '主题', 'num': profile.user.threads, 'type': 0},
               {'title': '粉丝', 'num': profile.user.fansnum, 'type': 1},
               {'title': '关注', 'num': profile.user.followuidnum, 'type': 2},
+              {'title': '主题', 'num': profile.user.threads, 'type': 0},
               {'title': '精华', 'num': profile.user.digestposts, 'type': 3},
             ]
                 .map(
@@ -353,6 +504,10 @@ class ProfileScreenModel extends FetchedListModel {
 
   @override
   APIRequest get fetchFromScratchRequest {
+    if (getFetchCount(fetchType) == 0) {
+      return null;
+    }
+
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {});
     return ProfileNewRequest(completer, user.uid, fetchType);
@@ -360,6 +515,10 @@ class ProfileScreenModel extends FetchedListModel {
 
   @override
   APIRequest get loadMoreRequest {
+    if (getFetchCount(fetchType) == 0) {
+      return null;
+    }
+
     final result = getFetchResult(fetchType);
     int nexttime = result?.nexttime;
 

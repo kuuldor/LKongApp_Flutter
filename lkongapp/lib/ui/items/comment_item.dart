@@ -154,7 +154,7 @@ class CommentItem extends StatelessWidget {
         },
       ),
       IconButton(
-        icon: Icon(Icons.message),
+        icon: Icon(Icons.comment),
         onPressed: () {
           onTap(CommentAction.Reply);
         },
@@ -191,12 +191,7 @@ class CommentItem extends StatelessWidget {
                 ),
               ),
             ),
-            Column(
-              children: <Widget>[
-                Icon(Icons.layers),
-                Text("${comment.lou}楼"),
-              ],
-            ),
+            Text("${comment.lou}楼"),
           ],
         ),
         Container(
