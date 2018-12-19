@@ -187,13 +187,8 @@ class ProfileScreenModel extends FetchedListModel {
     return SliverAppBar(
       expandedHeight: 240.0,
       flexibleSpace: FlexibleSpaceBar(
-          title: Row(
-            children: <Widget>[
-              Text(user?.username ?? ""),
-              Padding(
-                  padding: EdgeInsets.only(left: 8.0), child: verifyIcon(user)),
-            ],
-          ),
+          centerTitle: true,
+          title: Text(user?.username ?? ""),
           background: Stack(
             fit: StackFit.expand,
             children: <Widget>[
@@ -201,43 +196,46 @@ class ProfileScreenModel extends FetchedListModel {
                   "assets/${theme.isNightMode ? 'black.jpg' : 'blue.jpg'}",
                   fit: BoxFit.cover),
               Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    height: 64.0,
+                    padding: EdgeInsets.only(left: 48.0, right: 48.0),
+                    height: 72.0,
+                    alignment: Alignment.bottomCenter,
+                    child: user?.verifymessage != null
+                        ? Text(
+                            user.verifymessage,
+                            style: theme.themeData.textTheme.title.copyWith(
+                                fontSize: 20 -
+                                    (user.verifymessage.length ~/ 20)
+                                        .toDouble(),
+                                color: Colors.white),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          )
+                        : Container(),
                   ),
                   Container(
-                      padding: EdgeInsets.only(left: 24.0, top: 8.0),
-                      alignment: Alignment.centerLeft,
+                      padding: EdgeInsets.only(top: 8.0),
+                      alignment: Alignment.center,
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(right: 8.0),
+                              child: Container(
+                                height: 0.0,
+                                width: 18.0,
+                              )),
                           buildUserAvatar(context, state.user.uid, 96.0),
-                          Expanded(
-                            child: Padding(
-                                padding: EdgeInsets.only(left: 8.0),
-                                child: user?.verifymessage != null
-                                    ? Text(
-                                        user.verifymessage,
-                                        style: theme.themeData.textTheme.title
-                                            .copyWith(
-                                                fontSize: 24 -
-                                                    (user.verifymessage.length >
-                                                                15
-                                                            ? (user.verifymessage
-                                                                        .length -
-                                                                    15) ~/
-                                                                5
-                                                            : 0)
-                                                        .toDouble(),
-                                                color: Colors.white),
-                                        maxLines: 3,
-                                      )
-                                    : Container()),
-                          ),
+                          Padding(
+                              padding: EdgeInsets.only(left: 8.0),
+                              child: verifyIcon(user)),
                         ],
                       )),
                   Container(
-                    padding: EdgeInsets.only(left: 24.0, top: 8.0),
-                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.only(top: 8.0),
+                    alignment: Alignment.center,
                     child: Text(infoText,
                         style: theme.themeData.textTheme.title
                             .copyWith(color: Colors.white)),
