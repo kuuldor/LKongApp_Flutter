@@ -162,6 +162,22 @@ void main() {
     });
   });
 
+  test('Follow Test', () async {
+    await loginTestAccount();
+
+    await followAction({"type": "uid", "unfollow": true, "id": 807754})
+        .then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+
+    await followAction({"type": "black", "unfollow": true, "id": 807754})
+        .then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+    });
+  });
+
   test('Logout Test', () async {
     await logout().then((map) {
       print(map.toString());

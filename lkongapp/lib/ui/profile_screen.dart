@@ -5,10 +5,11 @@ import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/items/user_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
+import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/ui/tools/user_icon.dart';
 import 'package:material_search/material_search.dart';
 import 'dart:async';
-
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -75,25 +76,6 @@ class ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-enum MenuAction {
-  follow,
-  unfollow,
-  chat,
-  block,
-  unblock,
-  showAll,
-  manageBlackList,
-  uploadAvatar,
-}
-
-class Choice {
-  const Choice({this.title, this.icon, this.action});
-
-  final String title;
-  final IconData icon;
-  final MenuAction action;
-}
-
 final allMenus = const <Choice>[
   const Choice(title: '加关注', icon: Icons.visibility, action: MenuAction.follow),
   const Choice(
@@ -154,11 +136,14 @@ class ProfileScreenModel extends FetchedListModel {
         loading == other.loading &&
         lastError == other.lastError &&
         state == other.state &&
-        profile == other.profile;
+        profile == other.profile &&
+        uid == other.uid &&
+        followList == other.followList;
   }
 
   @override
-  int get hashCode => hashObjects([state, loading, lastError, profile]);
+  int get hashCode =>
+      hashObjects([state, loading, lastError, profile, uid, followList]);
 
   @override
   int get itemCount {
@@ -269,8 +254,61 @@ class ProfileScreenModel extends FetchedListModel {
     return menus;
   }
 
-  void menuSelected(MenuAction action) {
-    print("Menu Selcected for ${action.toString()}");
+  void menuSelected(BuildContext context, Choice choice) {
+    print("Menu Selcected for ${choice.title}");
+    final completer = Completer<bool>();
+
+    FollowRequest req;
+    switch (choice.action) {
+      case MenuAction.follow:
+        req = FollowRequest(
+          completer,
+          id: profile.user.uid,
+          replyType: FollowType.user,
+          unfollow: false,
+        );
+        break;
+      case MenuAction.unfollow:
+        req = FollowRequest(
+          completer,
+          id: profile.user.uid,
+          replyType: FollowType.user,
+          unfollow: true,
+        );
+        break;
+      case MenuAction.block:
+        req = FollowRequest(
+          completer,
+          id: profile.user.uid,
+          replyType: FollowType.black,
+          unfollow: false,
+        );
+        break;
+      case MenuAction.unblock:
+        req = FollowRequest(
+          completer,
+          id: profile.user.uid,
+          replyType: FollowType.black,
+          unfollow: true,
+        );
+        break;
+      default:
+        break;
+    }
+
+    if (req != null) {
+      completer.future.then((success) {
+        String msg;
+        if (success) {
+          msg = "${choice.title}成功";
+        } else {
+          msg = "${choice.title}失败";
+        }
+        showToast(msg);
+      });
+
+      dispatchAction(context)(req);
+    }
   }
 
   @override
@@ -290,34 +328,14 @@ class ProfileScreenModel extends FetchedListModel {
 
     List<Choice> menus = filterMenus();
     var actions = <Widget>[];
-    int menuOnBar = 0;
-    if (menus.length > 3) {
-      menuOnBar = 2;
-      actions.add(
-        IconButton(
-          icon: Icon(menus[0].icon),
-          onPressed: () {
-            menuSelected(menus[0].action);
-          },
-        ),
-      );
-      actions.add(
-        IconButton(
-          icon: Icon(menus[1].icon),
-          onPressed: () {
-            menuSelected(menus[1].action);
-          },
-        ),
-      );
-    }
 
     actions.add(
-      PopupMenuButton<MenuAction>(
-        onSelected: menuSelected,
+      PopupMenuButton<Choice>(
+        onSelected: (choice) => menuSelected(context, choice),
         itemBuilder: (BuildContext context) {
-          return menus.skip(menuOnBar).map((Choice menuItem) {
-            return PopupMenuItem<MenuAction>(
-              value: menuItem.action,
+          return menus.map((Choice menuItem) {
+            return PopupMenuItem<Choice>(
+              value: menuItem,
               child: Text(menuItem.title),
             );
           }).toList();
@@ -554,7 +572,9 @@ class ProfileScreenModel extends FetchedListModel {
       }
     }
 
-    return Scaffold(body: super.buildListView(context));
+    return Scaffold(
+      body: super.buildListView(context),
+    );
   }
 
   void handleFetchUserInfo(BuildContext context) {

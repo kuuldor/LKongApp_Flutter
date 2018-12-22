@@ -100,8 +100,7 @@ class ComposeState extends State<ComposeScreen> {
       if (success) {
         dispatchAction(context)(UINavigationPop(context));
       } else {
-        showToast(_scaffoldKey.currentState, '发帖失败',
-            background: Colors.red, textColor: Colors.white);
+        showToast('发帖失败');
       }
     });
 

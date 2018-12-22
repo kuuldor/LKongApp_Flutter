@@ -27,6 +27,7 @@ const MYDATA_API = "MYDATA";
 const SEARCH_API = "SEARCH";
 const USER_PROFILE_API = "USER_PROFILE";
 const REPLY_API = "REPLY";
+const FOLLOW_API = "FOLLOW";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -520,6 +521,20 @@ Future<Map> replyWithParameter(Map args) {
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
+Future<Map> followAction(Map args) {
+  int id = args["id"];
+  String type = args["type"];
+  bool unfollow = args["unfollow"];
+
+  Map params = {
+    "followtype": (unfollow ? "unfollow" : "follow"),
+    "followid": "$type-$id"
+  };
+
+  var httpAction = session.post(endpoint["follow"], data: params);
+  return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
+}
+
 String Function(String) combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
@@ -649,6 +664,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == REPLY_API) {
     return replyWithParameter(parameters);
+  }
+
+  if (api == FOLLOW_API) {
+    return followAction(parameters);
   }
 
   return Future<Map>(null);

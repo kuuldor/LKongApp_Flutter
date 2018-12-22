@@ -71,6 +71,11 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
     });
   }
 
+  if (action is FollowSuccess) {
+    User user = selectUser(store);
+    store.dispatch(FollowListRequest(null, user));
+  }
+
   if (passon) {
     next(action);
   }

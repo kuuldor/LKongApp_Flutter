@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class IconMessage extends StatelessWidget {
   final String message;
@@ -23,13 +24,13 @@ class IconMessage extends StatelessWidget {
   }
 }
 
-showToast(ScaffoldState scaffold, String msg,
-    {Color background, Color textColor}) {
-  scaffold.showSnackBar(SnackBar(
-    backgroundColor: background,
-    content: Text(
-      msg,
-      style: TextStyle(color: textColor),
-    ),
-  ));
+showToast(String msg,
+    {Color background: Colors.red, Color textColor: Colors.white}) {
+  Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIos: 1,
+      backgroundColor: background,
+      textColor: textColor);
 }
