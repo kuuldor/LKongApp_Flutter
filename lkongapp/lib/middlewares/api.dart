@@ -444,20 +444,27 @@ Future<Map> getUserProfile(Map args) {
 
   switch (type) {
     case 0:
-      typeString = "thread";
+      typeString = "/thread";
       parser = StoryListResult.fromJson;
       break;
     case 1:
-      typeString = "fans";
+      typeString = "/fans";
       parser = SearchUserResult.fromJson;
       break;
     case 2:
-      typeString = "follow";
+      typeString = "/follow";
       parser = SearchUserResult.fromJson;
       break;
     case 3:
-      typeString = "digest";
+      typeString = "/digest";
       parser = StoryListResult.fromJson;
+      break;
+    case 4:
+      typeString = "";
+      parser = (data) {
+        final stories = StoryListResult.fromJson(data);
+        return stories.rebuild((b) => b..data.replace(stories.data.reversed));
+      };
       break;
     default:
       assert(false, "Unsupported Data mode $type");
@@ -465,13 +472,15 @@ Future<Map> getUserProfile(Map args) {
   }
 
   var params = getTimeParameter(nexttime, 0);
-  var urlString =
-      endpoint["userProfile"] + "$uid/$typeString" + querify(params);
+  var urlString = endpoint["userProfile"] + "$uid$typeString" + querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
-      preProcessor: tagStripperBuiler(["subject"]));
+      preProcessor: combinedProcessorBuilder([
+        numMapperBuiler(["uid", "curtime", "nexttime", "sortkey"]),
+        tagStripperBuiler(["subject"])
+      ]));
 }
 
 Future<Map> replyWithParameter(Map args) {
@@ -573,7 +582,7 @@ String Function(String) tagStripperBuiler(List<String> fields) {
     String processed = data;
     final stripTag = (String string) {
       RegExp tagPattern = RegExp(r'<[!\\/a-z].*?>');
-      RegExp spacePattern = RegExp(r'\\n');
+      RegExp spacePattern = RegExp(r'\n');
       RegExp escapePattern = RegExp(r'\\\\');
 
       string = string.replaceAll(tagPattern, "");

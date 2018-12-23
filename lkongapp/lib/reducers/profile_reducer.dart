@@ -114,6 +114,12 @@ BuiltMap<int, Profile> Function(
                 type, profile.digests ?? StoryFetchList(), result);
             b..digests.replace(newList);
             break;
+          case 4:
+            final result = action.result as StoryListResult;
+            final newList = fetchListSucceeded(
+                type, profile.allPosts ?? StoryFetchList(), result);
+            b..allPosts.replace(newList);
+            break;
         }
         return b;
       };

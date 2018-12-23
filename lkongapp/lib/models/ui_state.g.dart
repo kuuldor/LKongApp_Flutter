@@ -427,6 +427,8 @@ class _$Profile extends Profile {
   final StoryFetchList digests;
   @override
   final SearchUserResult follows;
+  @override
+  final StoryFetchList allPosts;
 
   factory _$Profile([void updates(ProfileBuilder b)]) =>
       (new ProfileBuilder()..update(updates)).build();
@@ -438,7 +440,8 @@ class _$Profile extends Profile {
       this.stories,
       this.fans,
       this.digests,
-      this.follows})
+      this.follows,
+      this.allPosts})
       : super._() {
     if (loading == null) {
       throw new BuiltValueNullFieldError('Profile', 'loading');
@@ -465,7 +468,8 @@ class _$Profile extends Profile {
         stories == other.stories &&
         fans == other.fans &&
         digests == other.digests &&
-        follows == other.follows;
+        follows == other.follows &&
+        allPosts == other.allPosts;
   }
 
   @override
@@ -474,12 +478,14 @@ class _$Profile extends Profile {
         $jc(
             $jc(
                 $jc(
-                    $jc($jc($jc(0, lastError.hashCode), loading.hashCode),
-                        user.hashCode),
-                    stories.hashCode),
-                fans.hashCode),
-            digests.hashCode),
-        follows.hashCode));
+                    $jc(
+                        $jc($jc($jc(0, lastError.hashCode), loading.hashCode),
+                            user.hashCode),
+                        stories.hashCode),
+                    fans.hashCode),
+                digests.hashCode),
+            follows.hashCode),
+        allPosts.hashCode));
   }
 
   @override
@@ -491,7 +497,8 @@ class _$Profile extends Profile {
           ..add('stories', stories)
           ..add('fans', fans)
           ..add('digests', digests)
-          ..add('follows', follows))
+          ..add('follows', follows)
+          ..add('allPosts', allPosts))
         .toString();
   }
 }
@@ -531,6 +538,11 @@ class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
       _$this._follows ??= new SearchUserResultBuilder();
   set follows(SearchUserResultBuilder follows) => _$this._follows = follows;
 
+  StoryFetchListBuilder _allPosts;
+  StoryFetchListBuilder get allPosts =>
+      _$this._allPosts ??= new StoryFetchListBuilder();
+  set allPosts(StoryFetchListBuilder allPosts) => _$this._allPosts = allPosts;
+
   ProfileBuilder();
 
   ProfileBuilder get _$this {
@@ -542,6 +554,7 @@ class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
       _fans = _$v.fans?.toBuilder();
       _digests = _$v.digests?.toBuilder();
       _follows = _$v.follows?.toBuilder();
+      _allPosts = _$v.allPosts?.toBuilder();
       _$v = null;
     }
     return this;
@@ -572,7 +585,8 @@ class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
               stories: _stories?.build(),
               fans: _fans?.build(),
               digests: _digests?.build(),
-              follows: _follows?.build());
+              follows: _follows?.build(),
+              allPosts: _allPosts?.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -586,6 +600,8 @@ class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
         _digests?.build();
         _$failedField = 'follows';
         _follows?.build();
+        _$failedField = 'allPosts';
+        _allPosts?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'Profile', _$failedField, e.toString());

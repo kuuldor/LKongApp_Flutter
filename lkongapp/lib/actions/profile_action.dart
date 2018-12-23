@@ -20,8 +20,8 @@ abstract class ProfileRequest extends APIRequest with StartLoading {
 }
 
 class ProfileNewRequest extends ProfileRequest {
-  ProfileNewRequest(Completer completer, int uid, int searchType)
-      : super(completer, uid, searchType, 0);
+  ProfileNewRequest(Completer completer, int uid, int fetchType)
+      : super(completer, uid, fetchType, 0);
 
   @override
   CreateFailure get badResponse => (error) => ProfileNewFailure(this, error);

@@ -7,6 +7,7 @@ import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/ui/tools/user_icon.dart';
+import 'package:lkongapp/ui/user_story.dart';
 import 'package:material_search/material_search.dart';
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -33,6 +34,7 @@ const fetchTypeStory = 0;
 const fetchTypeFans = 1;
 const fetchTypeFollow = 2;
 const fetchTypeDigest = 3;
+const fetchTypeAllStories = 4;
 
 class ProfileScreen extends StatefulWidget {
   final UserInfo user;
@@ -123,7 +125,7 @@ class ProfileScreenModel extends FetchedListModel {
             profile: store.state.uiState.content.profiles[state.user.uid],
             state: state,
             uid: selectUID(store),
-            followList: selectUserData(store).followList,
+            followList: selectUserData(store)?.followList,
             changeFetchType: (int newType) => state.setFetchType(newType),
           );
 
@@ -292,6 +294,18 @@ class ProfileScreenModel extends FetchedListModel {
           unfollow: true,
         );
         break;
+      case MenuAction.showAll:
+        dispatchAction(context)(
+            UINavigationPush(context, LKongAppRoutes.post, false, (context) {
+          if (user != null) {
+            return UserStory(
+              user: user,
+            );
+          } else {
+            assert(false, "User is not ready");
+          }
+        }));
+        break;
       default:
         break;
     }
@@ -364,7 +378,7 @@ class ProfileScreenModel extends FetchedListModel {
                                 user.verifymessage.length < 12
                             ? 48.0
                             : 32.0),
-                    height: 120.0,
+                    height: 144.0,
                     alignment: Alignment.bottomCenter,
                     child: user?.verifymessage != null
                         ? Text(

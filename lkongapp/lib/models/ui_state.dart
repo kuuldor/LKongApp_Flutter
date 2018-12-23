@@ -85,6 +85,8 @@ abstract class Profile implements Built<Profile, ProfileBuilder> {
   StoryFetchList get digests;
   @nullable
   SearchUserResult get follows;
+  @nullable
+  StoryFetchList get allPosts;
 }
 
 abstract class SearchResult
