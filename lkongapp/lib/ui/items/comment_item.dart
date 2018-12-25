@@ -26,6 +26,8 @@ class CommentItem extends StatelessWidget {
     @required this.uid,
   });
 
+  
+
   Widget buildRateLog(BuildContext context, BuiltList<Ratelog> ratelog) {
     if (ratelog == null || ratelog.length == 0) {
       return Container();

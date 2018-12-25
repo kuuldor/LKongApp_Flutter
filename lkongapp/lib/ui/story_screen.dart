@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/comment_item.dart';
 import 'package:lkongapp/ui/items/story_info.dart';
@@ -22,9 +23,10 @@ class StoryScreen extends StatefulWidget {
   final int storyId;
   final int postId;
   final int page;
+  final int floor;
 
   const StoryScreen(
-      {Key key, @required this.storyId, this.postId, this.page: 1})
+      {Key key, @required this.storyId, this.postId, this.page, this.floor})
       : super(key: key);
 
   @override
@@ -37,11 +39,37 @@ class StoryContentState extends State<StoryScreen> {
   int storyId;
   int postId;
   int page;
+  int floor;
 
   bool loaded;
   bool loading;
 
-  StoryContentState(this.storyId, this.postId, this.page);
+  StoryContentState(this.storyId, this.postId, this.page) {
+    if (this.postId == null) {
+      if (this.page == null) {
+        this.page = 1;
+      }
+    } else {
+      getQuoteLocation({"postId": this.postId}).then((result) {
+        String location = result["location"];
+        int lou = result["lou"];
+        int page;
+
+        if (lou != null && location != null) {
+          final locArray = location.split("_");
+          if (locArray.length > 2) {
+            page = int.parse(locArray[2]);
+          } else {
+            page = 1;
+          }
+        }
+        setState(() {
+          this.page = page;
+          this.floor = lou;
+        });
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -53,21 +81,26 @@ class StoryContentState extends State<StoryScreen> {
 
   void prevPage() {
     setState(() {
-      if (page > 0) {
+      if (page != null && page > 0) {
         page--;
+        floor = null;
       }
     });
   }
 
   void nextPage() {
     setState(() {
-      page++;
+      if (page != null) {
+        page++;
+        floor = null;
+      }
     });
   }
 
   void setPage(int newPage) {
     setState(() {
       page = newPage;
+      floor = null;
     });
   }
 
@@ -140,10 +173,39 @@ class StoryContentModel {
   int get hashCode => hash2(loading, story);
 
   var _scrollController = ScrollController();
+  List<Widget> get actions => <Widget>[];
+  SliverAppBar get appBar => SliverAppBar(
+        title: Text("帖子"),
+        floating: true,
+        pinned: false,
+        actions: actions,
+      );
 
   Widget _buildContentView(BuildContext context, StoryContentState state) {
-    int storyId = state.storyId;
+    final spinner = Container(
+      height: MediaQuery.of(context).size.height - 160,
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
     int pageNo = state.page;
+    if (pageNo == null) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
+          appBar,
+          SliverList(
+            delegate: SliverChildListDelegate(
+              <Widget>[spinner],
+            ),
+          ),
+        ]),
+      );
+    }
+
+    int storyId = state.storyId;
+
     StoryInfoResult info;
 
     BuiltList<Comment> comments;
@@ -169,6 +231,12 @@ class StoryContentModel {
 
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
 
+    if (state.floor != null) {
+      Future(() {
+        showFloor(context, state.floor);
+      });
+    }
+
     final buildCommentViews = () {
       final wrapTile = (Widget tile) => Column(children: <Widget>[
             tile,
@@ -178,12 +246,7 @@ class StoryContentModel {
           ]);
       List<Widget> tiles = List();
       if (loading || comments == null) {
-        tiles.add(Container(
-          height: MediaQuery.of(context).size.height - 160,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
-        ));
+        tiles.add(spinner);
       } else {
         tiles.add(wrapTile(
           Container(
@@ -217,17 +280,10 @@ class StoryContentModel {
       return tiles;
     };
 
-    var actions = <Widget>[];
-
     return Scaffold(
       key: _scaffoldKey,
       body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
-        SliverAppBar(
-          title: Text("帖子"),
-          floating: true,
-          pinned: false,
-          actions: actions,
-        ),
+        appBar,
         SliverList(
           delegate: SliverChildListDelegate(
             buildCommentViews(),
@@ -351,5 +407,14 @@ class StoryContentModel {
             }),
       );
     });
+  }
+
+  void showFloor(BuildContext context, int floor) {
+    double offset = floor * 30.0;
+    bool shown = false;
+    do {
+      _scrollController.jumpTo(offset);
+      var renderObj = context.findRenderObject();
+    } while (!shown);
   }
 }

@@ -56,14 +56,12 @@ class UserStoryModel extends StoryListModel {
   final bool loading;
   final String lastError;
   final UserInfo user;
-  final int mode;
 
   UserStoryModel({
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
     @required this.user,
-    @required this.mode,
   });
 
   static final fromStateAndStore =

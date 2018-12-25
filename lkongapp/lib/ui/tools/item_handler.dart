@@ -11,7 +11,7 @@ import 'package:lkongapp/utils/utils.dart';
 Future<Null> onStoryTap(BuildContext context, Story story) {
   return Future(() {
     String storyId = story.tid;
-    String postId = "0";
+    String postId;
     if (storyId == null) {
       storyId = parseLKTypeId(story.id);
     } else {
@@ -21,8 +21,8 @@ Future<Null> onStoryTap(BuildContext context, Story story) {
     dispatchAction(context)(
         UINavigationPush(context, LKongAppRoutes.story, false, (context) {
       return StoryScreen(
-        storyId: int.parse(storyId),
-        postId: int.parse(postId),
+        storyId: storyId != null ? int.parse(storyId) : null,
+        postId: postId != null ? int.parse(postId) : null,
       );
     }));
   });

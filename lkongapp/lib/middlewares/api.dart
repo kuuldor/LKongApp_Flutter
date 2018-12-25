@@ -544,6 +544,19 @@ Future<Map> followAction(Map args) {
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
+Future<Map> getQuoteLocation(Map args) {
+  int postId = args["postId"];
+  final urlString =
+      "/index.php?mod=ajax&action=panelocation&dataitem=post_$postId" +
+          querify(defaultParameter());
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(
+    httpAction,
+    dataParser: (data) => json.decode(data),
+  );
+}
+
 String Function(String) combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
