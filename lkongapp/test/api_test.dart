@@ -177,7 +177,7 @@ Future<void> forumInfoTest() async {
     await getForumInfo({"id": 1024}).then((map) {
       print(map.toString());
       expect(map['error'], null);
-    });
+     });
   });
 }
 

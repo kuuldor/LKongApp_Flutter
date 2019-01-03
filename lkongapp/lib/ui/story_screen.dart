@@ -13,6 +13,7 @@ import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/theme.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
+import 'package:lkongapp/utils/indexed_controller.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
@@ -172,14 +173,13 @@ class StoryContentModel {
   @override
   int get hashCode => hash2(loading, story);
 
-  var _scrollController = ScrollController();
   List<Widget> get actions => <Widget>[];
-  SliverAppBar get appBar => SliverAppBar(
+  AppBar get appBar => AppBar(
         title: Text("帖子"),
-        floating: true,
-        pinned: false,
         actions: actions,
       );
+
+  ScrollController _scrollController;
 
   Widget _buildContentView(BuildContext context, StoryContentState state) {
     final spinner = Container(
@@ -191,16 +191,14 @@ class StoryContentModel {
 
     int pageNo = state.page;
     if (pageNo == null) {
+      _scrollController = ScrollController();
       return Scaffold(
         key: _scaffoldKey,
-        body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
-          appBar,
-          SliverList(
-            delegate: SliverChildListDelegate(
-              <Widget>[spinner],
-            ),
-          ),
-        ]),
+        appBar: appBar,
+        body: ListView.builder(
+            controller: _scrollController,
+            itemCount: 1,
+            itemBuilder: (context, int) => spinner),
       );
     }
 
@@ -229,43 +227,47 @@ class StoryContentModel {
       }
     }
 
-    int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
+    int itemCount = 1;
 
-    if (state.floor != null) {
-      Future(() {
-        showFloor(context, state.floor);
-      });
+    if (lastError != null) {
+      itemCount++;
+    } else if (comments != null) {
+      itemCount += comments.length;
     }
 
-    final buildCommentViews = () {
+    int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
+
+    final buildCommentViews = (BuildContext context, int index) {
       final wrapTile = (Widget tile) => Column(children: <Widget>[
             tile,
             Divider(
               height: 24.0,
             ),
           ]);
-      List<Widget> tiles = List();
+      Widget tile;
       if (loading || comments == null) {
-        tiles.add(spinner);
+        tile = spinner;
       } else {
-        tiles.add(wrapTile(
-          Container(
+        if (index == 0) {
+          tile = wrapTile(Container(
             child: Center(
               child: StoryInfoItem(info: info),
             ),
-          ),
-        ));
-        if (lastError != null) {
-          tiles.add(Container(
-              color: Colors.red[500],
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "错误：$lastError",
-                style: const TextStyle(color: Colors.white),
-              )));
+          ));
+        } else if (lastError != null) {
+          if (index == 1) {
+            tile = Container(
+                color: Colors.red[500],
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "错误：$lastError",
+                  style: const TextStyle(color: Colors.white),
+                ));
+          }
         } else {
-          for (int i = 0; i < comments.length; i++) {
+          var i = index - 1;
+          if (i >= 0 && i < comments.length) {
             var comment = comments[i];
 
             Widget item = CommentItem(
@@ -273,23 +275,38 @@ class StoryContentModel {
               comment: comment,
               onTap: (action) => onCommentAction(context, comment, action),
             );
-            tiles.add(wrapTile(item));
+            tile = wrapTile(item);
           }
         }
       }
-      return tiles;
+      return tile;
     };
+
+    Widget listView;
+
+    if (state.floor != null) {
+      Future(() {
+        showFloor(context, state.floor);
+      });
+      _scrollController = IndexedScrollController();
+      listView = IndexedListView.builder(
+        controller: _scrollController,
+        itemBuilder: buildCommentViews,
+        itemCount: itemCount,
+      );
+    } else {
+      _scrollController = ScrollController();
+      listView = ListView.builder(
+        controller: _scrollController,
+        itemBuilder: buildCommentViews,
+        itemCount: itemCount,
+      );
+    }
 
     return Scaffold(
       key: _scaffoldKey,
-      body: CustomScrollView(controller: _scrollController, slivers: <Widget>[
-        appBar,
-        SliverList(
-          delegate: SliverChildListDelegate(
-            buildCommentViews(),
-          ),
-        ),
-      ]),
+      appBar: appBar,
+      body: listView,
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -410,11 +427,8 @@ class StoryContentModel {
   }
 
   void showFloor(BuildContext context, int floor) {
-    double offset = floor * 30.0;
-    bool shown = false;
-    do {
-      _scrollController.jumpTo(offset);
-      var renderObj = context.findRenderObject();
-    } while (!shown);
+    var index = floor % 20;
+    final controller = _scrollController as IndexedScrollController;
+    controller.jumpToIndex(index);
   }
 }
