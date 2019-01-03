@@ -27,7 +27,7 @@ class ComposeState extends State<ComposeScreen> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static final String signatureLink = "http://lkong.cn/thread/1722140";
+  static final String signatureLink = "http://lkong.cn/thread/2214383";
   static final String signaturePattern =
       "<br>--<a target='_blank' href='.*?'.*?>.*?</a>";
   static final String editorPattern =
