@@ -428,6 +428,9 @@ class StoryContentModel {
 
   void showFloor(BuildContext context, int floor) {
     var index = floor % 20;
+    if (index == 0) {
+      index = 20;
+    }
     final controller = _scrollController as IndexedScrollController;
     controller.jumpToIndex(index);
   }
