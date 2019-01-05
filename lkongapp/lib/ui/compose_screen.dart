@@ -38,6 +38,8 @@ class ComposeState extends State<ComposeScreen> {
   final subjectController = TextEditingController();
   final contentController = TextEditingController();
 
+  bool sending = false;
+
   bool hasSignature(String s) {
     RegExp pattern = RegExp(signaturePattern);
     return pattern.hasMatch(s);
@@ -102,6 +104,9 @@ class ComposeState extends State<ComposeScreen> {
       } else {
         showToast('发帖失败');
       }
+      setState(() {
+        this.sending = false;
+      });
     });
 
     dispatchAction(context)(ReplyRequest(
@@ -113,6 +118,10 @@ class ComposeState extends State<ComposeScreen> {
       story: widget.story,
       comment: widget.comment,
     ));
+
+    setState(() {
+      this.sending = true;
+    });
   }
 
   @override
@@ -196,23 +205,36 @@ class ComposeState extends State<ComposeScreen> {
       ),
     );
 
-    return Scaffold(
+    final screen = Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: Text(title),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.send),
-            onPressed: () {
-              if (!_formKey.currentState.validate()) {
-                return;
-              }
-              sendMessage(context);
-            },
+            onPressed: (sending
+                ? null
+                : () {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
+                    sendMessage(context);
+                  }),
           ),
         ],
       ),
       body: form,
     );
+
+    if (!sending) {
+      return screen;
+    } else {
+      return Stack(
+        children: <Widget>[
+          screen,
+          Center(child: CircularProgressIndicator()),
+        ],
+      );
+    }
   }
 }
