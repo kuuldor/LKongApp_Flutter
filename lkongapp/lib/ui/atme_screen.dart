@@ -91,16 +91,18 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
   final int uid;
 
   AtMeScreenModel({
+    @required Store<AppState> store,
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
     @required this.uid,
-  });
+  }) : super(store);
 
   @override
   SliverAppBar buildAppBar(BuildContext context) => super.buildAppBar(context);
 
   static final fromStore = (Store<AppState> store) => AtMeScreenModel(
+        store: store,
         loading: store
             .state.uiState.content.userData[selectUID(store)]?.atMe?.loading,
         lastError: store

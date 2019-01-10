@@ -40,14 +40,16 @@ class HomeListModel extends StoryListModel {
   final String lastError;
 
   HomeListModel({
+    @required Store<AppState> store,
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
     @required this.threadOnlyHome,
-  });
+  }) : super(store);
 
   static HomeListModel fromStore(Store<AppState> store) {
     return HomeListModel(
+      store: store,
       loading: store.state.uiState.content.homeList.loading,
       lastError: store.state.uiState.content.homeList.lastError,
       storyList: store.state.uiState.content.homeList,

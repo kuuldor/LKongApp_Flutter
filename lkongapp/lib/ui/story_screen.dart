@@ -14,7 +14,7 @@ import 'package:lkongapp/utils/theme.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:lkongapp/utils/indexed_controller.dart';
-
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
@@ -131,6 +131,7 @@ class StoryContentModel {
   final StoryPageList story;
   final bool loading;
   final String lastError;
+  final BuiltList<String> blackList;
 
   StoryContentModel({
     @required this.uid,
@@ -139,6 +140,7 @@ class StoryContentModel {
     @required this.story,
     @required this.loadContent,
     @required this.loadInfo,
+    @required this.blackList,
   });
 
   final Future<Null> Function(int storyId, int page) loadContent;
@@ -155,6 +157,10 @@ class StoryContentModel {
           lastError:
               store.state.uiState.content.storyRepo[state.storyId]?.lastError,
           story: store.state.uiState.content.storyRepo[state.storyId],
+          blackList:
+              store.state.persistState.appConfig.setting.hideBlacklisterPost
+                  ? selectUserData(store).followList.black
+                  : null,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
           },
@@ -269,13 +275,17 @@ class StoryContentModel {
           var i = index - 1;
           if (i >= 0 && i < comments.length) {
             var comment = comments[i];
-
-            Widget item = CommentItem(
-              uid: uid,
-              comment: comment,
-              onTap: (action) => onCommentAction(context, comment, action),
-            );
-            tile = wrapTile(item);
+            if (blackList == null ||
+                !blackList.contains("${comment.authorid}")) {
+              Widget item = CommentItem(
+                uid: uid,
+                comment: comment,
+                onTap: (action) => onCommentAction(context, comment, action),
+              );
+              tile = wrapTile(item);
+            } else {
+              tile = Container();
+            }
           }
         }
       }

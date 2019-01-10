@@ -48,11 +48,12 @@ class FavoriteScreenModel extends StoryListModel {
   final int uid;
 
   FavoriteScreenModel({
+    @required Store<AppState> store,
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
     @required this.uid,
-  });
+  }) : super(store);
 
   @override
   SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
@@ -64,6 +65,7 @@ class FavoriteScreenModel extends StoryListModel {
 
   static final fromStateAndStore = (FavoriteScreenState state) =>
       (Store<AppState> store) => FavoriteScreenModel(
+            store: store,
             loading: store.state.uiState.content.userData[selectUID(store)]
                 ?.favorites?.loading,
             lastError: store.state.uiState.content.userData[selectUID(store)]

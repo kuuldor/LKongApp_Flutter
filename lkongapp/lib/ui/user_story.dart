@@ -58,14 +58,16 @@ class UserStoryModel extends StoryListModel {
   final UserInfo user;
 
   UserStoryModel({
+    @required Store<AppState> store,
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
     @required this.user,
-  });
+  }) : super(store);
 
   static final fromStateAndStore =
       (UserStoryState state) => (Store<AppState> store) => UserStoryModel(
+            store: store,
             loading:
                 store.state.uiState.content.profiles[state.user.uid]?.loading,
             lastError:

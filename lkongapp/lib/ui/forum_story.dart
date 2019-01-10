@@ -67,15 +67,17 @@ class ForumStoryModel extends StoryListModel {
   final int mode;
 
   ForumStoryModel({
+    @required Store<AppState> store,
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
     @required this.forum,
     @required this.mode,
-  });
+  }) : super(store);
 
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
+            store: store,
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
             lastError: store
