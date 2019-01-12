@@ -7,6 +7,7 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
+import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -35,10 +36,12 @@ class ForumStory extends StatefulWidget {
 class ForumStoryState extends StoryListState<ForumStory> {
   Forum forum;
   int mode;
+  bool loaded;
 
   void setMode(int newMode) {
     setState(() {
       mode = newMode;
+      loaded = false;
     });
   }
 
@@ -52,11 +55,12 @@ class ForumStoryState extends StoryListState<ForumStory> {
   @override
   int get hashCode => hash2(forum, mode);
 
-  ForumStoryState(this.forum, {this.mode: 0});
+  ForumStoryState(this.forum, {this.mode: 0, this.loaded: false});
+
   @override
   Widget build(BuildContext context) {
-    return buildWidgetWithVMFactory(
-        context, ForumStoryModel.fromStateAndStore(this));
+    final fromStore = ForumStoryModel.fromStateAndStore(this);
+    return buildWidgetWithVMFactory(context, fromStore);
   }
 }
 
@@ -64,8 +68,7 @@ class ForumStoryModel extends StoryListModel {
   final StoryFetchList storyList;
   final bool loading;
   final String lastError;
-  final Forum forum;
-  final int mode;
+  final ForumStoryState state;
   final int uid;
   final String username;
 
@@ -76,9 +79,23 @@ class ForumStoryModel extends StoryListModel {
     @required this.loading,
     @required this.lastError,
     @required this.storyList,
-    @required this.forum,
-    @required this.mode,
+    @required this.state,
   }) : super(store);
+
+  @override
+  bool operator ==(other) {
+    return other is ForumStoryModel &&
+        storyList == other.storyList &&
+        loading == other.loading &&
+        lastError == other.lastError &&
+        state == other.state &&
+        uid == other.uid &&
+        username == other.username;
+  }
+
+  @override
+  int get hashCode =>
+      hashObjects([storyList, loading, lastError, state, uid, username]);
 
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
@@ -90,9 +107,11 @@ class ForumStoryModel extends StoryListModel {
             lastError: store
                 .state.uiState.content.forumRepo[state.forum.fid].lastError,
             storyList: store.state.uiState.content.forumRepo[state.forum.fid],
-            forum: state.forum,
-            mode: state.mode,
+            state: state,
           );
+
+  @override
+  bool get initLoaded => super.initLoaded && state.loaded;
 
   @override
   APIRequest get fetchFromScratchRequest {
@@ -100,7 +119,10 @@ class ForumStoryModel extends StoryListModel {
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
-    return ForumStoryNewRequest(completer, forum.fid, mode, 0, 0);
+
+    state.loaded = true;
+
+    return ForumStoryNewRequest(completer, state.forum.fid, state.mode, 0, 0);
   }
 
   @override
@@ -114,7 +136,7 @@ class ForumStoryModel extends StoryListModel {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return ForumStoryLoadMoreRequest(
-        completer, forum.fid, mode, storyList.nexttime);
+        completer, state.forum.fid, state.mode, storyList.nexttime);
   }
 
   @override
@@ -128,12 +150,43 @@ class ForumStoryModel extends StoryListModel {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
     return ForumStoryRefreshRequest(
-        completer, forum.fid, mode, storyList.current);
+        completer, state.forum.fid, state.mode, storyList.current);
+  }
+
+  final allMenus = const <Choice>[
+    const Choice(
+        title: '全部显示', icon: Icons.visibility, action: MenuAction.showAll),
+    const Choice(
+        title: '精华', icon: Icons.visibility_off, action: MenuAction.digest),
+    const Choice(
+        title: '发布时间排序', icon: Icons.textsms, action: MenuAction.timeline),
+  ];
+
+  List<Choice> filterMenus() {
+    var menus = List<Choice>.from(allMenus);
+    menus.removeAt(state.mode);
+    return menus;
+  }
+
+  void _menuSelected(BuildContext context, Choice choice) {
+    switch (choice.action) {
+      case MenuAction.showAll:
+        state.setMode(0);
+        break;
+      case MenuAction.digest:
+        state.setMode(1);
+        break;
+      case MenuAction.timeline:
+        state.setMode(2);
+        break;
+      default:
+        break;
+    }
   }
 
   @override
   SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
-        title: Text(forum.name),
+        title: Text(state.forum.name),
         floating: false,
         pinned: true,
         actions: <Widget>[
@@ -142,12 +195,23 @@ class ForumStoryModel extends StoryListModel {
             onPressed: () {
               onPostButtonTap(
                 context,
-                forum: forum,
+                forum: state.forum,
                 uid: uid,
                 username: username,
               );
             },
           ),
+          PopupMenuButton<Choice>(
+            onSelected: (choice) => _menuSelected(context, choice),
+            itemBuilder: (BuildContext context) {
+              return filterMenus().map((Choice menuItem) {
+                return PopupMenuItem<Choice>(
+                  value: menuItem,
+                  child: Text(menuItem.title),
+                );
+              }).toList();
+            },
+          )
         ],
       );
 
@@ -157,7 +221,8 @@ class ForumStoryModel extends StoryListModel {
     completer.future.then((success) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
-    return ForumStoryCheckNewRequest(completer, forum.fid, storyList.current);
+    return ForumStoryCheckNewRequest(
+        completer, state.forum.fid, storyList.current);
   }
 
   @override

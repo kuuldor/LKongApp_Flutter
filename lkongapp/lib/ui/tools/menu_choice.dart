@@ -9,6 +9,8 @@ enum MenuAction {
   showAll,
   manageBlackList,
   uploadAvatar,
+  digest,
+  timeline,
 }
 
 class Choice {
