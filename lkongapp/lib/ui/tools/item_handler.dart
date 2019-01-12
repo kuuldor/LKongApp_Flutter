@@ -58,6 +58,8 @@ onReplyButtonTap(
   BuildContext context, {
   Comment comment,
   @required StoryInfoResult story,
+  @required int uid,
+  @required String username,
 }) =>
     Future(() => dispatchAction(context)(
             UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
@@ -75,6 +77,8 @@ onReplyButtonTap(
             comment: comment,
             story: story,
             replyType: replyType,
+            uid: uid,
+            username: username,
           );
         })));
 
@@ -82,6 +86,8 @@ onEditButtonTap(
   BuildContext context, {
   Comment comment,
   @required StoryInfoResult story,
+  @required int uid,
+  @required String username,
 }) =>
     Future(() => dispatchAction(context)(
             UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
@@ -99,10 +105,17 @@ onEditButtonTap(
             comment: comment,
             story: story,
             replyType: replyType,
+            uid: uid,
+            username: username,
           );
         })));
 
-onPostButtonTap(BuildContext context, Forum forum) =>
+onPostButtonTap(
+  BuildContext context, {
+  @required Forum forum,
+  @required int uid,
+  @required String username,
+}) =>
     Future(() => dispatchAction(context)(
             UINavigationPush(context, LKongAppRoutes.post, false, (context) {
           ReplyType replyType;
@@ -114,5 +127,7 @@ onPostButtonTap(BuildContext context, Forum forum) =>
           return ComposeScreen(
             forum: forum,
             replyType: replyType,
+            uid: uid,
+            username: username,
           );
         })));

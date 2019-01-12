@@ -13,6 +13,7 @@ import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
 import 'package:lkongapp/models/models.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 
@@ -65,8 +66,12 @@ class ForumStoryModel extends StoryListModel {
   final String lastError;
   final Forum forum;
   final int mode;
+  final int uid;
+  final String username;
 
   ForumStoryModel({
+    @required this.uid,
+    @required this.username,
     @required Store<AppState> store,
     @required this.loading,
     @required this.lastError,
@@ -78,6 +83,8 @@ class ForumStoryModel extends StoryListModel {
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             store: store,
+            username: selectUser(store).userInfo.username,
+            uid: selectUID(store),
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
             lastError: store
@@ -133,7 +140,12 @@ class ForumStoryModel extends StoryListModel {
           IconButton(
             icon: Icon(Icons.create),
             onPressed: () {
-              onPostButtonTap(context, forum);
+              onPostButtonTap(
+                context,
+                forum: forum,
+                uid: uid,
+                username: username,
+              );
             },
           ),
         ],

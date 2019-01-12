@@ -10,11 +10,18 @@ class ComposeScreen extends StatefulWidget {
   final Comment comment;
   final StoryInfoResult story;
   final Forum forum;
-
+  final String username;
+  final int uid;
   final ReplyType replyType;
 
   const ComposeScreen(
-      {Key key, this.comment, this.story, this.forum, this.replyType})
+      {Key key,
+      this.comment,
+      this.story,
+      this.forum,
+      this.replyType,
+      @required this.username,
+      @required this.uid})
       : super(key: key);
 
   @override
@@ -109,8 +116,13 @@ class ComposeState extends State<ComposeScreen> {
       });
     });
 
+    final now = DateTime.now().toUtc().toIso8601String();
+
     dispatchAction(context)(ReplyRequest(
       completer,
+      author: widget.username,
+      authorId: widget.uid,
+      dateline: now,
       subject: subject,
       content: content,
       replyType: widget.replyType,
@@ -144,13 +156,19 @@ class ComposeState extends State<ComposeScreen> {
       case ReplyType.EditStory:
         final comment = widget.comment;
         final story = widget.story;
-        subjectController.text = story.subject;
-        contentController.text = stripSignature(comment.message);
+        if (subjectController.text.length == 0) {
+          subjectController.text = story.subject;
+        }
+        if (contentController.text.length == 0) {
+          contentController.text = stripSignature(comment.message);
+        }
         title = "编辑：${story.subject}";
         break;
       case ReplyType.EditComment:
         final comment = widget.comment;
-        contentController.text = stripSignature(comment.message);
+        if (contentController.text.length == 0) {
+          contentController.text = stripSignature(comment.message);
+        }
         title = "编辑：${comment.lou}楼";
         break;
     }

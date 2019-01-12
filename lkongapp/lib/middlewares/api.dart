@@ -713,7 +713,7 @@ APIResponse createResponseAction(APIRequest action, Map response) {
     return LoginSuccess(action, user.rebuild((b) => b..uid = response["uid"]));
   }
 
-  var output = response["result"];
+  var output = response["result"] ?? response;
   return action.goodResponse(output);
 
   if (api == HOMELIST_API) {

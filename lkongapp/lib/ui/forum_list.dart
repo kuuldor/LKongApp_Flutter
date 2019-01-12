@@ -101,7 +101,10 @@ class ForumListModel extends FetchedListModel {
     final userData = selectUserData(store);
     return ForumListModel(
       repo: store.state.uiState.content.forumInfo,
-      followed: userData?.followList?.fid?.map((f) => int.parse(f))?.toList(),
+      followed: userData?.followList?.fid
+          ?.where((f) => f.length > 0)
+          ?.map((f) => int.parse(f))
+          ?.toList(),
       showInfo: selectSetting(store).showForumInfo,
     );
   }

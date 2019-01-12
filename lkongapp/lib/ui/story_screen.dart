@@ -128,12 +128,14 @@ class StoryContentState extends State<StoryScreen> {
 
 class StoryContentModel {
   final int uid;
+  final String username;
   final StoryPageList story;
   final bool loading;
   final String lastError;
   final BuiltList<String> blackList;
 
   StoryContentModel({
+    @required this.username,
     @required this.uid,
     @required this.loading,
     @required this.lastError,
@@ -150,7 +152,8 @@ class StoryContentModel {
 
   static final fromStateAndStore = (StoryContentState state) =>
       (Store<AppState> store) => StoryContentModel(
-          uid: store.state.persistState.authState.currentUser,
+          username: selectUser(store).userInfo.username,
+          uid: selectUID(store),
           loading:
               store.state.uiState.content.storyRepo[state.storyId]?.loading ??
                   false,
@@ -185,7 +188,7 @@ class StoryContentModel {
         actions: actions,
       );
 
-  ScrollController _scrollController;
+  static ScrollController _scrollController;
 
   Widget _buildContentView(BuildContext context, StoryContentState state) {
     final spinner = Container(
@@ -295,15 +298,15 @@ class StoryContentModel {
     Widget listView;
 
     if (state.floor != null) {
-      Future(() {
-        showFloor(context, state.floor);
-      });
       _scrollController = IndexedScrollController();
       listView = IndexedListView.builder(
         controller: _scrollController,
         itemBuilder: buildCommentViews,
         itemCount: itemCount,
       );
+      Future(() {
+        showFloor(context, state.floor);
+      });
     } else {
       _scrollController = ScrollController();
       listView = ListView.builder(
@@ -321,7 +324,12 @@ class StoryContentModel {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          onReplyButtonTap(context, story: story.storyInfo);
+          onReplyButtonTap(
+            context,
+            story: story.storyInfo,
+            uid: uid,
+            username: username,
+          );
         },
       ),
       bottomNavigationBar: BottomAppBar(
@@ -377,6 +385,8 @@ class StoryContentModel {
           context,
           comment: comment,
           story: story.storyInfo,
+          uid: uid,
+          username: username,
         );
         break;
       case CommentAction.Edit:
@@ -384,6 +394,8 @@ class StoryContentModel {
           context,
           comment: comment,
           story: story.storyInfo,
+          uid: uid,
+          username: username,
         );
         break;
       case CommentAction.UpVote:

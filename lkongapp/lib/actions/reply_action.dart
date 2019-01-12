@@ -21,10 +21,16 @@ class ReplyRequest extends APIRequest with StartLoading {
   final Forum forum;
   final String subject;
   final String content;
+  final String author;
+  final int authorId;
+  final String dateline;
   final ReplyType replyType;
 
   ReplyRequest(
     Completer completer, {
+    @required this.author,
+    @required this.authorId,
+    @required this.dateline,
     this.comment,
     this.story,
     this.forum,

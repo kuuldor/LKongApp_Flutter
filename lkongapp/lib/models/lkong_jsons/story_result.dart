@@ -204,12 +204,21 @@ abstract class StoryContentResult
 abstract class Comment implements Built<Comment, CommentBuilder> {
   Comment._();
 
-  factory Comment([updates(CommentBuilder b)]) = _$Comment;
+  factory Comment([updates(CommentBuilder b)]) => _$Comment((b) => b
+    ..fid = 0
+    ..warning = false
+    ..warningReason = ""
+    ..dateline = ""
+    ..message = ""
+    ..author = ""
+    ..authorid = 0
+    ..pid = 0
+    ..id = 0
+    ..lou = 0
+    ..update(updates));
 
   @BuiltValueField(wireName: 'fid')
   int get fid;
-  @BuiltValueField(wireName: 'sortkey')
-  int get sortkey;
   @BuiltValueField(wireName: 'warning')
   bool get warning;
   @BuiltValueField(wireName: 'warningreason')
@@ -222,25 +231,34 @@ abstract class Comment implements Built<Comment, CommentBuilder> {
   String get author;
   @BuiltValueField(wireName: 'authorid')
   int get authorid;
+  @BuiltValueField(wireName: 'pid')
+  int get pid;
+  @BuiltValueField(wireName: 'id')
+  int get id;
+  @BuiltValueField(wireName: 'lou')
+  int get lou;
+
+  @nullable
+  @BuiltValueField(wireName: 'sortkey')
+  int get sortkey;
+  @nullable
   @BuiltValueField(wireName: 'isme')
   int get isme;
   @nullable
   @BuiltValueField(wireName: 'notgroup')
   int get notgroup;
-  @BuiltValueField(wireName: 'pid')
-  int get pid;
+  @nullable
   @BuiltValueField(wireName: 'first')
   int get first;
+  @nullable
   @BuiltValueField(wireName: 'status')
   int get status;
-  @BuiltValueField(wireName: 'id')
-  int get id;
+  @nullable
   @BuiltValueField(wireName: 'tsadmin')
   bool get tsadmin;
+  @nullable
   @BuiltValueField(wireName: 'isadmin')
   int get isadmin;
-  @BuiltValueField(wireName: 'lou')
-  int get lou;
   @nullable
   @BuiltValueField(wireName: 'tid')
   int get tid;

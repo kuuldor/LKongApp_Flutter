@@ -13,6 +13,8 @@ final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
       _storyContentRequested),
   TypedReducer<BuiltMap<int, StoryPageList>, StoryContentSuccess>(
       _storyContentSucceeded),
+  TypedReducer<BuiltMap<int, StoryPageList>, ReplySuccess>(
+      _storyReplySucceeded),
   TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoRequest>(
       _storyInfoRequested),
   TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoSuccess>(
@@ -116,6 +118,77 @@ BuiltMap<int, StoryPageList> _storyContentRequested(
           (v) => v.rebuild((b) => b
             ..loading = true
             ..pages.addEntries([MapEntry(action.page, page)]))));
+    }
+  }
+  return newRepo;
+}
+
+BuiltMap<int, StoryPageList> _storyReplySucceeded(
+    BuiltMap<int, StoryPageList> storyRepo, ReplySuccess action) {
+  var newRepo = storyRepo;
+  final result = action.result;
+  final ReplyRequest request = action.request;
+
+  final message = result["mess"];
+
+  var story = request.story;
+
+  final replyType = request.replyType;
+
+  if (story != null) {
+    int page;
+    StoryPage storyPage;
+
+    int threadId = story.tid;
+    if (replyType == ReplyType.EditComment ||
+        replyType == ReplyType.EditStory) {
+      var comment = request.comment;
+      page = (comment.lou - 1) ~/ 20 + 1;
+
+      storyPage = newRepo[threadId].pages[page];
+      if (storyPage != null) {
+        int index = storyPage.comments.indexOf(comment);
+        storyPage = storyPage.rebuild((b) => b
+          ..comments.replaceRange(index, index + 1,
+              [comment.rebuild((b) => b..message = message)]));
+      }
+    }
+
+    if (replyType == ReplyType.Comment || replyType == ReplyType.Story) {
+      int lou = result["lou"];
+      page = (lou - 1) ~/ 20 + 1;
+
+      storyPage = newRepo[threadId].pages[page];
+      if (storyPage != null) {
+        storyPage = storyPage.rebuild((b) => b
+          ..comments.add(Comment().rebuild((b) => b
+            ..id = DateTime.now().millisecondsSinceEpoch
+            ..warning = false
+            ..warningReason = ""
+            ..message = request.content
+            ..fid = story.fid
+            ..author = request.author
+            ..authorid = request.authorId
+            ..dateline = request.dateline
+            ..pid = result["pid"]
+            ..tid = result["tid"]
+            ..lou = result["lou"])));
+      }
+    }
+
+    if (page != null && storyPage != null) {
+      var updater = (b) => b
+        ..loading = false
+        ..lastError = null
+        ..pages.updateValue(page, (v) => storyPage);
+      newRepo = newRepo.rebuild(
+        (b) => b
+          ..updateValue(
+            threadId,
+            (v) => v.rebuild(updater),
+            ifAbsent: () => StoryPageList().rebuild(updater),
+          ),
+      );
     }
   }
   return newRepo;

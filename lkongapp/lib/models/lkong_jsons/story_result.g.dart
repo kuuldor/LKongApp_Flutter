@@ -512,8 +512,6 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
     final result = <Object>[
       'fid',
       serializers.serialize(object.fid, specifiedType: const FullType(int)),
-      'sortkey',
-      serializers.serialize(object.sortkey, specifiedType: const FullType(int)),
       'warning',
       serializers.serialize(object.warning,
           specifiedType: const FullType(bool)),
@@ -532,28 +530,53 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
       'authorid',
       serializers.serialize(object.authorid,
           specifiedType: const FullType(int)),
-      'isme',
-      serializers.serialize(object.isme, specifiedType: const FullType(int)),
       'pid',
       serializers.serialize(object.pid, specifiedType: const FullType(int)),
-      'first',
-      serializers.serialize(object.first, specifiedType: const FullType(int)),
-      'status',
-      serializers.serialize(object.status, specifiedType: const FullType(int)),
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(int)),
-      'tsadmin',
-      serializers.serialize(object.tsadmin,
-          specifiedType: const FullType(bool)),
-      'isadmin',
-      serializers.serialize(object.isadmin, specifiedType: const FullType(int)),
       'lou',
       serializers.serialize(object.lou, specifiedType: const FullType(int)),
     ];
+    if (object.sortkey != null) {
+      result
+        ..add('sortkey')
+        ..add(serializers.serialize(object.sortkey,
+            specifiedType: const FullType(int)));
+    }
+    if (object.isme != null) {
+      result
+        ..add('isme')
+        ..add(serializers.serialize(object.isme,
+            specifiedType: const FullType(int)));
+    }
     if (object.notgroup != null) {
       result
         ..add('notgroup')
         ..add(serializers.serialize(object.notgroup,
+            specifiedType: const FullType(int)));
+    }
+    if (object.first != null) {
+      result
+        ..add('first')
+        ..add(serializers.serialize(object.first,
+            specifiedType: const FullType(int)));
+    }
+    if (object.status != null) {
+      result
+        ..add('status')
+        ..add(serializers.serialize(object.status,
+            specifiedType: const FullType(int)));
+    }
+    if (object.tsadmin != null) {
+      result
+        ..add('tsadmin')
+        ..add(serializers.serialize(object.tsadmin,
+            specifiedType: const FullType(bool)));
+    }
+    if (object.isadmin != null) {
+      result
+        ..add('isadmin')
+        ..add(serializers.serialize(object.isadmin,
             specifiedType: const FullType(int)));
     }
     if (object.tid != null) {
@@ -588,10 +611,6 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           result.fid = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
-        case 'sortkey':
-          result.sortkey = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
         case 'warning':
           result.warning = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
@@ -616,16 +635,28 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           result.authorid = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'pid':
+          result.pid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'lou':
+          result.lou = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'sortkey':
+          result.sortkey = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
         case 'isme':
           result.isme = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
         case 'notgroup':
           result.notgroup = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'pid':
-          result.pid = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
         case 'first':
@@ -636,20 +667,12 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
           result.status = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
-        case 'id':
-          result.id = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
         case 'tsadmin':
           result.tsadmin = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
         case 'isadmin':
           result.isadmin = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
-        case 'lou':
-          result.lou = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
         case 'tid':
@@ -1617,8 +1640,6 @@ class _$Comment extends Comment {
   @override
   final int fid;
   @override
-  final int sortkey;
-  @override
   final bool warning;
   @override
   final String warningReason;
@@ -1631,23 +1652,25 @@ class _$Comment extends Comment {
   @override
   final int authorid;
   @override
+  final int pid;
+  @override
+  final int id;
+  @override
+  final int lou;
+  @override
+  final int sortkey;
+  @override
   final int isme;
   @override
   final int notgroup;
-  @override
-  final int pid;
   @override
   final int first;
   @override
   final int status;
   @override
-  final int id;
-  @override
   final bool tsadmin;
   @override
   final int isadmin;
-  @override
-  final int lou;
   @override
   final int tid;
   @override
@@ -1658,30 +1681,27 @@ class _$Comment extends Comment {
 
   _$Comment._(
       {this.fid,
-      this.sortkey,
       this.warning,
       this.warningReason,
       this.dateline,
       this.message,
       this.author,
       this.authorid,
+      this.pid,
+      this.id,
+      this.lou,
+      this.sortkey,
       this.isme,
       this.notgroup,
-      this.pid,
       this.first,
       this.status,
-      this.id,
       this.tsadmin,
       this.isadmin,
-      this.lou,
       this.tid,
       this.ratelog})
       : super._() {
     if (fid == null) {
       throw new BuiltValueNullFieldError('Comment', 'fid');
-    }
-    if (sortkey == null) {
-      throw new BuiltValueNullFieldError('Comment', 'sortkey');
     }
     if (warning == null) {
       throw new BuiltValueNullFieldError('Comment', 'warning');
@@ -1701,26 +1721,11 @@ class _$Comment extends Comment {
     if (authorid == null) {
       throw new BuiltValueNullFieldError('Comment', 'authorid');
     }
-    if (isme == null) {
-      throw new BuiltValueNullFieldError('Comment', 'isme');
-    }
     if (pid == null) {
       throw new BuiltValueNullFieldError('Comment', 'pid');
     }
-    if (first == null) {
-      throw new BuiltValueNullFieldError('Comment', 'first');
-    }
-    if (status == null) {
-      throw new BuiltValueNullFieldError('Comment', 'status');
-    }
     if (id == null) {
       throw new BuiltValueNullFieldError('Comment', 'id');
-    }
-    if (tsadmin == null) {
-      throw new BuiltValueNullFieldError('Comment', 'tsadmin');
-    }
-    if (isadmin == null) {
-      throw new BuiltValueNullFieldError('Comment', 'isadmin');
     }
     if (lou == null) {
       throw new BuiltValueNullFieldError('Comment', 'lou');
@@ -1739,22 +1744,22 @@ class _$Comment extends Comment {
     if (identical(other, this)) return true;
     return other is Comment &&
         fid == other.fid &&
-        sortkey == other.sortkey &&
         warning == other.warning &&
         warningReason == other.warningReason &&
         dateline == other.dateline &&
         message == other.message &&
         author == other.author &&
         authorid == other.authorid &&
+        pid == other.pid &&
+        id == other.id &&
+        lou == other.lou &&
+        sortkey == other.sortkey &&
         isme == other.isme &&
         notgroup == other.notgroup &&
-        pid == other.pid &&
         first == other.first &&
         status == other.status &&
-        id == other.id &&
         tsadmin == other.tsadmin &&
         isadmin == other.isadmin &&
-        lou == other.lou &&
         tid == other.tid &&
         ratelog == other.ratelog;
   }
@@ -1783,26 +1788,26 @@ class _$Comment extends Comment {
                                                                                 0,
                                                                                 fid
                                                                                     .hashCode),
-                                                                            sortkey
+                                                                            warning
                                                                                 .hashCode),
-                                                                        warning
+                                                                        warningReason
                                                                             .hashCode),
-                                                                    warningReason
+                                                                    dateline
                                                                         .hashCode),
-                                                                dateline
+                                                                message
                                                                     .hashCode),
-                                                            message.hashCode),
-                                                        author.hashCode),
-                                                    authorid.hashCode),
-                                                isme.hashCode),
-                                            notgroup.hashCode),
-                                        pid.hashCode),
-                                    first.hashCode),
-                                status.hashCode),
-                            id.hashCode),
-                        tsadmin.hashCode),
-                    isadmin.hashCode),
-                lou.hashCode),
+                                                            author.hashCode),
+                                                        authorid.hashCode),
+                                                    pid.hashCode),
+                                                id.hashCode),
+                                            lou.hashCode),
+                                        sortkey.hashCode),
+                                    isme.hashCode),
+                                notgroup.hashCode),
+                            first.hashCode),
+                        status.hashCode),
+                    tsadmin.hashCode),
+                isadmin.hashCode),
             tid.hashCode),
         ratelog.hashCode));
   }
@@ -1811,22 +1816,22 @@ class _$Comment extends Comment {
   String toString() {
     return (newBuiltValueToStringHelper('Comment')
           ..add('fid', fid)
-          ..add('sortkey', sortkey)
           ..add('warning', warning)
           ..add('warningReason', warningReason)
           ..add('dateline', dateline)
           ..add('message', message)
           ..add('author', author)
           ..add('authorid', authorid)
+          ..add('pid', pid)
+          ..add('id', id)
+          ..add('lou', lou)
+          ..add('sortkey', sortkey)
           ..add('isme', isme)
           ..add('notgroup', notgroup)
-          ..add('pid', pid)
           ..add('first', first)
           ..add('status', status)
-          ..add('id', id)
           ..add('tsadmin', tsadmin)
           ..add('isadmin', isadmin)
-          ..add('lou', lou)
           ..add('tid', tid)
           ..add('ratelog', ratelog))
         .toString();
@@ -1839,10 +1844,6 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int _fid;
   int get fid => _$this._fid;
   set fid(int fid) => _$this._fid = fid;
-
-  int _sortkey;
-  int get sortkey => _$this._sortkey;
-  set sortkey(int sortkey) => _$this._sortkey = sortkey;
 
   bool _warning;
   bool get warning => _$this._warning;
@@ -1869,6 +1870,22 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int get authorid => _$this._authorid;
   set authorid(int authorid) => _$this._authorid = authorid;
 
+  int _pid;
+  int get pid => _$this._pid;
+  set pid(int pid) => _$this._pid = pid;
+
+  int _id;
+  int get id => _$this._id;
+  set id(int id) => _$this._id = id;
+
+  int _lou;
+  int get lou => _$this._lou;
+  set lou(int lou) => _$this._lou = lou;
+
+  int _sortkey;
+  int get sortkey => _$this._sortkey;
+  set sortkey(int sortkey) => _$this._sortkey = sortkey;
+
   int _isme;
   int get isme => _$this._isme;
   set isme(int isme) => _$this._isme = isme;
@@ -1876,10 +1893,6 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int _notgroup;
   int get notgroup => _$this._notgroup;
   set notgroup(int notgroup) => _$this._notgroup = notgroup;
-
-  int _pid;
-  int get pid => _$this._pid;
-  set pid(int pid) => _$this._pid = pid;
 
   int _first;
   int get first => _$this._first;
@@ -1889,10 +1902,6 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int get status => _$this._status;
   set status(int status) => _$this._status = status;
 
-  int _id;
-  int get id => _$this._id;
-  set id(int id) => _$this._id = id;
-
   bool _tsadmin;
   bool get tsadmin => _$this._tsadmin;
   set tsadmin(bool tsadmin) => _$this._tsadmin = tsadmin;
@@ -1900,10 +1909,6 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int _isadmin;
   int get isadmin => _$this._isadmin;
   set isadmin(int isadmin) => _$this._isadmin = isadmin;
-
-  int _lou;
-  int get lou => _$this._lou;
-  set lou(int lou) => _$this._lou = lou;
 
   int _tid;
   int get tid => _$this._tid;
@@ -1919,22 +1924,22 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   CommentBuilder get _$this {
     if (_$v != null) {
       _fid = _$v.fid;
-      _sortkey = _$v.sortkey;
       _warning = _$v.warning;
       _warningReason = _$v.warningReason;
       _dateline = _$v.dateline;
       _message = _$v.message;
       _author = _$v.author;
       _authorid = _$v.authorid;
+      _pid = _$v.pid;
+      _id = _$v.id;
+      _lou = _$v.lou;
+      _sortkey = _$v.sortkey;
       _isme = _$v.isme;
       _notgroup = _$v.notgroup;
-      _pid = _$v.pid;
       _first = _$v.first;
       _status = _$v.status;
-      _id = _$v.id;
       _tsadmin = _$v.tsadmin;
       _isadmin = _$v.isadmin;
-      _lou = _$v.lou;
       _tid = _$v.tid;
       _ratelog = _$v.ratelog?.toBuilder();
       _$v = null;
@@ -1962,22 +1967,22 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
       _$result = _$v ??
           new _$Comment._(
               fid: fid,
-              sortkey: sortkey,
               warning: warning,
               warningReason: warningReason,
               dateline: dateline,
               message: message,
               author: author,
               authorid: authorid,
+              pid: pid,
+              id: id,
+              lou: lou,
+              sortkey: sortkey,
               isme: isme,
               notgroup: notgroup,
-              pid: pid,
               first: first,
               status: status,
-              id: id,
               tsadmin: tsadmin,
               isadmin: isadmin,
-              lou: lou,
               tid: tid,
               ratelog: _ratelog?.build());
     } catch (_) {
