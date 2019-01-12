@@ -71,6 +71,7 @@ class ForumStoryModel extends StoryListModel {
   final ForumStoryState state;
   final int uid;
   final String username;
+  final BuiltList<String> followList;
 
   ForumStoryModel({
     @required this.uid,
@@ -80,12 +81,14 @@ class ForumStoryModel extends StoryListModel {
     @required this.lastError,
     @required this.storyList,
     @required this.state,
+    @required this.followList,
   }) : super(store);
 
   @override
   bool operator ==(other) {
     return other is ForumStoryModel &&
         storyList == other.storyList &&
+        followList == other.followList &&
         loading == other.loading &&
         lastError == other.lastError &&
         state == other.state &&
@@ -94,14 +97,15 @@ class ForumStoryModel extends StoryListModel {
   }
 
   @override
-  int get hashCode =>
-      hashObjects([storyList, loading, lastError, state, uid, username]);
+  int get hashCode => hashObjects(
+      [storyList, followList, loading, lastError, state, uid, username]);
 
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             store: store,
             username: selectUser(store).userInfo.username,
             uid: selectUID(store),
+            followList: selectUserData(store).followList.fid,
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
             lastError: store
@@ -184,36 +188,98 @@ class ForumStoryModel extends StoryListModel {
     }
   }
 
+  void followForum(BuildContext context, MenuAction action) {
+    final completer = Completer<bool>();
+    FollowRequest req;
+    switch (action) {
+      case MenuAction.follow:
+        req = FollowRequest(
+          completer,
+          id: state.forum.fid,
+          replyType: FollowType.forum,
+          unfollow: false,
+        );
+        break;
+      case MenuAction.unfollow:
+        req = FollowRequest(
+          completer,
+          id: state.forum.fid,
+          replyType: FollowType.forum,
+          unfollow: true,
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    if (req != null) {
+      completer.future.then((success) {
+        String msg;
+        if (success) {
+          msg = "修改关注状态成功";
+        } else {
+          msg = "修改关注状态失败";
+        }
+        showToast(msg);
+      });
+
+      dispatchAction(context)(req);
+    }
+  }
+
   @override
-  SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
-        title: Text(state.forum.name),
-        floating: false,
-        pinned: true,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.create),
-            onPressed: () {
-              onPostButtonTap(
-                context,
-                forum: state.forum,
-                uid: uid,
-                username: username,
-              );
-            },
-          ),
-          PopupMenuButton<Choice>(
-            onSelected: (choice) => _menuSelected(context, choice),
-            itemBuilder: (BuildContext context) {
-              return filterMenus().map((Choice menuItem) {
-                return PopupMenuItem<Choice>(
-                  value: menuItem,
-                  child: Text(menuItem.title),
-                );
-              }).toList();
-            },
-          )
-        ],
-      );
+  SliverAppBar buildAppBar(BuildContext context) {
+    List<Choice> menus = filterMenus();
+    var actions = <Widget>[
+      IconButton(
+        icon: Icon(Icons.create),
+        onPressed: () {
+          onPostButtonTap(
+            context,
+            forum: state.forum,
+            uid: uid,
+            username: username,
+          );
+        },
+      )
+    ];
+
+    if (followList.contains("${state.forum.fid}")) {
+      actions.add(IconButton(
+        icon: Icon(Icons.visibility_off),
+        onPressed: () {
+          followForum(context, MenuAction.unfollow);
+        },
+      ));
+    } else {
+      actions.add(IconButton(
+        icon: Icon(Icons.visibility),
+        onPressed: () {
+          followForum(context, MenuAction.follow);
+        },
+      ));
+    }
+
+    actions.add(PopupMenuButton<Choice>(
+      onSelected: (choice) => _menuSelected(context, choice),
+      itemBuilder: (BuildContext context) {
+        return menus.map((Choice menuItem) {
+          return PopupMenuItem<Choice>(
+            value: menuItem,
+            child: Text(menuItem.title),
+          );
+        }).toList();
+      },
+    ));
+
+    return SliverAppBar(
+      title: Text(state.forum.name),
+      floating: false,
+      pinned: true,
+      actions: actions,
+    );
+  }
 
   @override
   APIRequest get checkNewRequest {
