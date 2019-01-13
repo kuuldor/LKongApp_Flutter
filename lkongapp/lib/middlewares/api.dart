@@ -557,6 +557,21 @@ Future<Map> getQuoteLocation(Map args) {
   );
 }
 
+Future<Map> favoriteThread(Map args) {
+  int threadId = args["threadId"];
+  bool unfavorite = args["unfavorite"];
+
+  final urlString = "/index.php?mod=ajax&action=favorite&tid=$threadId" +
+      (unfavorite == true ? "&type=-1" : "") +
+      querify(defaultParameter());
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(
+    httpAction,
+    dataParser: (data) => json.decode(data),
+  );
+}
+
 String Function(String) combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;

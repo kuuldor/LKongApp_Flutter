@@ -36,12 +36,12 @@ class ForumStory extends StatefulWidget {
 class ForumStoryState extends StoryListState<ForumStory> {
   Forum forum;
   int mode;
-  bool loaded;
+  bool needReload;
 
   void setMode(int newMode) {
     setState(() {
       mode = newMode;
-      loaded = false;
+      needReload = true;
     });
   }
 
@@ -55,7 +55,7 @@ class ForumStoryState extends StoryListState<ForumStory> {
   @override
   int get hashCode => hash2(forum, mode);
 
-  ForumStoryState(this.forum, {this.mode: 0, this.loaded: false});
+  ForumStoryState(this.forum, {this.mode: 0, this.needReload: false});
 
   @override
   Widget build(BuildContext context) {
@@ -115,16 +115,16 @@ class ForumStoryModel extends StoryListModel {
           );
 
   @override
-  bool get initLoaded => super.initLoaded && state.loaded;
+  bool get initLoaded => super.initLoaded && !state.needReload;
 
   @override
   APIRequest get fetchFromScratchRequest {
+    state.needReload = false;
+
     final Completer<bool> completer = Completer<bool>();
     completer.future.then((success) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
-
-    state.loaded = true;
 
     return ForumStoryNewRequest(completer, state.forum.fid, state.mode, 0, 0);
   }
@@ -159,11 +159,10 @@ class ForumStoryModel extends StoryListModel {
 
   final allMenus = const <Choice>[
     const Choice(
-        title: '全部显示', icon: Icons.visibility, action: MenuAction.showAll),
+        title: '全部显示', icon: Icons.library_books, action: MenuAction.showAll),
+    const Choice(title: '精华', icon: Icons.star, action: MenuAction.digest),
     const Choice(
-        title: '精华', icon: Icons.visibility_off, action: MenuAction.digest),
-    const Choice(
-        title: '发布时间排序', icon: Icons.textsms, action: MenuAction.timeline),
+        title: '发布时间排序', icon: Icons.today, action: MenuAction.timeline),
   ];
 
   List<Choice> filterMenus() {

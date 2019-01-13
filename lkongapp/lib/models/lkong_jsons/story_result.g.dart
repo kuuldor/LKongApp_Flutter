@@ -567,6 +567,12 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
         ..add(serializers.serialize(object.status,
             specifiedType: const FullType(int)));
     }
+    if (object.favorite != null) {
+      result
+        ..add('favorite')
+        ..add(serializers.serialize(object.favorite,
+            specifiedType: const FullType(bool)));
+    }
     if (object.tsadmin != null) {
       result
         ..add('tsadmin')
@@ -666,6 +672,10 @@ class _$CommentSerializer implements StructuredSerializer<Comment> {
         case 'status':
           result.status = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'favorite':
+          result.favorite = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
           break;
         case 'tsadmin':
           result.tsadmin = serializers.deserialize(value,
@@ -1668,6 +1678,8 @@ class _$Comment extends Comment {
   @override
   final int status;
   @override
+  final bool favorite;
+  @override
   final bool tsadmin;
   @override
   final int isadmin;
@@ -1695,6 +1707,7 @@ class _$Comment extends Comment {
       this.notgroup,
       this.first,
       this.status,
+      this.favorite,
       this.tsadmin,
       this.isadmin,
       this.tid,
@@ -1758,6 +1771,7 @@ class _$Comment extends Comment {
         notgroup == other.notgroup &&
         first == other.first &&
         status == other.status &&
+        favorite == other.favorite &&
         tsadmin == other.tsadmin &&
         isadmin == other.isadmin &&
         tid == other.tid &&
@@ -1784,28 +1798,22 @@ class _$Comment extends Comment {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc(
-                                                                                0,
-                                                                                fid
-                                                                                    .hashCode),
-                                                                            warning
-                                                                                .hashCode),
-                                                                        warningReason
-                                                                            .hashCode),
-                                                                    dateline
-                                                                        .hashCode),
-                                                                message
-                                                                    .hashCode),
-                                                            author.hashCode),
-                                                        authorid.hashCode),
-                                                    pid.hashCode),
-                                                id.hashCode),
-                                            lou.hashCode),
-                                        sortkey.hashCode),
-                                    isme.hashCode),
-                                notgroup.hashCode),
-                            first.hashCode),
-                        status.hashCode),
+                                                                            $jc($jc(0, fid.hashCode),
+                                                                                warning.hashCode),
+                                                                            warningReason.hashCode),
+                                                                        dateline.hashCode),
+                                                                    message.hashCode),
+                                                                author.hashCode),
+                                                            authorid.hashCode),
+                                                        pid.hashCode),
+                                                    id.hashCode),
+                                                lou.hashCode),
+                                            sortkey.hashCode),
+                                        isme.hashCode),
+                                    notgroup.hashCode),
+                                first.hashCode),
+                            status.hashCode),
+                        favorite.hashCode),
                     tsadmin.hashCode),
                 isadmin.hashCode),
             tid.hashCode),
@@ -1830,6 +1838,7 @@ class _$Comment extends Comment {
           ..add('notgroup', notgroup)
           ..add('first', first)
           ..add('status', status)
+          ..add('favorite', favorite)
           ..add('tsadmin', tsadmin)
           ..add('isadmin', isadmin)
           ..add('tid', tid)
@@ -1902,6 +1911,10 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
   int get status => _$this._status;
   set status(int status) => _$this._status = status;
 
+  bool _favorite;
+  bool get favorite => _$this._favorite;
+  set favorite(bool favorite) => _$this._favorite = favorite;
+
   bool _tsadmin;
   bool get tsadmin => _$this._tsadmin;
   set tsadmin(bool tsadmin) => _$this._tsadmin = tsadmin;
@@ -1938,6 +1951,7 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
       _notgroup = _$v.notgroup;
       _first = _$v.first;
       _status = _$v.status;
+      _favorite = _$v.favorite;
       _tsadmin = _$v.tsadmin;
       _isadmin = _$v.isadmin;
       _tid = _$v.tid;
@@ -1981,6 +1995,7 @@ class CommentBuilder implements Builder<Comment, CommentBuilder> {
               notgroup: notgroup,
               first: first,
               status: status,
+              favorite: favorite,
               tsadmin: tsadmin,
               isadmin: isadmin,
               tid: tid,

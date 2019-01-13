@@ -254,6 +254,9 @@ abstract class Comment implements Built<Comment, CommentBuilder> {
   @BuiltValueField(wireName: 'status')
   int get status;
   @nullable
+  @BuiltValueField(wireName: 'favorite')
+  bool get favorite;
+  @nullable
   @BuiltValueField(wireName: 'tsadmin')
   bool get tsadmin;
   @nullable

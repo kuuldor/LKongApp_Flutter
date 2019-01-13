@@ -3,14 +3,16 @@ import 'dart:async';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:lkongapp/middlewares/api.dart';
+import 'package:lkongapp/middlewares/api.dart' as api;
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/comment_item.dart';
 import 'package:lkongapp/ui/items/story_info.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
+import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/utils/theme.dart';
+import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:lkongapp/utils/indexed_controller.dart';
@@ -51,7 +53,7 @@ class StoryContentState extends State<StoryScreen> {
         this.page = 1;
       }
     } else {
-      getQuoteLocation({"postId": this.postId}).then((result) {
+      api.getQuoteLocation({"postId": this.postId}).then((result) {
         String location = result["location"];
         int lou = result["lou"];
         int page;
@@ -133,6 +135,7 @@ class StoryContentModel {
   final bool loading;
   final String lastError;
   final BuiltList<String> blackList;
+  final BuiltList<String> followList;
 
   StoryContentModel({
     @required this.username,
@@ -143,6 +146,7 @@ class StoryContentModel {
     @required this.loadContent,
     @required this.loadInfo,
     @required this.blackList,
+    @required this.followList,
   });
 
   final Future<Null> Function(int storyId, int page) loadContent;
@@ -164,6 +168,7 @@ class StoryContentModel {
               store.state.persistState.appConfig.setting.hideBlacklisterPost
                   ? selectUserData(store).followList.black
                   : null,
+          followList: selectUserData(store).followList.tid,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
           },
@@ -182,11 +187,151 @@ class StoryContentModel {
   @override
   int get hashCode => hash2(loading, story);
 
-  List<Widget> get actions => <Widget>[];
-  AppBar get appBar => AppBar(
-        title: Text("帖子"),
-        actions: actions,
-      );
+  final allMenus = const <Choice>[
+    const Choice(
+        title: '关注', icon: Icons.visibility, action: MenuAction.follow),
+    const Choice(
+        title: '取消关注', icon: Icons.visibility_off, action: MenuAction.unfollow),
+    const Choice(
+        title: '收藏', icon: Icons.favorite, action: MenuAction.favorite),
+    const Choice(
+        title: '取消收藏', icon: Icons.delete_sweep, action: MenuAction.unfavorite),
+  ];
+
+  List<Choice> filterMenus() {
+    var menus = <Choice>[];
+    if (followList != null && story?.storyInfo?.tid != null) {
+      if (followList.contains("${story.storyInfo.tid}")) {
+        menus.add(allMenus[1]);
+      } else {
+        menus.add(allMenus[0]);
+      }
+    }
+
+    if (story?.pages != null &&
+        story?.pages[1] != null &&
+        story.pages[1].comments != null &&
+        story.pages[1].comments.length > 0) {
+      if (story.pages[1].comments.first.favorite == true) {
+        menus.add(allMenus[3]);
+      } else {
+        menus.add(allMenus[2]);
+      }
+    }
+    return menus;
+  }
+
+  void _menuSelected(BuildContext context, Choice choice) {
+    switch (choice.action) {
+      case MenuAction.follow:
+      case MenuAction.unfollow:
+        followStory(context, choice.action);
+        break;
+      case MenuAction.favorite:
+      case MenuAction.unfavorite:
+        favoriteStory(context, choice.action);
+        break;
+      default:
+        break;
+    }
+  }
+
+  void followStory(BuildContext context, MenuAction action) {
+    final completer = Completer<bool>();
+    FollowRequest req;
+    switch (action) {
+      case MenuAction.follow:
+        req = FollowRequest(
+          completer,
+          id: story.storyInfo.tid,
+          replyType: FollowType.story,
+          unfollow: false,
+        );
+        break;
+      case MenuAction.unfollow:
+        req = FollowRequest(
+          completer,
+          id: story.storyInfo.tid,
+          replyType: FollowType.story,
+          unfollow: true,
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    if (req != null) {
+      completer.future.then((success) {
+        String msg;
+        if (success) {
+          msg = "修改关注状态成功";
+        } else {
+          msg = "修改关注状态失败";
+        }
+        showToast(msg);
+      });
+
+      dispatchAction(context)(req);
+    }
+  }
+
+  void favoriteStory(BuildContext context, MenuAction action) {
+    bool unfavorite;
+    switch (action) {
+      case MenuAction.favorite:
+        unfavorite = false;
+        break;
+      case MenuAction.unfavorite:
+        unfavorite = true;
+        break;
+
+      default:
+        break;
+    }
+
+    if (unfavorite != null) {
+      final storyId = story.storyInfo.tid;
+      api.favoriteThread({"threadId": storyId, "unfavorite": unfavorite}).then(
+          (result) {
+        // Load the first page to refresh the favorite status
+        loadContent(storyId, 1);
+      });
+    }
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    List<Choice> menus = filterMenus();
+    var actions = <Widget>[
+      IconButton(
+        icon: Icon(Icons.create),
+        onPressed: () {
+          onReplyButtonTap(
+            context,
+            story: story.storyInfo,
+            uid: uid,
+            username: username,
+          );
+        },
+      )
+    ];
+
+    actions.add(PopupMenuButton<Choice>(
+      onSelected: (choice) => _menuSelected(context, choice),
+      itemBuilder: (BuildContext context) {
+        return menus.map((Choice menuItem) {
+          return PopupMenuItem<Choice>(
+            value: menuItem,
+            child: Text(menuItem.title),
+          );
+        }).toList();
+      },
+    ));
+    return AppBar(
+      title: Text("帖子"),
+      actions: actions,
+    );
+  }
 
   static ScrollController _scrollController;
 
@@ -203,7 +348,7 @@ class StoryContentModel {
       _scrollController = ScrollController();
       return Scaffold(
         key: _scaffoldKey,
-        appBar: appBar,
+        appBar: buildAppBar(context),
         body: ListView.builder(
             controller: _scrollController,
             itemCount: 1,
@@ -318,20 +463,8 @@ class StoryContentModel {
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: appBar,
+      appBar: buildAppBar(context),
       body: listView,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          onReplyButtonTap(
-            context,
-            story: story.storyInfo,
-            uid: uid,
-            username: username,
-          );
-        },
-      ),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisSize: MainAxisSize.min,

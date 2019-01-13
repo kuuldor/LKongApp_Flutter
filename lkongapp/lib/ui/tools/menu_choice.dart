@@ -11,6 +11,8 @@ enum MenuAction {
   uploadAvatar,
   digest,
   timeline,
+  favorite,
+  unfavorite,
 }
 
 class Choice {
