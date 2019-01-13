@@ -23,6 +23,7 @@ final storyContentsReducer = combineReducers<BuiltMap<int, StoryPageList>>([
       _storyContentFailed),
   TypedReducer<BuiltMap<int, StoryPageList>, StoryInfoFailure>(
       _storyInfoFailed),
+  TypedReducer<BuiltMap<int, StoryPageList>, UpvoteSuccess>(_upvoteSucceeded),
 ]);
 
 BuiltMap<int, StoryPageList> _storyInfoRequested(
@@ -252,3 +253,45 @@ StoryFetchList _homeListFailed(StoryFetchList list, APIFailure action) {
 _homeListSucceeded(FetchListRequestType type) =>
     (StoryFetchList list, HomeListSuccess action) =>
         fetchListSucceeded(type, list, action.list);
+
+BuiltMap<int, StoryPageList> _upvoteSucceeded(
+    BuiltMap<int, StoryPageList> storyRepo, UpvoteSuccess action) {
+  var newRepo = storyRepo;
+  final result = action.result;
+  final UpvoteRequest request = action.request;
+
+  final comment = request.voted;
+  final story = request.story;
+
+  if (comment != null) {
+    int page;
+    StoryPage storyPage;
+
+    int threadId = story.tid;
+
+    page = (comment.lou - 1) ~/ 20 + 1;
+
+    storyPage = newRepo[threadId].pages[page];
+    if (storyPage != null) {
+      int index = storyPage.comments.indexOf(comment);
+      storyPage = storyPage.rebuild((b) => b
+        ..comments.replaceRange(index, index + 1, [
+          comment.rebuild((b) => b..ratelog.insertAll(0, [result.ratelog]))
+        ]));
+
+      var updater = (b) => b
+        ..loading = false
+        ..lastError = null
+        ..pages.updateValue(page, (v) => storyPage);
+      newRepo = newRepo.rebuild(
+        (b) => b
+          ..updateValue(
+            threadId,
+            (v) => v.rebuild(updater),
+            ifAbsent: () => StoryPageList().rebuild(updater),
+          ),
+      );
+    }
+  }
+  return newRepo;
+}

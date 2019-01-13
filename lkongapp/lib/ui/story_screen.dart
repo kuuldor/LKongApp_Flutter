@@ -153,6 +153,7 @@ class StoryContentModel {
   final Future<Null> Function(int storyId) loadInfo;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   static final fromStateAndStore = (StoryContentState state) =>
       (Store<AppState> store) => StoryContentModel(
@@ -237,7 +238,7 @@ class StoryContentModel {
   }
 
   void followStory(BuildContext context, MenuAction action) {
-    final completer = Completer<bool>();
+    final completer = Completer<String>();
     FollowRequest req;
     switch (action) {
       case MenuAction.follow:
@@ -262,12 +263,12 @@ class StoryContentModel {
     }
 
     if (req != null) {
-      completer.future.then((success) {
-        String msg;
-        if (success) {
-          msg = "修改关注状态成功";
+      completer.future.then((error) {
+        String msg = '修改关注状态';
+        if (error == null) {
+          msg += '成功';
         } else {
-          msg = "修改关注状态失败";
+          msg += '失败' + ": $error";
         }
         showToast(msg);
       });
@@ -532,8 +533,124 @@ class StoryContentModel {
         );
         break;
       case CommentAction.UpVote:
+        onUpvoteButtonTap(context, comment);
         break;
     }
+  }
+
+  onUpvoteButtonTap(BuildContext context, Comment voted) {
+    final coinsController = TextEditingController();
+    final reasonController = TextEditingController();
+    final ValueKey _coinsKey = Key('__upvote__coins__${voted.id}');
+    final ValueKey _reasonKey = Key('__upvote__reason__${voted.id}');
+
+    final coinNumFld = TextFormField(
+      key: _coinsKey,
+      controller: coinsController,
+      autofocus: true,
+      keyboardType: TextInputType.number,
+      validator: (val) {
+        String msg;
+        if (val.isEmpty || val.trim().length == 0) {
+          msg = '请输入龙币数';
+        } else {
+          int n = 0;
+          try {
+            n = int.parse(val);
+          } catch (e) {}
+          if (n < 1) {
+            msg = '龙币数需大于1';
+          }
+        }
+
+        return msg;
+      },
+      decoration: InputDecoration(
+        hintText: '',
+        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+      ),
+    );
+
+    final reasonFld = TextFormField(
+      key: _reasonKey,
+      controller: reasonController,
+      autocorrect: false,
+      keyboardType: TextInputType.multiline,
+      maxLines: 2,
+      maxLength: 20,
+      autofocus: false,
+      decoration: InputDecoration(
+        hintText: '',
+        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+      ),
+    );
+
+    final form = Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('龙币数'),
+            SizedBox(height: 4.0),
+            coinNumFld,
+            SizedBox(height: 8.0),
+            Text('评分原因'),
+            SizedBox(height: 4.0),
+            reasonFld,
+            SizedBox(height: 18.0),
+          ],
+        ),
+      ),
+    );
+
+    final completer = Completer<String>();
+
+    showDialog<void>(
+      context: _scaffoldKey.currentContext,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('评分'),
+          content: form,
+          actions: <Widget>[
+            FlatButton(
+              child: Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('确定'),
+              onPressed: () {
+                int coins = int.parse(coinsController.text);
+                String reason = reasonController.text.trim();
+                dispatchAction(context)(UpvoteRequest(
+                  completer,
+                  story: story.storyInfo,
+                  coins: coins,
+                  voted: voted,
+                  reason: reason,
+                ));
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    completer.future.then((error) {
+      String msg = '评分';
+      if (error == null) {
+        msg += '成功';
+      } else {
+        msg += '失败' + ": $error";
+      }
+      showToast(msg);
+    });
   }
 
   void showPageSelector(BuildContext context, int totalPages, int pageNo,

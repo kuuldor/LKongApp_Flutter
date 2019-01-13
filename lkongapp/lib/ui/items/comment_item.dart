@@ -26,8 +26,6 @@ class CommentItem extends StatelessWidget {
     @required this.uid,
   });
 
-  
-
   Widget buildRateLog(BuildContext context, BuiltList<Ratelog> ratelog) {
     if (ratelog == null || ratelog.length == 0) {
       return Container();
@@ -148,31 +146,29 @@ class CommentItem extends StatelessWidget {
           )));
     }
 
-    var actionButtons = <Widget>[
-      IconButton(
+    var actionButtons = <Widget>[];
+
+    if (comment.authorid == uid) {
+      actionButtons.add(IconButton(
+        icon: Icon(Icons.edit),
+        onPressed: () {
+          onTap(CommentAction.Edit);
+        },
+      ));
+    } else {
+      actionButtons.add(IconButton(
         icon: Icon(Icons.thumb_up),
         onPressed: () {
           onTap(CommentAction.UpVote);
         },
-      ),
-      IconButton(
-        icon: Icon(Icons.comment),
-        onPressed: () {
-          onTap(CommentAction.Reply);
-        },
-      ),
-    ];
-
-    if (comment.authorid == uid) {
-      actionButtons.insert(
-          0,
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              onTap(CommentAction.Edit);
-            },
-          ));
+      ));
     }
+    actionButtons.add(IconButton(
+      icon: Icon(Icons.comment),
+      onPressed: () {
+        onTap(CommentAction.Reply);
+      },
+    ));
 
     return Container(
       key: commentItemKey(comment.id),

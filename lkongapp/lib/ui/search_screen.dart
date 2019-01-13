@@ -310,8 +310,8 @@ class SearchScreenModel extends FetchedListModel {
 
   @override
   APIRequest get fetchFromScratchRequest {
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return SearchNewRequest(completer, searchString, searchType);
   }
 
@@ -324,8 +324,8 @@ class SearchScreenModel extends FetchedListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return SearchLoadMoreRequest(completer, searchString, searchType, nexttime);
   }
 

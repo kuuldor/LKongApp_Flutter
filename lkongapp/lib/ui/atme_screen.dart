@@ -113,8 +113,8 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
 
   @override
   APIRequest get fetchFromScratchRequest {
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return GetMyAtsNewRequest(completer, uid, 0, 0);
   }
 
@@ -124,8 +124,8 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return GetMyAtsLoadMoreRequest(completer, uid, storyList.nexttime);
   }
 
@@ -135,8 +135,8 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return GetMyAtsRefreshRequest(completer, uid, storyList.current);
   }
 

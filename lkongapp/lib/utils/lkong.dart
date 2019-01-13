@@ -16,11 +16,13 @@ String avatarForForumID(id) {
   return avatar;
 }
 
-String parseLKTypeId(String storyId) {
+String parseLKTypeId(String storyId, {String type}) {
   var id;
   var flds = storyId.split("_");
   if (flds.length > 1) {
-    id = flds[1];
+    if (type == null || flds[0] == type) {
+      id = flds[1];
+    }
   } else {
     id = storyId;
   }

@@ -32,6 +32,7 @@ part 'serializers.g.dart';
   StoryContentResult,
   Comment,
   Ratelog,
+  UpvoteResult,
   FollowList,
   PunchCardResult,
   UserData,

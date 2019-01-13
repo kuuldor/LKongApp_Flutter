@@ -88,10 +88,10 @@ class ForumListModel extends FetchedListModel {
 
   @override
   Future<Null> handleRefresh(BuildContext context) {
-    final Completer<bool> completer = Completer<bool>();
+    final Completer<String> completer = Completer<String>();
     dispatchAction(context)(ForumListRequest(completer));
-    return completer.future.then((success) {
-      if (success) {
+    return completer.future.then((error) {
+      if (error == null) {
         _handleLoadInfo(context);
       }
     });

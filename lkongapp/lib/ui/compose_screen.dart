@@ -104,12 +104,12 @@ class ComposeState extends State<ComposeScreen> {
     }
     String content = finalizeContent(context, contentController.text);
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
-      if (success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
+      if (error == null) {
         dispatchAction(context)(UINavigationPop(context));
       } else {
-        showToast('发帖失败');
+        showToast("发帖失败: $error");
       }
       setState(() {
         this.sending = false;

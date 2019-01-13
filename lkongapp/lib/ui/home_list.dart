@@ -68,8 +68,8 @@ class HomeListModel extends StoryListModel {
 
   @override
   APIRequest get fetchFromScratchRequest {
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return HomeListNewRequest(completer, threadOnlyHome, 0, 0);
@@ -80,8 +80,8 @@ class HomeListModel extends StoryListModel {
     if (storyList.nexttime == 0) {
       return null;
     }
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return HomeListLoadMoreRequest(
@@ -93,8 +93,8 @@ class HomeListModel extends StoryListModel {
     if (storyList.current == 0) {
       return null;
     }
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
     return HomeListRefreshRequest(completer, threadOnlyHome, storyList.current);

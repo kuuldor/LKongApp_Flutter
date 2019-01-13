@@ -76,7 +76,7 @@ abstract class StoryListModel extends FetchedListModel {
   StoryListModel(Store<AppState> store) {
     if (store != null) {
       if (store.state.persistState.appConfig.setting.hideBlacklisterPost) {
-        blackList = selectUserData(store).followList.black.toList();
+        blackList = selectUserData(store)?.followList?.black?.toList();
       }
     }
   }

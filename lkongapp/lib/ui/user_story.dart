@@ -79,8 +79,8 @@ class UserStoryModel extends StoryListModel {
 
   @override
   APIRequest get fetchFromScratchRequest {
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return ProfileNewRequest(completer, user.uid, 4);
@@ -92,8 +92,8 @@ class UserStoryModel extends StoryListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return ProfileLoadMoreRequest(completer, user.uid, 4, storyList.nexttime);

@@ -8,7 +8,6 @@ import 'package:lkongapp/models/serializers.dart';
 
 part 'personal_stuff.g.dart';
 
-
 abstract class NoticeResult
     implements Built<NoticeResult, NoticeResultBuilder> {
   NoticeResult._();
@@ -67,7 +66,6 @@ abstract class Notice implements Built<Notice, NoticeBuilder> {
   static Serializer<Notice> get serializer => _$noticeSerializer;
 }
 
-
 abstract class RatelogResult
     implements Built<RatelogResult, RatelogResultBuilder> {
   RatelogResult._();
@@ -97,7 +95,6 @@ abstract class RatelogResult
   static Serializer<RatelogResult> get serializer => _$ratelogResultSerializer;
 }
 
-
 abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
   Ratelog._();
 
@@ -124,7 +121,6 @@ abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
   @BuiltValueField(wireName: 'pid')
   int get pid;
 
-
   String toJson() {
     return json.encode(serializers.serializeWith(Ratelog.serializer, this));
   }
@@ -135,6 +131,31 @@ abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
   }
 
   static Serializer<Ratelog> get serializer => _$ratelogSerializer;
+}
+
+abstract class UpvoteResult
+    implements Built<UpvoteResult, UpvoteResultBuilder> {
+  UpvoteResult._();
+
+  factory UpvoteResult([updates(UpvoteResultBuilder b)]) = _$UpvoteResult;
+
+  @BuiltValueField(wireName: 'ratelog')
+  Ratelog get ratelog;
+  @BuiltValueField(wireName: 'type')
+  String get type;
+  @BuiltValueField(wireName: 'pid')
+  int get pid;
+  String toJson() {
+    return json
+        .encode(serializers.serializeWith(UpvoteResult.serializer, this));
+  }
+
+  static UpvoteResult fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        UpvoteResult.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<UpvoteResult> get serializer => _$upvoteResultSerializer;
 }
 
 abstract class PrivateMessageResult

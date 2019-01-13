@@ -13,9 +13,9 @@ Future<Null> onStoryTap(BuildContext context, Story story) {
     String storyId = story.tid;
     String postId;
     if (storyId == null) {
-      storyId = parseLKTypeId(story.id);
+      storyId = parseLKTypeId(story.id, type: "thread");
     } else {
-      postId = parseLKTypeId(story.id);
+      postId = parseLKTypeId(story.id, type: "post");
     }
     dispatchAction(context)(StoryInfoRequest(null, int.parse(storyId)));
     dispatchAction(context)(

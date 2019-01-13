@@ -53,3 +53,38 @@ class FollowSuccess extends APISuccess with StopLoading {
 class FollowFailure extends APIFailure with StopLoading {
   FollowFailure(request, String error) : super(request, error);
 }
+
+class UpvoteRequest extends APIRequest with StartLoading {
+  final StoryInfoResult story;
+  final Comment voted;
+  final int coins;
+  final String reason;
+
+  UpvoteRequest(
+    Completer completer, {
+    @required this.story,
+    @required this.voted,
+    @required this.coins,
+    @required this.reason,
+  }) : super(completer: completer, api: UPVOTE_API, parameters: {
+          "id": voted.id,
+          "coins": coins,
+          "reason": reason,
+        });
+
+  @override
+  CreateFailure get badResponse => (error) => UpvoteFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse => (result) => UpvoteSuccess(this, result);
+}
+
+class UpvoteSuccess extends APISuccess with StopLoading {
+  final UpvoteResult result;
+
+  UpvoteSuccess(request, this.result) : super(request);
+}
+
+class UpvoteFailure extends APIFailure with StopLoading {
+  UpvoteFailure(request, String error) : super(request, error);
+}

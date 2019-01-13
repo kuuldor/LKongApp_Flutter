@@ -77,8 +77,8 @@ class FavoriteScreenModel extends StoryListModel {
 
   @override
   APIRequest get fetchFromScratchRequest {
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return GetMyFavoritesNewRequest(completer, uid, 0, 0);
   }
 
@@ -88,8 +88,8 @@ class FavoriteScreenModel extends StoryListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return GetMyFavoritesLoadMoreRequest(completer, uid, storyList.nexttime);
   }
 
@@ -99,8 +99,8 @@ class FavoriteScreenModel extends StoryListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return GetMyFavoritesRefreshRequest(completer, uid, storyList.current);
   }
 

@@ -12,6 +12,8 @@ Serializer<Notice> _$noticeSerializer = new _$NoticeSerializer();
 Serializer<RatelogResult> _$ratelogResultSerializer =
     new _$RatelogResultSerializer();
 Serializer<Ratelog> _$ratelogSerializer = new _$RatelogSerializer();
+Serializer<UpvoteResult> _$upvoteResultSerializer =
+    new _$UpvoteResultSerializer();
 Serializer<PrivateMessageResult> _$privateMessageResultSerializer =
     new _$PrivateMessageResultSerializer();
 Serializer<PrivateMessage> _$privateMessageSerializer =
@@ -311,6 +313,58 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
           break;
         case 'dateline':
           result.dateline = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
+          break;
+        case 'pid':
+          result.pid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$UpvoteResultSerializer implements StructuredSerializer<UpvoteResult> {
+  @override
+  final Iterable<Type> types = const [UpvoteResult, _$UpvoteResult];
+  @override
+  final String wireName = 'UpvoteResult';
+
+  @override
+  Iterable serialize(Serializers serializers, UpvoteResult object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'ratelog',
+      serializers.serialize(object.ratelog,
+          specifiedType: const FullType(Ratelog)),
+      'type',
+      serializers.serialize(object.type, specifiedType: const FullType(String)),
+      'pid',
+      serializers.serialize(object.pid, specifiedType: const FullType(int)),
+    ];
+
+    return result;
+  }
+
+  @override
+  UpvoteResult deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new UpvoteResultBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'ratelog':
+          result.ratelog.replace(serializers.deserialize(value,
+              specifiedType: const FullType(Ratelog)) as Ratelog);
+          break;
+        case 'type':
+          result.type = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
         case 'pid':
@@ -1135,6 +1189,123 @@ class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
             reason: reason,
             dateline: dateline,
             pid: pid);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$UpvoteResult extends UpvoteResult {
+  @override
+  final Ratelog ratelog;
+  @override
+  final String type;
+  @override
+  final int pid;
+
+  factory _$UpvoteResult([void updates(UpvoteResultBuilder b)]) =>
+      (new UpvoteResultBuilder()..update(updates)).build();
+
+  _$UpvoteResult._({this.ratelog, this.type, this.pid}) : super._() {
+    if (ratelog == null) {
+      throw new BuiltValueNullFieldError('UpvoteResult', 'ratelog');
+    }
+    if (type == null) {
+      throw new BuiltValueNullFieldError('UpvoteResult', 'type');
+    }
+    if (pid == null) {
+      throw new BuiltValueNullFieldError('UpvoteResult', 'pid');
+    }
+  }
+
+  @override
+  UpvoteResult rebuild(void updates(UpvoteResultBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  UpvoteResultBuilder toBuilder() => new UpvoteResultBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is UpvoteResult &&
+        ratelog == other.ratelog &&
+        type == other.type &&
+        pid == other.pid;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc($jc($jc(0, ratelog.hashCode), type.hashCode), pid.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('UpvoteResult')
+          ..add('ratelog', ratelog)
+          ..add('type', type)
+          ..add('pid', pid))
+        .toString();
+  }
+}
+
+class UpvoteResultBuilder
+    implements Builder<UpvoteResult, UpvoteResultBuilder> {
+  _$UpvoteResult _$v;
+
+  RatelogBuilder _ratelog;
+  RatelogBuilder get ratelog => _$this._ratelog ??= new RatelogBuilder();
+  set ratelog(RatelogBuilder ratelog) => _$this._ratelog = ratelog;
+
+  String _type;
+  String get type => _$this._type;
+  set type(String type) => _$this._type = type;
+
+  int _pid;
+  int get pid => _$this._pid;
+  set pid(int pid) => _$this._pid = pid;
+
+  UpvoteResultBuilder();
+
+  UpvoteResultBuilder get _$this {
+    if (_$v != null) {
+      _ratelog = _$v.ratelog?.toBuilder();
+      _type = _$v.type;
+      _pid = _$v.pid;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(UpvoteResult other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$UpvoteResult;
+  }
+
+  @override
+  void update(void updates(UpvoteResultBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$UpvoteResult build() {
+    _$UpvoteResult _$result;
+    try {
+      _$result = _$v ??
+          new _$UpvoteResult._(ratelog: ratelog.build(), type: type, pid: pid);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'ratelog';
+        ratelog.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'UpvoteResult', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

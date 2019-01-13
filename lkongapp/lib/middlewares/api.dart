@@ -28,6 +28,7 @@ const SEARCH_API = "SEARCH";
 const USER_PROFILE_API = "USER_PROFILE";
 const REPLY_API = "REPLY";
 const FOLLOW_API = "FOLLOW";
+const UPVOTE_API = "UPVOTE";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -572,6 +573,20 @@ Future<Map> favoriteThread(Map args) {
   );
 }
 
+Future<Map> upvoteComment(Map args) {
+  int commentId = args["id"];
+  int coins = args["coins"];
+  String reason = args["reason"];
+
+  var httpAction = session.post(endpoint["upvote"], data: {
+    "request": "rate_post_$commentId",
+    "num": "$coins",
+    "reason": reason,
+  });
+  return _handleHttp(httpAction,
+      dataParser: _parseResponseBody(UpvoteResult.fromJson));
+}
+
 String Function(String) combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
@@ -707,6 +722,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
     return followAction(parameters);
   }
 
+  if (api == UPVOTE_API) {
+    return upvoteComment(parameters);
+  }
+
   return Future<Map>(null);
 }
 
@@ -761,8 +780,12 @@ void callAPI(Store<AppState> store, APIRequest action, NextDispatcher next) {
     apiDispatch(action.api, action.parameters).then((map) {
       APIResponse response = createResponseAction(action, map);
       store.dispatch(response);
+      String error;
+      if (response is APIFailure) {
+        error = response.error;
+      }
 
-      action.completer?.complete(response is APISuccess);
+      action.completer?.complete(error);
     });
   });
 }

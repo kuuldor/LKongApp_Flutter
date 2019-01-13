@@ -121,8 +121,8 @@ class ForumStoryModel extends StoryListModel {
   APIRequest get fetchFromScratchRequest {
     state.needReload = false;
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
 
@@ -135,8 +135,8 @@ class ForumStoryModel extends StoryListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return ForumStoryLoadMoreRequest(
@@ -149,8 +149,8 @@ class ForumStoryModel extends StoryListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
     return ForumStoryRefreshRequest(
@@ -188,7 +188,7 @@ class ForumStoryModel extends StoryListModel {
   }
 
   void followForum(BuildContext context, MenuAction action) {
-    final completer = Completer<bool>();
+    final completer = Completer<String>();
     FollowRequest req;
     switch (action) {
       case MenuAction.follow:
@@ -213,12 +213,12 @@ class ForumStoryModel extends StoryListModel {
     }
 
     if (req != null) {
-      completer.future.then((success) {
-        String msg;
-        if (success) {
-          msg = "修改关注状态成功";
+      completer.future.then((error) {
+        String msg = '修改关注状态';
+        if (error == null) {
+          msg += '成功';
         } else {
-          msg = "修改关注状态失败";
+          msg += '失败' + ": $error";
         }
         showToast(msg);
       });
@@ -282,8 +282,8 @@ class ForumStoryModel extends StoryListModel {
 
   @override
   APIRequest get checkNewRequest {
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
     return ForumStoryCheckNewRequest(

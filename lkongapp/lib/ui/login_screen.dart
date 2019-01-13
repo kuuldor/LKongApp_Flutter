@@ -200,14 +200,14 @@ class LoginViewModel {
             return;
           }
 
-          final Completer<bool> completer = new Completer<bool>();
+          final Completer<String> completer = new Completer<String>();
           store.dispatch(LoginRequest(
               completer,
               User().rebuild((b) => b
                 ..identity = email.trim()
                 ..password = password.trim())));
-          completer.future.then((succeed) {
-            if (succeed) {
+          completer.future.then((error) {
+            if (error == null) {
               store.dispatch(UINavigationPop(context));
             }
           });

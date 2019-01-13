@@ -258,7 +258,7 @@ class ProfileScreenModel extends FetchedListModel {
 
   void menuSelected(BuildContext context, Choice choice) {
     print("Menu Selcected for ${choice.title}");
-    final completer = Completer<bool>();
+    final completer = Completer<String>();
 
     FollowRequest req;
     switch (choice.action) {
@@ -311,12 +311,12 @@ class ProfileScreenModel extends FetchedListModel {
     }
 
     if (req != null) {
-      completer.future.then((success) {
-        String msg;
-        if (success) {
-          msg = "${choice.title}成功";
+      completer.future.then((error) {
+        String msg = "${choice.title}";
+        if (error == null) {
+          msg += '成功';
         } else {
-          msg = "${choice.title}失败";
+          msg += '失败' + ": $error";
         }
         showToast(msg);
       });
@@ -540,8 +540,8 @@ class ProfileScreenModel extends FetchedListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return ProfileNewRequest(completer, user.uid, fetchType);
   }
 
@@ -558,8 +558,8 @@ class ProfileScreenModel extends FetchedListModel {
       return null;
     }
 
-    final Completer<bool> completer = Completer<bool>();
-    completer.future.then((success) {});
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {});
     return ProfileLoadMoreRequest(completer, user.uid, fetchType, nexttime);
   }
 
