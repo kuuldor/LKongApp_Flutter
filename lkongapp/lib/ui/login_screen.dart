@@ -94,12 +94,14 @@ class LoginState extends State<LoginScreen> {
                 context, emailController.text, passwordController.text);
           },
           color: Colors.lightBlueAccent,
-          child: Text('Log In', style: TextStyle(color: Colors.white)),
+          child: Text('登  录',
+              style:
+                  Theme.of(context).textTheme.title.apply(color: Colors.white)),
         ),
       );
 
       final saveCredential = CheckboxListTile(
-        title: const Text('Save password?'),
+        title: const Text('保存密码?'),
         value: viewModel.saveCredential,
         controlAffinity: ListTileControlAffinity.leading,
         onChanged: (bool value) {

@@ -25,14 +25,14 @@ Future<Null> onStoryTap(BuildContext context, Story story) {
 void openThreadView(BuildContext context, int storyId, [int postId]) {
   if (storyId != null) {
     dispatchAction(context)(StoryInfoRequest(null, storyId));
-    dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.story, false, (context) {
-      return StoryScreen(
-        storyId: storyId,
-        postId: postId,
-      );
-    }));
   }
+  dispatchAction(context)(
+      UINavigationPush(context, LKongAppRoutes.story, false, (context) {
+    return StoryScreen(
+      storyId: storyId,
+      postId: postId,
+    );
+  }));
 }
 
 Future<Null> onForumTap(BuildContext context, Forum forum) {

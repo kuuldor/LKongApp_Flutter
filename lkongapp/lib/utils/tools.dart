@@ -83,6 +83,15 @@ _handleURL(BuildContext context, String url) async {
       case "name":
         openUserView(context, flds[1]);
         break;
+      case "post":
+        int pid;
+        try {
+          pid = int.parse(flds[1]);
+        } catch (_) {}
+        if (pid != null) {
+          openThreadView(context, null, pid);
+        }
+        break;
       default:
         break;
     }

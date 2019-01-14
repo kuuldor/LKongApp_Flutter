@@ -44,8 +44,8 @@ class StoryContentState extends State<StoryScreen> {
   int page;
   int floor;
 
-  bool loaded;
-  bool loading;
+  bool loaded = false;
+  bool loading = false;
 
   StoryContentState(this.storyId, this.postId, this.page) {
     if (this.postId == null) {
@@ -53,10 +53,12 @@ class StoryContentState extends State<StoryScreen> {
         this.page = 1;
       }
     } else {
+      loading = true;
       api.queryMetaData({"postId": this.postId}).then((result) {
         String location = result["location"];
         int lou = result["lou"];
         int page;
+        int tid = storyId;
 
         if (lou != null && location != null) {
           final locArray = location.split("_");
@@ -65,21 +67,18 @@ class StoryContentState extends State<StoryScreen> {
           } else {
             page = 1;
           }
+          if (locArray.length > 1) {
+            tid = int.parse(locArray[1]);
+          }
         }
         setState(() {
+          this.loading = false;
           this.page = page;
           this.floor = lou;
+          this.storyId = tid;
         });
       });
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    loaded = false;
-    loading = false;
   }
 
   void prevPage() {
@@ -189,7 +188,16 @@ class StoryContentModel {
   }
 
   @override
-  int get hashCode => hash2(loading, story);
+  int get hashCode => hashObjects([
+        loading,
+        story,
+        lastError,
+        uid,
+        username,
+        blackList,
+        followList,
+        showDetailTime
+      ]);
 
   final allMenus = const <Choice>[
     const Choice(
@@ -333,7 +341,9 @@ class StoryContentModel {
     ));
     return AppBar(
       title: GestureDetector(
-        child: Text("帖子", style: Theme.of(context).textTheme.title),
+        child: Text("帖子",
+            style:
+                Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
       ),
       actions: actions,
@@ -378,12 +388,12 @@ class StoryContentModel {
     }
 
     if (info == null && lastError == null) {
-      if (!loading) {
+      if (!loading && storyId != null) {
         loadInfo(storyId);
       }
     }
     if (comments == null && lastError == null) {
-      if (!loading) {
+      if (!loading && storyId != null) {
         loadContent(storyId, pageNo);
       }
     }

@@ -142,7 +142,7 @@ class AppDrawer extends StatelessWidget {
       children.addAll(<Widget>[
         ListTile(
           leading: Icon(Icons.settings),
-          title: Text("Settings"),
+          title: Text('设置'),
           onTap: () {
             viewModel.pushScreen(context,
                 isAuthed ? LKongAppRoutes.settings : LKongAppRoutes.login);
@@ -150,7 +150,7 @@ class AppDrawer extends StatelessWidget {
         ),
         ListTile(
           leading: Icon(Icons.exit_to_app),
-          title: Text("Logout"),
+          title: Text('退出登录'),
           onTap: () {
             dispatchAction(context)(LogoutRequest(null));
           },
@@ -159,7 +159,7 @@ class AppDrawer extends StatelessWidget {
     } else {
       children.add(ListTile(
         leading: Icon(Icons.account_circle),
-        title: Text("Login"),
+        title: Text('登录'),
         onTap: () {
           viewModel.pushScreen(context,
               isAuthed ? LKongAppRoutes.settings : LKongAppRoutes.login);
