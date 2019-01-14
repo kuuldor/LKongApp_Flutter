@@ -143,7 +143,9 @@ class ProfileScreenModel extends FetchedListModel {
                     true,
             lastError:
                 store.state.uiState.content.profiles[state.user.uid]?.lastError,
-            profile: store.state.uiState.content.profiles[state.user.uid],
+            profile: state.user.uid != null
+                ? store.state.uiState.content.profiles[state.user.uid]
+                : null,
             state: state,
             uid: selectUID(store),
             followList: selectUserData(store)?.followList,
