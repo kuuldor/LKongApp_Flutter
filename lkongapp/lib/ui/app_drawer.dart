@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/actions/ui_action.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
+import 'package:lkongapp/utils/globals.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -166,7 +167,8 @@ class AppDrawer extends StatelessWidget {
       ));
     }
     children.add(AboutListTile(
-      applicationName: '',
+      applicationName: '龍空',
+      applicationVersion: appVersion,
       icon: Icon(Icons.info_outline),
     ));
 
