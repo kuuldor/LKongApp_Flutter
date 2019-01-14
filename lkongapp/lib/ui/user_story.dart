@@ -57,6 +57,7 @@ class UserStoryModel extends StoryListModel {
   final String lastError;
   final UserInfo user;
   final bool showDetailTime;
+  final List<String> blackList = null;  //override blacklist to always null
 
   UserStoryModel({
     @required Store<AppState> store,

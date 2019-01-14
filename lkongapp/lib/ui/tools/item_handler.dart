@@ -9,23 +9,30 @@ import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 Future<Null> onStoryTap(BuildContext context, Story story) {
+  int storyId;
+  int postId;
+  if (story.tid == null) {
+    storyId = parseLKTypeId(story.id, type: "thread");
+  } else {
+    storyId = parseLKTypeId(story.tid);
+    postId = parseLKTypeId(story.id, type: "post");
+  }
   return Future(() {
-    String storyId = story.tid;
-    String postId;
-    if (storyId == null) {
-      storyId = parseLKTypeId(story.id, type: "thread");
-    } else {
-      postId = parseLKTypeId(story.id, type: "post");
-    }
-    dispatchAction(context)(StoryInfoRequest(null, int.parse(storyId)));
+    openThreadView(context, storyId, postId);
+  });
+}
+
+void openThreadView(BuildContext context, int storyId, [int postId]) {
+  if (storyId != null) {
+    dispatchAction(context)(StoryInfoRequest(null, storyId));
     dispatchAction(context)(
         UINavigationPush(context, LKongAppRoutes.story, false, (context) {
       return StoryScreen(
-        storyId: storyId != null ? int.parse(storyId) : null,
-        postId: postId != null ? int.parse(postId) : null,
+        storyId: storyId,
+        postId: postId,
       );
     }));
-  });
+  }
 }
 
 Future<Null> onForumTap(BuildContext context, Forum forum) {
@@ -43,6 +50,19 @@ Future<Null> onForumTap(BuildContext context, Forum forum) {
 
 Future<Null> onUserTap(BuildContext context, UserInfo user) {
   // dispatchAction(context)(UserInfoRequest(null, user.uid));
+
+  return Future(() {
+    dispatchAction(context)(
+        UINavigationPush(context, LKongAppRoutes.profile, false, (context) {
+      return ProfileScreen(
+        user: user,
+      );
+    }));
+  });
+}
+
+Future<Null> openUserView(BuildContext context, String userName) {
+  UserInfo user = UserInfo().rebuild((b) => b..username = userName);
 
   return Future(() {
     dispatchAction(context)(

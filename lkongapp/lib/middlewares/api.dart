@@ -53,6 +53,7 @@ const endpoint = {
   "upvote": "/index.php?mod=ajax&action=submitbox",
   "search": "/index.php?mod=data&sars=search/",
   "getBlacklist": "/index.php?mod=ajax&action=getblack",
+  "favorite": "/index.php?mod=ajax&action=favorite",
 };
 
 Future<Map> _handleHttp(
@@ -142,7 +143,8 @@ Map getTimeParameter(nexttime, current) {
 String querify(Map parameters) {
   var param = '';
   parameters.forEach((key, value) {
-    param += '&' + key.toString() + '=' + value.toString();
+    param +=
+        '&' + key.toString() + '=' + Uri.encodeQueryComponent(value.toString());
   });
   return param;
 }
@@ -545,11 +547,22 @@ Future<Map> followAction(Map args) {
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
-Future<Map> getQuoteLocation(Map args) {
+Future<Map> queryMetaData(Map args) {
   int postId = args["postId"];
-  final urlString =
-      "/index.php?mod=ajax&action=panelocation&dataitem=post_$postId" +
-          querify(defaultParameter());
+  String userName = args["userName"];
+
+  String dataitem;
+  if (postId != null) {
+    dataitem = "post_$postId";
+  } else if (userName != null) {
+    dataitem = "name_$userName";
+  }
+
+  Map params = defaultParameter();
+
+  params["dataitem"] = dataitem;
+
+  final urlString = endpoint["query"] + querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(
@@ -562,9 +575,13 @@ Future<Map> favoriteThread(Map args) {
   int threadId = args["threadId"];
   bool unfavorite = args["unfavorite"];
 
-  final urlString = "/index.php?mod=ajax&action=favorite&tid=$threadId" +
-      (unfavorite == true ? "&type=-1" : "") +
-      querify(defaultParameter());
+  Map params = defaultParameter();
+  params["tid"] = "$threadId";
+  if (unfavorite == true) {
+    params["type"] = "-1";
+  }
+
+  final urlString = endpoint["favorite"] + querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(

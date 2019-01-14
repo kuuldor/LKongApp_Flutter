@@ -53,7 +53,7 @@ class StoryContentState extends State<StoryScreen> {
         this.page = 1;
       }
     } else {
-      api.getQuoteLocation({"postId": this.postId}).then((result) {
+      api.queryMetaData({"postId": this.postId}).then((result) {
         String location = result["location"];
         int lou = result["lou"];
         int page;

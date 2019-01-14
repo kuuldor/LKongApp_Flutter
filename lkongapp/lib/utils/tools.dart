@@ -61,11 +61,30 @@ String stripHtmlTag(String string) {
   return string.trim();
 }
 
-_handleURL(String url) async {
+_handleURL(BuildContext context, String url) async {
   print("URL is cliked: $url");
   if (url.startsWith("http")) {
     if (await canLaunch(url)) {
       await launch(url);
+    }
+  } else if (url.startsWith("lkong://")) {
+    final typeID = url.substring(8); // strip lkong://
+    final flds = parseTypeAndId(typeID);
+    switch (flds[0]) {
+      case "thread":
+        int tid;
+        try {
+          tid = int.parse(flds[1]);
+        } catch (_) {}
+        if (tid != null) {
+          openThreadView(context, tid);
+        }
+        break;
+      case "name":
+        openUserView(context, flds[1]);
+        break;
+      default:
+        break;
     }
   }
 }
@@ -219,7 +238,7 @@ _parseImageAndText(BuildContext context,
             _cleanUpTextList(nodeWidgets, nodeTextList);
             var linkDetector = GestureDetector(
               // When the child is tapped, show a snackbar
-              onTap: () => _handleURL(link),
+              onTap: () => _handleURL(context, link),
               // Our Custom Button!
               child: Column(
                 children: nodeWidgets,
@@ -235,7 +254,7 @@ _parseImageAndText(BuildContext context,
             // );
             // textList.add(linkText);
             TapGestureRecognizer tapper = TapGestureRecognizer()
-              ..onTap = () => _handleURL(link);
+              ..onTap = () => _handleURL(context, link);
             List<TextSpan> linkTexts = List<TextSpan>();
             nodeTextList.forEach((text) {
               linkTexts.add(TextSpan(

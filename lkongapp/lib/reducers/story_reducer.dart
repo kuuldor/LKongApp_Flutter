@@ -199,10 +199,9 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
     BuiltMap<int, StoryPageList> storyRepo, StoryContentSuccess action) {
   var newRepo = storyRepo;
   final result = action.result;
-  var id = parseLKTypeId(result.model);
+  int threadId = parseLKTypeId(result.model);
 
-  if (id != null) {
-    int threadId = int.parse(id);
+  if (threadId != null) {
     StoryPage page =
         StoryPage().rebuild((b) => b..comments.replace(result.comments));
     var updater = (b) => b

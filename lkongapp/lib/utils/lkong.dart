@@ -16,16 +16,28 @@ String avatarForForumID(id) {
   return avatar;
 }
 
-String parseLKTypeId(String storyId, {String type}) {
-  var id;
-  var flds = storyId.split("_");
+List<String> parseTypeAndId(String typeIDStr) {
+  var flds = typeIDStr.split("_");
+  if (flds.length != 2) {
+    flds = <String>["", typeIDStr];
+  }
+  return flds;
+}
+
+int parseLKTypeId(String typeIDStr, {String type}) {
+  var idStr;
+  var flds = typeIDStr.split("_");
   if (flds.length > 1) {
     if (type == null || flds[0] == type) {
-      id = flds[1];
+      idStr = flds[1];
     }
   } else {
-    id = storyId;
+    idStr = typeIDStr;
   }
+  int id;
+  try {
+    id = int.parse(idStr);
+  } catch (e) {}
   return id;
 }
 

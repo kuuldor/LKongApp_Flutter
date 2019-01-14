@@ -60,7 +60,7 @@ Future<void> quoteLocationTest() async {
   return test('Get Quote Location Test', () async {
     await loginTestAccount();
 
-    await getQuoteLocation({"postId": 33776898}).then((map) {
+    await queryMetaData({"postId": 33776898}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });

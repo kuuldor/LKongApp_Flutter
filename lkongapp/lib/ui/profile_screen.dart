@@ -1,4 +1,5 @@
 import 'package:lkongapp/actions/profile_action.dart';
+import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
@@ -47,10 +48,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class ProfileScreenState extends State<ProfileScreen> {
-  final UserInfo user;
+  UserInfo user;
   int fetchType;
-
-  final _scrollController = ScrollController();
+  bool stateLoading;
 
   ProfileScreenState({
     this.fetchType: fetchTypeNone,
@@ -66,6 +66,22 @@ class ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+
+    if (user.uid == null && user.username != null) {
+      stateLoading = true;
+      queryMetaData({"userName": user.username}).then((result) {
+        final location = result["location"];
+        if (location != null) {
+          int uid = parseLKTypeId(location, type: "user");
+          if (uid != null) {
+            setState(() {
+              stateLoading = false;
+              user = user.rebuild((b) => b..uid = uid);
+            });
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -98,7 +114,7 @@ final allMenus = const <Choice>[
 
 class ProfileScreenModel extends FetchedListModel {
   final Profile profile;
-  final bool loading;
+  final bool storeLoading;
   final String lastError;
   final int uid;
   final FollowList followList;
@@ -107,9 +123,11 @@ class ProfileScreenModel extends FetchedListModel {
 
   final Function(int) changeFetchType;
 
+  bool get loading => state.stateLoading || storeLoading;
+
   ProfileScreenModel({
     @required this.profile,
-    @required this.loading,
+    @required this.storeLoading,
     @required this.lastError,
     @required this.state,
     @required this.changeFetchType,
@@ -120,8 +138,9 @@ class ProfileScreenModel extends FetchedListModel {
 
   static final fromStateAndStore = (ProfileScreenState state) =>
       (Store<AppState> store) => ProfileScreenModel(
-            loading:
-                store.state.uiState.content.profiles[state.user.uid]?.loading,
+            storeLoading:
+                store.state.uiState.content.profiles[state.user.uid]?.loading ==
+                    true,
             lastError:
                 store.state.uiState.content.profiles[state.user.uid]?.lastError,
             profile: store.state.uiState.content.profiles[state.user.uid],
@@ -138,7 +157,7 @@ class ProfileScreenModel extends FetchedListModel {
   @override
   bool operator ==(other) {
     return other is ProfileScreenModel &&
-        loading == other.loading &&
+        storeLoading == other.storeLoading &&
         lastError == other.lastError &&
         state == other.state &&
         profile == other.profile &&
@@ -148,7 +167,7 @@ class ProfileScreenModel extends FetchedListModel {
 
   @override
   int get hashCode =>
-      hashObjects([state, loading, lastError, profile, uid, followList]);
+      hashObjects([state, storeLoading, lastError, profile, uid, followList]);
 
   @override
   int get itemCount {
@@ -586,7 +605,7 @@ class ProfileScreenModel extends FetchedListModel {
   @override
   Widget buildListView(BuildContext context) {
     if (profile == null) {
-      if (loading != true && lastError == null) {
+      if (storeLoading != true && lastError == null) {
         handleFetchUserInfo(context);
       }
     }
