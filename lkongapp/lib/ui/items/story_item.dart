@@ -7,12 +7,14 @@ import 'package:lkongapp/utils/utils.dart';
 class StoryItem extends StatelessWidget {
   final GestureTapCallback onTap;
   final Story story;
+  final bool showDetailTime;
 
   static final storyItemKey = (id) => Key('__story_item_${id}__');
 
   StoryItem({
     @required this.onTap,
     @required this.story,
+    @required this.showDetailTime,
   });
 
   @override
@@ -22,6 +24,11 @@ class StoryItem extends StatelessWidget {
     Widget title;
     Widget subtitle;
 
+    final timestamp = parseDatetime(story.dateline);
+    final datetime = showDetailTime
+        ? stringFromDate(timestamp)
+        : timeAgoSinceDate(timestamp);
+
     if (story.isthread != false) {
       var titleStyle = Theme.of(context).textTheme.title;
       if (story.digest != null && story.digest != 0) {
@@ -30,6 +37,7 @@ class StoryItem extends StatelessWidget {
         titleStyle = titleStyle.apply(fontWeightDelta: -1);
       }
       titleStyle = titleStyle.apply(color: theme.darkTextColor);
+
       title = Column(children: <Widget>[
         Row(
           children: <Widget>[
@@ -41,7 +49,7 @@ class StoryItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(story.username),
-                    Text(timeAgoSinceDate(parseDatetime(story.dateline))),
+                    Text(datetime),
                   ],
                 ),
               ),
@@ -90,7 +98,7 @@ class StoryItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(story.username),
-                    Text(timeAgoSinceDate(parseDatetime(story.dateline))),
+                    Text(datetime),
                   ],
                 ),
               ),

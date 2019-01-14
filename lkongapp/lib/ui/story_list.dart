@@ -102,6 +102,8 @@ abstract class StoryListModel extends FetchedListModel {
     return _stories;
   }
 
+  bool get showDetailTime;
+
   @override
   int get itemCount => stories?.length ?? 0;
 
@@ -135,6 +137,7 @@ abstract class StoryListModel extends FetchedListModel {
     var item = StoryItem(
       story: story,
       onTap: () => onStoryTap(context, story),
+      showDetailTime: showDetailTime,
     );
 
     return item;

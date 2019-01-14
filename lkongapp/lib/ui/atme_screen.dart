@@ -89,6 +89,7 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
   final bool loading;
   final String lastError;
   final int uid;
+  final bool showDetailTime;
 
   AtMeScreenModel({
     @required Store<AppState> store,
@@ -96,6 +97,7 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
     @required this.lastError,
     @required this.storyList,
     @required this.uid,
+    @required this.showDetailTime,
   }) : super(store);
 
   @override
@@ -109,6 +111,7 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
             .state.uiState.content.userData[selectUID(store)]?.atMe?.lastError,
         storyList: store.state.uiState.content.userData[selectUID(store)]?.atMe,
         uid: selectUID(store),
+        showDetailTime: selectSetting(store).showDetailTime,
       );
 
   @override

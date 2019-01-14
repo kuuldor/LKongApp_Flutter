@@ -136,6 +136,7 @@ class StoryContentModel {
   final String lastError;
   final BuiltList<String> blackList;
   final BuiltList<String> followList;
+  final bool showDetailTime;
 
   StoryContentModel({
     @required this.username,
@@ -147,6 +148,7 @@ class StoryContentModel {
     @required this.loadInfo,
     @required this.blackList,
     @required this.followList,
+    @required this.showDetailTime,
   });
 
   final Future<Null> Function(int storyId, int page) loadContent;
@@ -170,6 +172,7 @@ class StoryContentModel {
                   ? selectUserData(store).followList.black
                   : null,
           followList: selectUserData(store).followList.tid,
+          showDetailTime: selectSetting(store).showDetailTime,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
           },
@@ -329,7 +332,10 @@ class StoryContentModel {
       },
     ));
     return AppBar(
-      title: Text("帖子"),
+      title: GestureDetector(
+        child: Text("帖子", style: Theme.of(context).textTheme.title),
+        onTap: () => scrollToTop(context),
+      ),
       actions: actions,
     );
   }
@@ -429,6 +435,7 @@ class StoryContentModel {
               Widget item = CommentItem(
                 uid: uid,
                 comment: comment,
+                showDetailTime: showDetailTime,
                 onTap: (action) => onCommentAction(context, comment, action),
               );
               tile = wrapTile(item);
@@ -696,6 +703,14 @@ class StoryContentModel {
             }),
       );
     });
+  }
+
+  void scrollToTop(BuildContext context) {
+    if (_scrollController is IndexedScrollController) {
+      showFloor(context, 1);
+    } else {
+      _scrollController.jumpTo(0.0);
+    }
   }
 
   void showFloor(BuildContext context, int floor) {

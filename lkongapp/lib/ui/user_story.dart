@@ -15,7 +15,7 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
-
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 
 import 'story_list.dart';
@@ -56,6 +56,7 @@ class UserStoryModel extends StoryListModel {
   final bool loading;
   final String lastError;
   final UserInfo user;
+  final bool showDetailTime;
 
   UserStoryModel({
     @required Store<AppState> store,
@@ -63,6 +64,7 @@ class UserStoryModel extends StoryListModel {
     @required this.lastError,
     @required this.storyList,
     @required this.user,
+    @required this.showDetailTime,
   }) : super(store);
 
   static final fromStateAndStore =
@@ -74,6 +76,7 @@ class UserStoryModel extends StoryListModel {
                 store.state.uiState.content.profiles[state.user.uid]?.lastError,
             storyList:
                 store.state.uiState.content.profiles[state.user.uid]?.allPosts,
+            showDetailTime: selectSetting(store).showDetailTime,
             user: state.user,
           );
 

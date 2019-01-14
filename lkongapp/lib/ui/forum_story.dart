@@ -72,6 +72,7 @@ class ForumStoryModel extends StoryListModel {
   final int uid;
   final String username;
   final BuiltList<String> followList;
+  final bool showDetailTime;
 
   ForumStoryModel({
     @required this.uid,
@@ -82,6 +83,7 @@ class ForumStoryModel extends StoryListModel {
     @required this.storyList,
     @required this.state,
     @required this.followList,
+    @required this.showDetailTime,
   }) : super(store);
 
   @override
@@ -93,12 +95,21 @@ class ForumStoryModel extends StoryListModel {
         lastError == other.lastError &&
         state == other.state &&
         uid == other.uid &&
+        showDetailTime == other.showDetailTime &&
         username == other.username;
   }
 
   @override
-  int get hashCode => hashObjects(
-      [storyList, followList, loading, lastError, state, uid, username]);
+  int get hashCode => hashObjects([
+        storyList,
+        followList,
+        loading,
+        lastError,
+        state,
+        uid,
+        username,
+        showDetailTime
+      ]);
 
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
@@ -106,6 +117,7 @@ class ForumStoryModel extends StoryListModel {
             username: selectUser(store).userInfo.username,
             uid: selectUID(store),
             followList: selectUserData(store).followList.fid,
+            showDetailTime: selectSetting(store).showDetailTime,
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
             lastError: store

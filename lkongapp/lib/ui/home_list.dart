@@ -11,6 +11,7 @@ import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
+import 'package:lkongapp/selectors/selectors.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
@@ -38,6 +39,7 @@ class HomeListModel extends StoryListModel {
   final StoryFetchList storyList;
   final bool loading;
   final String lastError;
+  final bool showDetailTime;
 
   HomeListModel({
     @required Store<AppState> store,
@@ -45,6 +47,7 @@ class HomeListModel extends StoryListModel {
     @required this.lastError,
     @required this.storyList,
     @required this.threadOnlyHome,
+    @required this.showDetailTime,
   }) : super(store);
 
   static HomeListModel fromStore(Store<AppState> store) {
@@ -55,6 +58,7 @@ class HomeListModel extends StoryListModel {
       storyList: store.state.uiState.content.homeList,
       threadOnlyHome: store.state.persistState.appConfig.accountSettings
           .currentSetting.threadOnlyHome,
+      showDetailTime: selectSetting(store).showDetailTime,
     );
   }
 

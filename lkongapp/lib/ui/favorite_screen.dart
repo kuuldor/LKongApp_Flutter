@@ -46,6 +46,7 @@ class FavoriteScreenModel extends StoryListModel {
   final bool loading;
   final String lastError;
   final int uid;
+  final bool showDetailTime;
 
   FavoriteScreenModel({
     @required Store<AppState> store,
@@ -53,6 +54,7 @@ class FavoriteScreenModel extends StoryListModel {
     @required this.lastError,
     @required this.storyList,
     @required this.uid,
+    @required this.showDetailTime,
   }) : super(store);
 
   @override
@@ -73,6 +75,7 @@ class FavoriteScreenModel extends StoryListModel {
             storyList: store
                 .state.uiState.content.userData[selectUID(store)]?.favorites,
             uid: selectUID(store),
+            showDetailTime: selectSetting(store).showDetailTime,
           );
 
   @override

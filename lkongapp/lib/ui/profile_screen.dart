@@ -103,6 +103,7 @@ class ProfileScreenModel extends FetchedListModel {
   final int uid;
   final FollowList followList;
   final ProfileScreenState state;
+  final bool showDetailTime;
 
   final Function(int) changeFetchType;
 
@@ -113,6 +114,7 @@ class ProfileScreenModel extends FetchedListModel {
     @required this.state,
     @required this.changeFetchType,
     @required this.uid,
+    @required this.showDetailTime,
     @required this.followList,
   });
 
@@ -126,6 +128,7 @@ class ProfileScreenModel extends FetchedListModel {
             state: state,
             uid: selectUID(store),
             followList: selectUserData(store)?.followList,
+            showDetailTime: selectSetting(store).showDetailTime,
             changeFetchType: (int newType) => state.setFetchType(newType),
           );
 
@@ -446,6 +449,7 @@ class ProfileScreenModel extends FetchedListModel {
 
       item = StoryItem(
         story: story,
+        showDetailTime: showDetailTime,
         onTap: () => onStoryTap(context, story),
       );
     } else if (fetchType == fetchTypeFans) {
@@ -467,6 +471,7 @@ class ProfileScreenModel extends FetchedListModel {
 
       item = StoryItem(
         story: digest,
+        showDetailTime: showDetailTime,
         onTap: () => onStoryTap(context, digest),
       );
     }

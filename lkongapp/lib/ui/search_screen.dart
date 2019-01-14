@@ -182,6 +182,7 @@ class SearchScreenModel extends FetchedListModel {
   final String lastError;
   final String searchString;
   final int searchType;
+  final bool showDetailTime;
 
   SearchScreenModel({
     @required this.searchResult,
@@ -189,6 +190,7 @@ class SearchScreenModel extends FetchedListModel {
     @required this.lastError,
     @required this.searchString,
     @required this.searchType,
+    @required this.showDetailTime,
   });
 
   static final fromStateAndStore =
@@ -198,6 +200,7 @@ class SearchScreenModel extends FetchedListModel {
             searchResult: store.state.uiState.content.searchResult,
             searchString: state.searchString,
             searchType: state.searchType,
+            showDetailTime: selectSetting(store).showDetailTime,
           );
 
   @override
@@ -267,6 +270,7 @@ class SearchScreenModel extends FetchedListModel {
 
       item = StoryItem(
         story: story,
+        showDetailTime: showDetailTime,
         onTap: () => onStoryTap(context, story),
       );
     } else if (searchResult.searchType == searchTypeUser) {

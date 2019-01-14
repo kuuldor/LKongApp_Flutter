@@ -17,6 +17,7 @@ class CommentItem extends StatelessWidget {
   final Function(CommentAction) onTap;
   final Comment comment;
   final int uid;
+  final bool showDetailTime;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
 
@@ -24,6 +25,7 @@ class CommentItem extends StatelessWidget {
     @required this.onTap,
     @required this.comment,
     @required this.uid,
+    @required this.showDetailTime,
   });
 
   Widget buildRateLog(BuildContext context, BuiltList<Ratelog> ratelog) {
@@ -170,6 +172,11 @@ class CommentItem extends StatelessWidget {
       },
     ));
 
+    final timestamp = parseDatetime(comment.dateline);
+    final datetime = showDetailTime
+        ? stringFromDate(timestamp)
+        : timeAgoSinceDate(timestamp);
+
     return Container(
       key: commentItemKey(comment.id),
       padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -184,7 +191,7 @@ class CommentItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(comment.author),
-                    Text(timeAgoSinceDate(parseDatetime(comment.dateline))),
+                    Text(datetime),
                   ],
                 ),
               ),
