@@ -50,7 +50,7 @@ class ProfileScreen extends StatefulWidget {
 class ProfileScreenState extends State<ProfileScreen> {
   UserInfo user;
   int fetchType;
-  bool stateLoading;
+  bool stateLoading = false;
 
   ProfileScreenState({
     this.fetchType: fetchTypeNone,
