@@ -293,9 +293,6 @@ class _$StoryInfoResultSerializer
       serializers.serialize(object.views, specifiedType: const FullType(int)),
       'replies',
       serializers.serialize(object.replies, specifiedType: const FullType(int)),
-      'forumname',
-      serializers.serialize(object.forumname,
-          specifiedType: const FullType(String)),
       'digest',
       serializers.serialize(object.digest, specifiedType: const FullType(bool)),
       'timestamp',
@@ -315,6 +312,12 @@ class _$StoryInfoResultSerializer
       'isok',
       serializers.serialize(object.isok, specifiedType: const FullType(bool)),
     ];
+    if (object.forumname != null) {
+      result
+        ..add('forumname')
+        ..add(serializers.serialize(object.forumname,
+            specifiedType: const FullType(String)));
+    }
     if (object.uid != null) {
       result
         ..add('uid')
@@ -1205,9 +1208,6 @@ class _$StoryInfoResult extends StoryInfoResult {
     }
     if (replies == null) {
       throw new BuiltValueNullFieldError('StoryInfoResult', 'replies');
-    }
-    if (forumname == null) {
-      throw new BuiltValueNullFieldError('StoryInfoResult', 'forumname');
     }
     if (digest == null) {
       throw new BuiltValueNullFieldError('StoryInfoResult', 'digest');

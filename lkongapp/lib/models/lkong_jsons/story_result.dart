@@ -126,6 +126,7 @@ abstract class StoryInfoResult
   int get views;
   @BuiltValueField(wireName: 'replies')
   int get replies;
+  @nullable
   @BuiltValueField(wireName: 'forumname')
   String get forumname;
   @BuiltValueField(wireName: 'digest')

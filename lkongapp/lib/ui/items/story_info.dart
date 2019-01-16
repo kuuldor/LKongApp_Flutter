@@ -47,7 +47,7 @@ class StoryInfoItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(info.author),
-                          Text("发表于：${info.forumname}"),
+                          Text("发表于：${info.forumname ?? '个人位面'}"),
                         ],
                       ),
                     ),
