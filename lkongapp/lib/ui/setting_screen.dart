@@ -162,6 +162,7 @@ class SettingState extends State<SettingView> {
           IconButton(
             icon: Icon(Icons.save_alt),
             onPressed: () {
+              FocusScope.of(context).requestFocus(FocusNode());
               checkSaveConfig();
             },
           ),
@@ -247,8 +248,10 @@ class SettingState extends State<SettingView> {
                 fontSize: CS_ITEM_NAME_SIZE, color: CS_TEXT_COLOR),
             controller: TextEditingController(text: account.signature),
             decoration: InputDecoration(
-                hintText: "在此输入论坛发帖签名",
-                border: InputBorder.none),
+                hintText: "在此输入论坛发帖签名", border: InputBorder.none),
+            onChanged: (text) {
+              account.signature = text;
+            },
             onSubmitted: (text) {
               setState(() {
                 account.signature = text;
