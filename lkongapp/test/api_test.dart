@@ -240,7 +240,7 @@ Future<void> homelistTest() async {
 
 Future<void> hotlistTest() async {
   return test('Get Hot List Test', () async {
-    await getHotDigest().then((map) {
+    await getHotDigest({}).then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
