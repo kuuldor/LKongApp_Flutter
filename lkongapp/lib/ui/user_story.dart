@@ -57,7 +57,7 @@ class UserStoryModel extends StoryListModel {
   final String lastError;
   final UserInfo user;
   final bool showDetailTime;
-  final List<String> blackList = null;  //override blacklist to always null
+  final List<String> blackList = null; //override blacklist to always null
 
   UserStoryModel({
     @required Store<AppState> store,
@@ -108,7 +108,12 @@ class UserStoryModel extends StoryListModel {
 
   @override
   SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
-        title: Text("${user.username}(全部帖子)"),
+        title: GestureDetector(
+          child: Text("${user.username}(全部帖子 ${user.posts})",
+              style:
+                  Theme.of(context).textTheme.title.apply(color: Colors.white)),
+          onTap: () => scrollToTop(context),
+        ),
         floating: false,
         pinned: true,
       );

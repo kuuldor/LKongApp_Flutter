@@ -99,7 +99,8 @@ abstract class FetchedListModel extends GroupedListModel {
   SliverAppBar buildAppBar(BuildContext context) => null;
 
   Future<Null> handleRefresh(BuildContext context) async {
-    var request = refreshRequest;
+    var request = fetchFromScratchRequest;
+    // var request = refreshRequest;
     if (request != null) {
       dispatchAction(context)(request);
     }
@@ -142,12 +143,14 @@ abstract class FetchedListModel extends GroupedListModel {
     Widget listView;
     listView = super.buildGroupedListView(context);
 
-    if (refreshRequest == null) {
-      return listView;
-    } else {
-      return RefreshIndicator(
+    // if (refreshRequest == null) {
+    //   return listView;
+    // } else {
+    return RefreshIndicator(
+        displacement: 20.0,
         backgroundColor: Colors.white70,
-          onRefresh: () => handleRefresh(context), child: listView);
-    }
+        onRefresh: () => handleRefresh(context),
+        child: listView);
+    // }
   }
 }

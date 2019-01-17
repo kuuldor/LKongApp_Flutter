@@ -23,6 +23,10 @@ abstract class GroupedListModel {
 
   Widget fillupForEmptyView(BuildContext context);
 
+  void scrollToTop(context) {
+    scrollController.jumpTo(0.1); // 0.1 to avoid pull-to-refresh is triggered
+  }
+
   List<Widget> buildSlivers(BuildContext context) {
     ThemeData theme = Theme.of(context);
     List<Widget> slivers = new List<Widget>();

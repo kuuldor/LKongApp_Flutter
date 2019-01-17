@@ -316,7 +316,7 @@ class StoryContentModel {
     List<Choice> menus = filterMenus();
     var actions = <Widget>[
       IconButton(
-        icon: Icon(Icons.create),
+        icon: Icon(Icons.add_comment),
         onPressed: () {
           onReplyButtonTap(
             context,

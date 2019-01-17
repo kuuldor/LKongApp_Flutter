@@ -34,9 +34,11 @@ class FavoriteScreenState extends StoryListState<FavoriteScreen> {
   FavoriteScreenState();
   @override
   Widget build(BuildContext context) {
-    return buildWidgetWithVMFactory(
-      context,
-      FavoriteScreenModel.fromStateAndStore(this),
+    return Scaffold(
+      body: buildWidgetWithVMFactory(
+        context,
+        FavoriteScreenModel.fromStateAndStore(this),
+      ),
     );
   }
 }
@@ -58,9 +60,13 @@ class FavoriteScreenModel extends StoryListModel {
   }) : super(store);
 
   @override
-  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
-        leading: DrawerButton(),
-        title: Text('收藏'),
+  SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
+        title: GestureDetector(
+          child: Text("收藏",
+              style:
+                  Theme.of(context).textTheme.title.apply(color: Colors.white)),
+          onTap: () => scrollToTop(context),
+        ),
         floating: false,
         pinned: true,
       );

@@ -63,9 +63,14 @@ class HomeListModel extends StoryListModel {
   }
 
   @override
-  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
         leading: DrawerButton(),
-        title: Text('首页'),
+        title: GestureDetector(
+          child: Text("首页",
+              style:
+                  Theme.of(context).textTheme.title.apply(color: Colors.white)),
+          onTap: () => scrollToTop(context),
+        ),
         floating: false,
         pinned: true,
       );

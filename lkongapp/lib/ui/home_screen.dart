@@ -25,8 +25,8 @@ const pages = [
     "icon": Icons.dashboard,
   },
   {
-    "title": '收藏',
-    "icon": Icons.bookmark,
+    "title": '热门',
+    "icon": Icons.whatshot,
   },
   {
     "title": '通知',
@@ -65,9 +65,7 @@ class HomeScreen extends StatelessWidget {
             Container(
               child: ForumList(),
             ),
-            Container(
-              child: FavoriteScreen(),
-            ),
+            Container(),
             Container(
               child: AtMeScreen(),
             ),

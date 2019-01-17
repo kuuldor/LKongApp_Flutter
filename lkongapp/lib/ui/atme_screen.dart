@@ -58,9 +58,9 @@ class AtMeScreenState extends StoryListState<AtMeScreen> {
 }
 
 abstract class NotifScreenModel {
-  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
         leading: DrawerButton(),
-        title: Text('通知'),
+        title: getTitle(context),
         floating: false,
         pinned: true,
       );
@@ -82,6 +82,8 @@ abstract class NotifScreenModel {
       (Store<AppState> store) => createViewModel(state, store);
 
   Widget buildNotifView(BuildContext context);
+
+  Widget getTitle(BuildContext context);
 }
 
 class AtMeScreenModel extends StoryListModel with NotifScreenModel {
@@ -99,6 +101,13 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
     @required this.uid,
     @required this.showDetailTime,
   }) : super(store);
+
+  Widget getTitle(BuildContext context) => GestureDetector(
+        child: Text("通知",
+            style:
+                Theme.of(context).textTheme.title.apply(color: Colors.white)),
+        onTap: () => scrollToTop(context),
+      );
 
   @override
   SliverAppBar buildAppBar(BuildContext context) => super.buildAppBar(context);

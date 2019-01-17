@@ -174,7 +174,7 @@ class ForumStoryModel extends StoryListModel {
         title: '全部显示', icon: Icons.library_books, action: MenuAction.showAll),
     const Choice(title: '精华', icon: Icons.star, action: MenuAction.digest),
     const Choice(
-        title: '发布时间排序', icon: Icons.today, action: MenuAction.timeline),
+        title: '发布时间排序', icon: Icons.watch_later, action: MenuAction.timeline),
   ];
 
   List<Choice> filterMenus() {
@@ -285,7 +285,12 @@ class ForumStoryModel extends StoryListModel {
     ));
 
     return SliverAppBar(
-      title: Text(state.forum.name),
+      title: GestureDetector(
+        child: Text(state.forum.name,
+            style:
+                Theme.of(context).textTheme.title.apply(color: Colors.white)),
+        onTap: () => scrollToTop(context),
+      ),
       floating: false,
       pinned: true,
       actions: actions,

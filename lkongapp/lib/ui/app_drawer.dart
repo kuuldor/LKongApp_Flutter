@@ -144,8 +144,14 @@ class AppDrawer extends StatelessWidget {
           leading: Icon(Icons.settings),
           title: Text('设置'),
           onTap: () {
-            viewModel.pushScreen(context,
-                isAuthed ? LKongAppRoutes.settings : LKongAppRoutes.login);
+            viewModel.pushScreen(context, LKongAppRoutes.settings);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.favorite),
+          title: Text('收藏'),
+          onTap: () {
+            viewModel.pushScreen(context, LKongAppRoutes.favorite);
           },
         ),
         ListTile(
@@ -161,8 +167,7 @@ class AppDrawer extends StatelessWidget {
         leading: Icon(Icons.account_circle),
         title: Text('登录'),
         onTap: () {
-          viewModel.pushScreen(context,
-              isAuthed ? LKongAppRoutes.settings : LKongAppRoutes.login);
+          viewModel.pushScreen(context, LKongAppRoutes.login);
         },
       ));
     }
