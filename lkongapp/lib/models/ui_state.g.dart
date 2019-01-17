@@ -190,6 +190,8 @@ class _$ContentCache extends ContentCache {
   @override
   final String lastError;
   @override
+  final bool loading;
+  @override
   final StoryFetchList homeList;
   @override
   final BuiltMap<int, StoryPageList> storyRepo;
@@ -203,19 +205,23 @@ class _$ContentCache extends ContentCache {
   final SearchResult searchResult;
   @override
   final BuiltMap<int, Profile> profiles;
+  @override
+  final BuiltList<HotDigestResult> hotDigest;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
 
   _$ContentCache._(
       {this.lastError,
+      this.loading,
       this.homeList,
       this.storyRepo,
       this.forumInfo,
       this.forumRepo,
       this.userData,
       this.searchResult,
-      this.profiles})
+      this.profiles,
+      this.hotDigest})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
@@ -238,6 +244,9 @@ class _$ContentCache extends ContentCache {
     if (profiles == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'profiles');
     }
+    if (hotDigest == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'hotDigest');
+    }
   }
 
   @override
@@ -252,13 +261,15 @@ class _$ContentCache extends ContentCache {
     if (identical(other, this)) return true;
     return other is ContentCache &&
         lastError == other.lastError &&
+        loading == other.loading &&
         homeList == other.homeList &&
         storyRepo == other.storyRepo &&
         forumInfo == other.forumInfo &&
         forumRepo == other.forumRepo &&
         userData == other.userData &&
         searchResult == other.searchResult &&
-        profiles == other.profiles;
+        profiles == other.profiles &&
+        hotDigest == other.hotDigest;
   }
 
   @override
@@ -268,26 +279,34 @@ class _$ContentCache extends ContentCache {
             $jc(
                 $jc(
                     $jc(
-                        $jc($jc($jc(0, lastError.hashCode), homeList.hashCode),
-                            storyRepo.hashCode),
-                        forumInfo.hashCode),
-                    forumRepo.hashCode),
-                userData.hashCode),
-            searchResult.hashCode),
-        profiles.hashCode));
+                        $jc(
+                            $jc(
+                                $jc(
+                                    $jc($jc(0, lastError.hashCode),
+                                        loading.hashCode),
+                                    homeList.hashCode),
+                                storyRepo.hashCode),
+                            forumInfo.hashCode),
+                        forumRepo.hashCode),
+                    userData.hashCode),
+                searchResult.hashCode),
+            profiles.hashCode),
+        hotDigest.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('ContentCache')
           ..add('lastError', lastError)
+          ..add('loading', loading)
           ..add('homeList', homeList)
           ..add('storyRepo', storyRepo)
           ..add('forumInfo', forumInfo)
           ..add('forumRepo', forumRepo)
           ..add('userData', userData)
           ..add('searchResult', searchResult)
-          ..add('profiles', profiles))
+          ..add('profiles', profiles)
+          ..add('hotDigest', hotDigest))
         .toString();
   }
 }
@@ -299,6 +318,10 @@ class ContentCacheBuilder
   String _lastError;
   String get lastError => _$this._lastError;
   set lastError(String lastError) => _$this._lastError = lastError;
+
+  bool _loading;
+  bool get loading => _$this._loading;
+  set loading(bool loading) => _$this._loading = loading;
 
   StoryFetchListBuilder _homeList;
   StoryFetchListBuilder get homeList =>
@@ -340,11 +363,18 @@ class ContentCacheBuilder
   set profiles(MapBuilder<int, Profile> profiles) =>
       _$this._profiles = profiles;
 
+  ListBuilder<HotDigestResult> _hotDigest;
+  ListBuilder<HotDigestResult> get hotDigest =>
+      _$this._hotDigest ??= new ListBuilder<HotDigestResult>();
+  set hotDigest(ListBuilder<HotDigestResult> hotDigest) =>
+      _$this._hotDigest = hotDigest;
+
   ContentCacheBuilder();
 
   ContentCacheBuilder get _$this {
     if (_$v != null) {
       _lastError = _$v.lastError;
+      _loading = _$v.loading;
       _homeList = _$v.homeList?.toBuilder();
       _storyRepo = _$v.storyRepo?.toBuilder();
       _forumInfo = _$v.forumInfo?.toBuilder();
@@ -352,6 +382,7 @@ class ContentCacheBuilder
       _userData = _$v.userData?.toBuilder();
       _searchResult = _$v.searchResult?.toBuilder();
       _profiles = _$v.profiles?.toBuilder();
+      _hotDigest = _$v.hotDigest?.toBuilder();
       _$v = null;
     }
     return this;
@@ -377,13 +408,15 @@ class ContentCacheBuilder
       _$result = _$v ??
           new _$ContentCache._(
               lastError: lastError,
+              loading: loading,
               homeList: homeList.build(),
               storyRepo: storyRepo.build(),
               forumInfo: forumInfo.build(),
               forumRepo: forumRepo.build(),
               userData: userData.build(),
               searchResult: searchResult.build(),
-              profiles: profiles.build());
+              profiles: profiles.build(),
+              hotDigest: hotDigest.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -401,6 +434,8 @@ class ContentCacheBuilder
         searchResult.build();
         _$failedField = 'profiles';
         profiles.build();
+        _$failedField = 'hotDigest';
+        hotDigest.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'ContentCache', _$failedField, e.toString());

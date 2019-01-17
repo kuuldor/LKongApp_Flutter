@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/atme_screen.dart';
 import 'package:lkongapp/ui/favorite_screen.dart';
 import 'package:lkongapp/ui/home_list.dart';
+import 'package:lkongapp/ui/hot_digest.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/search_screen.dart';
 import 'package:quiver/core.dart';
@@ -65,7 +66,9 @@ class HomeScreen extends StatelessWidget {
             Container(
               child: ForumList(),
             ),
-            Container(),
+            Container(
+              child: HotDigest(),
+            ),
             Container(
               child: AtMeScreen(),
             ),

@@ -38,6 +38,7 @@ part 'serializers.g.dart';
   UserData,
   SearchUserResult,
   SearchForumResult,
+  HotDigestResult,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

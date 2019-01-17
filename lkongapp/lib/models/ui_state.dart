@@ -46,6 +46,7 @@ abstract class ContentCache
   ContentCache._();
   factory ContentCache([updates(ContentCacheBuilder b)]) =>
       _$ContentCache((b) => b
+        ..loading = false
         ..forumInfo.replace(ForumLists())
         ..homeList.replace(StoryFetchList())
         ..searchResult.replace(SearchResult())
@@ -53,6 +54,8 @@ abstract class ContentCache
 
   @nullable
   String get lastError;
+  @nullable
+  bool get loading;
   StoryFetchList get homeList;
   BuiltMap<int, StoryPageList> get storyRepo;
   ForumLists get forumInfo;
@@ -62,6 +65,8 @@ abstract class ContentCache
   SearchResult get searchResult;
   //Public data for all users
   BuiltMap<int, Profile> get profiles;
+
+  BuiltList<HotDigestResult> get hotDigest;
 }
 
 abstract class Profile implements Built<Profile, ProfileBuilder> {

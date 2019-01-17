@@ -11,6 +11,7 @@ import 'forum_reducer.dart';
 import 'userdata_reducer.dart';
 import 'search_reducer.dart';
 import 'profile_reducer.dart';
+import 'hot_digest_reducer.dart';
 
 final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIRequest>(_contentRequested),
@@ -22,15 +23,21 @@ final contentReducer = combineReducers<ContentCache>([
 ]);
 
 ContentCache _contentRequested(ContentCache content, APIRequest action) {
-  return content.rebuild((b) => b..lastError = null);
+  return content.rebuild((b) => b
+    ..lastError = null
+    ..loading = true);
 }
 
 ContentCache _contentRequestFailed(ContentCache content, APIFailure action) {
-  return content.rebuild((b) => b..lastError = action.error);
+  return content.rebuild((b) => b
+    ..lastError = action.error
+    ..loading = false);
 }
 
 ContentCache _contentRequestSucceed(ContentCache content, APISuccess action) {
-  return content.rebuild((b) => b..lastError = null);
+  return content.rebuild((b) => b
+    ..lastError = null
+    ..loading = false);
 }
 
 ContentCache _loginoutSucceeded(ContentCache content, action) {
@@ -45,5 +52,6 @@ ContentCache _contentReducer(ContentCache content, action) {
     ..userData.replace(userDataReducer(content.userData, action))
     ..searchResult.replace(searchResultReducer(content.searchResult, action))
     ..profiles.replace(profileReducer(content.profiles, action))
+    ..hotDigest.replace(hotDigestReducer(content.hotDigest, action))
     ..forumRepo.replace(forumRepoReducer(content.forumRepo, action)));
 }

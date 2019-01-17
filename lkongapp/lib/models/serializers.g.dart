@@ -19,6 +19,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(Forum.serializer)
       ..add(ForumInfoResult.serializer)
       ..add(ForumListResult.serializer)
+      ..add(HotDigestResult.serializer)
       ..add(PersistentState.serializer)
       ..add(PunchCardResult.serializer)
       ..add(Ratelog.serializer)
@@ -29,6 +30,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(StoryInfoResult.serializer)
       ..add(StoryListResult.serializer)
       ..add(ThemeSetting.serializer)
+      ..add(Thread.serializer)
       ..add(UIState.serializer)
       ..add(UpvoteResult.serializer)
       ..add(User.serializer)
@@ -74,6 +76,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
           const FullType(
               BuiltMap, const [const FullType(String), const FullType(Forum)]),
           () => new MapBuilder<String, Forum>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(Thread)]),
+          () => new ListBuilder<Thread>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(UserInfo)]),
           () => new ListBuilder<UserInfo>())

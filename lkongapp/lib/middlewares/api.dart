@@ -29,6 +29,7 @@ const USER_PROFILE_API = "USER_PROFILE";
 const REPLY_API = "REPLY";
 const FOLLOW_API = "FOLLOW";
 const UPVOTE_API = "UPVOTE";
+const HOTDIGEST_API = "HOTDIGEST";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -54,6 +55,8 @@ const endpoint = {
   "search": "/index.php?mod=data&sars=search/",
   "getBlacklist": "/index.php?mod=ajax&action=getblack",
   "favorite": "/index.php?mod=ajax&action=favorite",
+  "hotthread": "/index.php?mod=ajax&action=hotthread",
+  "digest": "/index.php?mod=ajax&action=digest",
 };
 
 Future<Map> _handleHttp(
@@ -154,22 +157,25 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
   var urlString = url + querify(parameters);
 
   var httpAction = session.get(urlString);
-  return _handleHttp(httpAction, dataParser: (data) {
-    Map result;
+  return _handleHttp(
+    httpAction,
+    dataParser: (data) {
+      Map result;
 
-    T stories = fromJson(data);
-    if (stories != null) {
-      if (proccessor != null) {
-        stories = proccessor(stories);
+      T stories = fromJson(data);
+      if (stories != null) {
+        if (proccessor != null) {
+          stories = proccessor(stories);
+        }
+        result = {"result": stories};
       }
-      result = {"result": stories};
-    }
-    return result;
-  },
-      preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["uid"]),
-        tagStripperBuiler(["subject"])
-      ]));
+      return result;
+    },
+    preProcessor: combinedProcessorBuilder([
+      numMapperBuiler(["uid"]),
+      tagStripperBuiler(["subject"])
+    ]),
+  );
 }
 
 Future<Map> getStoriesForForum(Map args) {
@@ -604,6 +610,35 @@ Future<Map> upvoteComment(Map args) {
       dataParser: _parseResponseBody(UpvoteResult.fromJson));
 }
 
+Future<Map> getHotDigest() {
+  var hotUrlString = endpoint["hotthread"] + querify(defaultParameter());
+  var hotHttpAction = session.get(hotUrlString);
+
+  final hotConnection = _handleHttp(
+    hotHttpAction,
+    dataParser: _parseResponseBody(HotDigestResult.fromJson),
+    preProcessor: numMapperBuiler(["tid"]),
+  );
+
+  var digestUrlString = endpoint["digest"] + querify(defaultParameter());
+  var digestHttpAction = session.get(digestUrlString);
+
+  final digestConnection = _handleHttp(
+    digestHttpAction,
+    dataParser: _parseResponseBody(HotDigestResult.fromJson),
+    preProcessor: numMapperBuiler(["tid"]),
+  );
+
+  return Future.wait([hotConnection, digestConnection]).then((results) {
+    var resultList = <HotDigestResult>[];
+    results.forEach((result) {
+      final hotlist = result["result"] as HotDigestResult;
+      resultList.add(hotlist);
+    });
+    return {"result": resultList};
+  });
+}
+
 String Function(String) combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
@@ -741,6 +776,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == UPVOTE_API) {
     return upvoteComment(parameters);
+  }
+
+  if (api == HOTDIGEST_API) {
+    return getHotDigest();
   }
 
   return Future<Map>(null);

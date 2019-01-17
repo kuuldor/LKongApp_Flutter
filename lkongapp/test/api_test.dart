@@ -53,6 +53,8 @@ Future main() async {
 
   await quoteLocationTest();
 
+  await hotlistTest();
+
   await logoutTest();
 }
 
@@ -177,7 +179,7 @@ Future<void> forumInfoTest() async {
     await getForumInfo({"id": 1024}).then((map) {
       print(map.toString());
       expect(map['error'], null);
-     });
+    });
   });
 }
 
@@ -229,6 +231,16 @@ Future<void> forumStoryTest() async {
 Future<void> homelistTest() async {
   return test('Get Home List Test', () async {
     await getHomeList({}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+      print(session.cookies.toString());
+    });
+  });
+}
+
+Future<void> hotlistTest() async {
+  return test('Get Hot List Test', () async {
+    await getHotDigest().then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
