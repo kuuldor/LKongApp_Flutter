@@ -158,7 +158,7 @@ class StoryContentModel {
 
   static final fromStateAndStore = (StoryContentState state) =>
       (Store<AppState> store) => StoryContentModel(
-          username: selectUser(store).userInfo.username,
+          username: selectUser(store)?.userInfo?.username,
           uid: selectUID(store),
           loading:
               store.state.uiState.content.storyRepo[state.storyId]?.loading ??
@@ -168,9 +168,9 @@ class StoryContentModel {
           story: store.state.uiState.content.storyRepo[state.storyId],
           blackList:
               store.state.persistState.appConfig.setting.hideBlacklisterPost
-                  ? selectUserData(store).followList.black
+                  ? selectUserData(store)?.followList?.black
                   : null,
-          followList: selectUserData(store).followList.tid,
+          followList: selectUserData(store)?.followList?.tid,
           showDetailTime: selectSetting(store).showDetailTime,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
@@ -314,8 +314,10 @@ class StoryContentModel {
 
   AppBar buildAppBar(BuildContext context) {
     List<Choice> menus = filterMenus();
-    var actions = <Widget>[
-      IconButton(
+    var actions = <Widget>[];
+
+    if (username != null && uid != null) {
+      actions.add(IconButton(
         icon: Icon(Icons.add_comment),
         onPressed: () {
           onReplyButtonTap(
@@ -325,20 +327,21 @@ class StoryContentModel {
             username: username,
           );
         },
-      )
-    ];
+      ));
 
-    actions.add(PopupMenuButton<Choice>(
-      onSelected: (choice) => _menuSelected(context, choice),
-      itemBuilder: (BuildContext context) {
-        return menus.map((Choice menuItem) {
-          return PopupMenuItem<Choice>(
-            value: menuItem,
-            child: Text(menuItem.title),
-          );
-        }).toList();
-      },
-    ));
+      actions.add(PopupMenuButton<Choice>(
+        onSelected: (choice) => _menuSelected(context, choice),
+        itemBuilder: (BuildContext context) {
+          return menus.map((Choice menuItem) {
+            return PopupMenuItem<Choice>(
+              value: menuItem,
+              child: Text(menuItem.title),
+            );
+          }).toList();
+        },
+      ));
+    }
+
     return AppBar(
       title: GestureDetector(
         child: Text("帖子",

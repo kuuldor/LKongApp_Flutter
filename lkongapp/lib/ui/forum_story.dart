@@ -114,9 +114,9 @@ class ForumStoryModel extends StoryListModel {
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             store: store,
-            username: selectUser(store).userInfo.username,
+            username: selectUser(store)?.userInfo?.username,
             uid: selectUID(store),
-            followList: selectUserData(store).followList.fid,
+            followList: selectUserData(store)?.followList?.fid,
             showDetailTime: selectSetting(store).showDetailTime,
             loading:
                 store.state.uiState.content.forumRepo[state.forum.fid].loading,
@@ -242,8 +242,10 @@ class ForumStoryModel extends StoryListModel {
   @override
   SliverAppBar buildAppBar(BuildContext context) {
     List<Choice> menus = filterMenus();
-    var actions = <Widget>[
-      IconButton(
+    var actions = <Widget>[];
+    
+    if (username != null && uid != null) {
+      actions.add(IconButton(
         icon: Icon(Icons.create),
         onPressed: () {
           onPostButtonTap(
@@ -253,25 +255,26 @@ class ForumStoryModel extends StoryListModel {
             username: username,
           );
         },
-      )
-    ];
-
-    if (followList.contains("${state.forum.fid}")) {
-      actions.add(IconButton(
-        icon: Icon(Icons.visibility_off),
-        onPressed: () {
-          followForum(context, MenuAction.unfollow);
-        },
-      ));
-    } else {
-      actions.add(IconButton(
-        icon: Icon(Icons.visibility),
-        onPressed: () {
-          followForum(context, MenuAction.follow);
-        },
       ));
     }
 
+    if (followList != null) {
+      if (followList.contains("${state.forum.fid}")) {
+        actions.add(IconButton(
+          icon: Icon(Icons.visibility_off),
+          onPressed: () {
+            followForum(context, MenuAction.unfollow);
+          },
+        ));
+      } else {
+        actions.add(IconButton(
+          icon: Icon(Icons.visibility),
+          onPressed: () {
+            followForum(context, MenuAction.follow);
+          },
+        ));
+      }
+    }
     actions.add(PopupMenuButton<Choice>(
       onSelected: (choice) => _menuSelected(context, choice),
       itemBuilder: (BuildContext context) {

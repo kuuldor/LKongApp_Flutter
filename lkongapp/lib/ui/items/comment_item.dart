@@ -149,29 +149,30 @@ class CommentItem extends StatelessWidget {
     }
 
     var actionButtons = <Widget>[];
-
-    if (comment.authorid == uid) {
+    if (uid != null && uid > 0) {
+      if (comment.authorid == uid) {
+        actionButtons.add(IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () {
+            onTap(CommentAction.Edit);
+          },
+        ));
+      } else {
+        actionButtons.add(IconButton(
+          icon: Icon(Icons.thumb_up),
+          onPressed: () {
+            onTap(CommentAction.UpVote);
+          },
+        ));
+      }
       actionButtons.add(IconButton(
-        icon: Icon(Icons.edit),
+        icon: Icon(Icons.comment),
         onPressed: () {
-          onTap(CommentAction.Edit);
-        },
-      ));
-    } else {
-      actionButtons.add(IconButton(
-        icon: Icon(Icons.thumb_up),
-        onPressed: () {
-          onTap(CommentAction.UpVote);
+          onTap(CommentAction.Reply);
         },
       ));
     }
-    actionButtons.add(IconButton(
-      icon: Icon(Icons.comment),
-      onPressed: () {
-        onTap(CommentAction.Reply);
-      },
-    ));
-
+    
     final timestamp = parseDatetime(comment.dateline);
     final datetime = showDetailTime
         ? stringFromDate(timestamp)
