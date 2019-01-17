@@ -367,19 +367,21 @@ class ProfileScreenModel extends FetchedListModel {
     List<Choice> menus = filterMenus();
     var actions = <Widget>[];
 
-    actions.add(
-      PopupMenuButton<Choice>(
-        onSelected: (choice) => menuSelected(context, choice),
-        itemBuilder: (BuildContext context) {
-          return menus.map((Choice menuItem) {
-            return PopupMenuItem<Choice>(
-              value: menuItem,
-              child: Text(menuItem.title),
-            );
-          }).toList();
-        },
-      ),
-    );
+    if (menus.length > 0) {
+      actions.add(
+        PopupMenuButton<Choice>(
+          onSelected: (choice) => menuSelected(context, choice),
+          itemBuilder: (BuildContext context) {
+            return menus.map((Choice menuItem) {
+              return PopupMenuItem<Choice>(
+                value: menuItem,
+                child: Text(menuItem.title),
+              );
+            }).toList();
+          },
+        ),
+      );
+    }
 
     return SliverAppBar(
       expandedHeight: 320.0,
