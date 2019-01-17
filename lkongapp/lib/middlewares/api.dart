@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
+import 'package:lkongapp/utils/utils.dart';
 import 'package:meta/meta.dart';
 import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
@@ -610,7 +611,9 @@ Future<Map> upvoteComment(Map args) {
       dataParser: _parseResponseBody(UpvoteResult.fromJson));
 }
 
-Future<Map> getHotDigest() {
+Future<Map> getHotDigest(Map args) {
+  final forums = args["forums"] as List<Forum>;
+
   var hotUrlString = endpoint["hotthread"] + querify(defaultParameter());
   var hotHttpAction = session.get(hotUrlString);
 
@@ -619,6 +622,24 @@ Future<Map> getHotDigest() {
     dataParser: _parseResponseBody(HotDigestResult.fromJson),
     preProcessor: numMapperBuiler(["tid"]),
   );
+
+  var connections = <Future>[hotConnection];
+
+  if (forums != null && forums.length > 0) {
+    forums.forEach((forum) {
+      var url =
+          endpoint["hotthread"] + "_${forum.fid}" + querify(defaultParameter());
+      var action = session.get(url);
+
+      final connection = _handleHttp(
+        action,
+        dataParser: _parseResponseBody(HotDigestResult.fromJson),
+        preProcessor: numMapperBuiler(["tid"]),
+      );
+
+      connections.add(connection);
+    });
+  }
 
   var digestUrlString = endpoint["digest"] + querify(defaultParameter());
   var digestHttpAction = session.get(digestUrlString);
@@ -629,10 +650,18 @@ Future<Map> getHotDigest() {
     preProcessor: numMapperBuiler(["tid"]),
   );
 
-  return Future.wait([hotConnection, digestConnection]).then((results) {
+  connections.add(digestConnection);
+
+  return Future.wait(connections).then((results) {
     var resultList = <HotDigestResult>[];
     results.forEach((result) {
-      final hotlist = result["result"] as HotDigestResult;
+      var hotlist = result["result"] as HotDigestResult;
+      int fid = parseLKTypeId(hotlist.id);
+      if (fid != null) {
+        final forum = forums.firstWhere((forum) => forum.fid == fid);
+        hotlist =
+            hotlist.rebuild((b) => b..title = "${b.title} - ${forum.name}");
+      }
       resultList.add(hotlist);
     });
     return {"result": resultList};
@@ -779,7 +808,7 @@ Future<Map> apiDispatch(api, Map parameters) async {
   }
 
   if (api == HOTDIGEST_API) {
-    return getHotDigest();
+    return getHotDigest(parameters);
   }
 
   return Future<Map>(null);

@@ -58,6 +58,7 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
     if (selectSetting(store).autoPunch) {
       store.dispatch(PunchCardRequest(null, user));
     }
+    store.dispatch(ForumListRequest(null));
     store.dispatch(FollowListRequest(null, user));
   }
 

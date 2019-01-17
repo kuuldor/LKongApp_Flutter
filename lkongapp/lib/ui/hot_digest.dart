@@ -32,13 +32,19 @@ class HotDigest extends StatelessWidget {
 
 class HotDigestModel extends FetchedListModel {
   final BuiltList<HotDigestResult> repo;
+  final List<Forum> followedForums;
   final bool loading;
   final String lastError;
 
   @override
-  SliverAppBar buildAppBar(BuildContext _) => SliverAppBar(
+  SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(
         leading: DrawerButton(),
-        title: Text('热门'),
+        title: GestureDetector(
+          child: Text("热门",
+              style:
+                  Theme.of(context).textTheme.title.apply(color: Colors.white)),
+          onTap: () => scrollToTop(context),
+        ),
         floating: false,
         pinned: true,
       );
@@ -47,15 +53,17 @@ class HotDigestModel extends FetchedListModel {
   bool operator ==(other) {
     return other is HotDigestModel &&
         repo == other.repo &&
+        followedForums == other.followedForums &&
         loading == other.loading &&
         lastError == other.lastError;
   }
 
   @override
-  int get hashCode => hash3(repo, loading, lastError);
+  int get hashCode => hashObjects([repo, followedForums, loading, lastError]);
 
   HotDigestModel({
     @required this.repo,
+    @required this.followedForums,
     @required this.loading,
     @required this.lastError,
   });
@@ -68,24 +76,31 @@ class HotDigestModel extends FetchedListModel {
   }
 
   @override
-  APIRequest get fetchFromScratchRequest => HotDigestRequest(null);
+  APIRequest get fetchFromScratchRequest =>
+      HotDigestRequest(null, followedForums);
 
   @override
   APIRequest get loadMoreRequest => null;
 
   @override
-  APIRequest get refreshRequest => HotDigestRequest(null);
+  APIRequest get refreshRequest => HotDigestRequest(null, followedForums);
 
   @override
   Future<Null> handleRefresh(BuildContext context) {
     final Completer<String> completer = Completer<String>();
-    dispatchAction(context)(HotDigestRequest(completer));
+    dispatchAction(context)(HotDigestRequest(completer, followedForums));
     return completer.future.then((_) {});
   }
 
   static HotDigestModel fromStore(Store<AppState> store) {
+    final userData = selectUserData(store);
+    final forumInfo = store.state.uiState.content.forumInfo;
+    final followed = userData?.followList?.fid;
+
     return HotDigestModel(
       repo: store.state.uiState.content.hotDigest,
+      followedForums: List<Forum>.from(forumInfo.forums
+          .where((forum) => followed?.contains("${forum.fid}") == true)),
       loading: store.state.uiState.content.loading,
       lastError: store.state.uiState.content.lastError,
     );
@@ -154,7 +169,7 @@ class HotDigestModel extends FetchedListModel {
   }
 
   @override
-  bool get initLoaded => repo.length > 0;
+  bool get initLoaded => repo.length == followedForums.length + 2;
 
   @override
   void listIsReady(BuildContext context) {}

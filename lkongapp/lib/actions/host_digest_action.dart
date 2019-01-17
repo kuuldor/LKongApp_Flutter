@@ -7,8 +7,12 @@ import 'base_action.dart';
 import 'api_action.dart';
 
 class HotDigestRequest extends APIRequest with StartLoading {
-  HotDigestRequest(Completer completer)
-      : super(completer: completer, api: HOTDIGEST_API, parameters: {});
+  final List<Forum> forums;
+  HotDigestRequest(Completer completer, this.forums)
+      : super(
+            completer: completer,
+            api: HOTDIGEST_API,
+            parameters: {"forums": forums});
 
   @override
   CreateFailure get badResponse => (error) => HotDigestFailure(this, error);
