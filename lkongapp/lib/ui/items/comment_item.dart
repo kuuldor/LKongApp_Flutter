@@ -97,10 +97,12 @@ class CommentItem extends StatelessWidget {
     }
     var credits = "";
     if (coins > 0) {
-      credits += "龙币+$coins";
+      credits += "龙币+$coins   ";
     }
     if (crystals > 0) {
-      credits += "   龙晶+$crystals";
+      credits += "龙晶+$crystals";
+    } else if (crystals < 0) {
+      credits += "龙晶$crystals";
     }
     list.insert(
         0,
@@ -172,7 +174,7 @@ class CommentItem extends StatelessWidget {
         },
       ));
     }
-    
+
     final timestamp = parseDatetime(comment.dateline);
     final datetime = showDetailTime
         ? stringFromDate(timestamp)

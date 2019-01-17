@@ -56,7 +56,7 @@ class StoryItem extends StatelessWidget {
             ),
             Column(
               children: <Widget>[
-                Icon(Icons.message),
+                (story.closed == 1 ? Icon(Icons.lock) : Icon(Icons.message)),
                 Text("${story.replynum ?? story.tReplynum}"),
               ],
             ),
