@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/grouped_list.dart';
 
-import 'package:lkongapp/ui/modeled_app.dart';
-
+import 'package:lkongapp/ui/items/item_wrapper.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:lkongapp/actions/actions.dart';
 
@@ -25,6 +24,8 @@ abstract class FetchedListModel extends GroupedListModel {
 
   //Override this if you has more than 1 sections.
   int get sectionCount => 1;
+
+  Widget Function(BuildContext, Widget) get wrapCell => wrapItem;
 
   @override
   int get numberOfSections {
@@ -78,12 +79,7 @@ abstract class FetchedListModel extends GroupedListModel {
         assert(item == null, "Section $section is not defined");
       }
 
-      return Column(children: <Widget>[
-        item,
-        Divider(
-          height: 12.0,
-        ),
-      ]);
+      return wrapCell(context, item);
     }
 
     assert(false, "Should Override cellForSectionAndIndex");

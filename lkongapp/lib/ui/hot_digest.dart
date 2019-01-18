@@ -9,6 +9,8 @@ import 'package:lkongapp/ui/app_drawer.dart';
 import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
+import 'package:lkongapp/ui/items/item_wrapper.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/utils/route.dart';
@@ -133,12 +135,7 @@ class HotDigestModel extends FetchedListModel {
     if (threads != null && index >= 0 && index < threads.length) {
       Widget item = createHotDigestItem(context, threads[index]);
 
-      return Column(children: <Widget>[
-        item,
-        Divider(
-          height: 12.0,
-        ),
-      ]);
+      return wrapItem(context, item);
     }
 
     return null;

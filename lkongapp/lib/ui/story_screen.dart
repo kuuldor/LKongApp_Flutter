@@ -6,6 +6,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/middlewares/api.dart' as api;
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/items/comment_item.dart';
+import 'package:lkongapp/ui/items/item_wrapper.dart';
 import 'package:lkongapp/ui/items/story_info.dart';
 import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
@@ -410,14 +411,11 @@ class StoryContentModel {
     }
 
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
 
     final buildCommentViews = (BuildContext context, int index) {
-      final wrapTile = (Widget tile) => Column(children: <Widget>[
-            tile,
-            Divider(
-              height: 24.0,
-            ),
-          ]);
+      final wrapTile = (Widget tile) => wrapItemAsCard(context, tile);
+
       Widget tile;
       if (loading || comments == null) {
         tile = spinner;
@@ -683,7 +681,7 @@ class StoryContentModel {
       return Container(
         height: totalPages > maxRows ? maxHeight : totalPages * rowHeight + 20,
         decoration: BoxDecoration(
-            border: Border.all(color: theme.mainColor, width: 2.0),
+            border: Border.all(color: theme.mainColor, width: 1.0),
             borderRadius: BorderRadius.circular(6.0)),
         child: ListView.builder(
             controller:

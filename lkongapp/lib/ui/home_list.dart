@@ -13,6 +13,7 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:redux/redux.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 
+import 'package:lkongapp/ui/items/item_wrapper.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 
@@ -61,6 +62,9 @@ class HomeListModel extends StoryListModel {
       showDetailTime: selectSetting(store).showDetailTime,
     );
   }
+
+  @override
+  Widget Function(BuildContext, Widget) get wrapCell => wrapItemAsCard;
 
   @override
   SliverAppBar buildAppBar(BuildContext context) => SliverAppBar(

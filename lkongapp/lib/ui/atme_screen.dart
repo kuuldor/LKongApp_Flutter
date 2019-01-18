@@ -15,6 +15,7 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 
+import 'package:lkongapp/ui/items/item_wrapper.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/selectors/selectors.dart';
@@ -101,6 +102,9 @@ class AtMeScreenModel extends StoryListModel with NotifScreenModel {
     @required this.uid,
     @required this.showDetailTime,
   }) : super(store);
+
+  @override
+  Widget Function(BuildContext, Widget) get wrapCell => wrapItemAsCard;
 
   Widget getTitle(BuildContext context) => GestureDetector(
         child: Text("通知",
