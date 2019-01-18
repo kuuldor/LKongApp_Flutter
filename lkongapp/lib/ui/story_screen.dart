@@ -414,7 +414,8 @@ class StoryContentModel {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
 
     final buildCommentViews = (BuildContext context, int index) {
-      final wrapTile = (Widget tile) => wrapItemAsCard(context, tile);
+      final wrapTile =
+          (Widget tile) => wrapItemAsCard(context, tile, clickable: false);
 
       Widget tile;
       if (loading || comments == null) {
