@@ -16,7 +16,7 @@ final defaultTheme = {
   "name": "默认",
   "colors": {
     "main": "#0080C0",
-    "paper": "#FFF",
+    "paper": "#F7F7F7",
     "headerBG": "#F0F0F0",
     "quoteBG": "#E9E9E9",
     "text": "#111",
@@ -33,7 +33,7 @@ final nightTheme = {
   "name": "默认夜间",
   "colors": {
     "main": "#456",
-    "paper": "#111",
+    "paper": "#222",
     "headerBG": "#282828",
     "quoteBG": "#333",
     "text": "#EEE",

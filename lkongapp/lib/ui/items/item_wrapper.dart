@@ -18,9 +18,9 @@ Widget wrapItemAsCard(BuildContext context, Widget item,
   }
 
   return Column(children: <Widget>[
-    SizedBox(height: 2.0),
+    SizedBox(height: 4.0),
     Container(
-        margin: EdgeInsets.all(2.0),
+        margin: EdgeInsets.symmetric(horizontal: 4.0),
         padding: EdgeInsets.symmetric(vertical: 12.0),
         decoration: BoxDecoration(
           color: theme.pageColor,
@@ -33,7 +33,7 @@ Widget wrapItemAsCard(BuildContext context, Widget item,
           ],
         ),
         child: item),
-    SizedBox(height: 6.0),
+    SizedBox(height: 8.0),
   ]);
 }
 

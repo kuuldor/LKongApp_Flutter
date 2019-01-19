@@ -318,6 +318,11 @@ class SettingState extends State<SettingView> {
             setting.nightMode = index == 1;
           });
         }, currentSelection: setting.nightMode ? 1 : 0),
+        CSButton(CSButtonType.DEFAULT_CENTER, "恢复默认主题", () {
+          setState(() {
+            setting.themeSetting.replace(ThemeSetting());
+          });
+        }),
         CSHeader(),
         CSControl('版权所有', Text(setting.copyright)),
         CSButton(CSButtonType.DEFAULT, "Licenses", () {

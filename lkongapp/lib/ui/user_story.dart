@@ -17,6 +17,7 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
+import 'package:lkongapp/ui/items/item_wrapper.dart';
 
 import 'story_list.dart';
 
@@ -80,6 +81,9 @@ class UserStoryModel extends StoryListModel {
             showDetailTime: selectSetting(store).showDetailTime,
             user: state.user,
           );
+
+  @override
+  Widget Function(BuildContext, Widget) get wrapCell => wrapItemAsCard;
 
   @override
   APIRequest get fetchFromScratchRequest {

@@ -143,10 +143,10 @@ class LoginState extends State<LoginScreen> {
       );
 
       var stackChildren = <Widget>[];
+      stackChildren.add(form);
       if (viewModel.loading) {
         stackChildren.add(Center(child: CircularProgressIndicator()));
       }
-      stackChildren.add(form);
 
       return Scaffold(
         key: scaffoldKey,
