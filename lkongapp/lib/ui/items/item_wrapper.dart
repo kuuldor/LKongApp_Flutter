@@ -27,8 +27,8 @@ Widget wrapItemAsCard(BuildContext context, Widget item,
           boxShadow: [
             new BoxShadow(
               color: theme.lightTextColor,
-              blurRadius: 0.2,
-              offset: Offset(0.0, 0.3),
+              blurRadius: 2.0,
+              offset: Offset(0.0, 1.0),
             )
           ],
         ),

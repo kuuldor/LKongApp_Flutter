@@ -81,7 +81,10 @@ abstract class UserData implements Built<UserData, UserDataBuilder> {
 abstract class UserInfo implements Built<UserInfo, UserInfoBuilder> {
   UserInfo._();
 
-  factory UserInfo([updates(UserInfoBuilder b)]) = _$UserInfo;
+  factory UserInfo([updates(UserInfoBuilder b)]) => _$UserInfo((b) => b
+    ..uid = 0
+    ..username = ""
+    ..update(updates));
 
   @nullable
   @BuiltValueField(wireName: 'blacklists')
@@ -107,10 +110,8 @@ abstract class UserInfo implements Built<UserInfo, UserInfoBuilder> {
   @nullable
   @BuiltValueField(wireName: 'sightml')
   String get sightml;
-  @nullable
   @BuiltValueField(wireName: 'uid')
   int get uid;
-  @nullable
   @BuiltValueField(wireName: 'username')
   String get username;
   @nullable

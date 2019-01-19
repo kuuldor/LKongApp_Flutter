@@ -167,7 +167,7 @@ abstract class StoryListModel extends FetchedListModel {
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           alignment: Alignment.centerLeft,
           child: Text(
-            "网络错误：$error。请稍后重试",
+            "错误：$error。请稍后重试",
             style: const TextStyle(color: Colors.white),
           ));
     } else if (newCount > 0) {

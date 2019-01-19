@@ -67,7 +67,7 @@ class ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
 
-    if (user.uid == null && user.username != null) {
+    if (user.uid == 0 && user.username.length > 0) {
       stateLoading = true;
       queryMetaData({"userName": user.username}).then((result) {
         final location = result["location"];
@@ -143,7 +143,7 @@ class ProfileScreenModel extends FetchedListModel {
                     true,
             lastError:
                 store.state.uiState.content.profiles[state.user.uid]?.lastError,
-            profile: state.user.uid != null
+            profile: state.user.uid != 0
                 ? store.state.uiState.content.profiles[state.user.uid]
                 : null,
             state: state,
@@ -514,7 +514,7 @@ class ProfileScreenModel extends FetchedListModel {
           alignment: Alignment.centerLeft,
           child: GestureDetector(
             child: Text(
-              "网络错误：$error。请稍后点击此处重试",
+              "错误：$error。请稍后点击此处重试",
               style: const TextStyle(color: Colors.white),
             ),
             onTap: () => handleFetchUserInfo(context),
@@ -620,6 +620,8 @@ class ProfileScreenModel extends FetchedListModel {
   }
 
   void handleFetchUserInfo(BuildContext context) {
-    dispatchAction(context)(UserInfoRequest(null, state.user.uid));
+    if (state.user.uid != 0) {
+      dispatchAction(context)(UserInfoRequest(null, state.user.uid));
+    }
   }
 }

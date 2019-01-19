@@ -171,7 +171,13 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
   @override
   Iterable serialize(Serializers serializers, UserInfo object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[];
+    final result = <Object>[
+      'uid',
+      serializers.serialize(object.uid, specifiedType: const FullType(int)),
+      'username',
+      serializers.serialize(object.username,
+          specifiedType: const FullType(String)),
+    ];
     if (object.blacklists != null) {
       result
         ..add('blacklists')
@@ -218,18 +224,6 @@ class _$UserInfoSerializer implements StructuredSerializer<UserInfo> {
       result
         ..add('sightml')
         ..add(serializers.serialize(object.sightml,
-            specifiedType: const FullType(String)));
-    }
-    if (object.uid != null) {
-      result
-        ..add('uid')
-        ..add(serializers.serialize(object.uid,
-            specifiedType: const FullType(int)));
-    }
-    if (object.username != null) {
-      result
-        ..add('username')
-        ..add(serializers.serialize(object.username,
             specifiedType: const FullType(String)));
     }
     if (object.me != null) {
@@ -1046,7 +1040,14 @@ class _$UserInfo extends UserInfo {
       this.isok,
       this.allban,
       this.smartmessage})
-      : super._();
+      : super._() {
+    if (uid == null) {
+      throw new BuiltValueNullFieldError('UserInfo', 'uid');
+    }
+    if (username == null) {
+      throw new BuiltValueNullFieldError('UserInfo', 'username');
+    }
+  }
 
   @override
   UserInfo rebuild(void updates(UserInfoBuilder b)) =>
