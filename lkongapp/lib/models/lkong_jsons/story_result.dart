@@ -44,7 +44,8 @@ abstract class StoryListResult
       _$storyListResultSerializer;
 }
 
-abstract class Story implements Identifiable, Built<Story, StoryBuilder> {
+abstract class Story
+    implements Identifiable, UserMessage, Built<Story, StoryBuilder> {
   Story._();
 
   factory Story([updates(StoryBuilder b)]) = _$Story;

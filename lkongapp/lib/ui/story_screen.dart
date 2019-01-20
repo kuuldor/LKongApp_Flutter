@@ -471,7 +471,7 @@ class StoryContentModel {
 
     Widget listView;
 
-    if (state.floor != null) {
+    if (state.floor != null && (state.floor % 20) != 1) {
       _scrollController = IndexedScrollController();
       listView = IndexedListView.builder(
         controller: _scrollController,
@@ -499,6 +499,9 @@ class StoryContentModel {
           mainAxisSize: MainAxisSize.min,
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
+            SizedBox(
+              width: 12.0,
+            ),
             IconButton(
               color: Theme.of(context).primaryColor,
               icon: Icon(Icons.arrow_back),

@@ -7,6 +7,12 @@ abstract class Identifiable {
   String get id;
 }
 
+abstract class UserMessage {
+  String get username;
+  String get dateline;
+  int get uid;
+}
+
 abstract class FetchResult<T> {
   int get nexttime;
   int get curtime;

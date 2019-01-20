@@ -40,7 +40,8 @@ abstract class NoticeResult
   static Serializer<NoticeResult> get serializer => _$noticeResultSerializer;
 }
 
-abstract class Notice implements Identifiable, Built<Notice, NoticeBuilder> {
+abstract class Notice
+    implements Identifiable, UserMessage, Built<Notice, NoticeBuilder> {
   Notice._();
 
   factory Notice([updates(NoticeBuilder b)]) = _$Notice;
@@ -101,7 +102,8 @@ abstract class RatelogResult
   static Serializer<RatelogResult> get serializer => _$ratelogResultSerializer;
 }
 
-abstract class Ratelog implements Identifiable, Built<Ratelog, RatelogBuilder> {
+abstract class Ratelog
+    implements Identifiable, UserMessage, Built<Ratelog, RatelogBuilder> {
   Ratelog._();
 
   factory Ratelog([updates(RatelogBuilder b)]) = _$Ratelog;
@@ -201,7 +203,10 @@ abstract class PrivateMessageResult
 }
 
 abstract class PrivateMessage
-    implements Identifiable, Built<PrivateMessage, PrivateMessageBuilder> {
+    implements
+        Identifiable,
+        UserMessage,
+        Built<PrivateMessage, PrivateMessageBuilder> {
   PrivateMessage._();
 
   factory PrivateMessage([updates(PrivateMessageBuilder b)]) = _$PrivateMessage;

@@ -2,6 +2,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -36,6 +37,45 @@ class NoticeItem extends StatelessWidget {
   }
 }
 
+class UserHeader extends StatelessWidget {
+  final UserMessage message;
+
+  const UserHeader({
+    Key key,
+    @required this.message,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    TextStyle style = theme.themeData.textTheme.title;
+    return GestureDetector(
+      child: Row(children: <Widget>[
+        buildUserAvatar(context, message.uid, 36.0),
+        Container(
+          width: 4.0,
+        ),
+        Text(
+          message.username,
+          style: style.copyWith(color: theme.linkColor, fontSize: 18.0),
+        ),
+        Expanded(
+          child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(dateStringToLocal(message.dateline), style: style)),
+        ),
+      ]),
+      onTap: () {
+        onUserTap(
+            context,
+            UserInfo().rebuild((b) => b
+              ..uid = message.uid
+              ..username = message.username));
+      },
+    );
+  }
+}
+
 class RatelogItem extends StatelessWidget {
   final Ratelog ratelog;
 
@@ -48,29 +88,19 @@ class RatelogItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.themeData.primaryTextTheme.headline;
+    TextStyle style = theme.themeData.textTheme.title;
 
     return ListTile(
+        onTap: () {
+          openThreadView(context, null, ratelog.pid);
+        },
         title: Container(
             padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
             child: Column(
               children: <Widget>[
-                Row(children: <Widget>[
-                  buildUserAvatar(context, ratelog.uid, 36.0, clickable: true),
-                  Container(
-                    width: 4.0,
-                  ),
-                  Text(
-                    ratelog.username,
-                    style:
-                        style.copyWith(color: theme.linkColor, fontSize: 18.0),
-                  ),
-                  Expanded(
-                    child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(dateStringToLocal(ratelog.dateline), style: style)),
-                  ),
-                ]),
+                UserHeader(
+                  message: ratelog,
+                ),
                 SizedBox(
                   height: 8.0,
                 ),
@@ -114,28 +144,16 @@ class PMItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.themeData.primaryTextTheme.headline;
+    TextStyle style = theme.themeData.textTheme.title;
 
     return ListTile(
       title: Container(
           padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
           child: Column(
             children: <Widget>[
-              Row(children: <Widget>[
-                buildUserAvatar(context, pm.uid, 36.0, clickable: true),
-                Container(
-                  width: 4.0,
-                ),
-                Text(
-                  pm.username,
-                  style: style.copyWith(color: theme.linkColor, fontSize: 18.0),
-                ),
-                Expanded(
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text(dateStringToLocal(pm.dateline), style: style)),
-                ),
-              ]),
+              UserHeader(
+                message: pm,
+              ),
               SizedBox(
                 height: 8.0,
               ),
