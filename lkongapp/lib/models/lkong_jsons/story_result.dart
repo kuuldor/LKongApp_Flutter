@@ -130,7 +130,8 @@ abstract class StoryInfoResult
         ..author = ""
         ..dateline = ""
         ..id = ""
-        ..isok = true);
+        ..isok = true
+        ..update(updates));
 
   @BuiltValueField(wireName: 'fid')
   int get fid;

@@ -141,6 +141,8 @@ BuiltMap<int, StoryPageList> _storyReplySucceeded(
     StoryPage storyPage;
 
     int threadId = story.tid;
+    int replies = newRepo[threadId].storyInfo.replies;
+
     if (replyType == ReplyType.EditComment ||
         replyType == ReplyType.EditStory) {
       var comment = request.comment;
@@ -161,6 +163,9 @@ BuiltMap<int, StoryPageList> _storyReplySucceeded(
       int pid = result["pid"];
       int tid = result["tid"];
       storyPage = newRepo[threadId].pages[page];
+
+      replies++;
+
       if (storyPage != null) {
         storyPage = storyPage.rebuild((b) => b
           ..comments.add(Comment().rebuild((b) => b
@@ -178,20 +183,29 @@ BuiltMap<int, StoryPageList> _storyReplySucceeded(
       }
     }
 
+    var updater;
+
     if (page != null && storyPage != null) {
-      var updater = (b) => b
+      updater = (b) => b
         ..loading = false
         ..lastError = null
+        ..storyInfo.update((b) => b..replies = replies)
         ..pages.updateValue(page, (v) => storyPage);
-      newRepo = newRepo.rebuild(
-        (b) => b
-          ..updateValue(
-            threadId,
-            (v) => v.rebuild(updater),
-            ifAbsent: () => StoryPageList().rebuild(updater),
-          ),
-      );
+    } else {
+      updater = (b) => b
+        ..loading = false
+        ..lastError = null
+        ..storyInfo.update((b) => b..replies = replies);
     }
+
+    newRepo = newRepo.rebuild(
+      (b) => b
+        ..updateValue(
+          threadId,
+          (v) => v.rebuild(updater),
+          ifAbsent: () => StoryPageList().rebuild(updater),
+        ),
+    );
   }
   return newRepo;
 }
@@ -242,7 +256,8 @@ FetchList<Story> _homeListNewCountChecked(
   return fetchListNewCountChecked(list, result);
 }
 
-FetchList<Story> _homeListLoading(FetchList<Story> list, HomeListRequest action) {
+FetchList<Story> _homeListLoading(
+    FetchList<Story> list, HomeListRequest action) {
   return fetchListLoading(list);
 }
 
