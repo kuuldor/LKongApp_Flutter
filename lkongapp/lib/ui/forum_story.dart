@@ -65,7 +65,7 @@ class ForumStoryState extends StoryListState<ForumStory> {
 }
 
 class ForumStoryModel extends StoryListModel {
-  final StoryFetchList storyList;
+  final FetchList<Story> storyList;
   final bool loading;
   final String lastError;
   final ForumStoryState state;

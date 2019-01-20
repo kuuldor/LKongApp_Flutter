@@ -111,13 +111,36 @@ class _$UserDataSerializer implements StructuredSerializer<UserData> {
       result
         ..add('favorites')
         ..add(serializers.serialize(object.favorites,
-            specifiedType: const FullType(StoryFetchList)));
+            specifiedType:
+                const FullType(FetchList, const [const FullType(Story)])));
     }
     if (object.atMe != null) {
       result
         ..add('atMe')
         ..add(serializers.serialize(object.atMe,
-            specifiedType: const FullType(StoryFetchList)));
+            specifiedType:
+                const FullType(FetchList, const [const FullType(Story)])));
+    }
+    if (object.notice != null) {
+      result
+        ..add('notice')
+        ..add(serializers.serialize(object.notice,
+            specifiedType:
+                const FullType(FetchList, const [const FullType(Notice)])));
+    }
+    if (object.ratelog != null) {
+      result
+        ..add('ratelog')
+        ..add(serializers.serialize(object.ratelog,
+            specifiedType:
+                const FullType(FetchList, const [const FullType(Ratelog)])));
+    }
+    if (object.pm != null) {
+      result
+        ..add('pm')
+        ..add(serializers.serialize(object.pm,
+            specifiedType: const FullType(
+                FetchList, const [const FullType(PrivateMessage)])));
     }
 
     return result;
@@ -149,11 +172,33 @@ class _$UserDataSerializer implements StructuredSerializer<UserData> {
           break;
         case 'favorites':
           result.favorites.replace(serializers.deserialize(value,
-              specifiedType: const FullType(StoryFetchList)) as StoryFetchList);
+                  specifiedType:
+                      const FullType(FetchList, const [const FullType(Story)]))
+              as FetchList<Story>);
           break;
         case 'atMe':
           result.atMe.replace(serializers.deserialize(value,
-              specifiedType: const FullType(StoryFetchList)) as StoryFetchList);
+                  specifiedType:
+                      const FullType(FetchList, const [const FullType(Story)]))
+              as FetchList<Story>);
+          break;
+        case 'notice':
+          result.notice.replace(serializers.deserialize(value,
+                  specifiedType:
+                      const FullType(FetchList, const [const FullType(Notice)]))
+              as FetchList<Notice>);
+          break;
+        case 'ratelog':
+          result.ratelog.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      FetchList, const [const FullType(Ratelog)]))
+              as FetchList<Ratelog>);
+          break;
+        case 'pm':
+          result.pm.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      FetchList, const [const FullType(PrivateMessage)]))
+              as FetchList<PrivateMessage>);
           break;
       }
     }
@@ -757,15 +802,28 @@ class _$UserData extends UserData {
   @override
   final PunchCardResult punchCard;
   @override
-  final StoryFetchList favorites;
+  final FetchList<Story> favorites;
   @override
-  final StoryFetchList atMe;
+  final FetchList<Story> atMe;
+  @override
+  final FetchList<Notice> notice;
+  @override
+  final FetchList<Ratelog> ratelog;
+  @override
+  final FetchList<PrivateMessage> pm;
 
   factory _$UserData([void updates(UserDataBuilder b)]) =>
       (new UserDataBuilder()..update(updates)).build();
 
   _$UserData._(
-      {this.uid, this.followList, this.punchCard, this.favorites, this.atMe})
+      {this.uid,
+      this.followList,
+      this.punchCard,
+      this.favorites,
+      this.atMe,
+      this.notice,
+      this.ratelog,
+      this.pm})
       : super._() {
     if (uid == null) {
       throw new BuiltValueNullFieldError('UserData', 'uid');
@@ -787,17 +845,26 @@ class _$UserData extends UserData {
         followList == other.followList &&
         punchCard == other.punchCard &&
         favorites == other.favorites &&
-        atMe == other.atMe;
+        atMe == other.atMe &&
+        notice == other.notice &&
+        ratelog == other.ratelog &&
+        pm == other.pm;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
         $jc(
-            $jc($jc($jc(0, uid.hashCode), followList.hashCode),
-                punchCard.hashCode),
-            favorites.hashCode),
-        atMe.hashCode));
+            $jc(
+                $jc(
+                    $jc(
+                        $jc($jc($jc(0, uid.hashCode), followList.hashCode),
+                            punchCard.hashCode),
+                        favorites.hashCode),
+                    atMe.hashCode),
+                notice.hashCode),
+            ratelog.hashCode),
+        pm.hashCode));
   }
 
   @override
@@ -807,7 +874,10 @@ class _$UserData extends UserData {
           ..add('followList', followList)
           ..add('punchCard', punchCard)
           ..add('favorites', favorites)
-          ..add('atMe', atMe))
+          ..add('atMe', atMe)
+          ..add('notice', notice)
+          ..add('ratelog', ratelog)
+          ..add('pm', pm))
         .toString();
   }
 }
@@ -831,16 +901,31 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
   set punchCard(PunchCardResultBuilder punchCard) =>
       _$this._punchCard = punchCard;
 
-  StoryFetchListBuilder _favorites;
-  StoryFetchListBuilder get favorites =>
-      _$this._favorites ??= new StoryFetchListBuilder();
-  set favorites(StoryFetchListBuilder favorites) =>
+  FetchListBuilder<Story> _favorites;
+  FetchListBuilder<Story> get favorites =>
+      _$this._favorites ??= new FetchListBuilder<Story>();
+  set favorites(FetchListBuilder<Story> favorites) =>
       _$this._favorites = favorites;
 
-  StoryFetchListBuilder _atMe;
-  StoryFetchListBuilder get atMe =>
-      _$this._atMe ??= new StoryFetchListBuilder();
-  set atMe(StoryFetchListBuilder atMe) => _$this._atMe = atMe;
+  FetchListBuilder<Story> _atMe;
+  FetchListBuilder<Story> get atMe =>
+      _$this._atMe ??= new FetchListBuilder<Story>();
+  set atMe(FetchListBuilder<Story> atMe) => _$this._atMe = atMe;
+
+  FetchListBuilder<Notice> _notice;
+  FetchListBuilder<Notice> get notice =>
+      _$this._notice ??= new FetchListBuilder<Notice>();
+  set notice(FetchListBuilder<Notice> notice) => _$this._notice = notice;
+
+  FetchListBuilder<Ratelog> _ratelog;
+  FetchListBuilder<Ratelog> get ratelog =>
+      _$this._ratelog ??= new FetchListBuilder<Ratelog>();
+  set ratelog(FetchListBuilder<Ratelog> ratelog) => _$this._ratelog = ratelog;
+
+  FetchListBuilder<PrivateMessage> _pm;
+  FetchListBuilder<PrivateMessage> get pm =>
+      _$this._pm ??= new FetchListBuilder<PrivateMessage>();
+  set pm(FetchListBuilder<PrivateMessage> pm) => _$this._pm = pm;
 
   UserDataBuilder();
 
@@ -851,6 +936,9 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
       _punchCard = _$v.punchCard?.toBuilder();
       _favorites = _$v.favorites?.toBuilder();
       _atMe = _$v.atMe?.toBuilder();
+      _notice = _$v.notice?.toBuilder();
+      _ratelog = _$v.ratelog?.toBuilder();
+      _pm = _$v.pm?.toBuilder();
       _$v = null;
     }
     return this;
@@ -879,7 +967,10 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
               followList: _followList?.build(),
               punchCard: _punchCard?.build(),
               favorites: _favorites?.build(),
-              atMe: _atMe?.build());
+              atMe: _atMe?.build(),
+              notice: _notice?.build(),
+              ratelog: _ratelog?.build(),
+              pm: _pm?.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -891,6 +982,12 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
         _favorites?.build();
         _$failedField = 'atMe';
         _atMe?.build();
+        _$failedField = 'notice';
+        _notice?.build();
+        _$failedField = 'ratelog';
+        _ratelog?.build();
+        _$failedField = 'pm';
+        _pm?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'UserData', _$failedField, e.toString());

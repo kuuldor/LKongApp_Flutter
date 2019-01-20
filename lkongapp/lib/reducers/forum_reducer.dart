@@ -62,34 +62,34 @@ enum ForumStoryRequestType {
   Refresh,
   LoadMore,
 }
-final forumRepoReducer = combineReducers<BuiltMap<int, StoryFetchList>>([
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewRequest>(
+final forumRepoReducer = combineReducers<BuiltMap<int, FetchList<Story>>>([
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryNewRequest>(
       _forumStoryNew),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryRequest>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryRequest>(
       _forumStoryRequested),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryFailure>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryFailure>(
       _forumStoryFailed),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryCheckNewFailure>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryCheckNewFailure>(
       _forumStoryCheckNewFailed),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryCheckNewSuccess>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryCheckNewSuccess>(
       _forumStoryNewCountChecked),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryNewSuccess>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryNewSuccess>(
       _forumStorySucceeded(FetchListRequestType.New)),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryRefreshSuccess>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryRefreshSuccess>(
       _forumStorySucceeded(FetchListRequestType.Refresh)),
-  TypedReducer<BuiltMap<int, StoryFetchList>, ForumStoryLoadMoreSuccess>(
+  TypedReducer<BuiltMap<int, FetchList<Story>>, ForumStoryLoadMoreSuccess>(
       _forumStorySucceeded(FetchListRequestType.LoadMore)),
 ]);
 
-BuiltMap<int, StoryFetchList> _forumStoryRequested(
-    BuiltMap<int, StoryFetchList> repo, ForumStoryRequest action) {
+BuiltMap<int, FetchList<Story>> _forumStoryRequested(
+    BuiltMap<int, FetchList<Story>> repo, ForumStoryRequest action) {
   return repo
       .rebuild((b) => b.updateValue(action.forum, (v) => fetchListLoading(v)));
 }
 
-BuiltMap<int, StoryFetchList> _forumStoryNew(
-    BuiltMap<int, StoryFetchList> repo, ForumStoryNewRequest action) {
-  var emptyLoadingList = StoryFetchList();
+BuiltMap<int, FetchList<Story>> _forumStoryNew(
+    BuiltMap<int, FetchList<Story>> repo, ForumStoryNewRequest action) {
+  var emptyLoadingList = FetchList<Story>();
   return repo.rebuild((b) => b.updateValue(
         action.forum,
         (v) => emptyLoadingList,
@@ -97,15 +97,15 @@ BuiltMap<int, StoryFetchList> _forumStoryNew(
       ));
 }
 
-BuiltMap<int, StoryFetchList> _forumStoryNewCountChecked(
-    BuiltMap<int, StoryFetchList> repo, ForumStoryCheckNewSuccess action) {
+BuiltMap<int, FetchList<Story>> _forumStoryNewCountChecked(
+    BuiltMap<int, FetchList<Story>> repo, ForumStoryCheckNewSuccess action) {
   var newRepo = repo;
   var request = action.request as ForumStoryCheckNewRequest;
   if (request != null) {
     final fid = request.forum;
     final result = action.result;
     final value =
-        fetchListNewCountChecked(newRepo[fid] ?? StoryFetchList(), result);
+        fetchListNewCountChecked(newRepo[fid] ?? FetchList<Story>(), result);
 
     newRepo = newRepo.rebuild(
         (b) => b.updateValue(fid, (v) => value, ifAbsent: () => value));
@@ -113,8 +113,8 @@ BuiltMap<int, StoryFetchList> _forumStoryNewCountChecked(
   return newRepo;
 }
 
-BuiltMap<int, StoryFetchList> _forumStoryFailed(
-    BuiltMap<int, StoryFetchList> repo, ForumStoryFailure action) {
+BuiltMap<int, FetchList<Story>> _forumStoryFailed(
+    BuiltMap<int, FetchList<Story>> repo, ForumStoryFailure action) {
   int fid;
 
   final request = action.request as ForumStoryRequest;
@@ -124,8 +124,8 @@ BuiltMap<int, StoryFetchList> _forumStoryFailed(
   return _forumRequestFailed(repo, fid, action);
 }
 
-BuiltMap<int, StoryFetchList> _forumStoryCheckNewFailed(
-    BuiltMap<int, StoryFetchList> repo, ForumStoryCheckNewFailure action) {
+BuiltMap<int, FetchList<Story>> _forumStoryCheckNewFailed(
+    BuiltMap<int, FetchList<Story>> repo, ForumStoryCheckNewFailure action) {
   int fid;
 
   final request = action.request as ForumStoryCheckNewRequest;
@@ -135,12 +135,12 @@ BuiltMap<int, StoryFetchList> _forumStoryCheckNewFailed(
   return _forumRequestFailed(repo, fid, action);
 }
 
-BuiltMap<int, StoryFetchList> _forumRequestFailed(
-    BuiltMap<int, StoryFetchList> repo, int fid, APIFailure action) {
+BuiltMap<int, FetchList<Story>> _forumRequestFailed(
+    BuiltMap<int, FetchList<Story>> repo, int fid, APIFailure action) {
   var newRepo = repo;
   if (fid != null) {
     final error = action.error;
-    final value = fetchListFailed(newRepo[fid] ?? StoryFetchList(), error);
+    final value = fetchListFailed(newRepo[fid] ?? FetchList<Story>(), error);
     newRepo = newRepo.rebuild(
         (b) => b.updateValue(fid, (v) => value, ifAbsent: () => value));
   }
@@ -149,13 +149,13 @@ BuiltMap<int, StoryFetchList> _forumRequestFailed(
 }
 
 _forumStorySucceeded(FetchListRequestType type) =>
-    (BuiltMap<int, StoryFetchList> repo, ForumStorySuccess action) {
+    (BuiltMap<int, FetchList<Story>> repo, ForumStorySuccess action) {
       var request = action.request as ForumStoryRequest;
       var result = action.result;
       var newRepo = repo;
       int fid = request.forum;
       final value =
-          fetchListSucceeded(type, newRepo[fid] ?? StoryFetchList(), result);
+          fetchListSucceeded(type, newRepo[fid] ?? FetchList<Story>(), result);
 
       newRepo = newRepo.rebuild(
           (b) => b.updateValue(fid, (v) => value, ifAbsent: () => value));

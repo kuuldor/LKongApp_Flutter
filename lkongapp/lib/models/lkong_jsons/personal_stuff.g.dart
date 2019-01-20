@@ -34,16 +34,20 @@ class _$NoticeResultSerializer implements StructuredSerializer<NoticeResult> {
       'nexttime',
       serializers.serialize(object.nexttime,
           specifiedType: const FullType(int)),
-      'curtime',
-      serializers.serialize(object.curtime, specifiedType: const FullType(int)),
       'data',
-      serializers.serialize(object.notices,
+      serializers.serialize(object.data,
           specifiedType:
               const FullType(BuiltList, const [const FullType(Notice)])),
       'nochecknew',
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(bool)),
     ];
+    if (object.curtime != null) {
+      result
+        ..add('curtime')
+        ..add(serializers.serialize(object.curtime,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -72,7 +76,7 @@ class _$NoticeResultSerializer implements StructuredSerializer<NoticeResult> {
               specifiedType: const FullType(int)) as int;
           break;
         case 'data':
-          result.notices.replace(serializers.deserialize(value,
+          result.data.replace(serializers.deserialize(value,
                   specifiedType:
                       const FullType(BuiltList, const [const FullType(Notice)]))
               as BuiltList);
@@ -174,16 +178,20 @@ class _$RatelogResultSerializer implements StructuredSerializer<RatelogResult> {
       'nexttime',
       serializers.serialize(object.nexttime,
           specifiedType: const FullType(int)),
-      'curtime',
-      serializers.serialize(object.curtime, specifiedType: const FullType(int)),
       'data',
-      serializers.serialize(object.ratelogs,
+      serializers.serialize(object.data,
           specifiedType:
               const FullType(BuiltList, const [const FullType(Ratelog)])),
       'nochecknew',
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(bool)),
     ];
+    if (object.curtime != null) {
+      result
+        ..add('curtime')
+        ..add(serializers.serialize(object.curtime,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -212,7 +220,7 @@ class _$RatelogResultSerializer implements StructuredSerializer<RatelogResult> {
               specifiedType: const FullType(int)) as int;
           break;
         case 'data':
-          result.ratelogs.replace(serializers.deserialize(value,
+          result.data.replace(serializers.deserialize(value,
               specifiedType: const FullType(
                   BuiltList, const [const FullType(Ratelog)])) as BuiltList);
           break;
@@ -244,7 +252,7 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
           specifiedType: const FullType(String)),
       'extcredits',
       serializers.serialize(object.extcredits,
-          specifiedType: const FullType(int)),
+          specifiedType: const FullType(String)),
       'score',
       serializers.serialize(object.score, specifiedType: const FullType(int)),
       'reason',
@@ -255,6 +263,8 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
           specifiedType: const FullType(String)),
       'pid',
       serializers.serialize(object.pid, specifiedType: const FullType(int)),
+      'id',
+      serializers.serialize(object.id, specifiedType: const FullType(String)),
     ];
     if (object.sortkey != null) {
       result
@@ -301,7 +311,7 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
           break;
         case 'extcredits':
           result.extcredits = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(String)) as String;
           break;
         case 'score':
           result.score = serializers.deserialize(value,
@@ -318,6 +328,10 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
         case 'pid':
           result.pid = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'id':
+          result.id = serializers.deserialize(value,
+              specifiedType: const FullType(String)) as String;
           break;
       }
     }
@@ -397,16 +411,20 @@ class _$PrivateMessageResultSerializer
       'nexttime',
       serializers.serialize(object.nexttime,
           specifiedType: const FullType(int)),
-      'curtime',
-      serializers.serialize(object.curtime, specifiedType: const FullType(int)),
       'data',
-      serializers.serialize(object.messages,
+      serializers.serialize(object.data,
           specifiedType: const FullType(
               BuiltList, const [const FullType(PrivateMessage)])),
       'nochecknew',
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(bool)),
     ];
+    if (object.curtime != null) {
+      result
+        ..add('curtime')
+        ..add(serializers.serialize(object.curtime,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -435,7 +453,7 @@ class _$PrivateMessageResultSerializer
               specifiedType: const FullType(int)) as int;
           break;
         case 'data':
-          result.messages.replace(serializers.deserialize(value,
+          result.data.replace(serializers.deserialize(value,
                   specifiedType: const FullType(
                       BuiltList, const [const FullType(PrivateMessage)]))
               as BuiltList);
@@ -538,7 +556,7 @@ class _$NoticeResult extends NoticeResult {
   @override
   final int curtime;
   @override
-  final BuiltList<Notice> notices;
+  final BuiltList<Notice> data;
   @override
   final bool nochecknew;
 
@@ -546,7 +564,7 @@ class _$NoticeResult extends NoticeResult {
       (new NoticeResultBuilder()..update(updates)).build();
 
   _$NoticeResult._(
-      {this.tmp, this.nexttime, this.curtime, this.notices, this.nochecknew})
+      {this.tmp, this.nexttime, this.curtime, this.data, this.nochecknew})
       : super._() {
     if (tmp == null) {
       throw new BuiltValueNullFieldError('NoticeResult', 'tmp');
@@ -554,11 +572,8 @@ class _$NoticeResult extends NoticeResult {
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('NoticeResult', 'nexttime');
     }
-    if (curtime == null) {
-      throw new BuiltValueNullFieldError('NoticeResult', 'curtime');
-    }
-    if (notices == null) {
-      throw new BuiltValueNullFieldError('NoticeResult', 'notices');
+    if (data == null) {
+      throw new BuiltValueNullFieldError('NoticeResult', 'data');
     }
     if (nochecknew == null) {
       throw new BuiltValueNullFieldError('NoticeResult', 'nochecknew');
@@ -579,7 +594,7 @@ class _$NoticeResult extends NoticeResult {
         tmp == other.tmp &&
         nexttime == other.nexttime &&
         curtime == other.curtime &&
-        notices == other.notices &&
+        data == other.data &&
         nochecknew == other.nochecknew;
   }
 
@@ -587,7 +602,7 @@ class _$NoticeResult extends NoticeResult {
   int get hashCode {
     return $jf($jc(
         $jc($jc($jc($jc(0, tmp.hashCode), nexttime.hashCode), curtime.hashCode),
-            notices.hashCode),
+            data.hashCode),
         nochecknew.hashCode));
   }
 
@@ -597,7 +612,7 @@ class _$NoticeResult extends NoticeResult {
           ..add('tmp', tmp)
           ..add('nexttime', nexttime)
           ..add('curtime', curtime)
-          ..add('notices', notices)
+          ..add('data', data)
           ..add('nochecknew', nochecknew))
         .toString();
   }
@@ -619,10 +634,9 @@ class NoticeResultBuilder
   int get curtime => _$this._curtime;
   set curtime(int curtime) => _$this._curtime = curtime;
 
-  ListBuilder<Notice> _notices;
-  ListBuilder<Notice> get notices =>
-      _$this._notices ??= new ListBuilder<Notice>();
-  set notices(ListBuilder<Notice> notices) => _$this._notices = notices;
+  ListBuilder<Notice> _data;
+  ListBuilder<Notice> get data => _$this._data ??= new ListBuilder<Notice>();
+  set data(ListBuilder<Notice> data) => _$this._data = data;
 
   bool _nochecknew;
   bool get nochecknew => _$this._nochecknew;
@@ -635,7 +649,7 @@ class NoticeResultBuilder
       _tmp = _$v.tmp;
       _nexttime = _$v.nexttime;
       _curtime = _$v.curtime;
-      _notices = _$v.notices?.toBuilder();
+      _data = _$v.data?.toBuilder();
       _nochecknew = _$v.nochecknew;
       _$v = null;
     }
@@ -664,13 +678,13 @@ class NoticeResultBuilder
               tmp: tmp,
               nexttime: nexttime,
               curtime: curtime,
-              notices: notices.build(),
+              data: data.build(),
               nochecknew: nochecknew);
     } catch (_) {
       String _$failedField;
       try {
-        _$failedField = 'notices';
-        notices.build();
+        _$failedField = 'data';
+        data.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'NoticeResult', _$failedField, e.toString());
@@ -849,7 +863,7 @@ class _$RatelogResult extends RatelogResult {
   @override
   final int curtime;
   @override
-  final BuiltList<Ratelog> ratelogs;
+  final BuiltList<Ratelog> data;
   @override
   final bool nochecknew;
 
@@ -857,7 +871,7 @@ class _$RatelogResult extends RatelogResult {
       (new RatelogResultBuilder()..update(updates)).build();
 
   _$RatelogResult._(
-      {this.tmp, this.nexttime, this.curtime, this.ratelogs, this.nochecknew})
+      {this.tmp, this.nexttime, this.curtime, this.data, this.nochecknew})
       : super._() {
     if (tmp == null) {
       throw new BuiltValueNullFieldError('RatelogResult', 'tmp');
@@ -865,11 +879,8 @@ class _$RatelogResult extends RatelogResult {
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('RatelogResult', 'nexttime');
     }
-    if (curtime == null) {
-      throw new BuiltValueNullFieldError('RatelogResult', 'curtime');
-    }
-    if (ratelogs == null) {
-      throw new BuiltValueNullFieldError('RatelogResult', 'ratelogs');
+    if (data == null) {
+      throw new BuiltValueNullFieldError('RatelogResult', 'data');
     }
     if (nochecknew == null) {
       throw new BuiltValueNullFieldError('RatelogResult', 'nochecknew');
@@ -890,7 +901,7 @@ class _$RatelogResult extends RatelogResult {
         tmp == other.tmp &&
         nexttime == other.nexttime &&
         curtime == other.curtime &&
-        ratelogs == other.ratelogs &&
+        data == other.data &&
         nochecknew == other.nochecknew;
   }
 
@@ -898,7 +909,7 @@ class _$RatelogResult extends RatelogResult {
   int get hashCode {
     return $jf($jc(
         $jc($jc($jc($jc(0, tmp.hashCode), nexttime.hashCode), curtime.hashCode),
-            ratelogs.hashCode),
+            data.hashCode),
         nochecknew.hashCode));
   }
 
@@ -908,7 +919,7 @@ class _$RatelogResult extends RatelogResult {
           ..add('tmp', tmp)
           ..add('nexttime', nexttime)
           ..add('curtime', curtime)
-          ..add('ratelogs', ratelogs)
+          ..add('data', data)
           ..add('nochecknew', nochecknew))
         .toString();
   }
@@ -930,10 +941,9 @@ class RatelogResultBuilder
   int get curtime => _$this._curtime;
   set curtime(int curtime) => _$this._curtime = curtime;
 
-  ListBuilder<Ratelog> _ratelogs;
-  ListBuilder<Ratelog> get ratelogs =>
-      _$this._ratelogs ??= new ListBuilder<Ratelog>();
-  set ratelogs(ListBuilder<Ratelog> ratelogs) => _$this._ratelogs = ratelogs;
+  ListBuilder<Ratelog> _data;
+  ListBuilder<Ratelog> get data => _$this._data ??= new ListBuilder<Ratelog>();
+  set data(ListBuilder<Ratelog> data) => _$this._data = data;
 
   bool _nochecknew;
   bool get nochecknew => _$this._nochecknew;
@@ -946,7 +956,7 @@ class RatelogResultBuilder
       _tmp = _$v.tmp;
       _nexttime = _$v.nexttime;
       _curtime = _$v.curtime;
-      _ratelogs = _$v.ratelogs?.toBuilder();
+      _data = _$v.data?.toBuilder();
       _nochecknew = _$v.nochecknew;
       _$v = null;
     }
@@ -975,13 +985,13 @@ class RatelogResultBuilder
               tmp: tmp,
               nexttime: nexttime,
               curtime: curtime,
-              ratelogs: ratelogs.build(),
+              data: data.build(),
               nochecknew: nochecknew);
     } catch (_) {
       String _$failedField;
       try {
-        _$failedField = 'ratelogs';
-        ratelogs.build();
+        _$failedField = 'data';
+        data.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'RatelogResult', _$failedField, e.toString());
@@ -1003,7 +1013,7 @@ class _$Ratelog extends Ratelog {
   @override
   final String message;
   @override
-  final int extcredits;
+  final String extcredits;
   @override
   final int score;
   @override
@@ -1012,6 +1022,8 @@ class _$Ratelog extends Ratelog {
   final String dateline;
   @override
   final int pid;
+  @override
+  final String id;
 
   factory _$Ratelog([void updates(RatelogBuilder b)]) =>
       (new RatelogBuilder()..update(updates)).build();
@@ -1025,7 +1037,8 @@ class _$Ratelog extends Ratelog {
       this.score,
       this.reason,
       this.dateline,
-      this.pid})
+      this.pid,
+      this.id})
       : super._() {
     if (uid == null) {
       throw new BuiltValueNullFieldError('Ratelog', 'uid');
@@ -1048,6 +1061,9 @@ class _$Ratelog extends Ratelog {
     if (pid == null) {
       throw new BuiltValueNullFieldError('Ratelog', 'pid');
     }
+    if (id == null) {
+      throw new BuiltValueNullFieldError('Ratelog', 'id');
+    }
   }
 
   @override
@@ -1069,7 +1085,8 @@ class _$Ratelog extends Ratelog {
         score == other.score &&
         reason == other.reason &&
         dateline == other.dateline &&
-        pid == other.pid;
+        pid == other.pid &&
+        id == other.id;
   }
 
   @override
@@ -1080,14 +1097,16 @@ class _$Ratelog extends Ratelog {
                 $jc(
                     $jc(
                         $jc(
-                            $jc($jc($jc(0, sortkey.hashCode), uid.hashCode),
-                                username.hashCode),
-                            message.hashCode),
-                        extcredits.hashCode),
-                    score.hashCode),
-                reason.hashCode),
-            dateline.hashCode),
-        pid.hashCode));
+                            $jc(
+                                $jc($jc($jc(0, sortkey.hashCode), uid.hashCode),
+                                    username.hashCode),
+                                message.hashCode),
+                            extcredits.hashCode),
+                        score.hashCode),
+                    reason.hashCode),
+                dateline.hashCode),
+            pid.hashCode),
+        id.hashCode));
   }
 
   @override
@@ -1101,7 +1120,8 @@ class _$Ratelog extends Ratelog {
           ..add('score', score)
           ..add('reason', reason)
           ..add('dateline', dateline)
-          ..add('pid', pid))
+          ..add('pid', pid)
+          ..add('id', id))
         .toString();
   }
 }
@@ -1125,9 +1145,9 @@ class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
   String get message => _$this._message;
   set message(String message) => _$this._message = message;
 
-  int _extcredits;
-  int get extcredits => _$this._extcredits;
-  set extcredits(int extcredits) => _$this._extcredits = extcredits;
+  String _extcredits;
+  String get extcredits => _$this._extcredits;
+  set extcredits(String extcredits) => _$this._extcredits = extcredits;
 
   int _score;
   int get score => _$this._score;
@@ -1145,6 +1165,10 @@ class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
   int get pid => _$this._pid;
   set pid(int pid) => _$this._pid = pid;
 
+  String _id;
+  String get id => _$this._id;
+  set id(String id) => _$this._id = id;
+
   RatelogBuilder();
 
   RatelogBuilder get _$this {
@@ -1158,6 +1182,7 @@ class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
       _reason = _$v.reason;
       _dateline = _$v.dateline;
       _pid = _$v.pid;
+      _id = _$v.id;
       _$v = null;
     }
     return this;
@@ -1188,7 +1213,8 @@ class RatelogBuilder implements Builder<Ratelog, RatelogBuilder> {
             score: score,
             reason: reason,
             dateline: dateline,
-            pid: pid);
+            pid: pid,
+            id: id);
     replace(_$result);
     return _$result;
   }
@@ -1319,7 +1345,7 @@ class _$PrivateMessageResult extends PrivateMessageResult {
   @override
   final int curtime;
   @override
-  final BuiltList<PrivateMessage> messages;
+  final BuiltList<PrivateMessage> data;
   @override
   final bool nochecknew;
 
@@ -1328,7 +1354,7 @@ class _$PrivateMessageResult extends PrivateMessageResult {
       (new PrivateMessageResultBuilder()..update(updates)).build();
 
   _$PrivateMessageResult._(
-      {this.tmp, this.nexttime, this.curtime, this.messages, this.nochecknew})
+      {this.tmp, this.nexttime, this.curtime, this.data, this.nochecknew})
       : super._() {
     if (tmp == null) {
       throw new BuiltValueNullFieldError('PrivateMessageResult', 'tmp');
@@ -1336,11 +1362,8 @@ class _$PrivateMessageResult extends PrivateMessageResult {
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('PrivateMessageResult', 'nexttime');
     }
-    if (curtime == null) {
-      throw new BuiltValueNullFieldError('PrivateMessageResult', 'curtime');
-    }
-    if (messages == null) {
-      throw new BuiltValueNullFieldError('PrivateMessageResult', 'messages');
+    if (data == null) {
+      throw new BuiltValueNullFieldError('PrivateMessageResult', 'data');
     }
     if (nochecknew == null) {
       throw new BuiltValueNullFieldError('PrivateMessageResult', 'nochecknew');
@@ -1362,7 +1385,7 @@ class _$PrivateMessageResult extends PrivateMessageResult {
         tmp == other.tmp &&
         nexttime == other.nexttime &&
         curtime == other.curtime &&
-        messages == other.messages &&
+        data == other.data &&
         nochecknew == other.nochecknew;
   }
 
@@ -1370,7 +1393,7 @@ class _$PrivateMessageResult extends PrivateMessageResult {
   int get hashCode {
     return $jf($jc(
         $jc($jc($jc($jc(0, tmp.hashCode), nexttime.hashCode), curtime.hashCode),
-            messages.hashCode),
+            data.hashCode),
         nochecknew.hashCode));
   }
 
@@ -1380,7 +1403,7 @@ class _$PrivateMessageResult extends PrivateMessageResult {
           ..add('tmp', tmp)
           ..add('nexttime', nexttime)
           ..add('curtime', curtime)
-          ..add('messages', messages)
+          ..add('data', data)
           ..add('nochecknew', nochecknew))
         .toString();
   }
@@ -1402,11 +1425,10 @@ class PrivateMessageResultBuilder
   int get curtime => _$this._curtime;
   set curtime(int curtime) => _$this._curtime = curtime;
 
-  ListBuilder<PrivateMessage> _messages;
-  ListBuilder<PrivateMessage> get messages =>
-      _$this._messages ??= new ListBuilder<PrivateMessage>();
-  set messages(ListBuilder<PrivateMessage> messages) =>
-      _$this._messages = messages;
+  ListBuilder<PrivateMessage> _data;
+  ListBuilder<PrivateMessage> get data =>
+      _$this._data ??= new ListBuilder<PrivateMessage>();
+  set data(ListBuilder<PrivateMessage> data) => _$this._data = data;
 
   bool _nochecknew;
   bool get nochecknew => _$this._nochecknew;
@@ -1419,7 +1441,7 @@ class PrivateMessageResultBuilder
       _tmp = _$v.tmp;
       _nexttime = _$v.nexttime;
       _curtime = _$v.curtime;
-      _messages = _$v.messages?.toBuilder();
+      _data = _$v.data?.toBuilder();
       _nochecknew = _$v.nochecknew;
       _$v = null;
     }
@@ -1448,13 +1470,13 @@ class PrivateMessageResultBuilder
               tmp: tmp,
               nexttime: nexttime,
               curtime: curtime,
-              messages: messages.build(),
+              data: data.build(),
               nochecknew: nochecknew);
     } catch (_) {
       String _$failedField;
       try {
-        _$failedField = 'messages';
-        messages.build();
+        _$failedField = 'data';
+        data.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'PrivateMessageResult', _$failedField, e.toString());

@@ -83,15 +83,15 @@ abstract class StoryListModel extends FetchedListModel {
 
   APIRequest get checkNewRequest;
 
-  StoryFetchList get storyList;
+  FetchList<Story> get storyList;
 
   List<String> blackList;
 
   List<Story> _stories;
   List<Story> get stories {
     if (_stories == null) {
-      if (storyList?.stories != null) {
-        _stories = storyList.stories.toList();
+      if (storyList?.data != null) {
+        _stories = storyList.data.toList();
         if (blackList != null) {
           _stories = _stories
               .where((story) => !blackList.contains("${story.uid}"))
@@ -128,7 +128,7 @@ abstract class StoryListModel extends FetchedListModel {
   @override
   bool get initLoaded =>
       storyList != null &&
-      (storyList.current != 0 || storyList.stories.length > 0);
+      (storyList.current != 0 || storyList.data.length > 0);
 
   @override
   Widget createListItem(BuildContext context, int index) {

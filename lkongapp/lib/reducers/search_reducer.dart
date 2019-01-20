@@ -79,13 +79,13 @@ SearchUserResult searchUserSucceeded(
     ..user.addAll(result.user ?? []));
 }
 
-StoryFetchList searchStorySucceeded(
-    StoryFetchList list, StoryListResult result) {
+FetchList<Story> searchStorySucceeded(
+    FetchList<Story> list, StoryListResult result) {
   int nexttime = result.data.length > 0 ? result.nexttime : 0;
-  final newlist = list ?? StoryFetchList();
+  final newlist = list ?? FetchList<Story>();
   return newlist.rebuild((b) => b
     ..nexttime = nexttime
-    ..stories.addAll(result.data ?? []));
+    ..data.addAll(result.data ?? []));
 }
 
 SearchResult _searchResultSucceeded(SearchResult repo, SearchSuccess action) {

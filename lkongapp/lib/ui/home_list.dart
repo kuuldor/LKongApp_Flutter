@@ -37,7 +37,7 @@ class HomeListState extends StoryListState<HomeList> {
 
 class HomeListModel extends StoryListModel {
   final bool threadOnlyHome;
-  final StoryFetchList storyList;
+  final FetchList<Story> storyList;
   final bool loading;
   final String lastError;
   final bool showDetailTime;

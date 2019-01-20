@@ -53,7 +53,7 @@ class UserStoryState extends StoryListState<UserStory> {
 }
 
 class UserStoryModel extends StoryListModel {
-  final StoryFetchList storyList;
+  final FetchList<Story> storyList;
   final bool loading;
   final String lastError;
   final UserInfo user;

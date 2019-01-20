@@ -3,13 +3,15 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/models.dart';
 
 import 'package:lkongapp/models/serializers.dart';
 
 part 'personal_stuff.g.dart';
 
 abstract class NoticeResult
-    implements Built<NoticeResult, NoticeResultBuilder> {
+    implements FetchResult<Notice>, Built<NoticeResult, NoticeResultBuilder> {
   NoticeResult._();
 
   factory NoticeResult([updates(NoticeResultBuilder b)]) = _$NoticeResult;
@@ -18,10 +20,11 @@ abstract class NoticeResult
   String get tmp;
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
+  @nullable
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
   @BuiltValueField(wireName: 'data')
-  BuiltList<Notice> get notices;
+  BuiltList<Notice> get data;
   @BuiltValueField(wireName: 'nochecknew')
   bool get nochecknew;
   String toJson() {
@@ -37,7 +40,7 @@ abstract class NoticeResult
   static Serializer<NoticeResult> get serializer => _$noticeResultSerializer;
 }
 
-abstract class Notice implements Built<Notice, NoticeBuilder> {
+abstract class Notice implements Identifiable, Built<Notice, NoticeBuilder> {
   Notice._();
 
   factory Notice([updates(NoticeBuilder b)]) = _$Notice;
@@ -67,7 +70,9 @@ abstract class Notice implements Built<Notice, NoticeBuilder> {
 }
 
 abstract class RatelogResult
-    implements Built<RatelogResult, RatelogResultBuilder> {
+    implements
+        FetchResult<Ratelog>,
+        Built<RatelogResult, RatelogResultBuilder> {
   RatelogResult._();
 
   factory RatelogResult([updates(RatelogResultBuilder b)]) = _$RatelogResult;
@@ -76,10 +81,11 @@ abstract class RatelogResult
   String get tmp;
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
+  @nullable
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
   @BuiltValueField(wireName: 'data')
-  BuiltList<Ratelog> get ratelogs;
+  BuiltList<Ratelog> get data;
   @BuiltValueField(wireName: 'nochecknew')
   bool get nochecknew;
   String toJson() {
@@ -95,7 +101,7 @@ abstract class RatelogResult
   static Serializer<RatelogResult> get serializer => _$ratelogResultSerializer;
 }
 
-abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
+abstract class Ratelog implements Identifiable, Built<Ratelog, RatelogBuilder> {
   Ratelog._();
 
   factory Ratelog([updates(RatelogBuilder b)]) = _$Ratelog;
@@ -111,7 +117,7 @@ abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
   @BuiltValueField(wireName: 'message')
   String get message;
   @BuiltValueField(wireName: 'extcredits')
-  int get extcredits;
+  String get extcredits;
   @BuiltValueField(wireName: 'score')
   int get score;
   @BuiltValueField(wireName: 'reason')
@@ -120,6 +126,8 @@ abstract class Ratelog implements Built<Ratelog, RatelogBuilder> {
   String get dateline;
   @BuiltValueField(wireName: 'pid')
   int get pid;
+  @BuiltValueField(wireName: 'id')
+  String get id;
 
   String toJson() {
     return json.encode(serializers.serializeWith(Ratelog.serializer, this));
@@ -159,7 +167,9 @@ abstract class UpvoteResult
 }
 
 abstract class PrivateMessageResult
-    implements Built<PrivateMessageResult, PrivateMessageResultBuilder> {
+    implements
+        FetchResult<PrivateMessage>,
+        Built<PrivateMessageResult, PrivateMessageResultBuilder> {
   PrivateMessageResult._();
 
   factory PrivateMessageResult([updates(PrivateMessageResultBuilder b)]) =
@@ -169,10 +179,11 @@ abstract class PrivateMessageResult
   String get tmp;
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
+  @nullable
   @BuiltValueField(wireName: 'curtime')
   int get curtime;
   @BuiltValueField(wireName: 'data')
-  BuiltList<PrivateMessage> get messages;
+  BuiltList<PrivateMessage> get data;
   @BuiltValueField(wireName: 'nochecknew')
   bool get nochecknew;
   String toJson() {
@@ -190,7 +201,7 @@ abstract class PrivateMessageResult
 }
 
 abstract class PrivateMessage
-    implements Built<PrivateMessage, PrivateMessageBuilder> {
+    implements Identifiable, Built<PrivateMessage, PrivateMessageBuilder> {
   PrivateMessage._();
 
   factory PrivateMessage([updates(PrivateMessageBuilder b)]) = _$PrivateMessage;

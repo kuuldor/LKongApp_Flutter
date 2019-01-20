@@ -7,6 +7,7 @@ import 'package:built_value/serializer.dart';
 import 'package:lkongapp/utils/localization.dart';
 import 'package:lkongapp/models/user.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/serializers.dart';
 
 part 'ui_state.g.dart';
@@ -17,7 +18,8 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
   factory UIState([updates(UIStateBuilder b)]) => _$UIState((b) {
         b
           ..homePageIndex = 0
-          ..content = (ContentCacheBuilder()..replace(ContentCache()))
+          ..atMeScreenType = 0
+          ..content.replace(ContentCache())
           ..navigationRoute = "/"
           ..update(updates);
       });
@@ -26,6 +28,8 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
 
   @BuiltValueField(wireName: 'homePageIndex')
   int get homePageIndex;
+
+  int get atMeScreenType;
 
   ContentCache get content;
 
@@ -48,7 +52,7 @@ abstract class ContentCache
       _$ContentCache((b) => b
         ..loading = false
         ..forumInfo.replace(ForumLists())
-        ..homeList.replace(StoryFetchList())
+        ..homeList.replace(FetchList<Story>())
         ..searchResult.replace(SearchResult())
         ..update(updates));
 
@@ -56,10 +60,10 @@ abstract class ContentCache
   String get lastError;
   @nullable
   bool get loading;
-  StoryFetchList get homeList;
+  FetchList<Story> get homeList;
   BuiltMap<int, StoryPageList> get storyRepo;
   ForumLists get forumInfo;
-  BuiltMap<int, StoryFetchList> get forumRepo;
+  BuiltMap<int, FetchList<Story>> get forumRepo;
   //Private data for login user
   BuiltMap<int, UserData> get userData;
   SearchResult get searchResult;
@@ -83,15 +87,15 @@ abstract class Profile implements Built<Profile, ProfileBuilder> {
   UserInfo get user;
 
   @nullable
-  StoryFetchList get stories;
+  FetchList<Story> get stories;
   @nullable
   SearchUserResult get fans;
   @nullable
-  StoryFetchList get digests;
+  FetchList<Story> get digests;
   @nullable
   SearchUserResult get follows;
   @nullable
-  StoryFetchList get allPosts;
+  FetchList<Story> get allPosts;
 }
 
 abstract class SearchResult
@@ -110,33 +114,11 @@ abstract class SearchResult
   String get searchString;
   int get searchType;
   @nullable
-  StoryFetchList get stories;
+  FetchList<Story> get stories;
   @nullable
   SearchUserResult get users;
   @nullable
   SearchForumResult get forums;
-}
-
-abstract class StoryFetchList
-    implements Built<StoryFetchList, StoryFetchListBuilder> {
-  StoryFetchList._();
-  factory StoryFetchList([updates(StoryFetchListBuilder b)]) =>
-      _$StoryFetchList((b) => b
-        ..loading = false
-        ..current = 0
-        ..nexttime = 0
-        ..newcount = 0
-        ..update(updates));
-
-  bool get loading;
-  int get nexttime;
-  int get current;
-  int get newcount;
-
-  @nullable
-  String get lastError;
-
-  BuiltList<Story> get stories;
 }
 
 abstract class StoryPageList

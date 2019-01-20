@@ -157,13 +157,14 @@ BuiltMap<int, StoryPageList> _storyReplySucceeded(
 
     if (replyType == ReplyType.Comment || replyType == ReplyType.Story) {
       int lou = result["lou"];
-      page = (lou - 1) ~/ 20 + 1;
-
+      page = result["page"];
+      int pid = result["pid"];
+      int tid = result["tid"];
       storyPage = newRepo[threadId].pages[page];
       if (storyPage != null) {
         storyPage = storyPage.rebuild((b) => b
           ..comments.add(Comment().rebuild((b) => b
-            ..id = DateTime.now().millisecondsSinceEpoch
+            ..id = pid
             ..warning = false
             ..warningReason = ""
             ..message = request.content
@@ -171,9 +172,9 @@ BuiltMap<int, StoryPageList> _storyReplySucceeded(
             ..author = request.author
             ..authorid = request.authorId
             ..dateline = request.dateline
-            ..pid = result["pid"]
-            ..tid = result["tid"]
-            ..lou = result["lou"])));
+            ..pid = pid
+            ..tid = tid
+            ..lou = lou)));
       }
     }
 
@@ -220,37 +221,37 @@ BuiltMap<int, StoryPageList> _storyContentSucceeded(
   return newRepo;
 }
 
-final homeListReducer = combineReducers<StoryFetchList>([
-  TypedReducer<StoryFetchList, HomeListRequest>(_homeListLoading),
-  TypedReducer<StoryFetchList, HomeListFailure>(_homeListFailed),
-  TypedReducer<StoryFetchList, HomeListCheckNewFailure>(_homeListFailed),
-  TypedReducer<StoryFetchList, HomeListNewSuccess>(
+final homeListReducer = combineReducers<FetchList<Story>>([
+  TypedReducer<FetchList<Story>, HomeListRequest>(_homeListLoading),
+  TypedReducer<FetchList<Story>, HomeListFailure>(_homeListFailed),
+  TypedReducer<FetchList<Story>, HomeListCheckNewFailure>(_homeListFailed),
+  TypedReducer<FetchList<Story>, HomeListNewSuccess>(
       _homeListSucceeded(FetchListRequestType.New)),
-  TypedReducer<StoryFetchList, HomeListRefreshSuccess>(
+  TypedReducer<FetchList<Story>, HomeListRefreshSuccess>(
       _homeListSucceeded(FetchListRequestType.Refresh)),
-  TypedReducer<StoryFetchList, HomeListLoadMoreSuccess>(
+  TypedReducer<FetchList<Story>, HomeListLoadMoreSuccess>(
       _homeListSucceeded(FetchListRequestType.LoadMore)),
-  TypedReducer<StoryFetchList, HomeListCheckNewSuccess>(
+  TypedReducer<FetchList<Story>, HomeListCheckNewSuccess>(
       _homeListNewCountChecked),
 ]);
 
-StoryFetchList _homeListNewCountChecked(
-    StoryFetchList list, HomeListCheckNewSuccess action) {
+FetchList<Story> _homeListNewCountChecked(
+    FetchList<Story> list, HomeListCheckNewSuccess action) {
   var result = action.result;
 
   return fetchListNewCountChecked(list, result);
 }
 
-StoryFetchList _homeListLoading(StoryFetchList list, HomeListRequest action) {
+FetchList<Story> _homeListLoading(FetchList<Story> list, HomeListRequest action) {
   return fetchListLoading(list);
 }
 
-StoryFetchList _homeListFailed(StoryFetchList list, APIFailure action) {
+FetchList<Story> _homeListFailed(FetchList<Story> list, APIFailure action) {
   return fetchListFailed(list, action.error);
 }
 
 _homeListSucceeded(FetchListRequestType type) =>
-    (StoryFetchList list, HomeListSuccess action) =>
+    (FetchList<Story> list, HomeListSuccess action) =>
         fetchListSucceeded(type, list, action.list);
 
 BuiltMap<int, StoryPageList> _upvoteSucceeded(

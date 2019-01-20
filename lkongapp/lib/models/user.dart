@@ -61,10 +61,19 @@ abstract class UserData implements Built<UserData, UserDataBuilder> {
   PunchCardResult get punchCard;
 
   @nullable
-  StoryFetchList get favorites;
+  FetchList<Story> get favorites;
 
   @nullable
-  StoryFetchList get atMe;
+  FetchList<Story> get atMe;
+
+  @nullable
+  FetchList<Notice> get notice;
+
+  @nullable
+  FetchList<Ratelog> get ratelog;
+
+  @nullable
+  FetchList<PrivateMessage> get pm;
 
   String toJson() {
     return json.encode(serializers.serializeWith(UserData.serializer, this));

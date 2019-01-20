@@ -269,7 +269,19 @@ Future<Map> contentsForStory(Map args) {
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(StoryContentResult.fromJson),
-      preProcessor: numMapperBuiler(["pid", "id", "authorid"]));
+      preProcessor: combinedProcessorBuilder([
+        numMapperBuiler(["pid", "id", "authorid"]),
+        strMapperBuiler(["extcredits"]),
+        (data) {
+          var mapper = (Match m) => "\"id\":${m[1]}";
+
+          RegExp pattern =
+              RegExp("\"_id\"\\s*:\\s*\\{\"\\\$id\"\\s*:\\s*(\".*?\")\\}");
+          data = data.replaceAllMapped(pattern, mapper);
+
+          return data;
+        }
+      ]));
 }
 
 Future<Map> getStoryInfo(Map args) {
@@ -381,7 +393,30 @@ Future<Map> getPersonalData(Map args) {
       };
       break;
     case 2:
+      modeString = "notice";
+      parser = (json) {
+        var result = NoticeResult.fromJson(json);
+        // result = result.rebuild((b) => b..notice.replace(result.notice.reversed));
+        return result;
+      };
+      break;
     case 3:
+      modeString = "rate";
+      parser = (json) {
+        var result = RatelogResult.fromJson(json);
+        // result = result
+        //     .rebuild((b) => b..ratelog.replace(result.ratelog.reversed));
+        return result;
+      };
+      break;
+    case 4:
+      modeString = "pm";
+      parser = (json) {
+        var result = PrivateMessageResult.fromJson(json);
+        // result = result.rebuild((b) => b..messages.replace(result.messages.reversed));
+        return result;
+      };
+      break;
     default:
       assert(false, "Unsupported Data mode $mode");
       break;
@@ -394,7 +429,7 @@ Future<Map> getPersonalData(Map args) {
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
       preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["uid", "score", "extcredits"]),
+        numMapperBuiler(["uid", "score"]),
         tagStripperBuiler(["subject"])
       ]));
 }
@@ -656,13 +691,15 @@ Future<Map> getHotDigest(Map args) {
     var resultList = <HotDigestResult>[];
     results.forEach((result) {
       var hotlist = result["result"] as HotDigestResult;
-      int fid = parseLKTypeId(hotlist.id);
-      if (fid != null) {
-        final forum = forums.firstWhere((forum) => forum.fid == fid);
-        hotlist =
-            hotlist.rebuild((b) => b..title = "${b.title} - ${forum.name}");
+      if (hotlist != null) {
+        int fid = parseLKTypeId(hotlist.id);
+        if (fid != null) {
+          final forum = forums.firstWhere((forum) => forum.fid == fid);
+          hotlist =
+              hotlist.rebuild((b) => b..title = "${b.title} - ${forum.name}");
+        }
+        resultList.add(hotlist);
       }
-      resultList.add(hotlist);
     });
     return {"result": resultList};
   });
@@ -691,8 +728,25 @@ String Function(String) numMapperBuiler(List<String> fields) {
     var numMapper = (Match m) => "${m[1]}:${m[2]}";
 
     fields.forEach((field) {
-      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"(\\d+)\"");
+      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*\"[+-]?(\\d+)\"");
       processed = processed.replaceAllMapped(pattern, numMapper);
+    });
+
+    return processed;
+  };
+  return processor;
+}
+
+String Function(String) strMapperBuiler(List<String> fields) {
+  String Function(String) processor;
+  processor = (String data) {
+    String processed = data;
+
+    var strMapper = (Match m) => "${m[1]}:\"${m[2]}\"${m[3]}";
+
+    fields.forEach((field) {
+      RegExp pattern = RegExp("(\"$field\")\\s*:\\s*(.*?)([,}])");
+      processed = processed.replaceAllMapped(pattern, strMapper);
     });
 
     return processed;

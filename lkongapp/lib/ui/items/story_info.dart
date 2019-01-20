@@ -55,7 +55,7 @@ class StoryInfoItem extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(stringFromDate(parseDatetime(info.dateline))),
+                      Text(dateStringToLocal(info.dateline)),
                       Text("${info.views}查看·${info.replies}回复"),
                     ],
                   ),

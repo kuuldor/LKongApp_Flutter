@@ -3,13 +3,17 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/models.dart';
 
 import 'package:lkongapp/models/serializers.dart';
 import 'personal_stuff.dart';
 part 'story_result.g.dart';
 
 abstract class StoryListResult
-    implements Built<StoryListResult, StoryListResultBuilder> {
+    implements
+        FetchResult<Story>,
+        Built<StoryListResult, StoryListResultBuilder> {
   StoryListResult._();
 
   factory StoryListResult([updates(StoryListResultBuilder b)]) =
@@ -40,7 +44,7 @@ abstract class StoryListResult
       _$storyListResultSerializer;
 }
 
-abstract class Story implements Built<Story, StoryBuilder> {
+abstract class Story implements Identifiable, Built<Story, StoryBuilder> {
   Story._();
 
   factory Story([updates(StoryBuilder b)]) = _$Story;
@@ -113,8 +117,20 @@ abstract class StoryInfoResult
     implements Built<StoryInfoResult, StoryInfoResultBuilder> {
   StoryInfoResult._();
 
-  factory StoryInfoResult([updates(StoryInfoResultBuilder b)]) =
-      _$StoryInfoResult;
+  factory StoryInfoResult([updates(StoryInfoResultBuilder b)]) =>
+      _$StoryInfoResult((b) => b
+        ..fid = 0
+        ..tid = 0
+        ..subject = ""
+        ..views = 0
+        ..replies = 0
+        ..digest = false
+        ..timestamp = 0
+        ..authorid = 0
+        ..author = ""
+        ..dateline = ""
+        ..id = ""
+        ..isok = true);
 
   @BuiltValueField(wireName: 'fid')
   int get fid;

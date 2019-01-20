@@ -93,7 +93,7 @@ BuiltMap<int, Profile> Function(
           case 0:
             final result = action.result as StoryListResult;
             final newList = fetchListSucceeded(
-                type, profile.stories ?? StoryFetchList(), result);
+                type, profile.stories ?? FetchList<Story>(), result);
             b..stories.replace(newList);
             break;
           case 1:
@@ -111,13 +111,13 @@ BuiltMap<int, Profile> Function(
           case 3:
             final result = action.result as StoryListResult;
             final newList = fetchListSucceeded(
-                type, profile.digests ?? StoryFetchList(), result);
+                type, profile.digests ?? FetchList<Story>(), result);
             b..digests.replace(newList);
             break;
           case 4:
             final result = action.result as StoryListResult;
             final newList = fetchListSucceeded(
-                type, profile.allPosts ?? StoryFetchList(), result);
+                type, profile.allPosts ?? FetchList<Story>(), result);
             b..allPosts.replace(newList);
             break;
         }

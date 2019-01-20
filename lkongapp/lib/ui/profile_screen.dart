@@ -184,7 +184,7 @@ class ProfileScreenModel extends FetchedListModel {
     BuiltList list;
     switch (type) {
       case fetchTypeStory:
-        list = profile?.stories?.stories;
+        list = profile?.stories?.data;
         break;
       case fetchTypeFans:
         list = profile?.fans?.user;
@@ -193,7 +193,7 @@ class ProfileScreenModel extends FetchedListModel {
         list = profile?.follows?.user;
         break;
       case fetchTypeDigest:
-        list = profile?.digests?.stories;
+        list = profile?.digests?.data;
         break;
     }
     return list;

@@ -24,6 +24,9 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
       'homePageIndex',
       serializers.serialize(object.homePageIndex,
           specifiedType: const FullType(int)),
+      'atMeScreenType',
+      serializers.serialize(object.atMeScreenType,
+          specifiedType: const FullType(int)),
       'content',
       serializers.serialize(object.content,
           specifiedType: const FullType(ContentCache)),
@@ -51,6 +54,10 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
           result.homePageIndex = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
           break;
+        case 'atMeScreenType':
+          result.atMeScreenType = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
         case 'content':
           result.content.replace(serializers.deserialize(value,
               specifiedType: const FullType(ContentCache)) as ContentCache);
@@ -68,18 +75,27 @@ class _$UIState extends UIState {
   @override
   final int homePageIndex;
   @override
+  final int atMeScreenType;
+  @override
   final ContentCache content;
 
   factory _$UIState([void updates(UIStateBuilder b)]) =>
       (new UIStateBuilder()..update(updates)).build();
 
-  _$UIState._({this.navigationRoute, this.homePageIndex, this.content})
+  _$UIState._(
+      {this.navigationRoute,
+      this.homePageIndex,
+      this.atMeScreenType,
+      this.content})
       : super._() {
     if (navigationRoute == null) {
       throw new BuiltValueNullFieldError('UIState', 'navigationRoute');
     }
     if (homePageIndex == null) {
       throw new BuiltValueNullFieldError('UIState', 'homePageIndex');
+    }
+    if (atMeScreenType == null) {
+      throw new BuiltValueNullFieldError('UIState', 'atMeScreenType');
     }
     if (content == null) {
       throw new BuiltValueNullFieldError('UIState', 'content');
@@ -99,13 +115,15 @@ class _$UIState extends UIState {
     return other is UIState &&
         navigationRoute == other.navigationRoute &&
         homePageIndex == other.homePageIndex &&
+        atMeScreenType == other.atMeScreenType &&
         content == other.content;
   }
 
   @override
   int get hashCode {
     return $jf($jc(
-        $jc($jc(0, navigationRoute.hashCode), homePageIndex.hashCode),
+        $jc($jc($jc(0, navigationRoute.hashCode), homePageIndex.hashCode),
+            atMeScreenType.hashCode),
         content.hashCode));
   }
 
@@ -114,6 +132,7 @@ class _$UIState extends UIState {
     return (newBuiltValueToStringHelper('UIState')
           ..add('navigationRoute', navigationRoute)
           ..add('homePageIndex', homePageIndex)
+          ..add('atMeScreenType', atMeScreenType)
           ..add('content', content))
         .toString();
   }
@@ -131,6 +150,11 @@ class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
   int get homePageIndex => _$this._homePageIndex;
   set homePageIndex(int homePageIndex) => _$this._homePageIndex = homePageIndex;
 
+  int _atMeScreenType;
+  int get atMeScreenType => _$this._atMeScreenType;
+  set atMeScreenType(int atMeScreenType) =>
+      _$this._atMeScreenType = atMeScreenType;
+
   ContentCacheBuilder _content;
   ContentCacheBuilder get content =>
       _$this._content ??= new ContentCacheBuilder();
@@ -142,6 +166,7 @@ class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
     if (_$v != null) {
       _navigationRoute = _$v.navigationRoute;
       _homePageIndex = _$v.homePageIndex;
+      _atMeScreenType = _$v.atMeScreenType;
       _content = _$v.content?.toBuilder();
       _$v = null;
     }
@@ -169,6 +194,7 @@ class UIStateBuilder implements Builder<UIState, UIStateBuilder> {
           new _$UIState._(
               navigationRoute: navigationRoute,
               homePageIndex: homePageIndex,
+              atMeScreenType: atMeScreenType,
               content: content.build());
     } catch (_) {
       String _$failedField;
@@ -192,13 +218,13 @@ class _$ContentCache extends ContentCache {
   @override
   final bool loading;
   @override
-  final StoryFetchList homeList;
+  final FetchList<Story> homeList;
   @override
   final BuiltMap<int, StoryPageList> storyRepo;
   @override
   final ForumLists forumInfo;
   @override
-  final BuiltMap<int, StoryFetchList> forumRepo;
+  final BuiltMap<int, FetchList<Story>> forumRepo;
   @override
   final BuiltMap<int, UserData> userData;
   @override
@@ -323,10 +349,10 @@ class ContentCacheBuilder
   bool get loading => _$this._loading;
   set loading(bool loading) => _$this._loading = loading;
 
-  StoryFetchListBuilder _homeList;
-  StoryFetchListBuilder get homeList =>
-      _$this._homeList ??= new StoryFetchListBuilder();
-  set homeList(StoryFetchListBuilder homeList) => _$this._homeList = homeList;
+  FetchListBuilder<Story> _homeList;
+  FetchListBuilder<Story> get homeList =>
+      _$this._homeList ??= new FetchListBuilder<Story>();
+  set homeList(FetchListBuilder<Story> homeList) => _$this._homeList = homeList;
 
   MapBuilder<int, StoryPageList> _storyRepo;
   MapBuilder<int, StoryPageList> get storyRepo =>
@@ -339,10 +365,10 @@ class ContentCacheBuilder
       _$this._forumInfo ??= new ForumListsBuilder();
   set forumInfo(ForumListsBuilder forumInfo) => _$this._forumInfo = forumInfo;
 
-  MapBuilder<int, StoryFetchList> _forumRepo;
-  MapBuilder<int, StoryFetchList> get forumRepo =>
-      _$this._forumRepo ??= new MapBuilder<int, StoryFetchList>();
-  set forumRepo(MapBuilder<int, StoryFetchList> forumRepo) =>
+  MapBuilder<int, FetchList<Story>> _forumRepo;
+  MapBuilder<int, FetchList<Story>> get forumRepo =>
+      _$this._forumRepo ??= new MapBuilder<int, FetchList<Story>>();
+  set forumRepo(MapBuilder<int, FetchList<Story>> forumRepo) =>
       _$this._forumRepo = forumRepo;
 
   MapBuilder<int, UserData> _userData;
@@ -455,15 +481,15 @@ class _$Profile extends Profile {
   @override
   final UserInfo user;
   @override
-  final StoryFetchList stories;
+  final FetchList<Story> stories;
   @override
   final SearchUserResult fans;
   @override
-  final StoryFetchList digests;
+  final FetchList<Story> digests;
   @override
   final SearchUserResult follows;
   @override
-  final StoryFetchList allPosts;
+  final FetchList<Story> allPosts;
 
   factory _$Profile([void updates(ProfileBuilder b)]) =>
       (new ProfileBuilder()..update(updates)).build();
@@ -553,30 +579,30 @@ class ProfileBuilder implements Builder<Profile, ProfileBuilder> {
   UserInfoBuilder get user => _$this._user ??= new UserInfoBuilder();
   set user(UserInfoBuilder user) => _$this._user = user;
 
-  StoryFetchListBuilder _stories;
-  StoryFetchListBuilder get stories =>
-      _$this._stories ??= new StoryFetchListBuilder();
-  set stories(StoryFetchListBuilder stories) => _$this._stories = stories;
+  FetchListBuilder<Story> _stories;
+  FetchListBuilder<Story> get stories =>
+      _$this._stories ??= new FetchListBuilder<Story>();
+  set stories(FetchListBuilder<Story> stories) => _$this._stories = stories;
 
   SearchUserResultBuilder _fans;
   SearchUserResultBuilder get fans =>
       _$this._fans ??= new SearchUserResultBuilder();
   set fans(SearchUserResultBuilder fans) => _$this._fans = fans;
 
-  StoryFetchListBuilder _digests;
-  StoryFetchListBuilder get digests =>
-      _$this._digests ??= new StoryFetchListBuilder();
-  set digests(StoryFetchListBuilder digests) => _$this._digests = digests;
+  FetchListBuilder<Story> _digests;
+  FetchListBuilder<Story> get digests =>
+      _$this._digests ??= new FetchListBuilder<Story>();
+  set digests(FetchListBuilder<Story> digests) => _$this._digests = digests;
 
   SearchUserResultBuilder _follows;
   SearchUserResultBuilder get follows =>
       _$this._follows ??= new SearchUserResultBuilder();
   set follows(SearchUserResultBuilder follows) => _$this._follows = follows;
 
-  StoryFetchListBuilder _allPosts;
-  StoryFetchListBuilder get allPosts =>
-      _$this._allPosts ??= new StoryFetchListBuilder();
-  set allPosts(StoryFetchListBuilder allPosts) => _$this._allPosts = allPosts;
+  FetchListBuilder<Story> _allPosts;
+  FetchListBuilder<Story> get allPosts =>
+      _$this._allPosts ??= new FetchListBuilder<Story>();
+  set allPosts(FetchListBuilder<Story> allPosts) => _$this._allPosts = allPosts;
 
   ProfileBuilder();
 
@@ -658,7 +684,7 @@ class _$SearchResult extends SearchResult {
   @override
   final int searchType;
   @override
-  final StoryFetchList stories;
+  final FetchList<Story> stories;
   @override
   final SearchUserResult users;
   @override
@@ -755,10 +781,10 @@ class SearchResultBuilder
   int get searchType => _$this._searchType;
   set searchType(int searchType) => _$this._searchType = searchType;
 
-  StoryFetchListBuilder _stories;
-  StoryFetchListBuilder get stories =>
-      _$this._stories ??= new StoryFetchListBuilder();
-  set stories(StoryFetchListBuilder stories) => _$this._stories = stories;
+  FetchListBuilder<Story> _stories;
+  FetchListBuilder<Story> get stories =>
+      _$this._stories ??= new FetchListBuilder<Story>();
+  set stories(FetchListBuilder<Story> stories) => _$this._stories = stories;
 
   SearchUserResultBuilder _users;
   SearchUserResultBuilder get users =>
@@ -824,178 +850,6 @@ class SearchResultBuilder
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'SearchResult', _$failedField, e.toString());
-      }
-      rethrow;
-    }
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$StoryFetchList extends StoryFetchList {
-  @override
-  final bool loading;
-  @override
-  final int nexttime;
-  @override
-  final int current;
-  @override
-  final int newcount;
-  @override
-  final String lastError;
-  @override
-  final BuiltList<Story> stories;
-
-  factory _$StoryFetchList([void updates(StoryFetchListBuilder b)]) =>
-      (new StoryFetchListBuilder()..update(updates)).build();
-
-  _$StoryFetchList._(
-      {this.loading,
-      this.nexttime,
-      this.current,
-      this.newcount,
-      this.lastError,
-      this.stories})
-      : super._() {
-    if (loading == null) {
-      throw new BuiltValueNullFieldError('StoryFetchList', 'loading');
-    }
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('StoryFetchList', 'nexttime');
-    }
-    if (current == null) {
-      throw new BuiltValueNullFieldError('StoryFetchList', 'current');
-    }
-    if (newcount == null) {
-      throw new BuiltValueNullFieldError('StoryFetchList', 'newcount');
-    }
-    if (stories == null) {
-      throw new BuiltValueNullFieldError('StoryFetchList', 'stories');
-    }
-  }
-
-  @override
-  StoryFetchList rebuild(void updates(StoryFetchListBuilder b)) =>
-      (toBuilder()..update(updates)).build();
-
-  @override
-  StoryFetchListBuilder toBuilder() =>
-      new StoryFetchListBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is StoryFetchList &&
-        loading == other.loading &&
-        nexttime == other.nexttime &&
-        current == other.current &&
-        newcount == other.newcount &&
-        lastError == other.lastError &&
-        stories == other.stories;
-  }
-
-  @override
-  int get hashCode {
-    return $jf($jc(
-        $jc(
-            $jc(
-                $jc($jc($jc(0, loading.hashCode), nexttime.hashCode),
-                    current.hashCode),
-                newcount.hashCode),
-            lastError.hashCode),
-        stories.hashCode));
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper('StoryFetchList')
-          ..add('loading', loading)
-          ..add('nexttime', nexttime)
-          ..add('current', current)
-          ..add('newcount', newcount)
-          ..add('lastError', lastError)
-          ..add('stories', stories))
-        .toString();
-  }
-}
-
-class StoryFetchListBuilder
-    implements Builder<StoryFetchList, StoryFetchListBuilder> {
-  _$StoryFetchList _$v;
-
-  bool _loading;
-  bool get loading => _$this._loading;
-  set loading(bool loading) => _$this._loading = loading;
-
-  int _nexttime;
-  int get nexttime => _$this._nexttime;
-  set nexttime(int nexttime) => _$this._nexttime = nexttime;
-
-  int _current;
-  int get current => _$this._current;
-  set current(int current) => _$this._current = current;
-
-  int _newcount;
-  int get newcount => _$this._newcount;
-  set newcount(int newcount) => _$this._newcount = newcount;
-
-  String _lastError;
-  String get lastError => _$this._lastError;
-  set lastError(String lastError) => _$this._lastError = lastError;
-
-  ListBuilder<Story> _stories;
-  ListBuilder<Story> get stories =>
-      _$this._stories ??= new ListBuilder<Story>();
-  set stories(ListBuilder<Story> stories) => _$this._stories = stories;
-
-  StoryFetchListBuilder();
-
-  StoryFetchListBuilder get _$this {
-    if (_$v != null) {
-      _loading = _$v.loading;
-      _nexttime = _$v.nexttime;
-      _current = _$v.current;
-      _newcount = _$v.newcount;
-      _lastError = _$v.lastError;
-      _stories = _$v.stories?.toBuilder();
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(StoryFetchList other) {
-    if (other == null) {
-      throw new ArgumentError.notNull('other');
-    }
-    _$v = other as _$StoryFetchList;
-  }
-
-  @override
-  void update(void updates(StoryFetchListBuilder b)) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  _$StoryFetchList build() {
-    _$StoryFetchList _$result;
-    try {
-      _$result = _$v ??
-          new _$StoryFetchList._(
-              loading: loading,
-              nexttime: nexttime,
-              current: current,
-              newcount: newcount,
-              lastError: lastError,
-              stories: stories.build());
-    } catch (_) {
-      String _$failedField;
-      try {
-        _$failedField = 'stories';
-        stories.build();
-      } catch (e) {
-        throw new BuiltValueNestedFieldError(
-            'StoryFetchList', _$failedField, e.toString());
       }
       rethrow;
     }

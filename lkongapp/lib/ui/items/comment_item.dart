@@ -37,13 +37,13 @@ class CommentItem extends StatelessWidget {
     TextStyle style = TextStyle(fontSize: 14.0, color: theme.mediumTextColor);
 
     var list = <Widget>[];
-    final creditName = {2: '龙币', 3: '龙晶'};
+    final creditName = {"2": '龙币', "3": '龙晶'};
     var coins = 0, crystals = 0;
     for (int i = 0; i < ratelog.length; i++) {
       final rate = ratelog[i];
-      if (rate.extcredits == 2) {
+      if (rate.extcredits == "2") {
         coins += rate.score;
-      } else if (rate.extcredits == 3) {
+      } else if (rate.extcredits == "3") {
         crystals += rate.score;
       }
 
@@ -72,7 +72,7 @@ class CommentItem extends StatelessWidget {
                 Expanded(
                   child: Align(
                       alignment: Alignment.centerRight,
-                      child: Text("${rate.dateline}", style: style)),
+                      child: Text(dateStringToLocal(rate.dateline), style: style)),
                 ),
               ]),
               Row(

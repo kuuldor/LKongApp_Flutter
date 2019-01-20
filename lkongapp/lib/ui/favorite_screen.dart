@@ -44,7 +44,7 @@ class FavoriteScreenState extends StoryListState<FavoriteScreen> {
 }
 
 class FavoriteScreenModel extends StoryListModel {
-  final StoryFetchList storyList;
+  final FetchList<Story> storyList;
   final bool loading;
   final String lastError;
   final int uid;

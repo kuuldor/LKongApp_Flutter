@@ -24,6 +24,7 @@ abstract class GetMyDataRequest extends APIRequest with StartLoading {
 }
 
 abstract class GetMyDataSuccess extends APISuccess with StopLoading {
+  dynamic get result;
   GetMyDataSuccess(APIRequest request) : super(request);
 }
 
@@ -194,4 +195,242 @@ class GetMyAtsLoadMoreSuccess extends GetMyAtsSuccess {
 
 class GetMyAtsLoadMoreFailure extends GetMyAtsFailure {
   GetMyAtsLoadMoreFailure(request, String error) : super(request, error);
+}
+
+//--- Get my Notice messages
+abstract class GetNoticeRequest extends GetMyDataRequest {
+  GetNoticeRequest(Completer completer, int uid, int nexttime, int current)
+      : super(completer, uid, 2, nexttime, current);
+}
+
+class GetNoticeSuccess extends GetMyDataSuccess with StopLoading {
+  final NoticeResult result;
+
+  GetNoticeSuccess(request, this.result) : super(request);
+}
+
+class GetNoticeFailure extends GetMyDataFailure {
+  GetNoticeFailure(APIRequest request, String error) : super(request, error);
+}
+
+class GetNoticeNewRequest extends GetNoticeRequest {
+  GetNoticeNewRequest(Completer completer, int uid, int nexttime, int current)
+      : super(completer, uid, nexttime, current);
+
+  @override
+  CreateFailure get badResponse => (error) => GetNoticeNewFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetNoticeNewSuccess(this, result);
+}
+
+class GetNoticeRefreshRequest extends GetNoticeRequest {
+  GetNoticeRefreshRequest(Completer completer, int uid, int current)
+      : super(completer, uid, 0, current);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetNoticeRefreshFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetNoticeRefreshSuccess(this, result);
+}
+
+class GetNoticeLoadMoreRequest extends GetNoticeRequest {
+  GetNoticeLoadMoreRequest(Completer completer, int uid, int nexttime)
+      : super(completer, uid, nexttime, 0);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetNoticeLoadMoreFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetNoticeLoadMoreSuccess(this, result);
+}
+
+class GetNoticeNewSuccess extends GetNoticeSuccess {
+  GetNoticeNewSuccess(request, NoticeResult result) : super(request, result);
+}
+
+class GetNoticeNewFailure extends GetNoticeFailure {
+  GetNoticeNewFailure(request, String error) : super(request, error);
+}
+
+class GetNoticeRefreshSuccess extends GetNoticeSuccess with StopLoading {
+  GetNoticeRefreshSuccess(request, NoticeResult result)
+      : super(request, result);
+}
+
+class GetNoticeRefreshFailure extends GetNoticeFailure {
+  GetNoticeRefreshFailure(request, String error) : super(request, error);
+}
+
+class GetNoticeLoadMoreSuccess extends GetNoticeSuccess {
+  GetNoticeLoadMoreSuccess(request, NoticeResult result)
+      : super(request, result);
+}
+
+class GetNoticeLoadMoreFailure extends GetNoticeFailure {
+  GetNoticeLoadMoreFailure(request, String error) : super(request, error);
+}
+
+//--- Get my Ratelog messages
+abstract class GetRatelogRequest extends GetMyDataRequest {
+  GetRatelogRequest(Completer completer, int uid, int nexttime, int current)
+      : super(completer, uid, 3, nexttime, current);
+}
+
+class GetRatelogSuccess extends GetMyDataSuccess with StopLoading {
+  final RatelogResult result;
+
+  GetRatelogSuccess(request, this.result) : super(request);
+}
+
+class GetRatelogFailure extends GetMyDataFailure {
+  GetRatelogFailure(APIRequest request, String error) : super(request, error);
+}
+
+class GetRatelogNewRequest extends GetRatelogRequest {
+  GetRatelogNewRequest(Completer completer, int uid, int nexttime, int current)
+      : super(completer, uid, nexttime, current);
+
+  @override
+  CreateFailure get badResponse => (error) => GetRatelogNewFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetRatelogNewSuccess(this, result);
+}
+
+class GetRatelogRefreshRequest extends GetRatelogRequest {
+  GetRatelogRefreshRequest(Completer completer, int uid, int current)
+      : super(completer, uid, 0, current);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetRatelogRefreshFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetRatelogRefreshSuccess(this, result);
+}
+
+class GetRatelogLoadMoreRequest extends GetRatelogRequest {
+  GetRatelogLoadMoreRequest(Completer completer, int uid, int nexttime)
+      : super(completer, uid, nexttime, 0);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetRatelogLoadMoreFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetRatelogLoadMoreSuccess(this, result);
+}
+
+class GetRatelogNewSuccess extends GetRatelogSuccess {
+  GetRatelogNewSuccess(request, RatelogResult result) : super(request, result);
+}
+
+class GetRatelogNewFailure extends GetRatelogFailure {
+  GetRatelogNewFailure(request, String error) : super(request, error);
+}
+
+class GetRatelogRefreshSuccess extends GetRatelogSuccess with StopLoading {
+  GetRatelogRefreshSuccess(request, RatelogResult result)
+      : super(request, result);
+}
+
+class GetRatelogRefreshFailure extends GetRatelogFailure {
+  GetRatelogRefreshFailure(request, String error) : super(request, error);
+}
+
+class GetRatelogLoadMoreSuccess extends GetRatelogSuccess {
+  GetRatelogLoadMoreSuccess(request, RatelogResult result)
+      : super(request, result);
+}
+
+class GetRatelogLoadMoreFailure extends GetRatelogFailure {
+  GetRatelogLoadMoreFailure(request, String error) : super(request, error);
+}
+
+//--- Get my PM messages
+abstract class GetPMRequest extends GetMyDataRequest {
+  GetPMRequest(Completer completer, int uid, int nexttime, int current)
+      : super(completer, uid, 4, nexttime, current);
+}
+
+class GetPMSuccess extends GetMyDataSuccess with StopLoading {
+  final PrivateMessageResult result;
+
+  GetPMSuccess(request, this.result) : super(request);
+}
+
+class GetPMFailure extends GetMyDataFailure {
+  GetPMFailure(APIRequest request, String error) : super(request, error);
+}
+
+class GetPMNewRequest extends GetPMRequest {
+  GetPMNewRequest(Completer completer, int uid, int nexttime, int current)
+      : super(completer, uid, nexttime, current);
+
+  @override
+  CreateFailure get badResponse => (error) => GetPMNewFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse => (result) => GetPMNewSuccess(this, result);
+}
+
+class GetPMRefreshRequest extends GetPMRequest {
+  GetPMRefreshRequest(Completer completer, int uid, int current)
+      : super(completer, uid, 0, current);
+
+  @override
+  CreateFailure get badResponse => (error) => GetPMRefreshFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetPMRefreshSuccess(this, result);
+}
+
+class GetPMLoadMoreRequest extends GetPMRequest {
+  GetPMLoadMoreRequest(Completer completer, int uid, int nexttime)
+      : super(completer, uid, nexttime, 0);
+
+  @override
+  CreateFailure get badResponse => (error) => GetPMLoadMoreFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetPMLoadMoreSuccess(this, result);
+}
+
+class GetPMNewSuccess extends GetPMSuccess {
+  GetPMNewSuccess(request, PrivateMessageResult result)
+      : super(request, result);
+}
+
+class GetPMNewFailure extends GetPMFailure {
+  GetPMNewFailure(request, String error) : super(request, error);
+}
+
+class GetPMRefreshSuccess extends GetPMSuccess with StopLoading {
+  GetPMRefreshSuccess(request, PrivateMessageResult result)
+      : super(request, result);
+}
+
+class GetPMRefreshFailure extends GetPMFailure {
+  GetPMRefreshFailure(request, String error) : super(request, error);
+}
+
+class GetPMLoadMoreSuccess extends GetPMSuccess {
+  GetPMLoadMoreSuccess(request, PrivateMessageResult result)
+      : super(request, result);
+}
+
+class GetPMLoadMoreFailure extends GetPMFailure {
+  GetPMLoadMoreFailure(request, String error) : super(request, error);
 }

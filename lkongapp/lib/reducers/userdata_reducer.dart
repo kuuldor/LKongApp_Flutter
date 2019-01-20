@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/lkong_jsons/story_result.dart';
 import 'package:lkongapp/reducers/fetchlist_reducer.dart';
 import 'package:lkongapp/utils/utils.dart';
@@ -13,6 +14,9 @@ final userDataReducer = combineReducers<BuiltMap<int, UserData>>([
   TypedReducer<BuiltMap<int, UserData>, PunchCardSuccess>(_punchCardSucceeded),
   _favoriteReducer,
   _atMeReducer,
+  _noticeReducer,
+  _ratelogReducer,
+  _pmReducer,
 ]);
 
 BuiltMap<int, UserData> _followListSucceeded(
@@ -37,140 +41,152 @@ BuiltMap<int, UserData> _punchCardSucceeded(
         ifAbsent: () => UserData().rebuild(update)));
 }
 
+final favoritesAccessor = (v) => v.favorites;
 final _favoriteReducer = combineReducers<BuiltMap<int, UserData>>([
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesNewRequest>(
-      _getMyFavoritesNew),
+      _getMyDataNew<GetMyFavoritesNewRequest, Story>(favoritesAccessor)),
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesRequest>(
-      _getMyFavoritesRequested),
+      _getMyDataRequested<GetMyFavoritesRequest>(favoritesAccessor)),
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesFailure>(
-      _getMyFavoritesFailed),
+      _getMyDataFailed<GetMyFavoritesFailure>(favoritesAccessor)),
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesNewSuccess>(
-      _getMyFavoritesSucceeded(FetchListRequestType.New)),
+      _getMyDataSucceeded<GetMyFavoritesNewSuccess>(
+          FetchListRequestType.New, favoritesAccessor)),
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesRefreshSuccess>(
-      _getMyFavoritesSucceeded(FetchListRequestType.Refresh)),
+      _getMyDataSucceeded<GetMyFavoritesRefreshSuccess>(
+          FetchListRequestType.Refresh, favoritesAccessor)),
   TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesLoadMoreSuccess>(
-      _getMyFavoritesSucceeded(FetchListRequestType.LoadMore)),
+      _getMyDataSucceeded<GetMyFavoritesLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, favoritesAccessor)),
 ]);
 
-BuiltMap<int, UserData> _getMyFavoritesRequested(
-    BuiltMap<int, UserData> repo, GetMyFavoritesRequest action) {
-  return repo.rebuild((b) => b.updateValue(
-        action.uid,
-        (v) => v.rebuild(
-              (b) => b.favorites.replace(
-                    fetchListLoading(v.favorites),
-                  ),
-            ),
-      ));
-}
+final atMeAccessor = (v) => v.atMe;
+final _atMeReducer = combineReducers<BuiltMap<int, UserData>>([
+  TypedReducer<BuiltMap<int, UserData>, GetMyAtsNewRequest>(
+      _getMyDataNew<GetMyAtsNewRequest, Story>(atMeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetMyAtsRequest>(
+      _getMyDataRequested<GetMyAtsRequest>(atMeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetMyAtsFailure>(
+      _getMyDataFailed<GetMyAtsFailure>(atMeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetMyAtsNewSuccess>(
+      _getMyDataSucceeded<GetMyAtsNewSuccess>(
+          FetchListRequestType.New, atMeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetMyAtsRefreshSuccess>(
+      _getMyDataSucceeded<GetMyAtsRefreshSuccess>(
+          FetchListRequestType.Refresh, atMeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetMyAtsLoadMoreSuccess>(
+      _getMyDataSucceeded<GetMyAtsLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, atMeAccessor)),
+]);
 
-BuiltMap<int, UserData> _getMyFavoritesNew(
-    BuiltMap<int, UserData> repo, GetMyFavoritesNewRequest action) {
-  final updates = (b) => b.favorites.replace(StoryFetchList());
-  return repo.rebuild((b) => b.updateValue(
-      action.uid, (v) => v.rebuild(updates),
-      ifAbsent: () => UserData().rebuild(updates)));
-}
+final noticeAccessor = (v) => v.notice;
+final _noticeReducer = combineReducers<BuiltMap<int, UserData>>([
+  TypedReducer<BuiltMap<int, UserData>, GetNoticeNewRequest>(
+      _getMyDataNew<GetNoticeNewRequest, Notice>(noticeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetNoticeRequest>(
+      _getMyDataRequested<GetNoticeRequest>(noticeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetNoticeFailure>(
+      _getMyDataFailed<GetNoticeFailure>(noticeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetNoticeNewSuccess>(
+      _getMyDataSucceeded<GetNoticeNewSuccess>(
+          FetchListRequestType.New, noticeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetNoticeRefreshSuccess>(
+      _getMyDataSucceeded<GetNoticeRefreshSuccess>(
+          FetchListRequestType.Refresh, noticeAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetNoticeLoadMoreSuccess>(
+      _getMyDataSucceeded<GetNoticeLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, noticeAccessor)),
+]);
 
-BuiltMap<int, UserData> _getMyFavoritesFailed(
-    BuiltMap<int, UserData> repo, GetMyFavoritesFailure action) {
-  int uid;
+final ratelogAccessor = (v) => v.ratelog;
+final _ratelogReducer = combineReducers<BuiltMap<int, UserData>>([
+  TypedReducer<BuiltMap<int, UserData>, GetRatelogNewRequest>(
+      _getMyDataNew<GetRatelogNewRequest, Ratelog>(ratelogAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetRatelogRequest>(
+      _getMyDataRequested<GetRatelogRequest>(ratelogAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetRatelogFailure>(
+      _getMyDataFailed<GetRatelogFailure>(ratelogAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetRatelogNewSuccess>(
+      _getMyDataSucceeded<GetRatelogNewSuccess>(
+          FetchListRequestType.New, ratelogAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetRatelogRefreshSuccess>(
+      _getMyDataSucceeded<GetRatelogRefreshSuccess>(
+          FetchListRequestType.Refresh, ratelogAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetRatelogLoadMoreSuccess>(
+      _getMyDataSucceeded<GetRatelogLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, ratelogAccessor)),
+]);
 
-  final request = action.request as GetMyFavoritesRequest;
-  if (request != null) {
-    uid = request.uid;
-  }
+final pmAccessor = (v) => v.pm;
+final _pmReducer = combineReducers<BuiltMap<int, UserData>>([
+  TypedReducer<BuiltMap<int, UserData>, GetPMNewRequest>(
+      _getMyDataNew<GetPMNewRequest, PrivateMessage>(pmAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetPMRequest>(
+      _getMyDataRequested<GetPMRequest>(pmAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetPMFailure>(
+      _getMyDataFailed<GetPMFailure>(pmAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetPMNewSuccess>(
+      _getMyDataSucceeded<GetPMNewSuccess>(
+          FetchListRequestType.New, pmAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetPMRefreshSuccess>(
+      _getMyDataSucceeded<GetPMRefreshSuccess>(
+          FetchListRequestType.Refresh, pmAccessor)),
+  TypedReducer<BuiltMap<int, UserData>, GetPMLoadMoreSuccess>(
+      _getMyDataSucceeded<GetPMLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, pmAccessor)),
+]);
 
-  var newRepo = repo;
-  if (uid != null) {
-    final data = newRepo[uid] ?? UserData();
-    final value = data.rebuild((b) =>
-        b.favorites.replace(fetchListFailed(data.favorites, action.error)));
-    newRepo = newRepo.rebuild(
-        (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));
-  }
+_getMyDataRequested<T extends GetMyDataRequest>(Function accessor) =>
+    (BuiltMap<int, UserData> repo, T action) {
+      return repo.rebuild((b) => b.updateValue(
+            action.uid,
+            (v) => v.rebuild(
+                  (b) => accessor(b).replace(
+                        fetchListLoading(accessor(v)),
+                      ),
+                ),
+          ));
+    };
 
-  return newRepo;
-}
+_getMyDataNew<T extends GetMyDataRequest, S>(Function accessor) =>
+    (BuiltMap<int, UserData> repo, T action) {
+      final updates = (b) => accessor(b).replace(FetchList<S>());
+      return repo.rebuild((b) => b.updateValue(
+          action.uid, (v) => v.rebuild(updates),
+          ifAbsent: () => UserData().rebuild(updates)));
+    };
 
-_getMyFavoritesSucceeded(FetchListRequestType type) =>
-    (BuiltMap<int, UserData> repo, GetMyFavoritesSuccess action) {
-      var request = action.request as GetMyFavoritesRequest;
-      int uid = request.uid;
-      var result = action.result;
+_getMyDataFailed<T extends GetMyDataFailure>(Function accessor) =>
+    (BuiltMap<int, UserData> repo, T action) {
+      int uid;
+
+      final request = action.request as GetMyDataRequest;
+      if (request != null) {
+        uid = request.uid;
+      }
+
       var newRepo = repo;
-      final data = newRepo[uid] ?? UserData();
-      final value = data.rebuild((b) => b.favorites
-          .replace(fetchListSucceeded(type, data.favorites, result)));
-
-      newRepo = newRepo.rebuild(
-          (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));
+      if (uid != null) {
+        final data = newRepo[uid] ?? UserData();
+        final value = data.rebuild((b) =>
+            accessor(b).replace(fetchListFailed(accessor(data), action.error)));
+        newRepo = newRepo.rebuild(
+            (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));
+      }
 
       return newRepo;
     };
 
-final _atMeReducer = combineReducers<BuiltMap<int, UserData>>([
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsNewRequest>(_getMyAtsNew),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsRequest>(_getMyAtsRequested),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsFailure>(_getMyAtsFailed),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsNewSuccess>(
-      _getMyAtsSucceeded(FetchListRequestType.New)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsRefreshSuccess>(
-      _getMyAtsSucceeded(FetchListRequestType.Refresh)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsLoadMoreSuccess>(
-      _getMyAtsSucceeded(FetchListRequestType.LoadMore)),
-]);
-
-BuiltMap<int, UserData> _getMyAtsRequested(
-    BuiltMap<int, UserData> repo, GetMyAtsRequest action) {
-  return repo.rebuild((b) => b.updateValue(
-        action.uid,
-        (v) => v.rebuild(
-              (b) => b.atMe.replace(
-                    fetchListLoading(v.atMe),
-                  ),
-            ),
-      ));
-}
-
-BuiltMap<int, UserData> _getMyAtsNew(
-    BuiltMap<int, UserData> repo, GetMyAtsNewRequest action) {
-  final updates = (b) => b.atMe.replace(StoryFetchList());
-  return repo.rebuild((b) => b.updateValue(
-      action.uid, (v) => v.rebuild(updates),
-      ifAbsent: () => UserData().rebuild(updates)));
-}
-
-BuiltMap<int, UserData> _getMyAtsFailed(
-    BuiltMap<int, UserData> repo, GetMyAtsFailure action) {
-  int uid;
-
-  final request = action.request as GetMyAtsRequest;
-  if (request != null) {
-    uid = request.uid;
-  }
-
-  var newRepo = repo;
-  if (uid != null) {
-    final data = newRepo[uid] ?? UserData();
-    final value = data.rebuild(
-        (b) => b.atMe.replace(fetchListFailed(data.atMe, action.error)));
-    newRepo = newRepo.rebuild(
-        (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));
-  }
-
-  return newRepo;
-}
-
-_getMyAtsSucceeded(FetchListRequestType type) =>
-    (BuiltMap<int, UserData> repo, GetMyAtsSuccess action) {
-      var request = action.request as GetMyAtsRequest;
+_getMyDataSucceeded<T extends GetMyDataSuccess>(
+        FetchListRequestType type, Function accessor) =>
+    (BuiltMap<int, UserData> repo, T action) {
+      var request = action.request as GetMyDataRequest;
       int uid = request.uid;
       var result = action.result;
       var newRepo = repo;
       final data = newRepo[uid] ?? UserData();
-      final value = data.rebuild(
-          (b) => b.atMe.replace(fetchListSucceeded(type, data.atMe, result)));
+      final value = data.rebuild((b) => accessor(b)
+          .replace(fetchListSucceeded(type, accessor(data), result)));
 
       newRepo = newRepo.rebuild(
           (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));

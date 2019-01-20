@@ -8,8 +8,6 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:lkongapp/actions/actions.dart';
 
 abstract class FetchedListModel extends GroupedListModel {
-  var _scrollController = ScrollController();
-
   APIRequest get refreshRequest;
   APIRequest get fetchFromScratchRequest;
   APIRequest get loadMoreRequest;
@@ -139,14 +137,14 @@ abstract class FetchedListModel extends GroupedListModel {
     Widget listView;
     listView = super.buildGroupedListView(context);
 
-    // if (refreshRequest == null) {
-    //   return listView;
-    // } else {
-    return RefreshIndicator(
-        displacement: 20.0,
-        backgroundColor: Colors.white70,
-        onRefresh: () => handleRefresh(context),
-        child: listView);
-    // }
+    if (refreshRequest == null) {
+      return listView;
+    } else {
+      return RefreshIndicator(
+          displacement: 20.0,
+          backgroundColor: Colors.white70,
+          onRefresh: () => handleRefresh(context),
+          child: listView);
+    }
   }
 }

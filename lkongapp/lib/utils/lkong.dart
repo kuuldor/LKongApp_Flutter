@@ -41,6 +41,10 @@ int parseLKTypeId(String typeIDStr, {String type}) {
   return id;
 }
 
+String dateStringToLocal(String dateline) {
+  return stringFromDate(parseDatetime(dateline));
+}
+
 DateTime parseDatetime(String dateline) {
   DateTime date;
 
@@ -48,7 +52,7 @@ DateTime parseDatetime(String dateline) {
   if (unixTime != null) {
     date = DateTime.fromMillisecondsSinceEpoch(unixTime * 1000);
   } else {
-    date = dateFromString(dateline);
+    date = dateFromString(dateline).toLocal();
   }
 
   return date;

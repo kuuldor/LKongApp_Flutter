@@ -13,6 +13,10 @@ enum MenuAction {
   timeline,
   favorite,
   unfavorite,
+  atMe,
+  notice,
+  ratelog,
+  pm,
 }
 
 class Choice {

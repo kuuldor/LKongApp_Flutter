@@ -184,6 +184,11 @@ class StoryContentModel {
   bool operator ==(other) {
     return other is StoryContentModel &&
         other.story == story &&
+        other.uid == uid &&
+        other.username == username &&
+        other.blackList == blackList &&
+        other.followList == followList &&
+        other.showDetailTime == showDetailTime &&
         other.loading == loading &&
         other.lastError == lastError;
   }
@@ -418,15 +423,19 @@ class StoryContentModel {
           (Widget tile) => wrapItemAsCard(context, tile, clickable: false);
 
       Widget tile;
-      if (loading || comments == null) {
+      if (loading || (comments == null && lastError == null)) {
         tile = spinner;
       } else {
         if (index == 0) {
-          tile = wrapTile(Container(
-            child: Center(
-              child: StoryInfoItem(info: info),
-            ),
-          ));
+          if ((info?.uid ?? 0) > 0) {
+            tile = wrapTile(Container(
+              child: Center(
+                child: StoryInfoItem(info: info),
+              ),
+            ));
+          } else {
+            tile = Container();
+          }
         } else if (lastError != null) {
           if (index == 1) {
             tile = Container(
@@ -721,7 +730,7 @@ class StoryContentModel {
     if (_scrollController is IndexedScrollController) {
       showFloor(context, 1);
     } else {
-      _scrollController.jumpTo(0.0);
+      _scrollController.jumpTo(0.1);
     }
   }
 

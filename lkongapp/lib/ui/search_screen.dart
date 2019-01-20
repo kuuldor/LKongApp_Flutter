@@ -228,7 +228,7 @@ class SearchScreenModel extends FetchedListModel {
     BuiltList list;
     switch (type) {
       case searchTypeStory:
-        list = searchResult?.stories?.stories;
+        list = searchResult?.stories?.data;
         break;
       case searchTypeUser:
         list = searchResult?.users?.user;

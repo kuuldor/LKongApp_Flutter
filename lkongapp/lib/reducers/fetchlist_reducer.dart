@@ -13,22 +13,24 @@ enum FetchListRequestType {
   LoadMore,
 }
 
-StoryFetchList fetchListNewCountChecked(StoryFetchList list, int result) {
+FetchList<T> fetchListNewCountChecked<T extends Identifiable>(
+    FetchList<T> list, int result) {
   return list.rebuild((b) => b.newcount = result);
 }
 
-StoryFetchList fetchListLoading(StoryFetchList list) {
+FetchList<T> fetchListLoading<T extends Identifiable>(FetchList<T> list) {
   return list.rebuild((b) => b..loading = true);
 }
 
-StoryFetchList fetchListFailed(StoryFetchList list, String error) {
+FetchList<T> fetchListFailed<T extends Identifiable>(
+    FetchList<T> list, String error) {
   return list.rebuild((b) => b
     ..loading = false
     ..lastError = error);
 }
 
-StoryFetchList fetchListSucceeded(
-    FetchListRequestType type, StoryFetchList list, StoryListResult result) {
+FetchList<T> fetchListSucceeded<T extends Identifiable>(
+    FetchListRequestType type, FetchList<T> list, FetchResult<T> result) {
   return list.rebuild((b) {
     var data = result.data;
 
@@ -49,19 +51,19 @@ StoryFetchList fetchListSucceeded(
         case FetchListRequestType.New:
           b
             ..newcount = 0
-            ..stories.replace(data);
+            ..data.replace(data);
           break;
         case FetchListRequestType.Refresh:
           var newsSet = data.map((story) => story.id).toSet();
 
           b
             ..newcount = 0
-            ..stories.where((story) => !newsSet.contains(story.id))
-            ..stories.insertAll(0, data);
+            ..data.where((story) => !newsSet.contains(story.id))
+            ..data.insertAll(0, data);
 
           break;
         case FetchListRequestType.LoadMore:
-          b..stories.addAll(data);
+          b..data.addAll(data);
           break;
       }
     }
