@@ -6,14 +6,31 @@ import 'package:meta/meta.dart';
 import 'base_action.dart';
 import 'api_action.dart';
 
+abstract class GetMyDataRequest {
+  int get uid;
+  int get nexttime;
+  int get current;
+}
+
+abstract class GetMyDataSuccess {
+  APIRequest get request;
+  dynamic get result;
+}
+
+abstract class GetMyDataFailure {
+  APIRequest get request;
+  String get error;
+}
+
 // --- Base classes for all get my data requests/responses
-abstract class GetMyDataRequest extends APIRequest with StartLoading {
+abstract class GetPersonalDataRequest extends APIRequest
+    with GetMyDataRequest, StartLoading {
   final int uid;
   final int nexttime;
   final int current;
   final int mode;
 
-  GetMyDataRequest(
+  GetPersonalDataRequest(
       Completer completer, this.uid, this.mode, this.nexttime, this.current)
       : super(completer: completer, api: MYDATA_API, parameters: {
           "uid": uid,
@@ -23,28 +40,31 @@ abstract class GetMyDataRequest extends APIRequest with StartLoading {
         });
 }
 
-abstract class GetMyDataSuccess extends APISuccess with StopLoading {
+abstract class GetPersonalDataSuccess extends APISuccess
+    with StopLoading, GetMyDataSuccess {
   dynamic get result;
-  GetMyDataSuccess(APIRequest request) : super(request);
+  GetPersonalDataSuccess(APIRequest request) : super(request);
 }
 
-abstract class GetMyDataFailure extends APIFailure with StopLoading {
-  GetMyDataFailure(APIRequest request, String error) : super(request, error);
+abstract class GetPersonalDataFailure extends APIFailure
+    with StopLoading, GetMyDataFailure {
+  GetPersonalDataFailure(APIRequest request, String error)
+      : super(request, error);
 }
 
 //---- Get my favorites
-abstract class GetMyFavoritesRequest extends GetMyDataRequest {
+abstract class GetMyFavoritesRequest extends GetPersonalDataRequest {
   GetMyFavoritesRequest(Completer completer, int uid, int nexttime, int current)
       : super(completer, uid, 0, nexttime, current);
 }
 
-class GetMyFavoritesSuccess extends GetMyDataSuccess with StopLoading {
+class GetMyFavoritesSuccess extends GetPersonalDataSuccess with StopLoading {
   final StoryListResult result;
 
   GetMyFavoritesSuccess(request, this.result) : super(request);
 }
 
-class GetMyFavoritesFailure extends GetMyDataFailure {
+class GetMyFavoritesFailure extends GetPersonalDataFailure {
   GetMyFavoritesFailure(APIRequest request, String error)
       : super(request, error);
 }
@@ -118,18 +138,18 @@ class GetMyFavoritesLoadMoreFailure extends GetMyFavoritesFailure {
 }
 
 //--- Get my AtMe messages
-abstract class GetMyAtsRequest extends GetMyDataRequest {
+abstract class GetMyAtsRequest extends GetPersonalDataRequest {
   GetMyAtsRequest(Completer completer, int uid, int nexttime, int current)
       : super(completer, uid, 1, nexttime, current);
 }
 
-class GetMyAtsSuccess extends GetMyDataSuccess with StopLoading {
+class GetMyAtsSuccess extends GetPersonalDataSuccess with StopLoading {
   final StoryListResult result;
 
   GetMyAtsSuccess(request, this.result) : super(request);
 }
 
-class GetMyAtsFailure extends GetMyDataFailure {
+class GetMyAtsFailure extends GetPersonalDataFailure {
   GetMyAtsFailure(APIRequest request, String error) : super(request, error);
 }
 
@@ -198,18 +218,18 @@ class GetMyAtsLoadMoreFailure extends GetMyAtsFailure {
 }
 
 //--- Get my Notice messages
-abstract class GetNoticeRequest extends GetMyDataRequest {
+abstract class GetNoticeRequest extends GetPersonalDataRequest {
   GetNoticeRequest(Completer completer, int uid, int nexttime, int current)
       : super(completer, uid, 2, nexttime, current);
 }
 
-class GetNoticeSuccess extends GetMyDataSuccess with StopLoading {
+class GetNoticeSuccess extends GetPersonalDataSuccess with StopLoading {
   final NoticeResult result;
 
   GetNoticeSuccess(request, this.result) : super(request);
 }
 
-class GetNoticeFailure extends GetMyDataFailure {
+class GetNoticeFailure extends GetPersonalDataFailure {
   GetNoticeFailure(APIRequest request, String error) : super(request, error);
 }
 
@@ -278,18 +298,18 @@ class GetNoticeLoadMoreFailure extends GetNoticeFailure {
 }
 
 //--- Get my Ratelog messages
-abstract class GetRatelogRequest extends GetMyDataRequest {
+abstract class GetRatelogRequest extends GetPersonalDataRequest {
   GetRatelogRequest(Completer completer, int uid, int nexttime, int current)
       : super(completer, uid, 3, nexttime, current);
 }
 
-class GetRatelogSuccess extends GetMyDataSuccess with StopLoading {
+class GetRatelogSuccess extends GetPersonalDataSuccess with StopLoading {
   final RatelogResult result;
 
   GetRatelogSuccess(request, this.result) : super(request);
 }
 
-class GetRatelogFailure extends GetMyDataFailure {
+class GetRatelogFailure extends GetPersonalDataFailure {
   GetRatelogFailure(APIRequest request, String error) : super(request, error);
 }
 
@@ -358,18 +378,18 @@ class GetRatelogLoadMoreFailure extends GetRatelogFailure {
 }
 
 //--- Get my PM messages
-abstract class GetPMRequest extends GetMyDataRequest {
+abstract class GetPMRequest extends GetPersonalDataRequest {
   GetPMRequest(Completer completer, int uid, int nexttime, int current)
       : super(completer, uid, 4, nexttime, current);
 }
 
-class GetPMSuccess extends GetMyDataSuccess with StopLoading {
+class GetPMSuccess extends GetPersonalDataSuccess with StopLoading {
   final PrivateMessageResult result;
 
   GetPMSuccess(request, this.result) : super(request);
 }
 
-class GetPMFailure extends GetMyDataFailure {
+class GetPMFailure extends GetPersonalDataFailure {
   GetPMFailure(APIRequest request, String error) : super(request, error);
 }
 
@@ -433,4 +453,101 @@ class GetPMLoadMoreSuccess extends GetPMSuccess {
 
 class GetPMLoadMoreFailure extends GetPMFailure {
   GetPMLoadMoreFailure(request, String error) : super(request, error);
+}
+
+//--- Get my PMSession messages
+abstract class GetPMSessionRequest extends APIRequest
+    with StartLoading, GetMyDataRequest {
+  final int uid;
+  final int pmid;
+  final int nexttime;
+  final int current;
+
+  GetPMSessionRequest(
+      Completer completer, this.uid, this.pmid, this.nexttime, this.current)
+      : super(completer: completer, api: PMSESSION_API, parameters: {
+          "uid": uid,
+          "pmid": pmid,
+          "nexttime": nexttime,
+          "current": current,
+        });
+}
+
+abstract class GetPMSessionSuccess extends APISuccess
+    with StopLoading, GetMyDataSuccess {
+  final PMSession result;
+  GetPMSessionSuccess(APIRequest request, this.result) : super(request);
+}
+
+abstract class GetPMSessionFailure extends APIFailure
+    with StopLoading, GetMyDataFailure {
+  GetPMSessionFailure(APIRequest request, String error) : super(request, error);
+}
+
+class GetPMSessionNewRequest extends GetPMSessionRequest {
+  GetPMSessionNewRequest(
+      Completer completer, int uid, int pmid, int nexttime, int current)
+      : super(completer, uid, pmid, nexttime, current);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetPMSessionNewFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetPMSessionNewSuccess(this, result);
+}
+
+class GetPMSessionRefreshRequest extends GetPMSessionRequest {
+  GetPMSessionRefreshRequest(
+      Completer completer, int uid, int pmid, int current)
+      : super(completer, uid, pmid, 0, current);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetPMSessionRefreshFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetPMSessionRefreshSuccess(this, result);
+}
+
+class GetPMSessionLoadMoreRequest extends GetPMSessionRequest {
+  GetPMSessionLoadMoreRequest(
+      Completer completer, int uid, int pmid, int nexttime)
+      : super(completer, uid, pmid, nexttime, 0);
+
+  @override
+  CreateFailure get badResponse =>
+      (error) => GetPMSessionLoadMoreFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse =>
+      (result) => GetPMSessionLoadMoreSuccess(this, result);
+}
+
+class GetPMSessionNewSuccess extends GetPMSessionSuccess {
+  GetPMSessionNewSuccess(request, PMSession result) : super(request, result);
+}
+
+class GetPMSessionNewFailure extends GetPMSessionFailure {
+  GetPMSessionNewFailure(request, String error) : super(request, error);
+}
+
+class GetPMSessionRefreshSuccess extends GetPMSessionSuccess with StopLoading {
+  GetPMSessionRefreshSuccess(request, PMSession result)
+      : super(request, result);
+}
+
+class GetPMSessionRefreshFailure extends GetPMSessionFailure {
+  GetPMSessionRefreshFailure(request, String error) : super(request, error);
+}
+
+class GetPMSessionLoadMoreSuccess extends GetPMSessionSuccess {
+  GetPMSessionLoadMoreSuccess(request, PMSession result)
+      : super(request, result);
+}
+
+class GetPMSessionLoadMoreFailure extends GetPMSessionFailure {
+  GetPMSessionLoadMoreFailure(request, String error) : super(request, error);
 }

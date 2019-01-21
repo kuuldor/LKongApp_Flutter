@@ -141,7 +141,6 @@ abstract class FetchedListModel extends GroupedListModel {
       return listView;
     } else {
       return RefreshIndicator(
-          displacement: 20.0,
           backgroundColor: Colors.white70,
           onRefresh: () => handleRefresh(context),
           child: listView);

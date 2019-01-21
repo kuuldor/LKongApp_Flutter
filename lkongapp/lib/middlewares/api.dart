@@ -31,6 +31,7 @@ const REPLY_API = "REPLY";
 const FOLLOW_API = "FOLLOW";
 const UPVOTE_API = "UPVOTE";
 const HOTDIGEST_API = "HOTDIGEST";
+const PMSESSION_API = "PMSESSION";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -396,7 +397,7 @@ Future<Map> getPersonalData(Map args) {
       modeString = "notice";
       parser = (json) {
         var result = NoticeResult.fromJson(json);
-        // result = result.rebuild((b) => b..notice.replace(result.notice.reversed));
+        // result = result.rebuild((b) => b..data.replace(result.data.reversed));
         return result;
       };
       break;
@@ -405,7 +406,7 @@ Future<Map> getPersonalData(Map args) {
       parser = (json) {
         var result = RatelogResult.fromJson(json);
         // result = result
-        //     .rebuild((b) => b..ratelog.replace(result.ratelog.reversed));
+        //     .rebuild((b) => b..data.replace(result.data.reversed));
         return result;
       };
       break;
@@ -413,7 +414,7 @@ Future<Map> getPersonalData(Map args) {
       modeString = "pm";
       parser = (json) {
         var result = PrivateMessageResult.fromJson(json);
-        // result = result.rebuild((b) => b..messages.replace(result.messages.reversed));
+        // result = result.rebuild((b) => b..data.replace(result.data.reversed));
         return result;
       };
       break;
@@ -426,11 +427,33 @@ Future<Map> getPersonalData(Map args) {
   var urlString = endpoint["atMe"] + modeString + querify(params);
 
   var httpAction = session.get(urlString);
+  return _handleHttp(
+    httpAction,
+    dataParser: _parseResponseBody(parser),
+    preProcessor: numMapperBuiler(["uid", "score"]),
+  );
+}
+
+Future<Map> getPMSession(Map args) {
+  int nexttime = args["nexttime"] ?? 0;
+  int current = args["current"] ?? 0;
+  int pmid = args["pmid"];
+
+  assert(pmid != null, "Must speicfy pmid");
+
+  var params = getTimeParameter(nexttime, current);
+  var urlString = endpoint["pmSession"] + "$pmid" + querify(params);
+  final parser = (json) {
+    var result = PMSession.fromJson(json);
+    result = result.rebuild((b) => b..data.replace(result.data.reversed));
+    return result;
+  };
+  var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
       preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["uid", "score"]),
-        tagStripperBuiler(["subject"])
+        numMapperBuiler(["uid"]),
+        tagStripperBuiler(["message"])
       ]));
 }
 
@@ -863,6 +886,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == HOTDIGEST_API) {
     return getHotDigest(parameters);
+  }
+
+  if (api == PMSESSION_API) {
+    return getPMSession(parameters);
   }
 
   return Future<Map>(null);

@@ -6,6 +6,7 @@ class LKongAppRoutes {
   static final settings = "/settings";
   static final favorite = "/favorite";
   static final profile = "/profile";
+  static final pmsession = "/pmsession";
   static final reply = "/reply";
   static final post = "/post";
 }

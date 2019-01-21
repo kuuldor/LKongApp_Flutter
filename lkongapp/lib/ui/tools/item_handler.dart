@@ -4,8 +4,7 @@ import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/ui/compose_screen.dart';
 import 'package:lkongapp/ui/forum_story.dart';
-import 'package:lkongapp/ui/profile_screen.dart';
-import 'package:lkongapp/ui/story_screen.dart';
+import 'package:lkongapp/ui/screens.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 Future<Null> onStoryTap(BuildContext context, Story story) {
@@ -56,6 +55,17 @@ Future<Null> onUserTap(BuildContext context, UserInfo user) {
         UINavigationPush(context, LKongAppRoutes.profile, false, (context) {
       return ProfileScreen(
         user: user,
+      );
+    }));
+  });
+}
+
+Future<Null> onPMTap(BuildContext context, int pmid) {
+  return Future(() {
+    dispatchAction(context)(
+        UINavigationPush(context, LKongAppRoutes.pmsession, false, (context) {
+      return PMSessionScreen(
+        pmid: pmid,
       );
     }));
   });

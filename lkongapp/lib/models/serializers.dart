@@ -44,6 +44,7 @@ part 'serializers.g.dart';
   RatelogResult,
   PrivateMessageResult,
   PrivateMessage,
+  PMSession,
 ])
 final Serializers serializers =
     (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();

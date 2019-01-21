@@ -75,6 +75,8 @@ abstract class UserData implements Built<UserData, UserDataBuilder> {
   @nullable
   FetchList<PrivateMessage> get pm;
 
+  BuiltMap<int, FetchList<PrivateMessage>> get pmSession;
+
   String toJson() {
     return json.encode(serializers.serializeWith(UserData.serializer, this));
   }

@@ -18,6 +18,7 @@ Serializer<PrivateMessageResult> _$privateMessageResultSerializer =
     new _$PrivateMessageResultSerializer();
 Serializer<PrivateMessage> _$privateMessageSerializer =
     new _$PrivateMessageSerializer();
+Serializer<PMSession> _$pMSessionSerializer = new _$PMSessionSerializer();
 
 class _$NoticeResultSerializer implements StructuredSerializer<NoticeResult> {
   @override
@@ -482,11 +483,6 @@ class _$PrivateMessageSerializer
     final result = <Object>[
       'uid',
       serializers.serialize(object.uid, specifiedType: const FullType(int)),
-      'username',
-      serializers.serialize(object.username,
-          specifiedType: const FullType(String)),
-      'typeid',
-      serializers.serialize(object.typeid, specifiedType: const FullType(int)),
       'sortkey',
       serializers.serialize(object.sortkey, specifiedType: const FullType(int)),
       'dateline',
@@ -498,6 +494,18 @@ class _$PrivateMessageSerializer
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(String)),
     ];
+    if (object.username != null) {
+      result
+        ..add('username')
+        ..add(serializers.serialize(object.username,
+            specifiedType: const FullType(String)));
+    }
+    if (object.msgfromid != null) {
+      result
+        ..add('msgfromid')
+        ..add(serializers.serialize(object.msgfromid,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -521,10 +529,6 @@ class _$PrivateMessageSerializer
           result.username = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           break;
-        case 'typeid':
-          result.typeid = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
-          break;
         case 'sortkey':
           result.sortkey = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
@@ -540,6 +544,84 @@ class _$PrivateMessageSerializer
         case 'id':
           result.id = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
+          break;
+        case 'msgfromid':
+          result.msgfromid = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$PMSessionSerializer implements StructuredSerializer<PMSession> {
+  @override
+  final Iterable<Type> types = const [PMSession, _$PMSession];
+  @override
+  final String wireName = 'PMSession';
+
+  @override
+  Iterable serialize(Serializers serializers, PMSession object,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = <Object>[
+      'nexttime',
+      serializers.serialize(object.nexttime,
+          specifiedType: const FullType(int)),
+      'data',
+      serializers.serialize(object.data,
+          specifiedType: const FullType(
+              BuiltList, const [const FullType(PrivateMessage)])),
+      'loadtime',
+      serializers.serialize(object.loadtime,
+          specifiedType: const FullType(int)),
+      'nochecknew',
+      serializers.serialize(object.nochecknew,
+          specifiedType: const FullType(int)),
+    ];
+    if (object.curtime != null) {
+      result
+        ..add('curtime')
+        ..add(serializers.serialize(object.curtime,
+            specifiedType: const FullType(int)));
+    }
+
+    return result;
+  }
+
+  @override
+  PMSession deserialize(Serializers serializers, Iterable serialized,
+      {FullType specifiedType = FullType.unspecified}) {
+    final result = new PMSessionBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current as String;
+      iterator.moveNext();
+      final dynamic value = iterator.current;
+      switch (key) {
+        case 'nexttime':
+          result.nexttime = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'curtime':
+          result.curtime = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'data':
+          result.data.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(
+                      BuiltList, const [const FullType(PrivateMessage)]))
+              as BuiltList);
+          break;
+        case 'loadtime':
+          result.loadtime = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
+        case 'nochecknew':
+          result.nochecknew = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -1494,8 +1576,6 @@ class _$PrivateMessage extends PrivateMessage {
   @override
   final String username;
   @override
-  final int typeid;
-  @override
   final int sortkey;
   @override
   final String dateline;
@@ -1503,6 +1583,8 @@ class _$PrivateMessage extends PrivateMessage {
   final String message;
   @override
   final String id;
+  @override
+  final int msgfromid;
 
   factory _$PrivateMessage([void updates(PrivateMessageBuilder b)]) =>
       (new PrivateMessageBuilder()..update(updates)).build();
@@ -1510,20 +1592,14 @@ class _$PrivateMessage extends PrivateMessage {
   _$PrivateMessage._(
       {this.uid,
       this.username,
-      this.typeid,
       this.sortkey,
       this.dateline,
       this.message,
-      this.id})
+      this.id,
+      this.msgfromid})
       : super._() {
     if (uid == null) {
       throw new BuiltValueNullFieldError('PrivateMessage', 'uid');
-    }
-    if (username == null) {
-      throw new BuiltValueNullFieldError('PrivateMessage', 'username');
-    }
-    if (typeid == null) {
-      throw new BuiltValueNullFieldError('PrivateMessage', 'typeid');
     }
     if (sortkey == null) {
       throw new BuiltValueNullFieldError('PrivateMessage', 'sortkey');
@@ -1553,11 +1629,11 @@ class _$PrivateMessage extends PrivateMessage {
     return other is PrivateMessage &&
         uid == other.uid &&
         username == other.username &&
-        typeid == other.typeid &&
         sortkey == other.sortkey &&
         dateline == other.dateline &&
         message == other.message &&
-        id == other.id;
+        id == other.id &&
+        msgfromid == other.msgfromid;
   }
 
   @override
@@ -1567,11 +1643,11 @@ class _$PrivateMessage extends PrivateMessage {
             $jc(
                 $jc(
                     $jc($jc($jc(0, uid.hashCode), username.hashCode),
-                        typeid.hashCode),
-                    sortkey.hashCode),
-                dateline.hashCode),
-            message.hashCode),
-        id.hashCode));
+                        sortkey.hashCode),
+                    dateline.hashCode),
+                message.hashCode),
+            id.hashCode),
+        msgfromid.hashCode));
   }
 
   @override
@@ -1579,11 +1655,11 @@ class _$PrivateMessage extends PrivateMessage {
     return (newBuiltValueToStringHelper('PrivateMessage')
           ..add('uid', uid)
           ..add('username', username)
-          ..add('typeid', typeid)
           ..add('sortkey', sortkey)
           ..add('dateline', dateline)
           ..add('message', message)
-          ..add('id', id))
+          ..add('id', id)
+          ..add('msgfromid', msgfromid))
         .toString();
   }
 }
@@ -1599,10 +1675,6 @@ class PrivateMessageBuilder
   String _username;
   String get username => _$this._username;
   set username(String username) => _$this._username = username;
-
-  int _typeid;
-  int get typeid => _$this._typeid;
-  set typeid(int typeid) => _$this._typeid = typeid;
 
   int _sortkey;
   int get sortkey => _$this._sortkey;
@@ -1620,17 +1692,21 @@ class PrivateMessageBuilder
   String get id => _$this._id;
   set id(String id) => _$this._id = id;
 
+  int _msgfromid;
+  int get msgfromid => _$this._msgfromid;
+  set msgfromid(int msgfromid) => _$this._msgfromid = msgfromid;
+
   PrivateMessageBuilder();
 
   PrivateMessageBuilder get _$this {
     if (_$v != null) {
       _uid = _$v.uid;
       _username = _$v.username;
-      _typeid = _$v.typeid;
       _sortkey = _$v.sortkey;
       _dateline = _$v.dateline;
       _message = _$v.message;
       _id = _$v.id;
+      _msgfromid = _$v.msgfromid;
       _$v = null;
     }
     return this;
@@ -1655,11 +1731,161 @@ class PrivateMessageBuilder
         new _$PrivateMessage._(
             uid: uid,
             username: username,
-            typeid: typeid,
             sortkey: sortkey,
             dateline: dateline,
             message: message,
-            id: id);
+            id: id,
+            msgfromid: msgfromid);
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$PMSession extends PMSession {
+  @override
+  final int nexttime;
+  @override
+  final int curtime;
+  @override
+  final BuiltList<PrivateMessage> data;
+  @override
+  final int loadtime;
+  @override
+  final int nochecknew;
+
+  factory _$PMSession([void updates(PMSessionBuilder b)]) =>
+      (new PMSessionBuilder()..update(updates)).build();
+
+  _$PMSession._(
+      {this.nexttime, this.curtime, this.data, this.loadtime, this.nochecknew})
+      : super._() {
+    if (nexttime == null) {
+      throw new BuiltValueNullFieldError('PMSession', 'nexttime');
+    }
+    if (data == null) {
+      throw new BuiltValueNullFieldError('PMSession', 'data');
+    }
+    if (loadtime == null) {
+      throw new BuiltValueNullFieldError('PMSession', 'loadtime');
+    }
+    if (nochecknew == null) {
+      throw new BuiltValueNullFieldError('PMSession', 'nochecknew');
+    }
+  }
+
+  @override
+  PMSession rebuild(void updates(PMSessionBuilder b)) =>
+      (toBuilder()..update(updates)).build();
+
+  @override
+  PMSessionBuilder toBuilder() => new PMSessionBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is PMSession &&
+        nexttime == other.nexttime &&
+        curtime == other.curtime &&
+        data == other.data &&
+        loadtime == other.loadtime &&
+        nochecknew == other.nochecknew;
+  }
+
+  @override
+  int get hashCode {
+    return $jf($jc(
+        $jc(
+            $jc($jc($jc(0, nexttime.hashCode), curtime.hashCode),
+                data.hashCode),
+            loadtime.hashCode),
+        nochecknew.hashCode));
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper('PMSession')
+          ..add('nexttime', nexttime)
+          ..add('curtime', curtime)
+          ..add('data', data)
+          ..add('loadtime', loadtime)
+          ..add('nochecknew', nochecknew))
+        .toString();
+  }
+}
+
+class PMSessionBuilder implements Builder<PMSession, PMSessionBuilder> {
+  _$PMSession _$v;
+
+  int _nexttime;
+  int get nexttime => _$this._nexttime;
+  set nexttime(int nexttime) => _$this._nexttime = nexttime;
+
+  int _curtime;
+  int get curtime => _$this._curtime;
+  set curtime(int curtime) => _$this._curtime = curtime;
+
+  ListBuilder<PrivateMessage> _data;
+  ListBuilder<PrivateMessage> get data =>
+      _$this._data ??= new ListBuilder<PrivateMessage>();
+  set data(ListBuilder<PrivateMessage> data) => _$this._data = data;
+
+  int _loadtime;
+  int get loadtime => _$this._loadtime;
+  set loadtime(int loadtime) => _$this._loadtime = loadtime;
+
+  int _nochecknew;
+  int get nochecknew => _$this._nochecknew;
+  set nochecknew(int nochecknew) => _$this._nochecknew = nochecknew;
+
+  PMSessionBuilder();
+
+  PMSessionBuilder get _$this {
+    if (_$v != null) {
+      _nexttime = _$v.nexttime;
+      _curtime = _$v.curtime;
+      _data = _$v.data?.toBuilder();
+      _loadtime = _$v.loadtime;
+      _nochecknew = _$v.nochecknew;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(PMSession other) {
+    if (other == null) {
+      throw new ArgumentError.notNull('other');
+    }
+    _$v = other as _$PMSession;
+  }
+
+  @override
+  void update(void updates(PMSessionBuilder b)) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  _$PMSession build() {
+    _$PMSession _$result;
+    try {
+      _$result = _$v ??
+          new _$PMSession._(
+              nexttime: nexttime,
+              curtime: curtime,
+              data: data.build(),
+              loadtime: loadtime,
+              nochecknew: nochecknew);
+    } catch (_) {
+      String _$failedField;
+      try {
+        _$failedField = 'data';
+        data.build();
+      } catch (e) {
+        throw new BuiltValueNestedFieldError(
+            'PMSession', _$failedField, e.toString());
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

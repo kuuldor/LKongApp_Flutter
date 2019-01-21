@@ -213,10 +213,9 @@ abstract class PrivateMessage
 
   @BuiltValueField(wireName: 'uid')
   int get uid;
+  @nullable
   @BuiltValueField(wireName: 'username')
   String get username;
-  @BuiltValueField(wireName: 'typeid')
-  int get typeid;
   @BuiltValueField(wireName: 'sortkey')
   int get sortkey;
   @BuiltValueField(wireName: 'dateline')
@@ -225,6 +224,9 @@ abstract class PrivateMessage
   String get message;
   @BuiltValueField(wireName: 'id')
   String get id;
+  @nullable
+  @BuiltValueField(wireName: 'msgfromid')
+  int get msgfromid;
   String toJson() {
     return json
         .encode(serializers.serializeWith(PrivateMessage.serializer, this));
@@ -237,4 +239,33 @@ abstract class PrivateMessage
 
   static Serializer<PrivateMessage> get serializer =>
       _$privateMessageSerializer;
+}
+
+abstract class PMSession
+    implements FetchResult<PrivateMessage>, Built<PMSession, PMSessionBuilder> {
+  PMSession._();
+
+  factory PMSession([updates(PMSessionBuilder b)]) = _$PMSession;
+
+  @BuiltValueField(wireName: 'nexttime')
+  int get nexttime;
+  @nullable
+  @BuiltValueField(wireName: 'curtime')
+  int get curtime;
+  @BuiltValueField(wireName: 'data')
+  BuiltList<PrivateMessage> get data;
+  @BuiltValueField(wireName: 'loadtime')
+  int get loadtime;
+  @BuiltValueField(wireName: 'nochecknew')
+  int get nochecknew;
+  String toJson() {
+    return json.encode(serializers.serializeWith(PMSession.serializer, this));
+  }
+
+  static PMSession fromJson(String jsonString) {
+    return serializers.deserializeWith(
+        PMSession.serializer, json.decode(jsonString));
+  }
+
+  static Serializer<PMSession> get serializer => _$pMSessionSerializer;
 }

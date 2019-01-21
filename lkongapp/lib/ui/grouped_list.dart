@@ -14,6 +14,8 @@ abstract class GroupedListModel {
 
   int get numberOfSections;
 
+  bool get reverse => false;
+
   int countOfItemsInSection({@required int section});
 
   Widget headerForSection(BuildContext context, {@required int section});
@@ -72,6 +74,7 @@ abstract class GroupedListModel {
 
   Widget buildGroupedListView(BuildContext context) {
     return CustomScrollView(
+      reverse: reverse,
       controller: scrollController,
       slivers: buildSlivers(context),
     );

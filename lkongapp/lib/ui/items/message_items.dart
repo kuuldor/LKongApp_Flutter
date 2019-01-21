@@ -49,30 +49,29 @@ class UserHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     TextStyle style = theme.themeData.textTheme.title;
-    return GestureDetector(
-      child: Row(children: <Widget>[
-        buildUserAvatar(context, message.uid, 36.0),
-        Container(
-          width: 4.0,
-        ),
-        Text(
-          message.username,
-          style: style.copyWith(color: theme.linkColor, fontSize: 18.0),
-        ),
-        Expanded(
-          child: Align(
-              alignment: Alignment.centerRight,
-              child: Text(dateStringToLocal(message.dateline), style: style)),
-        ),
-      ]),
-      onTap: () {
-        onUserTap(
-            context,
-            UserInfo().rebuild((b) => b
-              ..uid = message.uid
-              ..username = message.username));
-      },
-    );
+    return Row(children: <Widget>[
+      buildUserAvatar(context, message.uid, 36.0, clickable: true),
+      Container(
+        width: 4.0,
+      ),
+      GestureDetector(
+          child: Text(
+            message.username,
+            style: style.copyWith(color: theme.linkColor, fontSize: 18.0),
+          ),
+          onTap: () {
+            onUserTap(
+                context,
+                UserInfo().rebuild((b) => b
+                  ..uid = message.uid
+                  ..username = message.username));
+          }),
+      Expanded(
+        child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(dateStringToLocal(message.dateline), style: style)),
+      ),
+    ]);
   }
 }
 
@@ -147,6 +146,9 @@ class PMItem extends StatelessWidget {
     TextStyle style = theme.themeData.textTheme.title;
 
     return ListTile(
+      onTap: () {
+        onPMTap(context, pm.uid);
+      },
       title: Container(
           padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
           child: Column(

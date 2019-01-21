@@ -22,6 +22,7 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..add(HotDigestResult.serializer)
       ..add(Notice.serializer)
       ..add(NoticeResult.serializer)
+      ..add(PMSession.serializer)
       ..add(PersistentState.serializer)
       ..add(PrivateMessage.serializer)
       ..add(PrivateMessageResult.serializer)
@@ -59,6 +60,9 @@ Serializers _$serializers = (new Serializers().toBuilder()
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(Notice)]),
           () => new ListBuilder<Notice>())
+      ..addBuilderFactory(
+          const FullType(BuiltList, const [const FullType(PrivateMessage)]),
+          () => new ListBuilder<PrivateMessage>())
       ..addBuilderFactory(
           const FullType(BuiltList, const [const FullType(PrivateMessage)]),
           () => new ListBuilder<PrivateMessage>())
@@ -122,7 +126,13 @@ Serializers _$serializers = (new Serializers().toBuilder()
           () => new FetchListBuilder<Ratelog>())
       ..addBuilderFactory(
           const FullType(FetchList, const [const FullType(PrivateMessage)]),
-          () => new FetchListBuilder<PrivateMessage>()))
+          () => new FetchListBuilder<PrivateMessage>())
+      ..addBuilderFactory(
+          const FullType(BuiltMap, const [
+            const FullType(int),
+            const FullType(FetchList, const [const FullType(PrivateMessage)])
+          ]),
+          () => new MapBuilder<int, FetchList<PrivateMessage>>()))
     .build();
 
 // ignore_for_file: always_put_control_body_on_new_line,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new

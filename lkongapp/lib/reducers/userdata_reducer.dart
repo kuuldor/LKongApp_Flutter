@@ -1,4 +1,5 @@
 import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/lkong_jsons/story_result.dart';
 import 'package:lkongapp/reducers/fetchlist_reducer.dart';
@@ -12,12 +13,47 @@ final userDataReducer = combineReducers<BuiltMap<int, UserData>>([
   TypedReducer<BuiltMap<int, UserData>, FollowListSuccess>(
       _followListSucceeded),
   TypedReducer<BuiltMap<int, UserData>, PunchCardSuccess>(_punchCardSucceeded),
+  TypedReducer<BuiltMap<int, UserData>, GetMyDataRequest>(_dataRequested),
+  TypedReducer<BuiltMap<int, UserData>, GetMyDataSuccess>(_dataSucceeded),
+  TypedReducer<BuiltMap<int, UserData>, GetMyDataFailure>(_dataFailed),
+]);
+
+final _userDataReducer = combineReducers<UserData>([
   _favoriteReducer,
   _atMeReducer,
   _noticeReducer,
   _ratelogReducer,
   _pmReducer,
+  _pmSessionMapReducer,
 ]);
+
+BuiltMap<int, UserData> _handleDataActions(
+    BuiltMap<int, UserData> state, int uid, action) {
+  return state.rebuild((b) => b
+    ..updateValue(uid, (v) => _userDataReducer(v, action),
+        ifAbsent: () => _userDataReducer(UserData(), action)));
+}
+
+BuiltMap<int, UserData> _dataRequested(
+    BuiltMap<int, UserData> state, GetMyDataRequest action) {
+  final uid = action.uid;
+
+  return _handleDataActions(state, uid, action);
+}
+
+BuiltMap<int, UserData> _dataSucceeded(
+    BuiltMap<int, UserData> state, GetMyDataSuccess action) {
+  final request = action.request as GetMyDataRequest;
+  final uid = request.uid;
+  return _handleDataActions(state, uid, action);
+}
+
+BuiltMap<int, UserData> _dataFailed(
+    BuiltMap<int, UserData> state, GetMyDataFailure action) {
+  final request = action.request as GetMyDataRequest;
+  final uid = request.uid;
+  return _handleDataActions(state, uid, action);
+}
 
 BuiltMap<int, UserData> _followListSucceeded(
     BuiltMap<int, UserData> state, FollowListSuccess action) {
@@ -41,155 +77,223 @@ BuiltMap<int, UserData> _punchCardSucceeded(
         ifAbsent: () => UserData().rebuild(update)));
 }
 
+final builder = (UserData data, updates) => data.rebuild(updates);
+
 final favoritesAccessor = (v) => v.favorites;
-final _favoriteReducer = combineReducers<BuiltMap<int, UserData>>([
-  TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesNewRequest>(
-      _getMyDataNew<GetMyFavoritesNewRequest, Story>(favoritesAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesRequest>(
-      _getMyDataRequested<GetMyFavoritesRequest>(favoritesAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesFailure>(
-      _getMyDataFailed<GetMyFavoritesFailure>(favoritesAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesNewSuccess>(
-      _getMyDataSucceeded<GetMyFavoritesNewSuccess>(
-          FetchListRequestType.New, favoritesAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesRefreshSuccess>(
-      _getMyDataSucceeded<GetMyFavoritesRefreshSuccess>(
-          FetchListRequestType.Refresh, favoritesAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyFavoritesLoadMoreSuccess>(
-      _getMyDataSucceeded<GetMyFavoritesLoadMoreSuccess>(
-          FetchListRequestType.LoadMore, favoritesAccessor)),
+final _favoriteReducer = combineReducers<UserData>([
+  TypedReducer<UserData, GetMyFavoritesNewRequest>(
+      _getMyDataNew<UserData, GetMyFavoritesNewRequest, Story>(
+          favoritesAccessor, builder)),
+  TypedReducer<UserData, GetMyFavoritesRequest>(
+      _getMyDataRequested<UserData, GetMyFavoritesRequest>(
+          favoritesAccessor, builder)),
+  TypedReducer<UserData, GetMyFavoritesFailure>(
+      _getMyDataFailed<UserData, GetMyFavoritesFailure>(
+          favoritesAccessor, builder)),
+  TypedReducer<UserData, GetMyFavoritesNewSuccess>(
+      _getMyDataSucceeded<UserData, GetMyFavoritesNewSuccess>(
+          FetchListRequestType.New, favoritesAccessor, builder)),
+  TypedReducer<UserData, GetMyFavoritesRefreshSuccess>(
+      _getMyDataSucceeded<UserData, GetMyFavoritesRefreshSuccess>(
+          FetchListRequestType.Refresh, favoritesAccessor, builder)),
+  TypedReducer<UserData, GetMyFavoritesLoadMoreSuccess>(
+      _getMyDataSucceeded<UserData, GetMyFavoritesLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, favoritesAccessor, builder)),
 ]);
 
 final atMeAccessor = (v) => v.atMe;
-final _atMeReducer = combineReducers<BuiltMap<int, UserData>>([
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsNewRequest>(
-      _getMyDataNew<GetMyAtsNewRequest, Story>(atMeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsRequest>(
-      _getMyDataRequested<GetMyAtsRequest>(atMeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsFailure>(
-      _getMyDataFailed<GetMyAtsFailure>(atMeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsNewSuccess>(
-      _getMyDataSucceeded<GetMyAtsNewSuccess>(
-          FetchListRequestType.New, atMeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsRefreshSuccess>(
-      _getMyDataSucceeded<GetMyAtsRefreshSuccess>(
-          FetchListRequestType.Refresh, atMeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetMyAtsLoadMoreSuccess>(
-      _getMyDataSucceeded<GetMyAtsLoadMoreSuccess>(
-          FetchListRequestType.LoadMore, atMeAccessor)),
+final _atMeReducer = combineReducers<UserData>([
+  TypedReducer<UserData, GetMyAtsNewRequest>(
+      _getMyDataNew<UserData, GetMyAtsNewRequest, Story>(
+          atMeAccessor, builder)),
+  TypedReducer<UserData, GetMyAtsRequest>(
+      _getMyDataRequested<UserData, GetMyAtsRequest>(atMeAccessor, builder)),
+  TypedReducer<UserData, GetMyAtsFailure>(
+      _getMyDataFailed<UserData, GetMyAtsFailure>(atMeAccessor, builder)),
+  TypedReducer<UserData, GetMyAtsNewSuccess>(
+      _getMyDataSucceeded<UserData, GetMyAtsNewSuccess>(
+          FetchListRequestType.New, atMeAccessor, builder)),
+  TypedReducer<UserData, GetMyAtsRefreshSuccess>(
+      _getMyDataSucceeded<UserData, GetMyAtsRefreshSuccess>(
+          FetchListRequestType.Refresh, atMeAccessor, builder)),
+  TypedReducer<UserData, GetMyAtsLoadMoreSuccess>(
+      _getMyDataSucceeded<UserData, GetMyAtsLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, atMeAccessor, builder)),
 ]);
 
 final noticeAccessor = (v) => v.notice;
-final _noticeReducer = combineReducers<BuiltMap<int, UserData>>([
-  TypedReducer<BuiltMap<int, UserData>, GetNoticeNewRequest>(
-      _getMyDataNew<GetNoticeNewRequest, Notice>(noticeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetNoticeRequest>(
-      _getMyDataRequested<GetNoticeRequest>(noticeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetNoticeFailure>(
-      _getMyDataFailed<GetNoticeFailure>(noticeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetNoticeNewSuccess>(
-      _getMyDataSucceeded<GetNoticeNewSuccess>(
-          FetchListRequestType.New, noticeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetNoticeRefreshSuccess>(
-      _getMyDataSucceeded<GetNoticeRefreshSuccess>(
-          FetchListRequestType.Refresh, noticeAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetNoticeLoadMoreSuccess>(
-      _getMyDataSucceeded<GetNoticeLoadMoreSuccess>(
-          FetchListRequestType.LoadMore, noticeAccessor)),
+final _noticeReducer = combineReducers<UserData>([
+  TypedReducer<UserData, GetNoticeNewRequest>(
+      _getMyDataNew<UserData, GetNoticeNewRequest, Notice>(
+          noticeAccessor, builder)),
+  TypedReducer<UserData, GetNoticeRequest>(
+      _getMyDataRequested<UserData, GetNoticeRequest>(noticeAccessor, builder)),
+  TypedReducer<UserData, GetNoticeFailure>(
+      _getMyDataFailed<UserData, GetNoticeFailure>(noticeAccessor, builder)),
+  TypedReducer<UserData, GetNoticeNewSuccess>(
+      _getMyDataSucceeded<UserData, GetNoticeNewSuccess>(
+          FetchListRequestType.New, noticeAccessor, builder)),
+  TypedReducer<UserData, GetNoticeRefreshSuccess>(
+      _getMyDataSucceeded<UserData, GetNoticeRefreshSuccess>(
+          FetchListRequestType.Refresh, noticeAccessor, builder)),
+  TypedReducer<UserData, GetNoticeLoadMoreSuccess>(
+      _getMyDataSucceeded<UserData, GetNoticeLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, noticeAccessor, builder)),
 ]);
 
 final ratelogAccessor = (v) => v.ratelog;
-final _ratelogReducer = combineReducers<BuiltMap<int, UserData>>([
-  TypedReducer<BuiltMap<int, UserData>, GetRatelogNewRequest>(
-      _getMyDataNew<GetRatelogNewRequest, Ratelog>(ratelogAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetRatelogRequest>(
-      _getMyDataRequested<GetRatelogRequest>(ratelogAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetRatelogFailure>(
-      _getMyDataFailed<GetRatelogFailure>(ratelogAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetRatelogNewSuccess>(
-      _getMyDataSucceeded<GetRatelogNewSuccess>(
-          FetchListRequestType.New, ratelogAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetRatelogRefreshSuccess>(
-      _getMyDataSucceeded<GetRatelogRefreshSuccess>(
-          FetchListRequestType.Refresh, ratelogAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetRatelogLoadMoreSuccess>(
-      _getMyDataSucceeded<GetRatelogLoadMoreSuccess>(
-          FetchListRequestType.LoadMore, ratelogAccessor)),
+final _ratelogReducer = combineReducers<UserData>([
+  TypedReducer<UserData, GetRatelogNewRequest>(
+      _getMyDataNew<UserData, GetRatelogNewRequest, Ratelog>(
+          ratelogAccessor, builder)),
+  TypedReducer<UserData, GetRatelogRequest>(
+      _getMyDataRequested<UserData, GetRatelogRequest>(
+          ratelogAccessor, builder)),
+  TypedReducer<UserData, GetRatelogFailure>(
+      _getMyDataFailed<UserData, GetRatelogFailure>(ratelogAccessor, builder)),
+  TypedReducer<UserData, GetRatelogNewSuccess>(
+      _getMyDataSucceeded<UserData, GetRatelogNewSuccess>(
+          FetchListRequestType.New, ratelogAccessor, builder)),
+  TypedReducer<UserData, GetRatelogRefreshSuccess>(
+      _getMyDataSucceeded<UserData, GetRatelogRefreshSuccess>(
+          FetchListRequestType.Refresh, ratelogAccessor, builder)),
+  TypedReducer<UserData, GetRatelogLoadMoreSuccess>(
+      _getMyDataSucceeded<UserData, GetRatelogLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, ratelogAccessor, builder)),
 ]);
 
 final pmAccessor = (v) => v.pm;
-final _pmReducer = combineReducers<BuiltMap<int, UserData>>([
-  TypedReducer<BuiltMap<int, UserData>, GetPMNewRequest>(
-      _getMyDataNew<GetPMNewRequest, PrivateMessage>(pmAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetPMRequest>(
-      _getMyDataRequested<GetPMRequest>(pmAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetPMFailure>(
-      _getMyDataFailed<GetPMFailure>(pmAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetPMNewSuccess>(
-      _getMyDataSucceeded<GetPMNewSuccess>(
-          FetchListRequestType.New, pmAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetPMRefreshSuccess>(
-      _getMyDataSucceeded<GetPMRefreshSuccess>(
-          FetchListRequestType.Refresh, pmAccessor)),
-  TypedReducer<BuiltMap<int, UserData>, GetPMLoadMoreSuccess>(
-      _getMyDataSucceeded<GetPMLoadMoreSuccess>(
-          FetchListRequestType.LoadMore, pmAccessor)),
+final _pmReducer = combineReducers<UserData>([
+  TypedReducer<UserData, GetPMNewRequest>(
+      _getMyDataNew<UserData, GetPMNewRequest, PrivateMessage>(
+          pmAccessor, builder)),
+  TypedReducer<UserData, GetPMRequest>(
+      _getMyDataRequested<UserData, GetPMRequest>(pmAccessor, builder)),
+  TypedReducer<UserData, GetPMFailure>(
+      _getMyDataFailed<UserData, GetPMFailure>(pmAccessor, builder)),
+  TypedReducer<UserData, GetPMNewSuccess>(
+      _getMyDataSucceeded<UserData, GetPMNewSuccess>(
+          FetchListRequestType.New, pmAccessor, builder)),
+  TypedReducer<UserData, GetPMRefreshSuccess>(
+      _getMyDataSucceeded<UserData, GetPMRefreshSuccess>(
+          FetchListRequestType.Refresh, pmAccessor, builder)),
+  TypedReducer<UserData, GetPMLoadMoreSuccess>(
+      _getMyDataSucceeded<UserData, GetPMLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, pmAccessor, builder)),
 ]);
 
-_getMyDataRequested<T extends GetMyDataRequest>(Function accessor) =>
-    (BuiltMap<int, UserData> repo, T action) {
-      return repo.rebuild((b) => b.updateValue(
-            action.uid,
-            (v) => v.rebuild(
-                  (b) => accessor(b).replace(
-                        fetchListLoading(accessor(v)),
-                      ),
-                ),
-          ));
+_getMyDataRequested<D, T extends GetMyDataRequest>(
+        Function accessor, D Function(D, dynamic) rebuild) =>
+    (D repo, T action) {
+      return rebuild(
+        repo,
+        (b) => accessor(b).replace(
+              fetchListLoading(accessor(repo)),
+            ),
+      );
     };
 
-_getMyDataNew<T extends GetMyDataRequest, S>(Function accessor) =>
-    (BuiltMap<int, UserData> repo, T action) {
+_getMyDataNew<D, T extends GetMyDataRequest, S>(
+        Function accessor, D Function(D, dynamic) rebuild) =>
+    (D repo, T action) {
       final updates = (b) => accessor(b).replace(FetchList<S>());
-      return repo.rebuild((b) => b.updateValue(
-          action.uid, (v) => v.rebuild(updates),
-          ifAbsent: () => UserData().rebuild(updates)));
+      return rebuild(repo, updates);
     };
 
-_getMyDataFailed<T extends GetMyDataFailure>(Function accessor) =>
-    (BuiltMap<int, UserData> repo, T action) {
-      int uid;
-
-      final request = action.request as GetMyDataRequest;
-      if (request != null) {
-        uid = request.uid;
-      }
-
-      var newRepo = repo;
-      if (uid != null) {
-        final data = newRepo[uid] ?? UserData();
-        final value = data.rebuild((b) =>
-            accessor(b).replace(fetchListFailed(accessor(data), action.error)));
-        newRepo = newRepo.rebuild(
-            (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));
-      }
-
-      return newRepo;
+_getMyDataFailed<D, T extends GetMyDataFailure>(
+        Function accessor, D Function(D, dynamic) rebuild) =>
+    (D repo, T action) {
+      return rebuild(
+          repo,
+          (b) => accessor(b)
+              .replace(fetchListFailed(accessor(repo), action.error)));
     };
 
-_getMyDataSucceeded<T extends GetMyDataSuccess>(
-        FetchListRequestType type, Function accessor) =>
-    (BuiltMap<int, UserData> repo, T action) {
-      var request = action.request as GetMyDataRequest;
-      int uid = request.uid;
+_getMyDataSucceeded<D, T extends GetMyDataSuccess>(FetchListRequestType type,
+        Function accessor, D Function(D, dynamic) rebuild) =>
+    (D repo, T action) {
       var result = action.result;
-      var newRepo = repo;
-      final data = newRepo[uid] ?? UserData();
-      final value = data.rebuild((b) => accessor(b)
-          .replace(fetchListSucceeded(type, accessor(data), result)));
-
-      newRepo = newRepo.rebuild(
-          (b) => b.updateValue(uid, (v) => value, ifAbsent: () => value));
-
-      return newRepo;
+      return rebuild(
+          repo,
+          (b) => accessor(b)
+              .replace(fetchListSucceeded(type, accessor(repo), result)));
     };
+
+final _pmSessionMapReducer = combineReducers<UserData>([
+  TypedReducer<UserData, GetPMSessionRequest>(_handlePMSessionMap),
+  TypedReducer<UserData, GetPMSessionSuccess>(_handlePMSessionMap),
+  TypedReducer<UserData, GetPMSessionFailure>(_handlePMSessionMap),
+]);
+
+final _pmSessionReducer =
+    combineReducers<BuiltMap<int, FetchList<PrivateMessage>>>([
+  TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, GetPMSessionRequest>(
+      _pmSessionRequested),
+  TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, GetPMSessionSuccess>(
+      _pmSessionSucceeded),
+  TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, GetPMSessionFailure>(
+      _pmSessionFailed),
+]);
+
+UserData _handlePMSessionMap(UserData state, action) {
+  return state.rebuild(
+      (b) => b..pmSession.replace(_pmSessionReducer(state.pmSession, action)));
+}
+
+final _pmBuilder =
+    (FetchList<PrivateMessage> list, updates) => list.rebuild(updates);
+final selfAccessor = (v) => v;
+final _sessionReducer = combineReducers<FetchList<PrivateMessage>>([
+  TypedReducer<FetchList<PrivateMessage>, GetPMSessionNewRequest>(_getMyDataNew<
+      FetchList<PrivateMessage>,
+      GetPMSessionNewRequest,
+      PrivateMessage>(selfAccessor, _pmBuilder)),
+  TypedReducer<FetchList<PrivateMessage>, GetPMSessionRequest>(
+      _getMyDataRequested<FetchList<PrivateMessage>, GetPMSessionRequest>(
+          selfAccessor, _pmBuilder)),
+  TypedReducer<FetchList<PrivateMessage>, GetPMSessionFailure>(
+      _getMyDataFailed<FetchList<PrivateMessage>, GetPMSessionFailure>(
+          selfAccessor, _pmBuilder)),
+  TypedReducer<FetchList<PrivateMessage>, GetPMSessionNewSuccess>(
+      _getMyDataSucceeded<FetchList<PrivateMessage>, GetPMSessionNewSuccess>(
+          FetchListRequestType.New, selfAccessor, _pmBuilder)),
+  TypedReducer<FetchList<PrivateMessage>, GetPMSessionRefreshSuccess>(
+      _getMyDataSucceeded<FetchList<PrivateMessage>,
+              GetPMSessionRefreshSuccess>(
+          FetchListRequestType.Refresh, selfAccessor, _pmBuilder)),
+  TypedReducer<FetchList<PrivateMessage>, GetPMSessionLoadMoreSuccess>(
+      _getMyDataSucceeded<FetchList<PrivateMessage>,
+              GetPMSessionLoadMoreSuccess>(
+          FetchListRequestType.LoadMore, selfAccessor, _pmBuilder)),
+]);
+
+BuiltMap<int, FetchList<PrivateMessage>> _handlePMSessionActions(
+    BuiltMap<int, FetchList<PrivateMessage>> state, int pmid, action) {
+  return state.rebuild((b) => b
+    ..updateValue(pmid, (v) => _sessionReducer(v, action),
+        ifAbsent: () => FetchList<PrivateMessage>()));
+}
+
+BuiltMap<int, FetchList<PrivateMessage>> _pmSessionRequested(
+    BuiltMap<int, FetchList<PrivateMessage>> state,
+    GetPMSessionRequest action) {
+  final pmid = action.pmid;
+
+  return _handlePMSessionActions(state, pmid, action);
+}
+
+BuiltMap<int, FetchList<PrivateMessage>> _pmSessionSucceeded(
+    BuiltMap<int, FetchList<PrivateMessage>> state,
+    GetPMSessionSuccess action) {
+  final request = action.request as GetPMSessionRequest;
+  final pmid = request.pmid;
+  return _handlePMSessionActions(state, pmid, action);
+}
+
+BuiltMap<int, FetchList<PrivateMessage>> _pmSessionFailed(
+    BuiltMap<int, FetchList<PrivateMessage>> state,
+    GetPMSessionFailure action) {
+  final request = action.request as GetPMSessionRequest;
+  final pmid = request.pmid;
+  return _handlePMSessionActions(state, pmid, action);
+}
