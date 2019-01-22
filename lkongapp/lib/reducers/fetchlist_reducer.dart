@@ -33,6 +33,9 @@ FetchList<T> fetchListSucceeded<T extends Identifiable>(
     FetchListRequestType type, FetchList<T> list, FetchResult<T> result) {
   return list.rebuild((b) {
     var data = result.data;
+    if (result.curtime == null && result.nexttime == null && data.length == 0) {
+      return b;
+    }
 
     int nexttime = type != FetchListRequestType.Refresh
         ? (data != null && data.length > 0 ? result.nexttime : 0)
@@ -54,13 +57,18 @@ FetchList<T> fetchListSucceeded<T extends Identifiable>(
             ..data.replace(data);
           break;
         case FetchListRequestType.Refresh:
-          var newsSet = data.map((story) => story.id).toSet();
+          if (data.length >= 20) {
+            b
+              ..newcount = 0
+              ..data.replace(data);
+          } else {
+            var newsSet = data.map((story) => story.id).toSet();
 
-          b
-            ..newcount = 0
-            ..data.where((story) => !newsSet.contains(story.id))
-            ..data.insertAll(0, data);
-
+            b
+              ..newcount = 0
+              ..data.where((story) => !newsSet.contains(story.id))
+              ..data.insertAll(0, data);
+          }
           break;
         case FetchListRequestType.LoadMore:
           b..data.addAll(data);
