@@ -33,7 +33,7 @@ Widget wrapItemAsCard(BuildContext context, Widget item,
           ],
         ),
         child: item),
-    SizedBox(height: 8.0),
+    SizedBox(height: 4.0),
   ]);
 }
 
@@ -44,5 +44,14 @@ Widget wrapItem(BuildContext context, Widget item) {
     SizedBox(height: 6.0),
     item,
     Divider(),
+  ]);
+}
+
+Widget wrapItemNoDivider(BuildContext context, Widget item) {
+  LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+
+  return Column(children: <Widget>[
+    SizedBox(height: 6.0),
+    item,
   ]);
 }

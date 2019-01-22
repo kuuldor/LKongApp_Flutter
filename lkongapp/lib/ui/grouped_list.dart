@@ -74,6 +74,7 @@ abstract class GroupedListModel {
 
   Widget buildGroupedListView(BuildContext context) {
     return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       reverse: reverse,
       controller: scrollController,
       slivers: buildSlivers(context),

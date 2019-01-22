@@ -551,3 +551,37 @@ class GetPMSessionLoadMoreSuccess extends GetPMSessionSuccess {
 class GetPMSessionLoadMoreFailure extends GetPMSessionFailure {
   GetPMSessionLoadMoreFailure(request, String error) : super(request, error);
 }
+
+class SendPMRequest extends APIRequest with StartLoading, GetMyDataRequest {
+  final int uid;
+  final int pmid;
+  final String message;
+
+  SendPMRequest(Completer completer, this.uid, this.pmid, this.message)
+      : super(completer: completer, api: SENDPM_API, parameters: {
+          "uid": uid,
+          "pmid": pmid,
+          "message": message,
+        });
+
+  @override
+  CreateFailure get badResponse => (error) => SendPMFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse => (result) => SendPMSuccess(this, result);
+
+  @override
+  int get current => null;
+
+  @override
+  int get nexttime => null;
+}
+
+class SendPMSuccess extends APISuccess with StopLoading, GetMyDataSuccess {
+  final Map result;
+  SendPMSuccess(APIRequest request, this.result) : super(request);
+}
+
+class SendPMFailure extends APIFailure with StopLoading, GetMyDataFailure {
+  SendPMFailure(APIRequest request, String error) : super(request, error);
+}

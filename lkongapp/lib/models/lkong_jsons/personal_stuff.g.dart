@@ -32,9 +32,6 @@ class _$NoticeResultSerializer implements StructuredSerializer<NoticeResult> {
     final result = <Object>[
       'tmp',
       serializers.serialize(object.tmp, specifiedType: const FullType(String)),
-      'nexttime',
-      serializers.serialize(object.nexttime,
-          specifiedType: const FullType(int)),
       'data',
       serializers.serialize(object.data,
           specifiedType:
@@ -43,6 +40,12 @@ class _$NoticeResultSerializer implements StructuredSerializer<NoticeResult> {
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(bool)),
     ];
+    if (object.nexttime != null) {
+      result
+        ..add('nexttime')
+        ..add(serializers.serialize(object.nexttime,
+            specifiedType: const FullType(int)));
+    }
     if (object.curtime != null) {
       result
         ..add('curtime')
@@ -176,9 +179,6 @@ class _$RatelogResultSerializer implements StructuredSerializer<RatelogResult> {
     final result = <Object>[
       'tmp',
       serializers.serialize(object.tmp, specifiedType: const FullType(String)),
-      'nexttime',
-      serializers.serialize(object.nexttime,
-          specifiedType: const FullType(int)),
       'data',
       serializers.serialize(object.data,
           specifiedType:
@@ -187,6 +187,12 @@ class _$RatelogResultSerializer implements StructuredSerializer<RatelogResult> {
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(bool)),
     ];
+    if (object.nexttime != null) {
+      result
+        ..add('nexttime')
+        ..add(serializers.serialize(object.nexttime,
+            specifiedType: const FullType(int)));
+    }
     if (object.curtime != null) {
       result
         ..add('curtime')
@@ -409,9 +415,6 @@ class _$PrivateMessageResultSerializer
     final result = <Object>[
       'tmp',
       serializers.serialize(object.tmp, specifiedType: const FullType(String)),
-      'nexttime',
-      serializers.serialize(object.nexttime,
-          specifiedType: const FullType(int)),
       'data',
       serializers.serialize(object.data,
           specifiedType: const FullType(
@@ -420,6 +423,12 @@ class _$PrivateMessageResultSerializer
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(bool)),
     ];
+    if (object.nexttime != null) {
+      result
+        ..add('nexttime')
+        ..add(serializers.serialize(object.nexttime,
+            specifiedType: const FullType(int)));
+    }
     if (object.curtime != null) {
       result
         ..add('curtime')
@@ -566,9 +575,6 @@ class _$PMSessionSerializer implements StructuredSerializer<PMSession> {
   Iterable serialize(Serializers serializers, PMSession object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'nexttime',
-      serializers.serialize(object.nexttime,
-          specifiedType: const FullType(int)),
       'data',
       serializers.serialize(object.data,
           specifiedType: const FullType(
@@ -580,6 +586,12 @@ class _$PMSessionSerializer implements StructuredSerializer<PMSession> {
       serializers.serialize(object.nochecknew,
           specifiedType: const FullType(int)),
     ];
+    if (object.nexttime != null) {
+      result
+        ..add('nexttime')
+        ..add(serializers.serialize(object.nexttime,
+            specifiedType: const FullType(int)));
+    }
     if (object.curtime != null) {
       result
         ..add('curtime')
@@ -650,9 +662,6 @@ class _$NoticeResult extends NoticeResult {
       : super._() {
     if (tmp == null) {
       throw new BuiltValueNullFieldError('NoticeResult', 'tmp');
-    }
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('NoticeResult', 'nexttime');
     }
     if (data == null) {
       throw new BuiltValueNullFieldError('NoticeResult', 'data');
@@ -957,9 +966,6 @@ class _$RatelogResult extends RatelogResult {
       : super._() {
     if (tmp == null) {
       throw new BuiltValueNullFieldError('RatelogResult', 'tmp');
-    }
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('RatelogResult', 'nexttime');
     }
     if (data == null) {
       throw new BuiltValueNullFieldError('RatelogResult', 'data');
@@ -1441,9 +1447,6 @@ class _$PrivateMessageResult extends PrivateMessageResult {
     if (tmp == null) {
       throw new BuiltValueNullFieldError('PrivateMessageResult', 'tmp');
     }
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('PrivateMessageResult', 'nexttime');
-    }
     if (data == null) {
       throw new BuiltValueNullFieldError('PrivateMessageResult', 'data');
     }
@@ -1759,9 +1762,6 @@ class _$PMSession extends PMSession {
   _$PMSession._(
       {this.nexttime, this.curtime, this.data, this.loadtime, this.nochecknew})
       : super._() {
-    if (nexttime == null) {
-      throw new BuiltValueNullFieldError('PMSession', 'nexttime');
-    }
     if (data == null) {
       throw new BuiltValueNullFieldError('PMSession', 'data');
     }

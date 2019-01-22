@@ -93,11 +93,14 @@ abstract class FetchedListModel extends GroupedListModel {
   SliverAppBar buildAppBar(BuildContext context) => null;
 
   Future<Null> handleRefresh(BuildContext context) async {
-    var request = fetchFromScratchRequest;
-    // var request = refreshRequest;
+    // var request = fetchFromScratchRequest;
+    var request = refreshRequest;
     if (request != null) {
       dispatchAction(context)(request);
+      return request.completer.future.then((_) {});
     }
+
+    return Future(() {});
   }
 
   Future<Null> handleFetchFromScratch(BuildContext context) async {

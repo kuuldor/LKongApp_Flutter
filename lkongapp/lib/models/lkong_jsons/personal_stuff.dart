@@ -18,6 +18,7 @@ abstract class NoticeResult
 
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
   @nullable
@@ -80,6 +81,7 @@ abstract class RatelogResult
 
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
   @nullable
@@ -179,6 +181,7 @@ abstract class PrivateMessageResult
 
   @BuiltValueField(wireName: 'tmp')
   String get tmp;
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
   @nullable
@@ -209,7 +212,14 @@ abstract class PrivateMessage
         Built<PrivateMessage, PrivateMessageBuilder> {
   PrivateMessage._();
 
-  factory PrivateMessage([updates(PrivateMessageBuilder b)]) = _$PrivateMessage;
+  factory PrivateMessage([updates(PrivateMessageBuilder b)]) =>
+      _$PrivateMessage((b) => b
+        ..uid = 0
+        ..sortkey = 0
+        ..dateline = ""
+        ..message = ""
+        ..id = ""
+        ..msgfromid = 0);
 
   @BuiltValueField(wireName: 'uid')
   int get uid;
@@ -247,6 +257,7 @@ abstract class PMSession
 
   factory PMSession([updates(PMSessionBuilder b)]) = _$PMSession;
 
+  @nullable
   @BuiltValueField(wireName: 'nexttime')
   int get nexttime;
   @nullable

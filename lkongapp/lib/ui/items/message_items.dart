@@ -1,12 +1,15 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 
+import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
+import 'package:redux/redux.dart';
 
 class NoticeItem extends StatelessWidget {
   final Notice notice;
@@ -47,8 +50,15 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = StoreProvider.of<AppState>(context);
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     TextStyle style = theme.themeData.textTheme.title;
+
+    final timestamp = parseDatetime(message.dateline);
+    final datetime = showDetailTime(store)
+        ? stringFromDate(timestamp)
+        : timeAgoSinceDate(timestamp);
+
     return Row(children: <Widget>[
       buildUserAvatar(context, message.uid, 36.0, clickable: true),
       Container(
@@ -69,7 +79,7 @@ class UserHeader extends StatelessWidget {
       Expanded(
         child: Align(
             alignment: Alignment.centerRight,
-            child: Text(dateStringToLocal(message.dateline), style: style)),
+            child: Text(datetime, style: style)),
       ),
     ]);
   }
@@ -170,6 +180,94 @@ class PMItem extends StatelessWidget {
               // Divider()
             ],
           )),
+    );
+  }
+}
+
+class PMConciseItem extends StatelessWidget {
+  final PrivateMessage pm;
+
+  static final pmItemKey = (int id) => Key('__pm_item_${id}__');
+
+  PMConciseItem(this.pm);
+
+  @override
+  Widget build(BuildContext context) {
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    TextStyle style = theme.themeData.textTheme.title;
+
+    final datetime = dateStringToLocal(pm.dateline);
+
+    Color bgColor;
+    MainAxisAlignment align;
+    CrossAxisAlignment colAlign;
+
+    if (pm.msgfromid == 0) {
+      bgColor = Colors.green[600];
+      align = MainAxisAlignment.end;
+      colAlign = CrossAxisAlignment.end;
+    } else {
+      bgColor = Colors.lightBlue[600];
+      align = MainAxisAlignment.start;
+      colAlign = CrossAxisAlignment.start;
+    }
+
+    final content = Container(
+      margin: EdgeInsets.symmetric(horizontal: 4.0),
+      width: MediaQuery.of(context).size.width - 80,
+      child: Column(
+        crossAxisAlignment: colAlign,
+        children: <Widget>[
+          Container(
+              padding: EdgeInsets.fromLTRB(4.0, 0, 0, 0),
+              child: Text(datetime,
+                  style: style.apply(color: theme.lightTextColor))),
+          SizedBox(
+            height: 2.0,
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(6.0), color: bgColor),
+            child: Text(pm.message, style: style),
+          ),
+        ],
+      ),
+    );
+
+    final imageDim = 32.0;
+    final avatar = Column(
+      crossAxisAlignment: colAlign,
+      children: <Widget>[
+        Container(padding: EdgeInsets.fromLTRB(4.0, 0, 0, 0), child: Text(" ")),
+        SizedBox(
+          height: 2.0,
+        ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6.0),
+          child: Image(
+            width: imageDim,
+            image: pm.uid != null && pm.uid > 0
+                ? CachedNetworkImageProvider(avatarForUserID(pm.uid),
+                    imageOnError: "assets/noavatar.png")
+                : AssetImage("assets/noavatar.png"),
+          ),
+        ),
+      ],
+    );
+
+    var items = <Widget>[avatar, content];
+    if (pm.msgfromid == 0) {
+      items = items.reversed.toList();
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
+      child: Row(
+        mainAxisAlignment: align,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: items,
+      ),
     );
   }
 }

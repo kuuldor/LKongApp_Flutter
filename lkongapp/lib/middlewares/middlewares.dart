@@ -77,6 +77,20 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
     store.dispatch(FollowListRequest(null, user));
   }
 
+  if (action is SendPMSuccess) {
+    final request = action.request as SendPMRequest;
+    final userData = selectUserData(store);
+    final session = userData.pmSession[request.pmid];
+
+    if (session != null) {
+      store.dispatch(GetPMSessionRefreshRequest(
+          null, request.uid, request.pmid, session.current));
+    } else {
+      store.dispatch(
+          GetPMSessionNewRequest(null, request.uid, request.pmid, 0, 0));
+    }
+  }
+
   if (passon) {
     next(action);
   }

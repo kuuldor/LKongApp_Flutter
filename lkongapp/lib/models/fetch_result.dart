@@ -26,12 +26,14 @@ abstract class FetchList<T>
   factory FetchList([updates(FetchListBuilder<T> b)]) =>
       _$FetchList<T>((FetchListBuilder<T> b) => b
         ..loading = false
+        ..sending = false
         ..current = 0
         ..nexttime = 0
         ..newcount = 0
         ..update(updates));
 
   bool get loading;
+  bool get sending;
   int get nexttime;
   int get current;
   int get newcount;

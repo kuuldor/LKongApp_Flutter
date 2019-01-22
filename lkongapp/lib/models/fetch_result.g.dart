@@ -10,6 +10,8 @@ class _$FetchList<T> extends FetchList<T> {
   @override
   final bool loading;
   @override
+  final bool sending;
+  @override
   final int nexttime;
   @override
   final int current;
@@ -25,6 +27,7 @@ class _$FetchList<T> extends FetchList<T> {
 
   _$FetchList._(
       {this.loading,
+      this.sending,
       this.nexttime,
       this.current,
       this.newcount,
@@ -33,6 +36,9 @@ class _$FetchList<T> extends FetchList<T> {
       : super._() {
     if (loading == null) {
       throw new BuiltValueNullFieldError('FetchList', 'loading');
+    }
+    if (sending == null) {
+      throw new BuiltValueNullFieldError('FetchList', 'sending');
     }
     if (nexttime == null) {
       throw new BuiltValueNullFieldError('FetchList', 'nexttime');
@@ -63,6 +69,7 @@ class _$FetchList<T> extends FetchList<T> {
     if (identical(other, this)) return true;
     return other is FetchList &&
         loading == other.loading &&
+        sending == other.sending &&
         nexttime == other.nexttime &&
         current == other.current &&
         newcount == other.newcount &&
@@ -75,7 +82,9 @@ class _$FetchList<T> extends FetchList<T> {
     return $jf($jc(
         $jc(
             $jc(
-                $jc($jc($jc(0, loading.hashCode), nexttime.hashCode),
+                $jc(
+                    $jc($jc($jc(0, loading.hashCode), sending.hashCode),
+                        nexttime.hashCode),
                     current.hashCode),
                 newcount.hashCode),
             lastError.hashCode),
@@ -86,6 +95,7 @@ class _$FetchList<T> extends FetchList<T> {
   String toString() {
     return (newBuiltValueToStringHelper('FetchList')
           ..add('loading', loading)
+          ..add('sending', sending)
           ..add('nexttime', nexttime)
           ..add('current', current)
           ..add('newcount', newcount)
@@ -102,6 +112,10 @@ class FetchListBuilder<T>
   bool _loading;
   bool get loading => _$this._loading;
   set loading(bool loading) => _$this._loading = loading;
+
+  bool _sending;
+  bool get sending => _$this._sending;
+  set sending(bool sending) => _$this._sending = sending;
 
   int _nexttime;
   int get nexttime => _$this._nexttime;
@@ -128,6 +142,7 @@ class FetchListBuilder<T>
   FetchListBuilder<T> get _$this {
     if (_$v != null) {
       _loading = _$v.loading;
+      _sending = _$v.sending;
       _nexttime = _$v.nexttime;
       _current = _$v.current;
       _newcount = _$v.newcount;
@@ -158,6 +173,7 @@ class FetchListBuilder<T>
       _$result = _$v ??
           new _$FetchList<T>._(
               loading: loading,
+              sending: sending,
               nexttime: nexttime,
               current: current,
               newcount: newcount,

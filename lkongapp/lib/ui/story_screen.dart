@@ -427,7 +427,7 @@ class StoryContentModel {
         tile = spinner;
       } else {
         if (index == 0) {
-          if ((info?.uid ?? 0) > 0) {
+          if (info?.subject != null) {
             tile = wrapTile(Container(
               child: Center(
                 child: StoryInfoItem(info: info),

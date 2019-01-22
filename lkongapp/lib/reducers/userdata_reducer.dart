@@ -223,6 +223,9 @@ final _pmSessionMapReducer = combineReducers<UserData>([
   TypedReducer<UserData, GetPMSessionRequest>(_handlePMSessionMap),
   TypedReducer<UserData, GetPMSessionSuccess>(_handlePMSessionMap),
   TypedReducer<UserData, GetPMSessionFailure>(_handlePMSessionMap),
+  TypedReducer<UserData, SendPMRequest>(_handlePMSessionMap),
+  TypedReducer<UserData, SendPMFailure>(_handlePMSessionMap),
+  TypedReducer<UserData, SendPMSuccess>(_handlePMSessionMap),
 ]);
 
 final _pmSessionReducer =
@@ -233,6 +236,12 @@ final _pmSessionReducer =
       _pmSessionSucceeded),
   TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, GetPMSessionFailure>(
       _pmSessionFailed),
+  TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, SendPMRequest>(
+      _sendPMRequested),
+  TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, SendPMSuccess>(
+      _sendPMSucceeded),
+  TypedReducer<BuiltMap<int, FetchList<PrivateMessage>>, SendPMFailure>(
+      _sendPMFailed),
 ]);
 
 UserData _handlePMSessionMap(UserData state, action) {
@@ -296,4 +305,46 @@ BuiltMap<int, FetchList<PrivateMessage>> _pmSessionFailed(
   final request = action.request as GetPMSessionRequest;
   final pmid = request.pmid;
   return _handlePMSessionActions(state, pmid, action);
+}
+
+BuiltMap<int, FetchList<PrivateMessage>> _sendPMRequested(
+    BuiltMap<int, FetchList<PrivateMessage>> state, SendPMRequest action) {
+  final request = action;
+  final pmid = request.pmid;
+
+  final updates = (FetchListBuilder<PrivateMessage> b) => b..sending = true;
+
+  return state.rebuild((b) => b
+    ..updateValue(pmid, (v) => v.rebuild(updates),
+        ifAbsent: () => FetchList<PrivateMessage>().rebuild(updates)));
+}
+
+BuiltMap<int, FetchList<PrivateMessage>> _sendPMSucceeded(
+    BuiltMap<int, FetchList<PrivateMessage>> state, SendPMSuccess action) {
+  final request = action.request as SendPMRequest;
+  if (request != null) {
+    final pmid = request.pmid;
+
+    final updates = (FetchListBuilder<PrivateMessage> b) => b..sending = false;
+
+    return state
+        .rebuild((b) => b..updateValue(pmid, (v) => v.rebuild(updates)));
+  }
+  return state;
+}
+
+BuiltMap<int, FetchList<PrivateMessage>> _sendPMFailed(
+    BuiltMap<int, FetchList<PrivateMessage>> state, SendPMFailure action) {
+  final request = action.request as SendPMRequest;
+  if (request != null) {
+    final pmid = request.pmid;
+
+    final updates = (FetchListBuilder<PrivateMessage> b) => b
+      ..sending = false
+      ..lastError = action.error;
+
+    return state
+        .rebuild((b) => b..updateValue(pmid, (v) => v.rebuild(updates)));
+  }
+  return state;
 }

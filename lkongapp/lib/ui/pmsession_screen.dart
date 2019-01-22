@@ -10,8 +10,10 @@ import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/items/item_wrapper.dart';
+import 'package:lkongapp/ui/items/message_items.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
+import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
@@ -46,9 +48,11 @@ class PMSessionModel extends FetchedListModel {
   final String lastError;
   final bool showDetailTime;
 
+  static final _textController = TextEditingController();
+
   AppBar appBar(BuildContext context) => AppBar(
         title: GestureDetector(
-          child: Text("与${profile?.user?.username ?? ""}的对话",
+          child: Text("${profile?.user?.username ?? ""}",
               style:
                   Theme.of(context).textTheme.title.apply(color: Colors.white)),
           onTap: () => scrollToTop(context),
@@ -119,7 +123,8 @@ class PMSessionModel extends FetchedListModel {
   @override
   Future<Null> handleRefresh(BuildContext context) {
     final Completer<String> completer = Completer<String>();
-    dispatchAction(context)(GetPMSessionNewRequest(completer, uid, pmid, 0, 0));
+    dispatchAction(context)(
+        GetPMSessionRefreshRequest(completer, uid, pmid, session.current));
     return completer.future.then((_) {});
   }
 
@@ -131,8 +136,8 @@ class PMSessionModel extends FetchedListModel {
       return PMSessionModel(
         profile: store.state.uiState.content.profiles[pmid],
         uid: uid,
-        loading: store.state.uiState.content.loading,
-        lastError: store.state.uiState.content.lastError,
+        loading: userData?.pmSession[pmid]?.loading ?? false,
+        lastError: userData?.pmSession[pmid]?.lastError,
         pmid: pmid,
         session: userData?.pmSession[pmid],
         showDetailTime: selectSetting(store).showDetailTime,
@@ -142,31 +147,79 @@ class PMSessionModel extends FetchedListModel {
   }
 
   Widget createPMSessionItem(BuildContext context, PrivateMessage message) {
-    return ListTile(
-      title: Text(
-        message.message,
-        style: Theme.of(context).textTheme.title,
-      ),
-    );
+    return PMConciseItem(message);
+  }
+
+  void sendMessage(BuildContext context) {
+    if (session.sending) {
+      return;
+    }
+
+    final completer = Completer<String>();
+
+    String message = _textController.text;
+    print("Send Message: ${_textController.text}");
+    _textController.clear();
+
+    dispatchAction(context)(SendPMRequest(completer, uid, pmid, message));
+
+    completer.future.then((error) {
+      if (error != null) {
+        String msg;
+        msg = '消息发送失败' + ": $error";
+        showToast(msg);
+      }
+    });
   }
 
   @override
   Widget headerForSection(BuildContext context, {int section}) {
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     return Container(
-        color: Colors.grey[500],
-        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+        color: theme.quoteBG,
+        padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
         alignment: Alignment.centerLeft,
         child: Row(children: <Widget>[
           Expanded(
-            child: TextField(),
+            child: TextFormField(
+              controller: _textController,
+              scrollPadding: EdgeInsets.all(0),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: theme.pageColor,
+                contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(width: 1.0),
+                    borderRadius: BorderRadius.circular(6.0)),
+              ),
+            ),
           ),
-          FlatButton(
-            color: Colors.blue,
-            child: Text("发送"),
-            onPressed: () {},
+          SizedBox(
+            width: 8.0,
+          ),
+          Container(
+            height: 32,
+            width: 64,
+            child: session?.sending == true
+                ? Center(
+                    child: Container(
+                        padding: EdgeInsets.all(4.0),
+                        height: 32,
+                        width: 32,
+                        child: CircularProgressIndicator()))
+                : FlatButton(
+                    color: Colors.green[600],
+                    child: Text("发送"),
+                    onPressed: () {
+                      sendMessage(context);
+                    },
+                  ),
           ),
         ]));
   }
+
+  @override
+  Widget Function(BuildContext, Widget) get wrapCell => wrapItemNoDivider;
 
   @override
   Widget createListItem(BuildContext context, int index) {
@@ -175,7 +228,7 @@ class PMSessionModel extends FetchedListModel {
     if (messages != null && index >= 0 && index < messages.length) {
       Widget item = createPMSessionItem(context, messages[index]);
 
-      return wrapItem(context, item);
+      return wrapItemNoDivider(context, item);
     }
     return null;
   }

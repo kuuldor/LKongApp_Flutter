@@ -32,6 +32,7 @@ const FOLLOW_API = "FOLLOW";
 const UPVOTE_API = "UPVOTE";
 const HOTDIGEST_API = "HOTDIGEST";
 const PMSESSION_API = "PMSESSION";
+const SENDPM_API = "SENDPM";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -669,6 +670,17 @@ Future<Map> upvoteComment(Map args) {
       dataParser: _parseResponseBody(UpvoteResult.fromJson));
 }
 
+Future<Map> sendPM(Map args) {
+  int pmId = args["pmid"];
+  String message = args["message"];
+
+  var httpAction = session.post(endpoint["message"], data: {
+    "request": "pm_$pmId",
+    "message": message,
+  });
+  return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
+}
+
 Future<Map> getHotDigest(Map args) {
   final forums = args["forums"] as List<Forum>;
 
@@ -890,6 +902,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == PMSESSION_API) {
     return getPMSession(parameters);
+  }
+
+  if (api == SENDPM_API) {
+    return sendPM(parameters);
   }
 
   return Future<Map>(null);
