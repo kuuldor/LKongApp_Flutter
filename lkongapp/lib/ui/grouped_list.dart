@@ -27,6 +27,7 @@ abstract class GroupedListModel {
 
   void scrollToTop(context) {
     scrollController.jumpTo(0.1); // 0.1 to avoid pull-to-refresh is triggered
+    scrollController.jumpTo(0.0); // then move to top
   }
 
   List<Widget> buildSlivers(BuildContext context) {
