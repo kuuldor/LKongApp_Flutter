@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
+import 'package:lkongapp/ui/tools/item_handler.dart';
 
 class StoryInfoItem extends StatelessWidget {
   // final GestureTapCallback onTap;
@@ -16,6 +18,7 @@ class StoryInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
     return info == null
         ? Container()
         : ListTile(
@@ -30,14 +33,15 @@ class StoryInfoItem extends StatelessWidget {
                       child: Text(
                         info.subject,
                         style: Theme.of(context).textTheme.title.copyWith(
-                            fontSize: 24, fontWeight: FontWeight.w500),
+                            fontSize: 22, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
                 ),
               ),
-              // ]),
-              // subtitle:
+              SizedBox(
+                height: 4.0,
+              ),
               Row(
                 children: <Widget>[
                   Expanded(
@@ -47,7 +51,17 @@ class StoryInfoItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(info.author),
-                          Text("发表于：${info.forumname ?? '个人位面'}"),
+                          info.forumname != null
+                              ? GestureDetector(
+                                  child: Text("${info.forumname ?? '个人位面'}",
+                                      style: TextStyle(color: theme.linkColor)),
+                                  onTap: () => onForumTap(
+                                      context,
+                                      Forum().rebuild((b) => b
+                                        ..name = info.forumname
+                                        ..fid = info.fid)),
+                                )
+                              : Text("个人位面"),
                         ],
                       ),
                     ),

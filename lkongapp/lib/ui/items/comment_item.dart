@@ -66,7 +66,7 @@ class CommentItem extends StatelessWidget {
                   width: 4.0,
                 ),
                 Text(
-                  rate.username,
+                  rate.username ?? '',
                   style: style.apply(color: theme.linkColor),
                 ),
                 Expanded(

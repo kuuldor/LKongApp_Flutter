@@ -254,9 +254,6 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
     final result = <Object>[
       'uid',
       serializers.serialize(object.uid, specifiedType: const FullType(int)),
-      'username',
-      serializers.serialize(object.username,
-          specifiedType: const FullType(String)),
       'extcredits',
       serializers.serialize(object.extcredits,
           specifiedType: const FullType(String)),
@@ -278,6 +275,12 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
         ..add('sortkey')
         ..add(serializers.serialize(object.sortkey,
             specifiedType: const FullType(int)));
+    }
+    if (object.username != null) {
+      result
+        ..add('username')
+        ..add(serializers.serialize(object.username,
+            specifiedType: const FullType(String)));
     }
     if (object.message != null) {
       result
@@ -1130,9 +1133,6 @@ class _$Ratelog extends Ratelog {
       : super._() {
     if (uid == null) {
       throw new BuiltValueNullFieldError('Ratelog', 'uid');
-    }
-    if (username == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'username');
     }
     if (extcredits == null) {
       throw new BuiltValueNullFieldError('Ratelog', 'extcredits');

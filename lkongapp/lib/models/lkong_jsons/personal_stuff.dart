@@ -115,6 +115,7 @@ abstract class Ratelog
   int get sortkey;
   @BuiltValueField(wireName: 'uid')
   int get uid;
+  @nullable
   @BuiltValueField(wireName: 'username')
   String get username;
   @nullable
