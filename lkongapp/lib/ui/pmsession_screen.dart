@@ -234,7 +234,7 @@ class PMSessionModel extends FetchedListModel {
   }
 
   @override
-  bool get initLoaded => (session?.data?.length ?? 0) > 0;
+  bool get initLoaded => (session?.current ?? 0) > 0;
 
   @override
   void listIsReady(BuildContext context) {}

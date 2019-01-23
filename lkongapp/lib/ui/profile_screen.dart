@@ -5,6 +5,7 @@ import 'package:lkongapp/ui/fetched_list.dart';
 import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/items/user_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/ui/screens.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/ui/tools/user_icon.dart';
@@ -328,6 +329,14 @@ class ProfileScreenModel extends FetchedListModel {
           } else {
             assert(false, "User is not ready");
           }
+        }));
+        break;
+      case MenuAction.chat:
+        dispatchAction(context)(UINavigationPush(
+            context, LKongAppRoutes.pmsession, false, (context) {
+          return PMSessionScreen(
+            pmid: profile.user.uid,
+          );
         }));
         break;
       default:
