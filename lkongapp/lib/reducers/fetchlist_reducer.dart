@@ -60,8 +60,10 @@ FetchList<T> fetchListSucceeded<T extends Identifiable>(
           break;
         case FetchListRequestType.Refresh:
           if (data.length >= 20) {
+            final date = parseDatetime(data.last.dateline);
             b
               ..newcount = 0
+              ..nexttime = date.millisecondsSinceEpoch ~/ 1000 - 1
               ..data.replace(data);
           } else {
             var newsSet = data.map((story) => story.id).toSet();

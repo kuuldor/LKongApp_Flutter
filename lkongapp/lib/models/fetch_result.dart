@@ -5,6 +5,7 @@ part 'fetch_result.g.dart';
 
 abstract class Identifiable {
   String get id;
+  String get dateline;
 }
 
 abstract class UserMessage {
