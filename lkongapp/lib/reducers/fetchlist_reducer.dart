@@ -34,7 +34,9 @@ FetchList<T> fetchListSucceeded<T extends Identifiable>(
   return list.rebuild((b) {
     var data = result.data;
     if (result.curtime == null && result.nexttime == null && data.length == 0) {
-      return b;
+      return b
+        ..loading = false
+        ..lastError = null;
     }
 
     int nexttime = type != FetchListRequestType.Refresh
