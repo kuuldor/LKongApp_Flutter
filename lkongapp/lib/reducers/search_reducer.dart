@@ -20,7 +20,8 @@ SearchResult _searchResultRequested(SearchResult repo, SearchRequest action) {
   return SearchResult().rebuild((b) => b
     ..loading = true
     ..searchString = action.searchString
-    ..searchType = action.searchType);
+    ..searchType = action.searchType
+    ..sortType = action.sortType);
 }
 
 SearchResult _searchResultFailed(SearchResult repo, SearchFailure action) {

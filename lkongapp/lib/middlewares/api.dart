@@ -464,11 +464,13 @@ Future<Map> getPMSession(Map args) {
 Future<Map> searchLKong(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int type = args["type"];
+  int sort = args["sort"];
   String searchString = args["search"];
 
   assert(type != null, "Must speicfy type");
 
   String searchTypePrefix;
+  String sortSuffix;
   Function(String) parser;
 
   switch (type) {
@@ -489,9 +491,25 @@ Future<Map> searchLKong(Map args) {
       break;
   }
 
+  switch (sort) {
+    case 0:
+      sortSuffix = "";
+      break;
+    case 1:
+      sortSuffix = "/hot";
+      break;
+    case 2:
+      sortSuffix = "/time";
+      break;
+    default:
+      assert(false, "Invalid Search Sort $type");
+      break;
+  }
+
   var params = getTimeParameter(nexttime, 0);
   var urlString = endpoint["search"] +
       Uri.encodeComponent(searchTypePrefix + searchString) +
+      sortSuffix +
       querify(params);
 
   var httpAction = session.get(urlString);

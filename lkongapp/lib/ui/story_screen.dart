@@ -206,12 +206,10 @@ class StoryContentModel {
       ]);
 
   final allMenus = const <Choice>[
-    const Choice(
-        title: '关注', icon: Icons.visibility, action: MenuAction.follow),
+    const Choice(title: '关注', icon: Icons.visibility, action: MenuAction.follow),
     const Choice(
         title: '取消关注', icon: Icons.visibility_off, action: MenuAction.unfollow),
-    const Choice(
-        title: '收藏', icon: Icons.favorite, action: MenuAction.favorite),
+    const Choice(title: '收藏', icon: Icons.favorite, action: MenuAction.favorite),
     const Choice(
         title: '取消收藏', icon: Icons.delete_sweep, action: MenuAction.unfavorite),
   ];

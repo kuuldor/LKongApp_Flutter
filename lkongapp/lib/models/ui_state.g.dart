@@ -684,6 +684,8 @@ class _$SearchResult extends SearchResult {
   @override
   final int searchType;
   @override
+  final int sortType;
+  @override
   final FetchList<Story> stories;
   @override
   final SearchUserResult users;
@@ -698,6 +700,7 @@ class _$SearchResult extends SearchResult {
       this.loading,
       this.searchString,
       this.searchType,
+      this.sortType,
       this.stories,
       this.users,
       this.forums})
@@ -710,6 +713,9 @@ class _$SearchResult extends SearchResult {
     }
     if (searchType == null) {
       throw new BuiltValueNullFieldError('SearchResult', 'searchType');
+    }
+    if (sortType == null) {
+      throw new BuiltValueNullFieldError('SearchResult', 'sortType');
     }
   }
 
@@ -728,6 +734,7 @@ class _$SearchResult extends SearchResult {
         loading == other.loading &&
         searchString == other.searchString &&
         searchType == other.searchType &&
+        sortType == other.sortType &&
         stories == other.stories &&
         users == other.users &&
         forums == other.forums;
@@ -739,9 +746,11 @@ class _$SearchResult extends SearchResult {
         $jc(
             $jc(
                 $jc(
-                    $jc($jc($jc(0, lastError.hashCode), loading.hashCode),
-                        searchString.hashCode),
-                    searchType.hashCode),
+                    $jc(
+                        $jc($jc($jc(0, lastError.hashCode), loading.hashCode),
+                            searchString.hashCode),
+                        searchType.hashCode),
+                    sortType.hashCode),
                 stories.hashCode),
             users.hashCode),
         forums.hashCode));
@@ -754,6 +763,7 @@ class _$SearchResult extends SearchResult {
           ..add('loading', loading)
           ..add('searchString', searchString)
           ..add('searchType', searchType)
+          ..add('sortType', sortType)
           ..add('stories', stories)
           ..add('users', users)
           ..add('forums', forums))
@@ -781,6 +791,10 @@ class SearchResultBuilder
   int get searchType => _$this._searchType;
   set searchType(int searchType) => _$this._searchType = searchType;
 
+  int _sortType;
+  int get sortType => _$this._sortType;
+  set sortType(int sortType) => _$this._sortType = sortType;
+
   FetchListBuilder<Story> _stories;
   FetchListBuilder<Story> get stories =>
       _$this._stories ??= new FetchListBuilder<Story>();
@@ -804,6 +818,7 @@ class SearchResultBuilder
       _loading = _$v.loading;
       _searchString = _$v.searchString;
       _searchType = _$v.searchType;
+      _sortType = _$v.sortType;
       _stories = _$v.stories?.toBuilder();
       _users = _$v.users?.toBuilder();
       _forums = _$v.forums?.toBuilder();
@@ -835,6 +850,7 @@ class SearchResultBuilder
               loading: loading,
               searchString: searchString,
               searchType: searchType,
+              sortType: sortType,
               stories: _stories?.build(),
               users: _users?.build(),
               forums: _forums?.build());

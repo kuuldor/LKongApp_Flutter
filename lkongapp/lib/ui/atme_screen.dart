@@ -100,7 +100,7 @@ abstract class NotifScreenModel extends StoryListModel {
 
   List<Choice> filterMenus() {
     var menus = List<Choice>.from(allMenus);
-    menus.removeAt(state.type);
+    menus[state.type] = Choice.disable(menus[state.type]);
     return menus;
   }
 
@@ -144,6 +144,7 @@ abstract class NotifScreenModel extends StoryListModel {
             return menus.map((Choice menuItem) {
               return PopupMenuItem<Choice>(
                 value: menuItem,
+                enabled: menuItem.enabled,
                 child: Text(menuItem.title),
               );
             }).toList();

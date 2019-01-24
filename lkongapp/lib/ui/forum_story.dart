@@ -155,7 +155,6 @@ class ForumStoryModel extends StoryListModel {
         completer, state.forum.fid, state.mode, storyList.nexttime);
   }
 
-
   @override
   APIRequest get refreshRequest => fetchFromScratchRequest;
 
@@ -175,7 +174,7 @@ class ForumStoryModel extends StoryListModel {
 
   final allMenus = const <Choice>[
     const Choice(
-        title: '全部显示', icon: Icons.library_books, action: MenuAction.showAll),
+        title: '正常顺序显示', icon: Icons.library_books, action: MenuAction.normal),
     const Choice(title: '精华', icon: Icons.star, action: MenuAction.digest),
     const Choice(
         title: '发布时间排序', icon: Icons.watch_later, action: MenuAction.timeline),
@@ -183,7 +182,7 @@ class ForumStoryModel extends StoryListModel {
 
   List<Choice> filterMenus() {
     var menus = List<Choice>.from(allMenus);
-    menus.removeAt(state.mode);
+    menus[state.mode] = Choice.disable(menus[state.mode]);
     return menus;
   }
 
@@ -247,7 +246,7 @@ class ForumStoryModel extends StoryListModel {
   SliverAppBar buildAppBar(BuildContext context) {
     List<Choice> menus = filterMenus();
     var actions = <Widget>[];
-    
+
     if (username != null && uid != null) {
       actions.add(IconButton(
         icon: Icon(Icons.create),
@@ -285,6 +284,7 @@ class ForumStoryModel extends StoryListModel {
         return menus.map((Choice menuItem) {
           return PopupMenuItem<Choice>(
             value: menuItem,
+            enabled: menuItem.enabled,
             child: Text(menuItem.title),
           );
         }).toList();

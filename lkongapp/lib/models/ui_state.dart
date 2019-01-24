@@ -106,6 +106,7 @@ abstract class SearchResult
         ..loading = false
         ..searchString = ""
         ..searchType = -1
+        ..sortType = -1
         ..update(updates));
 
   @nullable
@@ -113,6 +114,7 @@ abstract class SearchResult
   bool get loading;
   String get searchString;
   int get searchType;
+  int get sortType;
   @nullable
   FetchList<Story> get stories;
   @nullable

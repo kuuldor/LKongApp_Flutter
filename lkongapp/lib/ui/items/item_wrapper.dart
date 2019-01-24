@@ -41,9 +41,11 @@ Widget wrapItem(BuildContext context, Widget item) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
 
   return Column(children: <Widget>[
-    SizedBox(height: 6.0),
+    SizedBox(height: 2.0),
     item,
-    Divider(),
+    Divider(
+      height: 12.0,
+    ),
   ]);
 }
 

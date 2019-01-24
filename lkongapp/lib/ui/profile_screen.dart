@@ -101,10 +101,8 @@ final allMenus = const <Choice>[
       title: '解除关注', icon: Icons.visibility_off, action: MenuAction.unfollow),
   const Choice(title: '发消息', icon: Icons.textsms, action: MenuAction.chat),
   const Choice(title: '加入黑名单', icon: Icons.report, action: MenuAction.block),
-  const Choice(
-      title: '解除黑名单', icon: Icons.report_off, action: MenuAction.unblock),
-  const Choice(
-      title: '全部帖子', icon: Icons.library_books, action: MenuAction.showAll),
+  const Choice(title: '解除黑名单', icon: Icons.report_off, action: MenuAction.unblock),
+  const Choice(title: '全部帖子', icon: Icons.library_books, action: MenuAction.showAll),
   const Choice(
       title: '管理黑名单',
       icon: Icons.recent_actors,
@@ -275,7 +273,7 @@ class ProfileScreenModel extends FetchedListModel {
         return true;
       }).toList();
     } else {
-      menus = <Choice>[];
+      menus = const <Choice>[];
     }
 
     return menus;

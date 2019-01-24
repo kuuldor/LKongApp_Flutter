@@ -9,8 +9,10 @@ enum MenuAction {
   showAll,
   manageBlackList,
   uploadAvatar,
+  normal,
   digest,
   timeline,
+  hot,
   favorite,
   unfavorite,
   atMe,
@@ -20,9 +22,18 @@ enum MenuAction {
 }
 
 class Choice {
-  const Choice({this.title, this.icon, this.action});
+  const Choice({this.title, this.icon, this.action, this.enabled: true});
 
   final String title;
   final IconData icon;
   final MenuAction action;
+  final bool enabled;
+
+  static Choice disable(Choice choice) {
+    return Choice(
+        title: choice.title,
+        icon: choice.icon,
+        action: choice.action,
+        enabled: false);
+  }
 }
