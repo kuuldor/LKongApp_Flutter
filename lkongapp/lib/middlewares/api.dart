@@ -431,7 +431,10 @@ Future<Map> getPersonalData(Map args) {
   return _handleHttp(
     httpAction,
     dataParser: _parseResponseBody(parser),
-    preProcessor: numMapperBuiler(["uid", "score"]),
+    preProcessor: combinedProcessorBuilder([
+      numMapperBuiler(["uid", "score"]),
+      tagStripperBuiler(["subject"])
+    ]),
   );
 }
 

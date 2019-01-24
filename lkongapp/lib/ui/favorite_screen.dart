@@ -103,15 +103,18 @@ class FavoriteScreenModel extends StoryListModel {
   }
 
   @override
-  APIRequest get refreshRequest {
-    if (storyList == null || storyList.current == 0) {
-      return null;
-    }
+  APIRequest get refreshRequest => fetchFromScratchRequest;
 
-    final Completer<String> completer = Completer<String>();
-    completer.future.then((error) {});
-    return GetMyFavoritesRefreshRequest(completer, uid, storyList.current);
-  }
+  // @override
+  // APIRequest get refreshRequest {
+  //   if (storyList == null || storyList.current == 0) {
+  //     return null;
+  //   }
+
+  //   final Completer<String> completer = Completer<String>();
+  //   completer.future.then((error) {});
+  //   return GetMyFavoritesRefreshRequest(completer, uid, storyList.current);
+  // }
 
   @override
   APIRequest get checkNewRequest => null;

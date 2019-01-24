@@ -155,19 +155,23 @@ class ForumStoryModel extends StoryListModel {
         completer, state.forum.fid, state.mode, storyList.nexttime);
   }
 
-  @override
-  APIRequest get refreshRequest {
-    if (storyList.current == 0) {
-      return null;
-    }
 
-    final Completer<String> completer = Completer<String>();
-    completer.future.then((error) {
-      // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
-    });
-    return ForumStoryRefreshRequest(
-        completer, state.forum.fid, state.mode, storyList.current);
-  }
+  @override
+  APIRequest get refreshRequest => fetchFromScratchRequest;
+
+  // @override
+  // APIRequest get refreshRequest {
+  //   if (storyList.current == 0) {
+  //     return null;
+  //   }
+
+  //   final Completer<String> completer = Completer<String>();
+  //   completer.future.then((error) {
+  //     // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
+  //   });
+  //   return ForumStoryRefreshRequest(
+  //       completer, state.forum.fid, state.mode, storyList.current);
+  // }
 
   final allMenus = const <Choice>[
     const Choice(
