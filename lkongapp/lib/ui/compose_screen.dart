@@ -64,7 +64,7 @@ class ComposeState extends State<ComposeScreen> {
       final signature = signaturePattern.replaceAllMapped(
           dotPattern, (Match m) => "'$signatureLink'>$signatureRaw");
 
-      content += signature;
+      content = "$content $signature";
     }
 
     return content;
