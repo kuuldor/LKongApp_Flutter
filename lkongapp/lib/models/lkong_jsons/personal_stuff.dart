@@ -125,12 +125,16 @@ abstract class Ratelog
   String get extcredits;
   @BuiltValueField(wireName: 'score')
   int get score;
+  @nullable
   @BuiltValueField(wireName: 'reason')
   String get reason;
+  @nullable
   @BuiltValueField(wireName: 'dateline')
   String get dateline;
+  @nullable
   @BuiltValueField(wireName: 'pid')
   int get pid;
+  @nullable
   @BuiltValueField(wireName: 'id')
   String get id;
 

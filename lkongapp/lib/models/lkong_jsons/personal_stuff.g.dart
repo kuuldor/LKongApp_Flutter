@@ -259,16 +259,6 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
           specifiedType: const FullType(String)),
       'score',
       serializers.serialize(object.score, specifiedType: const FullType(int)),
-      'reason',
-      serializers.serialize(object.reason,
-          specifiedType: const FullType(String)),
-      'dateline',
-      serializers.serialize(object.dateline,
-          specifiedType: const FullType(String)),
-      'pid',
-      serializers.serialize(object.pid, specifiedType: const FullType(int)),
-      'id',
-      serializers.serialize(object.id, specifiedType: const FullType(String)),
     ];
     if (object.sortkey != null) {
       result
@@ -286,6 +276,30 @@ class _$RatelogSerializer implements StructuredSerializer<Ratelog> {
       result
         ..add('message')
         ..add(serializers.serialize(object.message,
+            specifiedType: const FullType(String)));
+    }
+    if (object.reason != null) {
+      result
+        ..add('reason')
+        ..add(serializers.serialize(object.reason,
+            specifiedType: const FullType(String)));
+    }
+    if (object.dateline != null) {
+      result
+        ..add('dateline')
+        ..add(serializers.serialize(object.dateline,
+            specifiedType: const FullType(String)));
+    }
+    if (object.pid != null) {
+      result
+        ..add('pid')
+        ..add(serializers.serialize(object.pid,
+            specifiedType: const FullType(int)));
+    }
+    if (object.id != null) {
+      result
+        ..add('id')
+        ..add(serializers.serialize(object.id,
             specifiedType: const FullType(String)));
     }
 
@@ -1139,18 +1153,6 @@ class _$Ratelog extends Ratelog {
     }
     if (score == null) {
       throw new BuiltValueNullFieldError('Ratelog', 'score');
-    }
-    if (reason == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'reason');
-    }
-    if (dateline == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'dateline');
-    }
-    if (pid == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'pid');
-    }
-    if (id == null) {
-      throw new BuiltValueNullFieldError('Ratelog', 'id');
     }
   }
 

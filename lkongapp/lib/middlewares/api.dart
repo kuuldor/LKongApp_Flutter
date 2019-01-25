@@ -687,8 +687,11 @@ Future<Map> upvoteComment(Map args) {
     "num": "$coins",
     "reason": reason,
   });
-  return _handleHttp(httpAction,
-      dataParser: _parseResponseBody(UpvoteResult.fromJson));
+  return _handleHttp(
+    httpAction,
+    dataParser: _parseResponseBody(UpvoteResult.fromJson),
+    preProcessor: strMapperBuiler(["extcredits"]),
+  );
 }
 
 Future<Map> sendPM(Map args) {
