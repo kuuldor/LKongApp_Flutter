@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
+import 'package:photo_view/photo_view.dart';
+import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
@@ -125,11 +127,13 @@ _cleanUpTextList(List<Widget> widgetList, List<TextSpan> textList) {
   }
 }
 
-_parseImageAndText(BuildContext context,
-    {@required dom.Node node,
-    @required List<Widget> widgetList,
-    @required TextStyle baseTextStyle,
-    @required List<TextSpan> textList}) {
+_parseImageAndText(
+  BuildContext context, {
+  @required dom.Node node,
+  @required List<Widget> widgetList,
+  @required TextStyle baseTextStyle,
+  @required List<TextSpan> textList,
+}) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
   if (node is dom.Element) {
     dom.Element e = node;
@@ -142,11 +146,32 @@ _parseImageAndText(BuildContext context,
       var src = e.attributes['src'];
 
       if (src.startsWith("http") || src.startsWith("https")) {
-        widgetList.add(CachedNetworkImage(
+        Widget image = CachedNetworkImage(
           imageUrl: src,
           imageOnError: "assets/image_placeholder.png",
           fit: BoxFit.cover,
-        ));
+        );
+
+        if (!isLKongEmoji(src)) {
+          final imageProvider = CachedNetworkImageProvider(src,
+              imageOnError: "assets/image_placeholder.png");
+          image = GestureDetector(
+            child: image,
+            onLongPress: () {
+              dispatchAction(context)(UINavigationPush(
+                  context, LKongAppRoutes.photo_view, false, (context) {
+                return Container(
+                  child: PhotoView(
+                    imageProvider: imageProvider,
+                    minScale: PhotoViewComputedScale.contained * 0.5,
+                    maxScale: 2.5,
+                  ),
+                );
+              }));
+            },
+          );
+        }
+        widgetList.add(image);
       } else if (src.startsWith('data:image')) {
         var exp = RegExp(r'data:.*;base64,');
         var base64Str = src.replaceAll(exp, '');
@@ -326,11 +351,13 @@ _parseDocumentBody(
       .apply(fontWeightDelta: -1, color: theme.darkTextColor);
 
   if (docBodyChildren.length > 0)
-    docBodyChildren.forEach((e) => _parseImageAndText(context,
-        node: e,
-        widgetList: widgetList,
-        baseTextStyle: defaultStyle,
-        textList: textList));
+    docBodyChildren.forEach((e) => _parseImageAndText(
+          context,
+          node: e,
+          widgetList: widgetList,
+          baseTextStyle: defaultStyle,
+          textList: textList,
+        ));
 
   _cleanUpTextList(widgetList, textList);
 }
