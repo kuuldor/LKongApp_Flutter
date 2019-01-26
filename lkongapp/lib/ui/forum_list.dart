@@ -189,6 +189,17 @@ class ForumListModel extends FetchedListModel {
 
   @override
   Widget headerForSection(BuildContext context, {int section}) {
+    if (lastError != null && section == 0) {
+      return Container(
+          color: Colors.red[500],
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "错误：$lastError。请稍后重试",
+            style: const TextStyle(color: Colors.white),
+          ));
+    }
+
     String headerText;
 
     switch (section) {

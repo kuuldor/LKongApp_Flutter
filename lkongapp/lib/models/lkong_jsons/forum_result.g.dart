@@ -93,12 +93,6 @@ class _$ForumSerializer implements StructuredSerializer<Forum> {
       'name',
       serializers.serialize(object.name, specifiedType: const FullType(String)),
     ];
-    if (object.pos != null) {
-      result
-        ..add('pos')
-        ..add(serializers.serialize(object.pos,
-            specifiedType: const FullType(int)));
-    }
 
     return result;
   }
@@ -121,10 +115,6 @@ class _$ForumSerializer implements StructuredSerializer<Forum> {
         case 'name':
           result.name = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
-          break;
-        case 'pos':
-          result.pos = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -525,13 +515,11 @@ class _$Forum extends Forum {
   final int fid;
   @override
   final String name;
-  @override
-  final int pos;
 
   factory _$Forum([void updates(ForumBuilder b)]) =>
       (new ForumBuilder()..update(updates)).build();
 
-  _$Forum._({this.fid, this.name, this.pos}) : super._() {
+  _$Forum._({this.fid, this.name}) : super._() {
     if (fid == null) {
       throw new BuiltValueNullFieldError('Forum', 'fid');
     }
@@ -550,23 +538,19 @@ class _$Forum extends Forum {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Forum &&
-        fid == other.fid &&
-        name == other.name &&
-        pos == other.pos;
+    return other is Forum && fid == other.fid && name == other.name;
   }
 
   @override
   int get hashCode {
-    return $jf($jc($jc($jc(0, fid.hashCode), name.hashCode), pos.hashCode));
+    return $jf($jc($jc(0, fid.hashCode), name.hashCode));
   }
 
   @override
   String toString() {
     return (newBuiltValueToStringHelper('Forum')
           ..add('fid', fid)
-          ..add('name', name)
-          ..add('pos', pos))
+          ..add('name', name))
         .toString();
   }
 }
@@ -582,17 +566,12 @@ class ForumBuilder implements Builder<Forum, ForumBuilder> {
   String get name => _$this._name;
   set name(String name) => _$this._name = name;
 
-  int _pos;
-  int get pos => _$this._pos;
-  set pos(int pos) => _$this._pos = pos;
-
   ForumBuilder();
 
   ForumBuilder get _$this {
     if (_$v != null) {
       _fid = _$v.fid;
       _name = _$v.name;
-      _pos = _$v.pos;
       _$v = null;
     }
     return this;
@@ -613,7 +592,7 @@ class ForumBuilder implements Builder<Forum, ForumBuilder> {
 
   @override
   _$Forum build() {
-    final _$result = _$v ?? new _$Forum._(fid: fid, name: name, pos: pos);
+    final _$result = _$v ?? new _$Forum._(fid: fid, name: name);
     replace(_$result);
     return _$result;
   }

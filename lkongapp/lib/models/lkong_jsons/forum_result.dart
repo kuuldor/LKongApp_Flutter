@@ -48,9 +48,7 @@ abstract class Forum implements Built<Forum, ForumBuilder> {
   int get fid;
   @BuiltValueField(wireName: 'name')
   String get name;
-  @nullable
-  @BuiltValueField(wireName: 'pos')
-  int get pos;
+
   String toJson() {
     return json.encode(serializers.serializeWith(Forum.serializer, this));
   }
