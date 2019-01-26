@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/atme_screen.dart';
 import 'package:lkongapp/ui/favorite_screen.dart';
 import 'package:lkongapp/ui/home_list.dart';
@@ -56,6 +57,7 @@ class HomeScreen extends StatelessWidget {
       if (!viewModel.isAuthed) {
         //viewModel.showLoginScreen(context);
       }
+
       return Scaffold(
         drawer: AppDrawerBuilder(),
         body: PageView(
@@ -84,11 +86,42 @@ class HomeScreen extends StatelessWidget {
           items: pages.map((Map page) {
             String title = page["title"];
             IconData icon = page["icon"];
+            Widget iconWidget = Icon(icon);
+
+            if (title == '通知') {
+              if (viewModel.noticeCount > 0) {
+                iconWidget = Stack(
+                  children: <Widget>[
+                    iconWidget,
+                    Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.all(1.0),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6.0),
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 12,
+                          minHeight: 12,
+                        ),
+                        child: Text(
+                          '${viewModel.noticeCount}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  ],
+                );
+              }
+            }
 
             return BottomNavigationBarItem(
-              icon: Icon(
-                icon,
-              ),
+              icon: iconWidget,
               title: Text(title),
             );
           }).toList(),
@@ -104,6 +137,7 @@ class HomeScreen extends StatelessWidget {
 class PageModel {
   final int page;
   final bool isAuthed;
+  final CheckNoticeResult notice;
   final Function(BuildContext, int) onPageChanged;
   final Function(BuildContext) showLoginScreen;
 
@@ -111,18 +145,22 @@ class PageModel {
   bool operator ==(other) {
     return other is PageModel &&
         page == other.page &&
-        isAuthed == other.isAuthed;
+        isAuthed == other.isAuthed &&
+        notice == other.notice;
   }
 
   @override
-  int get hashCode => hash2(page, isAuthed);
+  int get hashCode => hash3(page, isAuthed, notice);
 
   PageModel({
     @required this.page,
     @required this.isAuthed,
     @required this.onPageChanged,
     @required this.showLoginScreen,
+    @required this.notice,
   });
+
+  int get noticeCount => notice?.newNotice?.totalCount ?? 0;
 
   static PageModel fromStore(Store<AppState> store) {
     return PageModel(
@@ -136,6 +174,7 @@ class PageModel {
           store.dispatch(UINavigationPush(context, LKongAppRoutes.login, true));
         });
       },
+      notice: selectUserData(store)?.newNotice,
     );
   }
 }

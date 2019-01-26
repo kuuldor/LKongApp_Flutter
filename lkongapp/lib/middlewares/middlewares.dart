@@ -2,6 +2,7 @@ library middlewares;
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
@@ -58,8 +59,25 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
     if (selectSetting(store).autoPunch) {
       store.dispatch(PunchCardRequest(null, user));
     }
+    store.dispatch(CheckNoticeRequest(null, user));
     store.dispatch(ForumListRequest(null));
     store.dispatch(FollowListRequest(null, user));
+  }
+
+  if (action is CheckNoticeSuccess) {
+    final request = action.request as CheckNoticeRequest;
+    User user = request.user;
+    final currentUID = selectUID(store);
+
+    if (user.uid == currentUID) {
+      final userData = selectUserData(store);
+      final newCount = action.result?.newNotice?.totalCount ?? 0;
+      final oldCount = userData?.newNotice?.newNotice?.totalCount ?? 0;
+      if (newCount > oldCount) {
+        //TODO: replace this with custom sound
+        SystemSound.play(SystemSoundType.click);
+      }
+    }
   }
 
   if (action is RehydrateSuccess) {

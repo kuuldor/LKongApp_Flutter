@@ -13,6 +13,8 @@ final userDataReducer = combineReducers<BuiltMap<int, UserData>>([
   TypedReducer<BuiltMap<int, UserData>, FollowListSuccess>(
       _followListSucceeded),
   TypedReducer<BuiltMap<int, UserData>, PunchCardSuccess>(_punchCardSucceeded),
+  TypedReducer<BuiltMap<int, UserData>, CheckNoticeSuccess>(
+      _checkNoticeSucceeded),
   TypedReducer<BuiltMap<int, UserData>, GetMyDataRequest>(_dataRequested),
   TypedReducer<BuiltMap<int, UserData>, GetMyDataSuccess>(_dataSucceeded),
   TypedReducer<BuiltMap<int, UserData>, GetMyDataFailure>(_dataFailed),
@@ -72,6 +74,17 @@ BuiltMap<int, UserData> _punchCardSucceeded(
   final user = request.user;
   final result = action.result;
   final update = (b) => b..punchCard.replace(result);
+  return state.rebuild((b) => b
+    ..updateValue(user.uid, (v) => v.rebuild(update),
+        ifAbsent: () => UserData().rebuild(update)));
+}
+
+BuiltMap<int, UserData> _checkNoticeSucceeded(
+    BuiltMap<int, UserData> state, CheckNoticeSuccess action) {
+  final request = action.request as CheckNoticeRequest;
+  final user = request.user;
+  final result = action.result;
+  final update = (b) => b..newNotice.replace(result);
   return state.rebuild((b) => b
     ..updateValue(user.uid, (v) => v.rebuild(update),
         ifAbsent: () => UserData().rebuild(update)));

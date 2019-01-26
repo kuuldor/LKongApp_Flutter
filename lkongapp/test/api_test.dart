@@ -57,6 +57,8 @@ Future main() async {
 
   await pmSessionTest();
 
+  await checkNewTest();
+
   await logoutTest();
 }
 
@@ -233,6 +235,16 @@ Future<void> forumStoryTest() async {
 Future<void> homelistTest() async {
   return test('Get Home List Test', () async {
     await getHomeList({}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+      print(session.cookies.toString());
+    });
+  });
+}
+
+Future<void> checkNewTest() async {
+  return test('Check New Notice Test', () async {
+    await checkNewNotice().then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());

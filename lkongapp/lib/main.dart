@@ -37,15 +37,31 @@ class LKongApp extends StatelessWidget {
     distinct: true,
   );
 
-  final Timer autoPunchTimer = Timer.periodic(
-    Duration(hours: 12),
-    (timer) {
-      if (selectSetting(store).autoPunch) {
+  Timer autoPunchTimer;
+  Timer checkNotifTimer;
+
+  LKongApp({Key key, this.autoPunchTimer}) : super(key: key) {
+    autoPunchTimer = globals.createPeriodicTimer(
+      store,
+      period: Duration(hours: 12),
+      callback: (timer) {
+        if (selectSetting(store).autoPunch) {
+          final user = selectUser(store);
+          store.dispatch(PunchCardRequest(null, user));
+        }
+      },
+    );
+    checkNotifTimer = globals.createPeriodicTimer(
+      store,
+      period: Duration(minutes: 1),
+      callback: (timer) {
         final user = selectUser(store);
-        store.dispatch(PunchCardRequest(null, user));
-      }
-    },
-  );
+        if (user != null && user.uid > 0) {
+          store.dispatch(CheckNoticeRequest(null, user));
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

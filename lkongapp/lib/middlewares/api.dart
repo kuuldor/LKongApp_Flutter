@@ -33,6 +33,7 @@ const UPVOTE_API = "UPVOTE";
 const HOTDIGEST_API = "HOTDIGEST";
 const PMSESSION_API = "PMSESSION";
 const SENDPM_API = "SENDPM";
+const CHECKNOTICE_API = "CHECKNOTICE";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -53,7 +54,7 @@ const endpoint = {
   "message": "/index.php?mod=ajax&action=submitbox",
   "atMe": "/index.php?mod=data&sars=my/",
   "pmSession": "/index.php?mod=data&sars=pm/",
-  "checkNew": "/index.php?mod=ajax&action=langloop",
+  "checkNotice": "/index.php?mod=ajax&action=langloop",
   "upvote": "/index.php?mod=ajax&action=submitbox",
   "search": "/index.php?mod=data&sars=search/",
   "getBlacklist": "/index.php?mod=ajax&action=getblack",
@@ -764,6 +765,16 @@ Future<Map> getHotDigest(Map args) {
   });
 }
 
+Future<Map> checkNewNotice() {
+  final urlString = endpoint["checkNotice"] + querify(defaultParameter());
+
+  var httpAction = session.get(urlString);
+  return _handleHttp(
+    httpAction,
+    dataParser: _parseResponseBody(CheckNoticeResult.fromJson),
+  );
+}
+
 String Function(String) combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
@@ -930,6 +941,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == SENDPM_API) {
     return sendPM(parameters);
+  }
+
+  if (api == CHECKNOTICE_API) {
+    return checkNewNotice();
   }
 
   return Future<Map>(null);

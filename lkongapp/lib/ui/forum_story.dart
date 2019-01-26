@@ -174,7 +174,7 @@ class ForumStoryModel extends StoryListModel {
 
   final allMenus = const <Choice>[
     const Choice(
-        title: '正常顺序显示', icon: Icons.library_books, action: MenuAction.normal),
+        title: '回贴时间排序', icon: Icons.library_books, action: MenuAction.normal),
     const Choice(title: '精华', icon: Icons.star, action: MenuAction.digest),
     const Choice(
         title: '发布时间排序', icon: Icons.watch_later, action: MenuAction.timeline),
@@ -188,7 +188,7 @@ class ForumStoryModel extends StoryListModel {
 
   void _menuSelected(BuildContext context, Choice choice) {
     switch (choice.action) {
-      case MenuAction.showAll:
+      case MenuAction.normal:
         state.setMode(0);
         break;
       case MenuAction.digest:
@@ -278,18 +278,8 @@ class ForumStoryModel extends StoryListModel {
         ));
       }
     }
-    actions.add(PopupMenuButton<Choice>(
-      onSelected: (choice) => _menuSelected(context, choice),
-      itemBuilder: (BuildContext context) {
-        return menus.map((Choice menuItem) {
-          return PopupMenuItem<Choice>(
-            value: menuItem,
-            enabled: menuItem.enabled,
-            child: Text(menuItem.title),
-          );
-        }).toList();
-      },
-    ));
+
+    actions.add(popupMenu(context, menus, _menuSelected));
 
     return SliverAppBar(
       title: GestureDetector(

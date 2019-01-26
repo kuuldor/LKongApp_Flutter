@@ -101,8 +101,10 @@ final allMenus = const <Choice>[
       title: '解除关注', icon: Icons.visibility_off, action: MenuAction.unfollow),
   const Choice(title: '发消息', icon: Icons.textsms, action: MenuAction.chat),
   const Choice(title: '加入黑名单', icon: Icons.report, action: MenuAction.block),
-  const Choice(title: '解除黑名单', icon: Icons.report_off, action: MenuAction.unblock),
-  const Choice(title: '全部帖子', icon: Icons.library_books, action: MenuAction.showAll),
+  const Choice(
+      title: '解除黑名单', icon: Icons.report_off, action: MenuAction.unblock),
+  const Choice(
+      title: '全部帖子', icon: Icons.library_books, action: MenuAction.showAll),
   const Choice(
       title: '管理黑名单',
       icon: Icons.recent_actors,
@@ -375,19 +377,7 @@ class ProfileScreenModel extends FetchedListModel {
     var actions = <Widget>[];
 
     if (menus.length > 0) {
-      actions.add(
-        PopupMenuButton<Choice>(
-          onSelected: (choice) => menuSelected(context, choice),
-          itemBuilder: (BuildContext context) {
-            return menus.map((Choice menuItem) {
-              return PopupMenuItem<Choice>(
-                value: menuItem,
-                child: Text(menuItem.title),
-              );
-            }).toList();
-          },
-        ),
-      );
+      actions.add(popupMenu(context, menus, menuSelected));
     }
 
     return SliverAppBar(

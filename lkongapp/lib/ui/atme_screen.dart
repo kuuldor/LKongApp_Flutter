@@ -78,6 +78,7 @@ abstract class NotifScreenModel extends StoryListModel {
   final FetchList<Notice> noticeList;
   final FetchList<Ratelog> ratelogList;
   final FetchList<PrivateMessage> pmList;
+  final CheckNoticeResult notice;
 
   final bool loading;
   final String lastError;
@@ -91,6 +92,7 @@ abstract class NotifScreenModel extends StoryListModel {
     @required this.loading,
     @required this.lastError,
     @required this.uid,
+    @required this.notice,
     this.showDetailTime,
     this.storyList,
     this.noticeList,
@@ -98,8 +100,37 @@ abstract class NotifScreenModel extends StoryListModel {
     this.pmList,
   }) : super(store);
 
+  int get newNoticeCount;
+  String get newNotifDesc => newNoticeCount > 0 ? "($newNoticeCount)" : "";
+
   List<Choice> filterMenus() {
-    var menus = List<Choice>.from(allMenus);
+    var menus = allMenus.map((item) {
+      Choice choice = Choice.copy(item);
+      if (notice?.newNotice != null) {
+        int newCount = 0;
+        switch (choice.action) {
+          case MenuAction.atMe:
+            newCount = notice.newNotice.atme;
+            break;
+          case MenuAction.notice:
+            newCount = notice.newNotice.notice;
+            break;
+          case MenuAction.ratelog:
+            newCount = notice.newNotice.rate;
+            break;
+          case MenuAction.pm:
+            newCount = notice.newNotice.pm;
+            break;
+          default:
+            break;
+        }
+        if (newCount > 0) {
+          choice = Choice.newTitle(choice, "${choice.title}($newCount)");
+        }
+      }
+
+      return choice;
+    }).toList();
     menus[state.type] = Choice.disable(menus[state.type]);
     return menus;
   }
@@ -137,20 +168,7 @@ abstract class NotifScreenModel extends StoryListModel {
     var actions = <Widget>[];
 
     if (menus.length > 0) {
-      actions.add(
-        PopupMenuButton<Choice>(
-          onSelected: (choice) => menuSelected(context, choice),
-          itemBuilder: (BuildContext context) {
-            return menus.map((Choice menuItem) {
-              return PopupMenuItem<Choice>(
-                value: menuItem,
-                enabled: menuItem.enabled,
-                child: Text(menuItem.title),
-              );
-            }).toList();
-          },
-        ),
-      );
+      actions.add(popupMenu(context, menus, menuSelected));
     }
     return SliverAppBar(
       leading: DrawerButton(),
@@ -202,6 +220,7 @@ class AtMeScreenModel extends NotifScreenModel {
     @required bool showDetailTime,
     @required AtMeScreenState state,
     @required FetchList<Story> storyList,
+    @required CheckNoticeResult notice,
   }) : super(
           store: store,
           loading: loading,
@@ -210,13 +229,17 @@ class AtMeScreenModel extends NotifScreenModel {
           showDetailTime: showDetailTime,
           state: state,
           storyList: storyList,
+          notice: notice,
         );
+
+  int get newNoticeCount =>
+      (notice?.newNotice != null) ? notice.newNotice.atme : 0;
 
   @override
   Widget Function(BuildContext, Widget) get wrapCell => wrapItemAsCard;
 
   Widget getTitle(BuildContext context) => GestureDetector(
-        child: Text("@我        ",
+        child: Text("@我$newNotifDesc        ",
             style:
                 Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
@@ -234,6 +257,7 @@ class AtMeScreenModel extends NotifScreenModel {
             uid: selectUID(store),
             state: state,
             showDetailTime: selectSetting(store).showDetailTime,
+            notice: selectUserData(store)?.newNotice,
           );
 
   @override
@@ -285,6 +309,7 @@ class NoticeScreenModel extends NotifScreenModel {
     @required int uid,
     @required AtMeScreenState state,
     @required FetchList<Notice> noticeList,
+    @required CheckNoticeResult notice,
   }) : super(
           store: store,
           loading: loading,
@@ -292,13 +317,17 @@ class NoticeScreenModel extends NotifScreenModel {
           uid: uid,
           state: state,
           noticeList: noticeList,
+          notice: notice,
         );
+
+  int get newNoticeCount =>
+      (notice?.newNotice != null) ? notice.newNotice.notice : 0;
 
   @override
   Widget Function(BuildContext, Widget) get wrapCell => wrapItem;
 
   Widget getTitle(BuildContext context) => GestureDetector(
-        child: Text("通知        ",
+        child: Text("通知$newNotifDesc        ",
             style:
                 Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
@@ -315,6 +344,7 @@ class NoticeScreenModel extends NotifScreenModel {
                 store.state.uiState.content.userData[selectUID(store)]?.notice,
             uid: selectUID(store),
             state: state,
+            notice: selectUserData(store)?.newNotice,
           );
 
   @override
@@ -375,6 +405,7 @@ class RatelogScreenModel extends NotifScreenModel {
     @required int uid,
     @required AtMeScreenState state,
     @required FetchList<Ratelog> ratelogList,
+    @required CheckNoticeResult notice,
   }) : super(
           store: store,
           loading: loading,
@@ -382,13 +413,17 @@ class RatelogScreenModel extends NotifScreenModel {
           uid: uid,
           state: state,
           ratelogList: ratelogList,
+          notice: notice,
         );
+
+  int get newNoticeCount =>
+      (notice?.newNotice != null) ? notice.newNotice.rate : 0;
 
   @override
   Widget Function(BuildContext, Widget) get wrapCell => wrapItem;
 
   Widget getTitle(BuildContext context) => GestureDetector(
-        child: Text("评分        ",
+        child: Text("评分$newNotifDesc        ",
             style:
                 Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
@@ -405,6 +440,7 @@ class RatelogScreenModel extends NotifScreenModel {
                 store.state.uiState.content.userData[selectUID(store)]?.ratelog,
             uid: selectUID(store),
             state: state,
+            notice: selectUserData(store)?.newNotice,
           );
 
   @override
@@ -465,6 +501,7 @@ class PMScreenModel extends NotifScreenModel {
     @required int uid,
     @required AtMeScreenState state,
     @required FetchList<PrivateMessage> pmList,
+    @required CheckNoticeResult notice,
   }) : super(
           store: store,
           loading: loading,
@@ -472,13 +509,17 @@ class PMScreenModel extends NotifScreenModel {
           uid: uid,
           state: state,
           pmList: pmList,
+          notice: notice,
         );
+
+  int get newNoticeCount =>
+      (notice?.newNotice != null) ? notice.newNotice.pm : 0;
 
   @override
   Widget Function(BuildContext, Widget) get wrapCell => wrapItem;
 
   Widget getTitle(BuildContext context) => GestureDetector(
-        child: Text("私信        ",
+        child: Text("私信$newNotifDesc        ",
             style:
                 Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
@@ -494,6 +535,7 @@ class PMScreenModel extends NotifScreenModel {
             pmList: store.state.uiState.content.userData[selectUID(store)]?.pm,
             uid: selectUID(store),
             state: state,
+            notice: selectUserData(store)?.newNotice,
           );
 
   @override

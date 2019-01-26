@@ -209,20 +209,7 @@ class SearchScreenState extends State<SearchScreen> {
     var actions = <Widget>[];
 
     if (menus.length > 0) {
-      actions.add(
-        PopupMenuButton<Choice>(
-          onSelected: (choice) => menuSelected(context, choice),
-          itemBuilder: (BuildContext context) {
-            return menus.map((Choice menuItem) {
-              return PopupMenuItem<Choice>(
-                value: menuItem,
-                enabled: menuItem.enabled,
-                child: Text(menuItem.title),
-              );
-            }).toList();
-          },
-        ),
-      );
+      actions.add(popupMenu(context, menus, menuSelected));
     }
 
     SliverAppBar bar = SliverAppBar(

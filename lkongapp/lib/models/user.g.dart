@@ -148,6 +148,12 @@ class _$UserDataSerializer implements StructuredSerializer<UserData> {
             specifiedType: const FullType(
                 FetchList, const [const FullType(PrivateMessage)])));
     }
+    if (object.newNotice != null) {
+      result
+        ..add('newNotice')
+        ..add(serializers.serialize(object.newNotice,
+            specifiedType: const FullType(CheckNoticeResult)));
+    }
 
     return result;
   }
@@ -213,6 +219,11 @@ class _$UserDataSerializer implements StructuredSerializer<UserData> {
                 const FullType(
                     FetchList, const [const FullType(PrivateMessage)])
               ])) as BuiltMap);
+          break;
+        case 'newNotice':
+          result.newNotice.replace(serializers.deserialize(value,
+                  specifiedType: const FullType(CheckNoticeResult))
+              as CheckNoticeResult);
           break;
       }
     }
@@ -827,6 +838,8 @@ class _$UserData extends UserData {
   final FetchList<PrivateMessage> pm;
   @override
   final BuiltMap<int, FetchList<PrivateMessage>> pmSession;
+  @override
+  final CheckNoticeResult newNotice;
 
   factory _$UserData([void updates(UserDataBuilder b)]) =>
       (new UserDataBuilder()..update(updates)).build();
@@ -840,7 +853,8 @@ class _$UserData extends UserData {
       this.notice,
       this.ratelog,
       this.pm,
-      this.pmSession})
+      this.pmSession,
+      this.newNotice})
       : super._() {
     if (uid == null) {
       throw new BuiltValueNullFieldError('UserData', 'uid');
@@ -869,7 +883,8 @@ class _$UserData extends UserData {
         notice == other.notice &&
         ratelog == other.ratelog &&
         pm == other.pm &&
-        pmSession == other.pmSession;
+        pmSession == other.pmSession &&
+        newNotice == other.newNotice;
   }
 
   @override
@@ -880,14 +895,18 @@ class _$UserData extends UserData {
                 $jc(
                     $jc(
                         $jc(
-                            $jc($jc($jc(0, uid.hashCode), followList.hashCode),
-                                punchCard.hashCode),
-                            favorites.hashCode),
-                        atMe.hashCode),
-                    notice.hashCode),
-                ratelog.hashCode),
-            pm.hashCode),
-        pmSession.hashCode));
+                            $jc(
+                                $jc(
+                                    $jc($jc(0, uid.hashCode),
+                                        followList.hashCode),
+                                    punchCard.hashCode),
+                                favorites.hashCode),
+                            atMe.hashCode),
+                        notice.hashCode),
+                    ratelog.hashCode),
+                pm.hashCode),
+            pmSession.hashCode),
+        newNotice.hashCode));
   }
 
   @override
@@ -901,7 +920,8 @@ class _$UserData extends UserData {
           ..add('notice', notice)
           ..add('ratelog', ratelog)
           ..add('pm', pm)
-          ..add('pmSession', pmSession))
+          ..add('pmSession', pmSession)
+          ..add('newNotice', newNotice))
         .toString();
   }
 }
@@ -957,6 +977,12 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
   set pmSession(MapBuilder<int, FetchList<PrivateMessage>> pmSession) =>
       _$this._pmSession = pmSession;
 
+  CheckNoticeResultBuilder _newNotice;
+  CheckNoticeResultBuilder get newNotice =>
+      _$this._newNotice ??= new CheckNoticeResultBuilder();
+  set newNotice(CheckNoticeResultBuilder newNotice) =>
+      _$this._newNotice = newNotice;
+
   UserDataBuilder();
 
   UserDataBuilder get _$this {
@@ -970,6 +996,7 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
       _ratelog = _$v.ratelog?.toBuilder();
       _pm = _$v.pm?.toBuilder();
       _pmSession = _$v.pmSession?.toBuilder();
+      _newNotice = _$v.newNotice?.toBuilder();
       _$v = null;
     }
     return this;
@@ -1002,7 +1029,8 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
               notice: _notice?.build(),
               ratelog: _ratelog?.build(),
               pm: _pm?.build(),
-              pmSession: pmSession.build());
+              pmSession: pmSession.build(),
+              newNotice: _newNotice?.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -1022,6 +1050,8 @@ class UserDataBuilder implements Builder<UserData, UserDataBuilder> {
         _pm?.build();
         _$failedField = 'pmSession';
         pmSession.build();
+        _$failedField = 'newNotice';
+        _newNotice?.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'UserData', _$failedField, e.toString());
