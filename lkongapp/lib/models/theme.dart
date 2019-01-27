@@ -23,7 +23,7 @@ Color htmlColor(String html, {bool nightRev: false}) {
   double opacity = 1.0;
   Colour.Color color;
   html = html.trim();
-  RegExp hexPattern = RegExp('#(([0-9A-F]{3}){1,2})', caseSensitive: false);
+  RegExp hexPattern = RegExp('#([0-9A-F]{3,6})', caseSensitive: false);
   RegExp rgboPattern = RegExp(
       'rgba\\((\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+\\.\\d+)\\s*\\)',
       caseSensitive: false);
@@ -34,6 +34,11 @@ Color htmlColor(String html, {bool nightRev: false}) {
     if (hexStr.length == 3) {
       hexStr =
           hexStr[0] + hexStr[0] + hexStr[1] + hexStr[1] + hexStr[2] + hexStr[2];
+    }
+    if (hexStr.length == 4) {
+      hexStr = hexStr + "00";
+    } else if (hexStr.length == 5) {
+      hexStr = hexStr + "0";
     }
 
     color = Colour.Color.hex(hexStr);
