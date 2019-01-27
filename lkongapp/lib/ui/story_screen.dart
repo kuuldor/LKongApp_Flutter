@@ -450,6 +450,7 @@ class StoryContentModel {
                 comment: comment,
                 showDetailTime: showDetailTime,
                 onTap: (action) => onCommentAction(context, comment, action),
+                author: story?.storyInfo?.authorid,
               );
               tile = wrapTile(item);
             } else {

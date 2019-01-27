@@ -17,6 +17,7 @@ class CommentItem extends StatelessWidget {
   final Function(CommentAction) onTap;
   final Comment comment;
   final int uid;
+  final int author;
   final bool showDetailTime;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
@@ -25,6 +26,7 @@ class CommentItem extends StatelessWidget {
     @required this.onTap,
     @required this.comment,
     @required this.uid,
+    @required this.author,
     @required this.showDetailTime,
   });
 
@@ -72,7 +74,8 @@ class CommentItem extends StatelessWidget {
                 Expanded(
                   child: Align(
                       alignment: Alignment.centerRight,
-                      child: Text(dateStringToLocal(rate.dateline), style: style)),
+                      child:
+                          Text(dateStringToLocal(rate.dateline), style: style)),
                 ),
               ]),
               Row(
@@ -175,6 +178,19 @@ class CommentItem extends StatelessWidget {
       ));
     }
 
+    Widget authorLine = Text(comment.author);
+    if (author == comment.authorid) {
+      authorLine = Row(
+        children: <Widget>[
+          authorLine,
+          SizedBox(
+            width: 4.0,
+          ),
+          Text("[楼主]", style: TextStyle(color: Colors.orange)),
+        ],
+      );
+    }
+
     final timestamp = parseDatetime(comment.dateline);
     final datetime = showDetailTime
         ? stringFromDate(timestamp)
@@ -193,7 +209,7 @@ class CommentItem extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(comment.author),
+                    authorLine,
                     Text(datetime),
                   ],
                 ),
