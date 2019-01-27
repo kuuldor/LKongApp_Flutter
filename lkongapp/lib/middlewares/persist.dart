@@ -48,7 +48,11 @@ void loadAppState(Store<AppState> store, action, NextDispatcher next) {
 void checkAndSaveAppState(Store<AppState> store, action, NextDispatcher next) {
   next(action);
   bool save = false;
-  if (action is LoginSuccess || action is UserInfoSuccess || action is LogoutSuccess) {
+  if (action is LoginSuccess ||
+      action is LoginTestSuccess ||
+      action is UserInfoSuccess ||
+      action is LogoutSuccess ||
+      action is DeleteUsers) {
     save = true;
   }
   if (save) {

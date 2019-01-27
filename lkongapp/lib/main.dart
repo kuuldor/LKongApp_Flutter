@@ -90,6 +90,7 @@ Widget _createModeledApp(viewModel) {
               LoginScreen(key: LKongAppKeys.loginScreen),
           LKongAppRoutes.home: (context) => HomeScreen(),
           LKongAppRoutes.settings: (context) => SettingScreen(),
+          LKongAppRoutes.accountManage: (context) => AccountManageScreen(),
           LKongAppRoutes.favorite: (context) => FavoriteScreen(),
         },
       ));

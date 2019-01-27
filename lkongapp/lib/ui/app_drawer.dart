@@ -171,6 +171,16 @@ class AppDrawer extends StatelessWidget {
         },
       ));
     }
+
+    children.add(
+      ListTile(
+        leading: Icon(Icons.group_add),
+        title: Text('帐号管理'),
+        onTap: () {
+          viewModel.pushScreen(context, LKongAppRoutes.accountManage);
+        },
+      ),
+    );
     children.add(AboutListTile(
       applicationName: '龍空',
       applicationVersion: appVersion,

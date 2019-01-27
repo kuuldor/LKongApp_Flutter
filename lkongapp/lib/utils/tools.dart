@@ -159,7 +159,7 @@ _parseImageAndText(
             child: image,
             onLongPress: () {
               dispatchAction(context)(UINavigationPush(
-                  context, LKongAppRoutes.photo_view, false, (context) {
+                  context, LKongAppRoutes.photoView, false, (context) {
                 return Container(
                   child: PhotoView(
                     imageProvider: imageProvider,

@@ -9,6 +9,7 @@ class LKongAppRoutes {
   static final pmsession = "/pmsession";
   static final reply = "/reply";
   static final post = "/post";
-  static final photo_view = "/photo_view";
-  static final photo_gallery = "/photo_gallery";
+  static final photoView = "/photo_view";
+  static final accountManage = "/account_manage";
+  static final photoGallery = "/photo_gallery";
 }

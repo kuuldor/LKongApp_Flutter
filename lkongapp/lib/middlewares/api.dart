@@ -963,36 +963,15 @@ APIResponse createResponseAction(APIRequest action, Map response) {
     return action.badResponse(error);
   }
 
+  var output;
   if (api == LOGIN_API) {
     User user = userParam(action.parameters);
-    return LoginSuccess(action, user.rebuild((b) => b..uid = response["uid"]));
+    output = user.rebuild((b) => b..uid = response["uid"]);
+  } else {
+    output = response["result"] ?? response;
   }
 
-  var output = response["result"] ?? response;
   return action.goodResponse(output);
-
-  if (api == HOMELIST_API) {
-    StoryListResult list = response["result"] as StoryListResult;
-    return HomeListSuccess(action, list);
-  }
-
-  if (api == STORY_CONTENT_API) {
-    return result;
-  }
-
-  if (api == STORY_INFO_API) {
-    return result;
-  }
-
-  if (api == FORUMLIST_API) {
-    return result;
-  }
-
-  if (api.startsWith(FORUM_THREADS_API)) {
-    return result;
-  }
-
-  return result;
 }
 
 void callAPI(Store<AppState> store, APIRequest action, NextDispatcher next) {

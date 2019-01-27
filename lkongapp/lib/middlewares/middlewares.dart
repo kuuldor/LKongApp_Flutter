@@ -64,6 +64,11 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
     store.dispatch(FollowListRequest(null, user));
   }
 
+  if (action is LoginTestSuccess) {
+    User user = action.user;
+    store.dispatch(UserInfoRequest(null, user.uid));
+  }
+
   if (action is CheckNoticeSuccess) {
     final request = action.request as CheckNoticeRequest;
     User user = request.user;

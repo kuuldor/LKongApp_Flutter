@@ -146,3 +146,32 @@ class CheckNoticeSuccess extends APISuccess with StopLoading {
 class CheckNoticeFailure extends APIFailure with StopLoading {
   CheckNoticeFailure(request, String error) : super(request, error);
 }
+
+class DeleteUsers {
+  Set<User> users;
+
+  DeleteUsers(this.users);
+}
+
+class LoginTestRequest extends APIRequest with StartLoading {
+  User user;
+
+  LoginTestRequest(Completer completer, this.user)
+      : super(completer: completer, api: LOGIN_API, parameters: {"user": user});
+
+  @override
+  CreateFailure get badResponse => (error) => LoginTestFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse => (user) => LoginTestSuccess(this, user);
+}
+
+class LoginTestSuccess extends APISuccess with StopLoading {
+  final User user;
+
+  LoginTestSuccess(request, this.user) : super(request);
+}
+
+class LoginTestFailure extends APIFailure with StopLoading {
+  LoginTestFailure(request, String error) : super(request, error);
+}
