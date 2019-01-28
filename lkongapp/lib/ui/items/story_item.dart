@@ -37,7 +37,6 @@ class StoryItem extends StatelessWidget {
       if (story.digest != null && story.digest != 0) {
         titleStyle = titleStyle.apply(fontWeightDelta: 2);
       }
-      titleStyle = titleStyle.apply(color: theme.darkTextColor);
 
       title = Column(children: <Widget>[
         Row(

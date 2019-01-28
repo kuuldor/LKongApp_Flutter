@@ -109,7 +109,7 @@ class LKongAppTheme {
   TextStyle get subtitleStyle =>
       _subtitleStyle ??= themeData.textTheme.title.copyWith(
         fontSize: subtitleSize,
-        color: lightTextColor,
+        color: mediumTextColor,
         fontWeight: FontWeight.normal,
       );
 
