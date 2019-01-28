@@ -87,12 +87,19 @@ class _$ForumSerializer implements StructuredSerializer<Forum> {
   @override
   Iterable serialize(Serializers serializers, Forum object,
       {FullType specifiedType = FullType.unspecified}) {
-    final result = <Object>[
-      'fid',
-      serializers.serialize(object.fid, specifiedType: const FullType(int)),
-      'name',
-      serializers.serialize(object.name, specifiedType: const FullType(String)),
-    ];
+    final result = <Object>[];
+    if (object.fid != null) {
+      result
+        ..add('fid')
+        ..add(serializers.serialize(object.fid,
+            specifiedType: const FullType(int)));
+    }
+    if (object.name != null) {
+      result
+        ..add('name')
+        ..add(serializers.serialize(object.name,
+            specifiedType: const FullType(String)));
+    }
 
     return result;
   }
@@ -519,14 +526,7 @@ class _$Forum extends Forum {
   factory _$Forum([void updates(ForumBuilder b)]) =>
       (new ForumBuilder()..update(updates)).build();
 
-  _$Forum._({this.fid, this.name}) : super._() {
-    if (fid == null) {
-      throw new BuiltValueNullFieldError('Forum', 'fid');
-    }
-    if (name == null) {
-      throw new BuiltValueNullFieldError('Forum', 'name');
-    }
-  }
+  _$Forum._({this.fid, this.name}) : super._();
 
   @override
   Forum rebuild(void updates(ForumBuilder b)) =>

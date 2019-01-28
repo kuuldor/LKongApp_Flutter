@@ -44,8 +44,10 @@ abstract class Forum implements Built<Forum, ForumBuilder> {
     ..fid = 0
     ..name = "");
 
+  @nullable
   @BuiltValueField(wireName: 'fid')
   int get fid;
+  @nullable
   @BuiltValueField(wireName: 'name')
   String get name;
 
