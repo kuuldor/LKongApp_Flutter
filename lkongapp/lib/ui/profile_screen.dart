@@ -435,7 +435,7 @@ class ProfileScreenModel extends FetchedListModel {
                           buildUserAvatar(context, state.user.uid, 96.0),
                           Padding(
                               padding: EdgeInsets.only(left: 8.0),
-                              child: verifyIcon(user)),
+                              child: verifyIcon(user, 18.0)),
                         ],
                       )),
                   Container(

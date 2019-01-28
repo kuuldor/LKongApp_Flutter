@@ -193,8 +193,7 @@ _parseImageAndText(
       } else if (e.localName == "strong" || e.localName == "b") {
         baseTextStyle = baseTextStyle.copyWith(fontWeight: FontWeight.bold);
       } else if (e.localName == "blockquote" || cls == "lkong_quobes") {
-        baseTextStyle =
-            baseTextStyle.apply(fontSizeFactor: 0.85, color: Colors.blueGrey);
+        baseTextStyle = theme.subheadStyle.apply(color: Colors.blueGrey);
       } else if (e.localName == "font") {
         e.attributes.forEach((name, value) {
           switch (name.toString().toLowerCase()) {
@@ -345,10 +344,7 @@ _parseDocumentBody(
   dom.NodeList docBodyChildren = body.nodes;
 
   final theme = LKModeledApp.modelOf(context).theme;
-  TextStyle defaultStyle = Theme.of(context)
-      .textTheme
-      .title
-      .apply(fontWeightDelta: -1, color: theme.darkTextColor);
+  TextStyle defaultStyle = theme.textStyle;
 
   if (docBodyChildren.length > 0)
     docBodyChildren.forEach((e) => _parseImageAndText(
@@ -362,7 +358,7 @@ _parseDocumentBody(
   _cleanUpTextList(widgetList, textList);
 }
 
-Widget comment2Widget(BuildContext context, String comment, {ThemeData style}) {
+Widget comment2Widget(BuildContext context, String comment) {
   List<Widget> widgetList = List<Widget>();
 
   dom.Document document = parse(comment);

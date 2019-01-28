@@ -105,7 +105,7 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
           specifiedType: const FullType(bool)),
       'fontSize',
       serializers.serialize(object.fontSize,
-          specifiedType: const FullType(int)),
+          specifiedType: const FullType(double)),
       'allowCopy',
       serializers.serialize(object.allowCopy,
           specifiedType: const FullType(bool)),
@@ -197,7 +197,7 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
           break;
         case 'fontSize':
           result.fontSize = serializers.deserialize(value,
-              specifiedType: const FullType(int)) as int;
+              specifiedType: const FullType(double)) as double;
           break;
         case 'allowCopy':
           result.allowCopy = serializers.deserialize(value,
@@ -543,7 +543,7 @@ class _$AppSetting extends AppSetting {
   @override
   final bool lockOrientation;
   @override
-  final int fontSize;
+  final double fontSize;
   @override
   final bool allowCopy;
   @override
@@ -817,9 +817,9 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   set lockOrientation(bool lockOrientation) =>
       _$this._lockOrientation = lockOrientation;
 
-  int _fontSize;
-  int get fontSize => _$this._fontSize;
-  set fontSize(int fontSize) => _$this._fontSize = fontSize;
+  double _fontSize;
+  double get fontSize => _$this._fontSize;
+  set fontSize(double fontSize) => _$this._fontSize = fontSize;
 
   bool _allowCopy;
   bool get allowCopy => _$this._allowCopy;

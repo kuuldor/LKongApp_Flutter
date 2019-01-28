@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/models/user.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/user_icon.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -19,13 +20,27 @@ class UserItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle titleStyle = theme.titleStyle;
+    TextStyle subtitleStyle = theme.subtitleStyle;
+
+    String subtitle;
+
+    if (user != null) {
+      if (user.customstatus != null && user.customstatus.length > 0) {
+        subtitle = user.customstatus;
+      } else if (user.sightml != null && user.sightml.length > 0) {
+        subtitle = user.sightml;
+      }
+    }
+
     return ListTile(
       key: userItemKey(user.uid),
       onTap: onTap,
       title: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            buildUserAvatar(context, user.uid, 48.0),
+            buildUserAvatar(context, user.uid, theme.titleSize * 2 + 8),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(left: 8.0),
@@ -34,28 +49,24 @@ class UserItem extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       user.username,
-                      style: Theme.of(context).textTheme.title,
+                      style: titleStyle,
                     ),
                     // Text(timeAgoSinceDate(parseDatetime(forum.dateline))),
                   ],
                 ),
               ),
             ),
-            verifyIcon(user),
+            verifyIcon(user, theme.titleSize - 2),
           ],
         ),
       ]),
-      subtitle:
-          user != null && (user.customstatus != null || user.sightml != null)
-              ? (user.customstatus != null && user.customstatus.length > 0
-                  ? Text(user.customstatus, maxLines: 8)
-                  : (user.sightml != null && user.sightml.length > 0
-                      ? Text(
-                          user.sightml,
-                          maxLines: 8,
-                        )
-                      : null))
-              : null,
+      subtitle: subtitle != null
+          ? Text(
+              user.customstatus,
+              maxLines: 8,
+              style: subtitleStyle,
+            )
+          : null,
     );
   }
 }

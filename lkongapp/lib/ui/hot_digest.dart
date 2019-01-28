@@ -109,10 +109,13 @@ class HotDigestModel extends FetchedListModel {
   }
 
   Widget createHotDigestItem(BuildContext context, Thread thread) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle titleStyle = theme.titleStyle;
+
     return ListTile(
       title: Text(
         thread.subject,
-        style: Theme.of(context).textTheme.title,
+        style: titleStyle,
       ),
       onTap: () => openThreadView(context, thread.tid),
     );

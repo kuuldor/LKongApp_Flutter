@@ -263,10 +263,10 @@ class SettingState extends State<SettingView> {
         CSWidget(
             CupertinoSlider(
                 min: 1,
-                max: 15,
-                value: setting.fontSize.toDouble(),
+                max: 11,
+                value: setting.fontSize,
                 onChanged: (double value) => setState(() {
-                      setting.fontSize = value.floor();
+                      setting.fontSize = value;
                     })),
             style: fontStyle),
         GestureDetector(

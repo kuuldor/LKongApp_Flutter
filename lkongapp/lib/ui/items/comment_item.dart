@@ -35,8 +35,8 @@ class CommentItem extends StatelessWidget {
       return Container();
     }
 
-    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = TextStyle(fontSize: 14.0, color: theme.mediumTextColor);
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle style = theme.subheadStyle.apply(color: theme.mediumTextColor);
 
     var list = <Widget>[];
     final creditName = {"2": '龙币', "3": '龙晶'};
@@ -58,7 +58,7 @@ class CommentItem extends StatelessWidget {
             children: <Widget>[
               Row(children: <Widget>[
                 Container(
-                    height: 24.0,
+                    height: theme.titleSize,
                     child: Image(
                       image: CachedNetworkImageProvider(
                           avatarForUserID(rate.uid),
@@ -139,6 +139,11 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle subheadStyle = theme.subheadStyle;
+    TextStyle subtitleStyle = theme.subtitleStyle;
+    double size = theme.captionSize;
+
     var messages = List<Widget>();
     if (comment.warning) {
       messages.add(Container(
@@ -148,6 +153,7 @@ class CommentItem extends StatelessWidget {
               Icon(Icons.warning),
               Text(
                 comment.warningReason,
+                style: subheadStyle,
               ),
             ],
           )));
@@ -157,6 +163,7 @@ class CommentItem extends StatelessWidget {
     if (uid != null && uid > 0) {
       if (comment.authorid == uid) {
         actionButtons.add(IconButton(
+          iconSize: size * 2,
           icon: Icon(Icons.edit),
           onPressed: () {
             onTap(CommentAction.Edit);
@@ -164,6 +171,7 @@ class CommentItem extends StatelessWidget {
         ));
       } else {
         actionButtons.add(IconButton(
+          iconSize: size * 2,
           icon: Icon(Icons.thumb_up),
           onPressed: () {
             onTap(CommentAction.UpVote);
@@ -171,6 +179,7 @@ class CommentItem extends StatelessWidget {
         ));
       }
       actionButtons.add(IconButton(
+        iconSize: size * 2,
         icon: Icon(Icons.comment),
         onPressed: () {
           onTap(CommentAction.Reply);
@@ -178,15 +187,15 @@ class CommentItem extends StatelessWidget {
       ));
     }
 
-    Widget authorLine = Text(comment.author);
+    Widget authorLine = Text(comment.author, style: subtitleStyle);
     if (author == comment.authorid) {
       authorLine = Row(
         children: <Widget>[
           authorLine,
           SizedBox(
-            width: 4.0,
+            width: size / 3,
           ),
-          Text("[楼主]", style: TextStyle(color: Colors.orange)),
+          Text("[楼主]", style: subtitleStyle.apply(color: Colors.orange)),
         ],
       );
     }
@@ -198,28 +207,29 @@ class CommentItem extends StatelessWidget {
 
     return Container(
       key: commentItemKey(comment.id),
-      padding: EdgeInsets.symmetric(horizontal: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            buildUserAvatar(context, comment.authorid, 36.0, clickable: true),
+            buildUserAvatar(context, comment.authorid, size * 2 + 4,
+                clickable: true),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.only(left: 8.0),
+                padding: EdgeInsets.only(left: (size / 3 * 2)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     authorLine,
-                    Text(datetime),
+                    Text(datetime, style: subtitleStyle),
                   ],
                 ),
               ),
             ),
-            Text("${comment.lou}楼"),
+            Text("${comment.lou}楼", style: subtitleStyle),
           ],
         ),
         Container(
-          height: 12.0,
+          height: size,
         ),
         comment.warning
             ? Container(
@@ -233,6 +243,7 @@ class CommentItem extends StatelessWidget {
                     Container(width: 8.0),
                     Text(
                       "此帖被警告。理由：${comment.warningReason}",
+                      style: subheadStyle,
                     ),
                   ],
                 ))
@@ -245,17 +256,17 @@ class CommentItem extends StatelessWidget {
                 child: comment2Widget(
                   context,
                   comment.message,
-                  style: Theme.of(context),
                 ),
               )
             ],
           ),
         ),
         Container(
-          height: 12.0,
+          height: size,
         ),
         buildRateLog(context, comment.ratelog),
         Container(
+          height: size * 4,
           width: MediaQuery.of(context).size.width,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,

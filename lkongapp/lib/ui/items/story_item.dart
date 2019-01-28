@@ -20,6 +20,10 @@ class StoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle titleStyle = theme.titleStyle;
+    TextStyle subheadStyle = theme.subheadStyle;
+    TextStyle subtitleStyle = theme.subtitleStyle;
+    double size = theme.captionSize;
 
     Widget title;
     Widget subtitle;
@@ -30,34 +34,34 @@ class StoryItem extends StatelessWidget {
         : timeAgoSinceDate(timestamp);
 
     if (story.isthread != false) {
-      var titleStyle = Theme.of(context).textTheme.title;
       if (story.digest != null && story.digest != 0) {
-        titleStyle = titleStyle.apply(fontWeightDelta: 1);
-      } else {
-        titleStyle = titleStyle.apply(fontWeightDelta: -1);
+        titleStyle = titleStyle.apply(fontWeightDelta: 2);
       }
       titleStyle = titleStyle.apply(color: theme.darkTextColor);
 
       title = Column(children: <Widget>[
         Row(
           children: <Widget>[
-            buildUserAvatar(context, story.uid, 36.0),
+            buildUserAvatar(context, story.uid, theme.subheadSize * 2 + 4),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.only(left: 8.0),
+                padding: EdgeInsets.only(left: size * 2 / 3),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(story.username),
-                    Text(datetime),
+                    Text(story.username, style: subheadStyle),
+                    Text(datetime, style: subheadStyle),
                   ],
                 ),
               ),
             ),
             Column(
               children: <Widget>[
-                (story.closed == 1 ? Icon(Icons.lock) : Icon(Icons.message)),
-                Text("${story.replynum ?? story.tReplynum}"),
+                (story.closed == 1
+                    ? Icon(Icons.lock, size: theme.subheadSize)
+                    : Icon(Icons.message, size: theme.subheadSize)),
+                Text("${story.replynum ?? story.tReplynum}",
+                    style: subheadStyle),
               ],
             ),
           ],
@@ -77,7 +81,8 @@ class StoryItem extends StatelessWidget {
         ),
       ]);
       if (story.message != null) {
-        subtitle = Text(stripHtmlTag(story.message), maxLines: 4);
+        subtitle = Text(stripHtmlTag(story.message),
+            maxLines: 4, style: subtitleStyle);
       }
     } else {
       String message;
@@ -90,15 +95,15 @@ class StoryItem extends StatelessWidget {
       title = Column(children: <Widget>[
         Row(
           children: <Widget>[
-            buildUserAvatar(context, story.uid, 36.0),
+            buildUserAvatar(context, story.uid, theme.subheadSize * 2 + 4),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.only(left: 8.0),
+                padding: EdgeInsets.only(left: size * 2 / 3),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(story.username),
-                    Text(datetime),
+                    Text(story.username, style: subheadStyle),
+                    Text(datetime, style: subheadStyle),
                   ],
                 ),
               ),
@@ -113,7 +118,6 @@ class StoryItem extends StatelessWidget {
                 child: comment2Widget(
                   context,
                   message,
-                  style: Theme.of(context),
                 ),
               ),
             ],

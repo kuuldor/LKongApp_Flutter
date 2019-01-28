@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 class ForumItem extends StatelessWidget {
@@ -18,6 +19,11 @@ class ForumItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle titleStyle = theme.titleStyle;
+    TextStyle subheadStyle = theme.subheadStyle;
+    TextStyle subtitleStyle = theme.subtitleStyle;
+
     return ListTile(
       key: forumItemKey(forum.fid),
       onTap: onTap,
@@ -29,7 +35,7 @@ class ForumItem extends StatelessWidget {
               backgroundImage: CachedNetworkImageProvider(
                   avatarForForumID(forum.fid),
                   imageOnError: "assets/image_placeholder.png"),
-              radius: 24.0,
+              radius: theme.titleSize + 4,
             ),
             Expanded(
               child: Container(
@@ -39,7 +45,7 @@ class ForumItem extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       forum.name,
-                      style: Theme.of(context).textTheme.title,
+                      style: titleStyle,
                     ),
                     // Text(timeAgoSinceDate(parseDatetime(forum.dateline))),
                   ],
@@ -50,7 +56,7 @@ class ForumItem extends StatelessWidget {
                 ? Column(
                     children: <Widget>[
                       Icon(Icons.message),
-                      Text("${info.todayposts}"),
+                      Text("${info.todayposts}", style: subheadStyle),
                     ],
                   )
                 : Container(),
@@ -60,7 +66,7 @@ class ForumItem extends StatelessWidget {
       subtitle: info != null && info.description != null
           ? Container(
               padding: EdgeInsetsDirectional.only(top: 8.0),
-              child: Text(info.description, maxLines: 8))
+              child: Text(info.description, maxLines: 8, style: subtitleStyle))
           : null,
     );
   }

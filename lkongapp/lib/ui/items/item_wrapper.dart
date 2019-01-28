@@ -5,6 +5,7 @@ import 'package:lkongapp/utils/utils.dart';
 Widget wrapItemAsCard(BuildContext context, Widget item,
     {bool clickable: true}) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+  double size = theme.captionSize;
 
   if (clickable) {
     //To keep the tapping ripple effect, we must wrap the item with this
@@ -18,10 +19,10 @@ Widget wrapItemAsCard(BuildContext context, Widget item,
   }
 
   return Column(children: <Widget>[
-    SizedBox(height: 4.0),
+    SizedBox(height: size / 3),
     Container(
         margin: EdgeInsets.symmetric(horizontal: 4.0),
-        padding: EdgeInsets.symmetric(vertical: 12.0),
+        padding: EdgeInsets.symmetric(vertical: size),
         decoration: BoxDecoration(
           color: theme.pageColor,
           boxShadow: [
@@ -33,27 +34,29 @@ Widget wrapItemAsCard(BuildContext context, Widget item,
           ],
         ),
         child: item),
-    SizedBox(height: 4.0),
+    SizedBox(height: size / 3),
   ]);
 }
 
 Widget wrapItem(BuildContext context, Widget item) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+  double size = theme.captionSize;
 
   return Column(children: <Widget>[
     SizedBox(height: 2.0),
     item,
     Divider(
-      height: 12.0,
+      height: size,
     ),
   ]);
 }
 
 Widget wrapItemNoDivider(BuildContext context, Widget item) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+  double size = theme.captionSize;
 
   return Column(children: <Widget>[
-    SizedBox(height: 6.0),
+    SizedBox(height: size / 2.0),
     item,
   ]);
 }

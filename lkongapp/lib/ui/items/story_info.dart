@@ -19,12 +19,16 @@ class StoryInfoItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    TextStyle headerStyle = theme.headerStyle;
+    TextStyle subheadStyle = theme.subheadStyle;
+    double size = theme.captionSize;
+
     return info == null
         ? Container()
-        : ListTile(
+        : Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             key: storyItemKey(info.id),
-            // onTap: onTap,
-            title: Column(children: <Widget>[
+            child: Column(children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width,
                 child: Row(
@@ -32,15 +36,14 @@ class StoryInfoItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         info.subject,
-                        style: Theme.of(context).textTheme.title.copyWith(
-                            fontSize: 22, fontWeight: FontWeight.w500),
+                        style: headerStyle,
                       ),
                     ),
                   ],
                 ),
               ),
               SizedBox(
-                height: 4.0,
+                height: size / 3,
               ),
               Row(
                 children: <Widget>[
@@ -50,18 +53,19 @@ class StoryInfoItem extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(info.author),
+                          Text(info.author, style: subheadStyle),
                           info.forumname != null
                               ? GestureDetector(
                                   child: Text("${info.forumname ?? '个人位面'}",
-                                      style: TextStyle(color: theme.linkColor)),
+                                      style: subheadStyle.apply(
+                                          color: theme.linkColor)),
                                   onTap: () => onForumTap(
                                       context,
                                       Forum().rebuild((b) => b
                                         ..name = info.forumname
                                         ..fid = info.fid)),
                                 )
-                              : Text("个人位面"),
+                              : Text("个人位面", style: subheadStyle),
                         ],
                       ),
                     ),
@@ -69,8 +73,10 @@ class StoryInfoItem extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
-                      Text(dateStringToLocal(info.dateline)),
-                      Text("${info.views}查看·${info.replies}回复"),
+                      Text(dateStringToLocal(info.dateline),
+                          style: subheadStyle),
+                      Text("${info.views}查看·${info.replies}回复",
+                          style: subheadStyle),
                     ],
                   ),
                 ],

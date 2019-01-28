@@ -30,7 +30,6 @@ class NoticeItem extends StatelessWidget {
               child: comment2Widget(
                 context,
                 notice.note,
-                style: Theme.of(context),
               ),
             )
           ],
@@ -51,8 +50,8 @@ class UserHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final store = StoreProvider.of<AppState>(context);
-    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.themeData.textTheme.title;
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle subheadStyle = theme.subheadStyle;
 
     final timestamp = parseDatetime(message.dateline);
     final datetime = showDetailTime(store)
@@ -60,14 +59,15 @@ class UserHeader extends StatelessWidget {
         : timeAgoSinceDate(timestamp);
 
     return Row(children: <Widget>[
-      buildUserAvatar(context, message.uid, 36.0, clickable: true),
+      buildUserAvatar(context, message.uid, theme.subheadSize * 2 + 4,
+          clickable: true),
       Container(
         width: 4.0,
       ),
       GestureDetector(
           child: Text(
             message.username,
-            style: style.copyWith(color: theme.linkColor, fontSize: 18.0),
+            style: subheadStyle.apply(color: theme.linkColor),
           ),
           onTap: () {
             onUserTap(
@@ -79,7 +79,7 @@ class UserHeader extends StatelessWidget {
       Expanded(
         child: Align(
             alignment: Alignment.centerRight,
-            child: Text(datetime, style: style)),
+            child: Text(datetime, style: subheadStyle)),
       ),
     ]);
   }
@@ -96,8 +96,9 @@ class RatelogItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.themeData.textTheme.title;
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle titleStyle = theme.titleStyle;
+    TextStyle subtitleStyle = theme.subtitleStyle;
 
     return ListTile(
         onTap: () {
@@ -116,8 +117,7 @@ class RatelogItem extends StatelessWidget {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      child: Text("${ratelog.message}",
-                          style: style.copyWith(fontSize: 20.0)),
+                      child: Text("${ratelog.message}", style: titleStyle),
                     ),
                   ],
                 ),
@@ -129,11 +129,12 @@ class RatelogItem extends StatelessWidget {
             Container(
               width: 120.0,
               child: Text("评分：${ratelog.score} ${ratelog.extcredits}",
-                  style: style.apply(color: Colors.lightGreen)),
+                  style: subtitleStyle.apply(color: Colors.lightGreen)),
             ),
             Expanded(
               child: Text(
                 "${ratelog.reason}",
+                style: subtitleStyle,
               ),
             ),
           ],
@@ -152,8 +153,8 @@ class PMItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.themeData.textTheme.title;
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle style = theme.titleStyle;
 
     return ListTile(
       onTap: () {
@@ -172,8 +173,7 @@ class PMItem extends StatelessWidget {
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: Text("${stripHtmlTag(pm.message)}",
-                        style: style.copyWith(fontSize: 20.0)),
+                    child: Text("${stripHtmlTag(pm.message)}", style: style),
                   ),
                 ],
               ),
@@ -194,7 +194,8 @@ class PMConciseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.themeData.textTheme.title;
+    TextStyle subheadStyle = theme.subheadStyle;
+    TextStyle subtitleStyle = theme.subtitleStyle;
 
     final datetime = dateStringToLocal(pm.dateline);
 
@@ -220,8 +221,7 @@ class PMConciseItem extends StatelessWidget {
         children: <Widget>[
           Container(
               padding: EdgeInsets.fromLTRB(4.0, 0, 0, 0),
-              child: Text(datetime,
-                  style: style.apply(color: theme.lightTextColor))),
+              child: Text(datetime, style: subtitleStyle)),
           SizedBox(
             height: 2.0,
           ),
@@ -229,17 +229,19 @@ class PMConciseItem extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6.0), color: bgColor),
-            child: Text(pm.message, style: style),
+            child: Text(pm.message, style: subheadStyle),
           ),
         ],
       ),
     );
 
-    final imageDim = 32.0;
+    final imageDim = theme.subheadSize * 2;
     final avatar = Column(
       crossAxisAlignment: colAlign,
       children: <Widget>[
-        Container(padding: EdgeInsets.fromLTRB(4.0, 0, 0, 0), child: Text(" ")),
+        Container(
+            padding: EdgeInsets.fromLTRB(4.0, 0, 0, 0),
+            child: Text(" ", style: subheadStyle)),
         SizedBox(
           height: 2.0,
         ),

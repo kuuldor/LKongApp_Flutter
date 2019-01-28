@@ -87,7 +87,7 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   @BuiltValueField(wireName: 'lockOrientation')
   bool get lockOrientation;
   @BuiltValueField(wireName: 'fontSize')
-  int get fontSize;
+  double get fontSize;
   @BuiltValueField(wireName: 'allowCopy')
   bool get allowCopy;
   @BuiltValueField(wireName: 'loadInSamePage')
