@@ -21,7 +21,7 @@ void main() {
   runApp(new LKongApp());
 }
 
-class LKongApp extends StatelessWidget {
+class LKongApp extends StatefulWidget {
   // This widget is the root of your application.
   static final store = Store<AppState>(
     appReducer,
@@ -37,37 +37,70 @@ class LKongApp extends StatelessWidget {
     distinct: true,
   );
 
+  LKongApp({Key key}) : super(key: key);
+
+  @override
+  LKongAppState createState() {
+    return new LKongAppState();
+  }
+}
+
+class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
   Timer autoPunchTimer;
   Timer checkNotifTimer;
 
-  LKongApp({Key key, this.autoPunchTimer}) : super(key: key) {
-    autoPunchTimer = globals.createPeriodicTimer(
-      store,
-      period: Duration(hours: 12),
-      callback: (timer) {
-        if (selectSetting(store).autoPunch) {
-          final user = selectUser(store);
-          store.dispatch(PunchCardRequest(null, user));
-        }
-      },
-    );
-    checkNotifTimer = globals.createPeriodicTimer(
-      store,
-      period: Duration(minutes: 1),
-      callback: (timer) {
-        final user = selectUser(store);
-        if (user != null && user.uid > 0) {
-          store.dispatch(CheckNoticeRequest(null, user));
-        }
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      final user = selectUser(LKongApp.store);
+      if (user != null && user.uid > 0) {
+        LKongApp.store.dispatch(PunchCardRequest(null, user));
+        LKongApp.store.dispatch(CheckNoticeRequest(null, user));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    store.dispatch(Rehydrate());
+    autoPunchTimer = globals.createPeriodicTimer(
+      LKongApp.store,
+      period: Duration(hours: 12),
+      callback: (timer) {
+        if (selectSetting(LKongApp.store).autoPunch) {
+          final user = selectUser(LKongApp.store);
+          if (user != null && user.uid > 0) {
+            LKongApp.store.dispatch(PunchCardRequest(null, user));
+          }
+        }
+      },
+    );
+
+    checkNotifTimer = globals.createPeriodicTimer(
+      LKongApp.store,
+      period: Duration(minutes: 1),
+      callback: (timer) {
+        final user = selectUser(LKongApp.store);
+        if (user != null && user.uid > 0) {
+          LKongApp.store.dispatch(CheckNoticeRequest(null, user));
+        }
+      },
+    );
+
+    LKongApp.store.dispatch(Rehydrate());
     return StoreProvider<AppState>(
-      store: store,
+      store: LKongApp.store,
       child: buildConnectedWidget(
           context, LKAppModel.fromStore, _createModeledApp),
     );
