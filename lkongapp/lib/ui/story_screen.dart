@@ -39,16 +39,24 @@ class StoryScreen extends StatefulWidget {
   }
 }
 
+const readingModeAll = 0;
+const readingModeAuthor = 1;
+const readingModeNovel = 2;
+
 class StoryContentState extends State<StoryScreen> {
   int storyId;
   int postId;
   int page;
   int floor;
 
+  int readingMode;
+
   bool loaded = false;
   bool loading = false;
 
   StoryContentState(this.storyId, this.postId, this.page) {
+    this.readingMode = readingModeAll;
+
     if (this.postId == null) {
       if (this.page == null) {
         this.page = 1;
@@ -107,6 +115,13 @@ class StoryContentState extends State<StoryScreen> {
     });
   }
 
+  void setReadingMode(int newMode) {
+    setState(() {
+      readingMode = newMode;
+      floor = null;
+    });
+  }
+
   void setLoading(bool value) {
     setState(() {
       loading = value;
@@ -137,6 +152,7 @@ class StoryContentModel {
   final BuiltList<String> blackList;
   final BuiltList<String> followList;
   final bool showDetailTime;
+  final StoryContentState state;
 
   StoryContentModel({
     @required this.username,
@@ -149,6 +165,7 @@ class StoryContentModel {
     @required this.blackList,
     @required this.followList,
     @required this.showDetailTime,
+    @required this.state,
   });
 
   final Future<Null> Function(int storyId, int page) loadContent;
@@ -173,6 +190,7 @@ class StoryContentModel {
                   : null,
           followList: selectUserData(store)?.followList?.tid,
           showDetailTime: selectSetting(store).showDetailTime,
+          state: state,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
           },
@@ -205,7 +223,7 @@ class StoryContentModel {
         showDetailTime
       ]);
 
-  final allMenus = const <Choice>[
+  final actionMenus = const <Choice>[
     const Choice(
         title: '关注', icon: Icons.visibility, action: MenuAction.follow),
     const Choice(
@@ -216,13 +234,13 @@ class StoryContentModel {
         title: '取消收藏', icon: Icons.delete_sweep, action: MenuAction.unfavorite),
   ];
 
-  List<Choice> filterMenus() {
+  List<Choice> filterActionMenus() {
     var menus = <Choice>[];
     if (followList != null && story?.storyInfo?.tid != null) {
       if (followList.contains("${story.storyInfo.tid}")) {
-        menus.add(allMenus[1]);
+        menus.add(actionMenus[1]);
       } else {
-        menus.add(allMenus[0]);
+        menus.add(actionMenus[0]);
       }
     }
 
@@ -231,11 +249,25 @@ class StoryContentModel {
         story.pages[1].comments != null &&
         story.pages[1].comments.length > 0) {
       if (story.pages[1].comments.first.favorite == true) {
-        menus.add(allMenus[3]);
+        menus.add(actionMenus[3]);
       } else {
-        menus.add(allMenus[2]);
+        menus.add(actionMenus[2]);
       }
     }
+    return menus;
+  }
+
+  final modeMenus = const <Choice>[
+    const Choice(title: '全部显示', icon: Icons.toc, action: MenuAction.normal),
+    const Choice(
+        title: '只看楼主', icon: Icons.face, action: MenuAction.authorOnly),
+    const Choice(
+        title: '小说连载', icon: Icons.receipt, action: MenuAction.novelReading),
+  ];
+
+  List<Choice> filterModeMenus() {
+    var menus = modeMenus.map((item) => Choice.copy(item)).toList();
+    menus[state.readingMode] = Choice.disable(menus[state.readingMode]);
     return menus;
   }
 
@@ -248,6 +280,15 @@ class StoryContentModel {
       case MenuAction.favorite:
       case MenuAction.unfavorite:
         favoriteStory(context, choice.action);
+        break;
+      case MenuAction.normal:
+        state.setReadingMode(readingModeAll);
+        break;
+      case MenuAction.authorOnly:
+        state.setReadingMode(readingModeAuthor);
+        break;
+      case MenuAction.novelReading:
+        state.setReadingMode(readingModeNovel);
         break;
       default:
         break;
@@ -319,25 +360,22 @@ class StoryContentModel {
   }
 
   AppBar buildAppBar(BuildContext context) {
-    List<Choice> menus = filterMenus();
+    List<Choice> actionChoices = filterActionMenus();
+    List<Choice> modeChoices = filterModeMenus();
+
     var actions = <Widget>[];
 
     if (username != null && uid != null) {
-      actions.add(IconButton(
-        icon: Icon(Icons.add_comment),
-        onPressed: () {
-          onReplyButtonTap(
-            context,
-            story: story.storyInfo,
-            uid: uid,
-            username: username,
-          );
-        },
-      ));
+      actionChoices.forEach((menu) => actions.add(IconButton(
+            icon: Icon(menu.icon),
+            onPressed: () {
+              _menuSelected(context, menu);
+            },
+          )));
+    }
 
-      if (menus.length > 0) {
-        actions.add(popupMenu(context, menus, _menuSelected));
-      }
+    if (modeChoices.length > 0) {
+      actions.add(popupMenu(context, modeChoices, _menuSelected));
     }
 
     return AppBar(
@@ -408,11 +446,14 @@ class StoryContentModel {
     }
 
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
-    LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
+    final theme = LKModeledApp.modelOf(context).theme;
+    final subheadStyle = theme.subheadStyle;
+    final size = theme.captionSize;
 
     final buildCommentViews = (BuildContext context, int index) {
       final wrapTile =
           (Widget tile) => wrapItemAsCard(context, tile, clickable: false);
+      final wrapTileConcise = (Widget tile) => wrapItem(context, tile);
 
       Widget tile;
       if (loading || (comments == null && lastError == null)) {
@@ -436,23 +477,52 @@ class StoryContentModel {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "错误：$lastError",
-                  style: const TextStyle(color: Colors.white),
+                  style: subheadStyle.apply(color: Colors.white),
                 ));
           }
         } else {
           var i = index - 1;
           if (i >= 0 && i < comments.length) {
             var comment = comments[i];
-            if (blackList == null ||
-                !blackList.contains("${comment.authorid}")) {
+            bool visible = true;
+            bool concise = false;
+            if (blackList != null &&
+                blackList.contains("${comment.authorid}")) {
+              visible = false;
+            }
+
+            if (state.readingMode == readingModeAuthor) {
+              if (comment.authorid != info?.authorid) {
+                visible = false;
+              }
+            }
+
+            if (state.readingMode == readingModeNovel) {
+              concise = true;
+              if (comment.authorid != info?.authorid) {
+                visible = false;
+              }
+
+              //Assume the novel's chapter will be longer than 1K
+              if (comment.message.length < 1024) {
+                visible = false;
+              }
+            }
+
+            if (visible) {
               Widget item = CommentItem(
                 uid: uid,
                 comment: comment,
                 showDetailTime: showDetailTime,
                 onTap: (action) => onCommentAction(context, comment, action),
                 author: story?.storyInfo?.authorid,
+                concise: concise,
               );
-              tile = wrapTile(item);
+              if (concise) {
+                tile = wrapTileConcise(item);
+              } else {
+                tile = wrapTile(item);
+              }
             } else {
               tile = Container();
             }
@@ -528,6 +598,24 @@ class StoryContentModel {
                       _scrollController.jumpTo(0.0);
                     }
                   : null,
+            ),
+            Expanded(
+                child: Container(
+              height: 0.0,
+            )),
+            IconButton(
+              icon: Icon(Icons.add_comment),
+              onPressed: () {
+                onReplyButtonTap(
+                  context,
+                  story: story.storyInfo,
+                  uid: uid,
+                  username: username,
+                );
+              },
+            ),
+            SizedBox(
+              width: 12.0,
             ),
           ],
         ),

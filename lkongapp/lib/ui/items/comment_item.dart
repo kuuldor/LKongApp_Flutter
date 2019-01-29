@@ -19,6 +19,7 @@ class CommentItem extends StatelessWidget {
   final int uid;
   final int author;
   final bool showDetailTime;
+  final bool concise;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
 
@@ -28,6 +29,7 @@ class CommentItem extends StatelessWidget {
     @required this.uid,
     @required this.author,
     @required this.showDetailTime,
+    this.concise: false,
   });
 
   Widget buildRateLog(BuildContext context, BuiltList<Ratelog> ratelog) {
@@ -144,19 +146,26 @@ class CommentItem extends StatelessWidget {
     TextStyle subtitleStyle = theme.subtitleStyle;
     double size = theme.captionSize;
 
-    var messages = List<Widget>();
-    if (comment.warning) {
-      messages.add(Container(
-          color: Colors.redAccent,
-          child: Row(
-            children: <Widget>[
-              Icon(Icons.warning),
-              Text(
-                comment.warningReason,
-                style: subheadStyle,
-              ),
-            ],
-          )));
+    final textContent = Container(
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: comment2Widget(
+              context,
+              comment.message,
+            ),
+          )
+        ],
+      ),
+    );
+
+    if (concise) {
+      return Container(
+        key: commentItemKey(comment.id),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: textContent,
+      );
     }
 
     var actionButtons = <Widget>[];
@@ -205,75 +214,69 @@ class CommentItem extends StatelessWidget {
         ? stringFromDate(timestamp)
         : timeAgoSinceDate(timestamp);
 
+    var rows = <Widget>[];
+    rows.add(Row(
+      children: <Widget>[
+        buildUserAvatar(context, comment.authorid, size * 2 + 4,
+            clickable: true),
+        Expanded(
+          child: Container(
+            padding: EdgeInsets.only(left: (size / 3 * 2)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                authorLine,
+                Text(datetime, style: subtitleStyle),
+              ],
+            ),
+          ),
+        ),
+        Text("${comment.lou}楼", style: subtitleStyle),
+      ],
+    ));
+
+    rows.add(Container(height: size));
+
+    if (comment.warning == true) {
+      rows.add(Container(
+          padding: EdgeInsets.all(size / 2),
+          decoration: BoxDecoration(
+              color: Colors.red[400],
+              borderRadius: BorderRadius.circular(size / 2)),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.warning),
+              Container(width: size / 3 * 2),
+              Expanded(
+                child: Text(
+                  "此帖被警告。\n理由：${comment.warningReason}",
+                  style: subheadStyle,
+                ),
+              ),
+            ],
+          )));
+      rows.add(Container(height: size));
+    }
+
+    rows.add(textContent);
+
+    rows.add(Container(
+      height: size,
+    ));
+    rows.add(buildRateLog(context, comment.ratelog));
+    rows.add(Container(
+      height: size * 4,
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: actionButtons,
+      ),
+    ));
+
     return Container(
       key: commentItemKey(comment.id),
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      child: Column(children: <Widget>[
-        Row(
-          children: <Widget>[
-            buildUserAvatar(context, comment.authorid, size * 2 + 4,
-                clickable: true),
-            Expanded(
-              child: Container(
-                padding: EdgeInsets.only(left: (size / 3 * 2)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    authorLine,
-                    Text(datetime, style: subtitleStyle),
-                  ],
-                ),
-              ),
-            ),
-            Text("${comment.lou}楼", style: subtitleStyle),
-          ],
-        ),
-        Container(
-          height: size,
-        ),
-        comment.warning
-            ? Container(
-                padding: EdgeInsets.all(6.0),
-                decoration: BoxDecoration(
-                    color: Colors.red[400],
-                    borderRadius: BorderRadius.circular(6.0)),
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.warning),
-                    Container(width: 8.0),
-                    Text(
-                      "此帖被警告。理由：${comment.warningReason}",
-                      style: subheadStyle,
-                    ),
-                  ],
-                ))
-            : Container(),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: comment2Widget(
-                  context,
-                  comment.message,
-                ),
-              )
-            ],
-          ),
-        ),
-        Container(
-          height: size,
-        ),
-        buildRateLog(context, comment.ratelog),
-        Container(
-          height: size * 4,
-          width: MediaQuery.of(context).size.width,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: actionButtons,
-          ),
-        ),
-      ]),
+      child: Column(children: rows),
     );
   }
 }

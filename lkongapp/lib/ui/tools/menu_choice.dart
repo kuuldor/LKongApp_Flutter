@@ -19,6 +19,8 @@ enum MenuAction {
   notice,
   ratelog,
   pm,
+  authorOnly,
+  novelReading,
 }
 
 class Choice {
