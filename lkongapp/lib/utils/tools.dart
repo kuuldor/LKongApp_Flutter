@@ -188,6 +188,10 @@ _parseImageAndText(
     } else {
       String cls = e.attributes["class"];
       baseTextStyle = applyCSSForClass(cls, theme, baseTextStyle);
+
+      String style = e.attributes["style"];
+      baseTextStyle = applyCSSForStyle(style, baseTextStyle, theme.isNightMode);
+
       if (e.localName == "em" || e.localName == "i") {
         baseTextStyle = baseTextStyle.copyWith(fontStyle: FontStyle.italic);
       } else if (e.localName == "strong" || e.localName == "b") {
@@ -311,6 +315,21 @@ _parseImageAndText(
         node.text.trim().replaceAll(RegExp(r"(\s+)", multiLine: true), " ");
     textList.add(TextSpan(style: baseTextStyle, text: text));
   }
+}
+
+TextStyle applyCSSForStyle(
+    String style, TextStyle baseTextStyle, bool isNightMode) {
+  if (style != null) {
+    RegExp colorPattern = RegExp(r'color:\s*(.*?)\s*;', caseSensitive: false);
+    if (colorPattern.hasMatch(style)) {
+      String fcolor = colorPattern.firstMatch(style).group(1);
+
+      Color color = htmlColor(fcolor, nightRev: isNightMode);
+      baseTextStyle = baseTextStyle.apply(color: color);
+    }
+  }
+
+  return baseTextStyle;
 }
 
 TextStyle applyCSSForClass(

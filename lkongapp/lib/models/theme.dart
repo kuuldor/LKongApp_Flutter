@@ -5,6 +5,7 @@ import 'package:color/color.dart' as Colour;
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:lkongapp/data/theme.dart';
 
 import 'package:lkongapp/models/serializers.dart';
 import 'package:lkongapp/data/theme.dart' as themeData;
@@ -25,10 +26,15 @@ Color htmlColor(String html, {bool nightRev: false}) {
   html = html.trim();
   RegExp hexPattern = RegExp('#([0-9A-F]{3,6})', caseSensitive: false);
   RegExp rgboPattern = RegExp(
-      'rgba\\((\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+\\.\\d+)\\s*\\)',
+      r'rgba\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+\.\d+)\s*\)',
       caseSensitive: false);
+  RegExp rgbPattern =
+      RegExp(r'rgb\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)', caseSensitive: false);
 
-  if (hexPattern.hasMatch(html)) {
+  String namedColor = htmlColorTable[html.toLowerCase()];
+  if (namedColor != null) {
+    color = Colour.Color.hex(namedColor);
+  } else if (hexPattern.hasMatch(html)) {
     String hexStr = hexPattern.firstMatch(html).group(1);
 
     if (hexStr.length == 3) {
@@ -53,16 +59,18 @@ Color htmlColor(String html, {bool nightRev: false}) {
     int green = int.parse(g);
     int blue = int.parse(b);
 
-    if (nightRev) {
-      if (red == green && green == blue) {
-        int rev = 255 - red;
-        red = rev;
-        green = rev;
-        blue = rev;
-      }
-    }
-
     opacity = double.parse(o);
+    color = Colour.Color.rgb(red, green, blue);
+  } else if (rgbPattern.hasMatch(html)) {
+    Match match = rgbPattern.firstMatch(html);
+    String r = match.group(1);
+    String g = match.group(2);
+    String b = match.group(3);
+
+    int red = int.parse(r);
+    int green = int.parse(g);
+    int blue = int.parse(b);
+
     color = Colour.Color.rgb(red, green, blue);
   } else {
     color = Colour.Color.rgb(0, 0, 0);

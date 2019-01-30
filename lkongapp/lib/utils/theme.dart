@@ -55,10 +55,10 @@ class LKongAppTheme {
         appTheme: theme, isNightMode: night, fontSize: fontSize);
   }
 
+  ThemeData _themeData;
   ThemeData get themeData {
-    ThemeData template = isNightMode ? ThemeData.dark() : ThemeData.light();
-
-    return template.copyWith(
+    return _themeData ??=
+        (isNightMode ? ThemeData.dark() : ThemeData.light()).copyWith(
       primaryColor: mainColor,
       backgroundColor: pageColor,
       accentColor: mainColor,
@@ -66,13 +66,20 @@ class LKongAppTheme {
     );
   }
 
-  double get sizeFactor => (fontSize - 1) * 0.1 + 0.5;
-  double get textSize => 20 * sizeFactor;
-  double get titleSize => 20 * sizeFactor;
-  double get subtitleSize => 14 * sizeFactor;
-  double get headerSize => 22 * sizeFactor;
-  double get subheadSize => 16 * sizeFactor;
-  double get captionSize => 12 * sizeFactor;
+  double _sizeFactor;
+  double get sizeFactor => _sizeFactor ??= (fontSize - 1) * 0.1 + 0.5;
+  double _textSize;
+  double get textSize => _textSize ??= 20 * sizeFactor;
+  double _titleSize;
+  double get titleSize => _titleSize ??= 20 * sizeFactor;
+  double _subtitleSize;
+  double get subtitleSize => _subtitleSize ??= 14 * sizeFactor;
+  double _headerSize;
+  double get headerSize => _headerSize ??= 22 * sizeFactor;
+  double _subheadSize;
+  double get subheadSize => _subheadSize ??= 16 * sizeFactor;
+  double _captionSize;
+  double get captionSize => _captionSize ??= 12 * sizeFactor;
 
   TextStyle _textStyle;
   TextStyle get textStyle => _textStyle ??= themeData.textTheme.title.copyWith(
