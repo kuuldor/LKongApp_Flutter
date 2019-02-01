@@ -385,7 +385,11 @@ Future<Map> getPersonalData(Map args) {
   switch (mode) {
     case 0:
       modeString = "favorite";
-      parser = StoryListResult.fromJson;
+      parser = (json) {
+        var result = StoryListResult.fromJson(json);
+        result = result.rebuild((b) => b..data.replace(result.data.reversed));
+        return result;
+      };
       break;
     case 1:
       modeString = "atme";
