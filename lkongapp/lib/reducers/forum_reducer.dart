@@ -83,8 +83,11 @@ final forumRepoReducer = combineReducers<BuiltMap<int, FetchList<Story>>>([
 
 BuiltMap<int, FetchList<Story>> _forumStoryRequested(
     BuiltMap<int, FetchList<Story>> repo, ForumStoryRequest action) {
-  return repo
-      .rebuild((b) => b.updateValue(action.forum, (v) => fetchListLoading(v)));
+  return repo.rebuild((b) => b.updateValue(
+        action.forum,
+        (v) => fetchListLoading(v),
+        ifAbsent: () => fetchListLoading(FetchList<Story>()),
+      ));
 }
 
 BuiltMap<int, FetchList<Story>> _forumStoryNew(

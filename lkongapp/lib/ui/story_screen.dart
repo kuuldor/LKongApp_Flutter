@@ -451,9 +451,13 @@ class StoryContentModel {
     final size = theme.captionSize;
 
     final buildCommentViews = (BuildContext context, int index) {
-      final wrapTile =
-          (Widget tile) => wrapItemAsCard(context, tile, clickable: false);
-      final wrapTileConcise = (Widget tile) => wrapItem(context, tile);
+      var wrapTile;
+      if (state.readingMode == readingModeNovel) {
+        wrapTile = (Widget tile) => wrapItem(context, tile);
+      } else {
+        wrapTile =
+            (Widget tile) => wrapItemAsCard(context, tile, clickable: false);
+      }
 
       Widget tile;
       if (loading || (comments == null && lastError == null)) {
@@ -485,7 +489,6 @@ class StoryContentModel {
           if (i >= 0 && i < comments.length) {
             var comment = comments[i];
             bool visible = true;
-            bool concise = false;
             if (blackList != null &&
                 blackList.contains("${comment.authorid}")) {
               visible = false;
@@ -498,7 +501,6 @@ class StoryContentModel {
             }
 
             if (state.readingMode == readingModeNovel) {
-              concise = true;
               if (comment.authorid != info?.authorid) {
                 visible = false;
               }
@@ -516,13 +518,9 @@ class StoryContentModel {
                 showDetailTime: showDetailTime,
                 onTap: (action) => onCommentAction(context, comment, action),
                 author: story?.storyInfo?.authorid,
-                concise: concise,
+                concise: (state.readingMode == readingModeNovel),
               );
-              if (concise) {
-                tile = wrapTileConcise(item);
-              } else {
-                tile = wrapTile(item);
-              }
+              tile = wrapTile(item);
             } else {
               tile = Container();
             }

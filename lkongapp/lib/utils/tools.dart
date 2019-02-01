@@ -127,6 +127,13 @@ _cleanUpTextList(List<Widget> widgetList, List<TextSpan> textList) {
   }
 }
 
+final needNewLineTest = (dom.Element e) => (e.localName == "p" ||
+    e.localName == "h1" ||
+    e.localName == "h2" ||
+    e.localName == "h3" ||
+    e.localName == "h4" ||
+    e.localName == "h5");
+
 _parseImageAndText(
   BuildContext context, {
   @required dom.Node node,
@@ -211,6 +218,26 @@ _parseImageAndText(
               break;
           }
         });
+      } else if (e.localName == "h1") {
+        baseTextStyle = theme.headerStyle
+            .apply(fontSizeFactor: 1.5)
+            .copyWith(fontWeight: FontWeight.bold);
+      } else if (e.localName == "h2") {
+        baseTextStyle = theme.headerStyle
+            .apply(fontSizeFactor: 1.2)
+            .copyWith(fontWeight: FontWeight.bold);
+      } else if (e.localName == "h3") {
+        baseTextStyle = theme.headerStyle
+            .apply(fontSizeFactor: 1.0)
+            .copyWith(fontWeight: FontWeight.bold);
+      } else if (e.localName == "h4") {
+        baseTextStyle = theme.headerStyle
+            .apply(fontSizeFactor: 0.9)
+            .copyWith(fontWeight: FontWeight.bold);
+      } else if (e.localName == "h5") {
+        baseTextStyle = theme.headerStyle
+            .apply(fontSizeFactor: 0.8)
+            .copyWith(fontWeight: FontWeight.bold);
       } else if (e.localName == "a") {
         baseTextStyle = baseTextStyle.apply(color: theme.linkColor);
       }
@@ -227,14 +254,21 @@ _parseImageAndText(
 
       if (e.localName == "br") {
         nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
-      } else if (e.localName == "p") {
+      } else if (needNewLineTest(e)) {
         nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
-        // nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
+        nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
       } else if (e.localName == "div" && cls != "lkong_quobes") {
         if (e.nodes.length == 1) {
           final child = e.nodes.elementAt(0);
-          if (!(child is dom.Element) ||
-              (child as dom.Element).localName != "div") {
+          bool needNewline = false;
+          if (child is dom.Element) {
+            if (child.localName != "div" && !needNewLineTest(child)) {
+              needNewline = true;
+            }
+          } else {
+            needNewline = true;
+          }
+          if (needNewline) {
             nodeTextList.insert(0, TextSpan(style: baseTextStyle, text: "\n"));
             // nodeTextList.add(TextSpan(style: baseTextStyle, text: "\n"));
           }
@@ -313,7 +347,9 @@ _parseImageAndText(
   } else if (node is dom.Text) {
     String text =
         node.text.trim().replaceAll(RegExp(r"(\s+)", multiLine: true), " ");
-    textList.add(TextSpan(style: baseTextStyle, text: text));
+    if (text.length > 0) {
+      textList.add(TextSpan(style: baseTextStyle, text: text));
+    }
   }
 }
 
