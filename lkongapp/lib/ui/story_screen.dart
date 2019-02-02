@@ -12,11 +12,11 @@ import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/ui/tools/menu_choice.dart';
+import 'package:lkongapp/utils/indexed_controller.dart';
 import 'package:lkongapp/utils/theme.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
-import 'package:lkongapp/utils/indexed_controller.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
@@ -51,8 +51,9 @@ class StoryContentState extends State<StoryScreen> {
 
   int readingMode;
 
-  bool loaded = false;
-  bool loading = false;
+  int loading;
+
+  double offset = 0.0;
 
   StoryContentState(this.storyId, this.postId, this.page) {
     this.readingMode = readingModeAll;
@@ -62,7 +63,6 @@ class StoryContentState extends State<StoryScreen> {
         this.page = 1;
       }
     } else {
-      loading = true;
       api.queryMetaData({"postId": this.postId}).then((result) {
         String location = result["location"];
         int lou = result["lou"];
@@ -81,7 +81,6 @@ class StoryContentState extends State<StoryScreen> {
           }
         }
         setState(() {
-          this.loading = false;
           this.page = page;
           this.floor = lou;
           this.storyId = tid;
@@ -119,26 +118,35 @@ class StoryContentState extends State<StoryScreen> {
     setState(() {
       readingMode = newMode;
       floor = null;
+      offset = 0.0;
     });
   }
 
-  void setLoading(bool value) {
+  void setFloor(int value) {
     setState(() {
-      loading = value;
+      floor = value;
     });
   }
 
-  void onInitialLoaded() {
-    setState(() {
-      loaded = true;
-    });
+  void setLoading(int value) {
+    loading = value;
+  }
+
+  void setOffset(double value) {
+    offset = value;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    offset = 0.0;
   }
 
   @override
   Widget build(BuildContext context) {
     return buildConnectedWidget(
         context, StoryContentModel.fromStateAndStore(this), (viewModel) {
-      return viewModel._buildContentView(context, this);
+      return viewModel._buildContentView(context);
     });
   }
 }
@@ -154,6 +162,8 @@ class StoryContentModel {
   final bool showDetailTime;
   final bool detectLink;
   final StoryContentState state;
+
+  bool get novelMode => state.readingMode == readingModeNovel;
 
   StoryContentModel({
     @required this.username,
@@ -196,6 +206,7 @@ class StoryContentModel {
           state: state,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
+            state.setLoading(page);
           },
           loadInfo: (storyId) {
             store.dispatch(StoryInfoRequest(null, storyId));
@@ -210,8 +221,10 @@ class StoryContentModel {
         other.blackList == blackList &&
         other.followList == followList &&
         other.showDetailTime == showDetailTime &&
+        other.detectLink == detectLink &&
         other.loading == loading &&
-        other.lastError == lastError;
+        other.lastError == lastError &&
+        other.state == state;
   }
 
   @override
@@ -223,7 +236,9 @@ class StoryContentModel {
         username,
         blackList,
         followList,
-        showDetailTime
+        showDetailTime,
+        detectLink,
+        state,
       ]);
 
   final actionMenus = const <Choice>[
@@ -362,7 +377,10 @@ class StoryContentModel {
     }
   }
 
-  AppBar buildAppBar(BuildContext context) {
+  Widget buildAppBar(BuildContext context, bool forSliver) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    final titleStyle = theme.titleStyle;
+
     List<Choice> actionChoices = filterActionMenus();
     List<Choice> modeChoices = filterModeMenus();
 
@@ -381,77 +399,157 @@ class StoryContentModel {
       actions.add(popupMenu(context, modeChoices, _menuSelected));
     }
 
-    return AppBar(
-      title: GestureDetector(
-        child: Text("帖子",
-            style:
-                Theme.of(context).textTheme.title.apply(color: Colors.white)),
-        onTap: () => scrollToTop(context),
-      ),
-      actions: actions,
-    );
-  }
-
-  static ScrollController _scrollController;
-
-  Widget _buildContentView(BuildContext context, StoryContentState state) {
-    final spinner = Container(
-      height: MediaQuery.of(context).size.height - 160,
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
+    final titleBar = GestureDetector(
+      child: Text("帖子", style: titleStyle.apply(color: Colors.white)),
+      onTap: () => scrollToTop(context),
     );
 
-    int pageNo = state.page;
-    if (pageNo == null) {
-      _scrollController = ScrollController();
-      return Scaffold(
-        key: _scaffoldKey,
-        appBar: buildAppBar(context),
-        body: ListView.builder(
-            controller: _scrollController,
-            itemCount: 1,
-            itemBuilder: (context, int) => spinner),
+    if (forSliver) {
+      return SliverAppBar(
+        title: titleBar,
+        actions: actions,
+        pinned: false,
+        floating: true,
+      );
+    } else {
+      return AppBar(
+        title: titleBar,
+        actions: actions,
       );
     }
+  }
 
-    int storyId = state.storyId;
+  List<Widget> buildSlivers(BuildContext context, int count,
+      Widget Function(BuildContext, int) builder) {
+    List<Widget> slivers = new List<Widget>();
 
-    StoryInfoResult info;
-
-    BuiltList<Comment> comments;
-    if (story != null) {
-      info = story.storyInfo;
-      StoryPage page = story.pages[pageNo];
-
-      if (page != null) {
-        comments = page.comments;
-      }
+    SliverAppBar bar = buildAppBar(context, true);
+    if (bar != null) {
+      slivers.add(bar);
     }
 
-    if (info == null && lastError == null) {
+    slivers.add(SliverList(
+      delegate: SliverChildBuilderDelegate(
+        builder,
+        childCount: count,
+      ),
+    ));
+
+    return slivers;
+  }
+
+  Widget get spinner => Container(
+        padding: EdgeInsets.symmetric(vertical: 48),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+  ScrollController _scrollController;
+
+  Widget _buildContentView(BuildContext context) {
+    int storyId = state.storyId;
+    int pageNo = state.page;
+
+    if (lastError == null && (pageNo == null || story?.storyInfo == null)) {
       if (!loading && storyId != null) {
         loadInfo(storyId);
       }
+      _scrollController = ScrollController(initialScrollOffset: 0.0);
+      return Scaffold(
+          key: _scaffoldKey,
+          body: Container(
+            height: MediaQuery.of(context).size.height - 160,
+            child: Center(child: spinner),
+          ));
+    } else {
+      return _buildStoryView(context);
     }
-    if (comments == null && lastError == null) {
-      if (!loading && storyId != null) {
-        loadContent(storyId, pageNo);
+  }
+
+  List buildListItems(int totalPages, List<int> availablePages) {
+    List items = List();
+    int storyId = state.storyId;
+    int pageNo = state.page;
+
+    if (story != null) {
+      StoryPage page;
+
+      if (novelMode) {
+        for (int i = 1; i <= totalPages; i++) {
+          page = story.pages[i];
+
+          if (page != null && page.comments.length > 0) {
+            items.addAll(page.comments);
+            availablePages.add(i);
+          } else {
+            break;
+          }
+        }
+      } else {
+        page = story.pages[pageNo];
+
+        if (page != null && page.comments.length > 0) {
+          items.addAll(page.comments);
+          availablePages.add(pageNo);
+        } else if (lastError == null) {
+          if (!loading && storyId != null) {
+            loadContent(storyId, pageNo);
+          }
+
+          if (pageNo == state.loading) {
+            items.add(spinner);
+          }
+        }
       }
     }
 
-    int itemCount = 1;
+    return items;
+  }
+
+  Widget _buildStoryView(BuildContext context) {
+    int storyId = state.storyId;
+    int pageNo = state.page;
+
+    final theme = LKModeledApp.modelOf(context).theme;
+    final subheadStyle = theme.subheadStyle;
+    final titleStyle = theme.titleStyle;
+    final size = theme.captionSize;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    StoryInfoResult info;
+
+    List items = List();
+    if (story != null) {
+      info = story.storyInfo;
+
+      if (info != null) {
+        items.add(info);
+      }
+    }
 
     if (lastError != null) {
-      itemCount++;
-    } else if (comments != null) {
-      itemCount += comments.length;
+      items.add(Container(
+          color: Colors.red[500],
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "错误：$lastError",
+            style: subheadStyle.apply(color: Colors.white),
+          )));
     }
 
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
-    final theme = LKModeledApp.modelOf(context).theme;
-    final subheadStyle = theme.subheadStyle;
-    final size = theme.captionSize;
+    int lastAvailPage = 0;
+    final availPages = <int>[];
+
+    items.addAll(buildListItems(totalPages, availPages));
+
+    if (availPages.length > 0) {
+      lastAvailPage = availPages.last;
+    }
+
+    int itemCount = items.length + (novelMode ? 1 : 0);
 
     final buildCommentViews = (BuildContext context, int index) {
       var wrapTile;
@@ -463,103 +561,143 @@ class StoryContentModel {
       }
 
       Widget tile;
-      if (loading || (comments == null && lastError == null)) {
-        tile = spinner;
-      } else {
-        if (index == 0) {
-          if (info?.subject != null) {
-            tile = wrapTile(Container(
-              child: Center(
-                child: StoryInfoItem(info: info),
-              ),
-            ));
-          } else {
-            tile = Container();
-          }
-        } else if (lastError != null) {
-          if (index == 1) {
-            tile = Container(
-                color: Colors.red[500],
-                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "错误：$lastError",
-                  style: subheadStyle.apply(color: Colors.white),
-                ));
-          }
-        } else {
-          var i = index - 1;
-          if (i >= 0 && i < comments.length) {
-            var comment = comments[i];
-            bool visible = true;
-            if (blackList != null &&
-                blackList.contains("${comment.authorid}")) {
-              visible = false;
+      if (index >= items.length) {
+        if (lastAvailPage < totalPages) {
+          if (lastError == null) {
+            if (!loading && storyId != null) {
+              loadContent(storyId, lastAvailPage + 1);
             }
-
-            if (state.readingMode == readingModeAuthor) {
-              if (comment.authorid != info?.authorid) {
-                visible = false;
-              }
-            }
-
-            if (state.readingMode == readingModeNovel) {
-              if (comment.authorid != info?.authorid) {
-                visible = false;
-              }
-
-              //Assume the novel's chapter will be longer than 1K
-              if (comment.message.length < 1024) {
-                visible = false;
-              }
-            }
-
-            if (visible) {
-              Widget item = CommentItem(
-                uid: uid,
-                comment: comment,
-                showDetailTime: showDetailTime,
-                detectLink: detectLink,
-                onTap: (action) => onCommentAction(context, comment, action),
-                author: story?.storyInfo?.authorid,
-                concise: (state.readingMode == readingModeNovel),
-              );
-              tile = wrapTile(item);
-            } else {
-              tile = Container();
-            }
+            return spinner;
           }
         }
+        return Container();
       }
+
+      var item = items[index];
+
+      if (item is Widget) {
+        tile = item;
+      } else if (item is StoryInfoResult) {
+        if (info?.subject != null) {
+          tile = wrapTile(Container(
+            child: Center(
+              child: StoryInfoItem(info: info),
+            ),
+          ));
+        }
+      } else if (item is Comment) {
+        var comment = item;
+
+        bool visible = true;
+        bool concise = false;
+        if (blackList != null && blackList.contains("${comment.authorid}")) {
+          visible = false;
+        }
+
+        if (state.readingMode == readingModeAuthor) {
+          if (comment.authorid != info?.authorid) {
+            visible = false;
+          }
+        } else if (state.readingMode == readingModeNovel) {
+          concise = true;
+          if (comment.authorid != info?.authorid ||
+              comment.message.length < 1024) {
+            visible = false;
+          }
+        }
+        if (visible) {
+          Widget item = CommentItem(
+            uid: uid,
+            comment: comment,
+            showDetailTime: showDetailTime,
+            detectLink: detectLink,
+            onTap: (action) => onCommentAction(context, comment, action),
+            author: story?.storyInfo?.authorid,
+            concise: (state.readingMode == readingModeNovel),
+          );
+          tile = wrapTile(item);
+        } else {
+          tile = Container();
+        }
+      } else {
+        tile = Container();
+      }
+
       return tile;
     };
 
-    Widget listView;
+    Widget view;
 
-    if (lastError == null && state.floor != null && (state.floor % 20) != 1) {
-      _scrollController = IndexedScrollController();
-      listView = IndexedListView.builder(
-        controller: _scrollController,
-        itemBuilder: buildCommentViews,
-        itemCount: itemCount,
+    if (novelMode) {
+      _scrollController = ScrollController(initialScrollOffset: state.offset);
+      final listView = NotificationListener(
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: buildSlivers(context, itemCount, buildCommentViews),
+        ),
+        onNotification: (notification) {
+          if (notification is ScrollNotification) {
+            state.setOffset(notification.metrics.pixels);
+          }
+        },
       );
-      Future(() {
-        showFloor(context, state.floor);
-      });
+
+      view = Scaffold(
+        key: _scaffoldKey,
+        body: listView,
+        bottomNavigationBar: BottomAppBar(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              SizedBox(
+                width: 12.0,
+              ),
+              IconButton(
+                color: theme.mainColor,
+                icon: Icon(Icons.arrow_back),
+                onPressed: () {
+                  _scrollController.animateTo(state.offset - screenHeight + 100,
+                      duration: Duration(milliseconds: 250),
+                      curve: Curves.easeOut);
+                },
+              ),
+              SizedBox(
+                width: 64,
+              ),
+              IconButton(
+                color: theme.mainColor,
+                icon: Icon(Icons.arrow_forward),
+                onPressed: () {
+                  _scrollController.animateTo(state.offset + screenHeight - 100,
+                      duration: Duration(milliseconds: 250),
+                      curve: Curves.easeOut);
+                },
+              ),
+              Expanded(
+                  child: Container(
+                height: 0.0,
+              )),
+              // IconButton(
+              //   icon: Icon(Icons.add_comment),
+              //   onPressed: () {
+              //     onReplyButtonTap(
+              //       context,
+              //       story: story.storyInfo,
+              //       uid: uid,
+              //       username: username,
+              //     );
+              //   },
+              // ),
+              SizedBox(
+                width: 12.0,
+              ),
+            ],
+          ),
+        ),
+      );
     } else {
-      _scrollController = ScrollController();
-      listView = ListView.builder(
-        controller: _scrollController,
-        itemBuilder: buildCommentViews,
-        itemCount: itemCount,
-      );
-    }
-
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: buildAppBar(context),
-      body: listView,
-      bottomNavigationBar: BottomAppBar(
+      final bottomBar = BottomAppBar(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -568,22 +706,23 @@ class StoryContentModel {
               width: 12.0,
             ),
             IconButton(
-              color: Theme.of(context).primaryColor,
+              color: theme.mainColor,
               icon: Icon(Icons.arrow_back),
               onPressed: state.page > 1
                   ? () {
-                      state.prevPage();
-                      _scrollController.jumpTo(0.0);
+                      Future(() {
+                        if (!novelMode || state.page == 2) {
+                          scrollToTop(context);
+                        }
+                        state.prevPage();
+                      });
                     }
                   : null,
             ),
             FlatButton(
               child: Text(
                 "$pageNo / $totalPages",
-                style: Theme.of(context)
-                    .textTheme
-                    .title
-                    .apply(color: Theme.of(context).primaryColor),
+                style: titleStyle.apply(color: theme.mainColor),
               ),
               onPressed: () {
                 if (totalPages > 1) {
@@ -592,12 +731,16 @@ class StoryContentModel {
               },
             ),
             IconButton(
-              color: Theme.of(context).primaryColor,
+              color: theme.mainColor,
               icon: Icon(Icons.arrow_forward),
               onPressed: state.page < totalPages
                   ? () {
-                      state.nextPage();
-                      _scrollController.jumpTo(0.0);
+                      Future(() {
+                        state.nextPage();
+                        if (!novelMode) {
+                          scrollToTop(context);
+                        }
+                      });
                     }
                   : null,
             ),
@@ -621,8 +764,35 @@ class StoryContentModel {
             ),
           ],
         ),
-      ),
-    );
+      );
+
+      Widget listView;
+      if (lastError == null && state.floor != null && (state.floor % 20) != 1) {
+        _scrollController = IndexedScrollController();
+        listView = IndexedListView.builder(
+          controller: _scrollController,
+          itemBuilder: buildCommentViews,
+          itemCount: itemCount,
+        );
+        Future(() {
+          showFloor(context, state.floor);
+        });
+      } else {
+        _scrollController = ScrollController(initialScrollOffset: 0.0);
+        listView = ListView.builder(
+          controller: _scrollController,
+          itemBuilder: buildCommentViews,
+          itemCount: itemCount,
+        );
+      }
+      view = Scaffold(
+        key: _scaffoldKey,
+        appBar: buildAppBar(context, false),
+        body: listView,
+        bottomNavigationBar: bottomBar,
+      );
+    }
+    return view;
   }
 
   void onCommentAction(
@@ -786,9 +956,13 @@ class StoryContentModel {
             itemCount: totalPages,
             itemBuilder: (BuildContext context, i) {
               final turnPage = (int i) {
-                state.setPage(i + 1);
+                Future(() {
+                  state.setPage(i + 1);
+                  if (!novelMode) {
+                    scrollToTop(context);
+                  }
+                });
                 Navigator.pop(context);
-                _scrollController.jumpTo(0.0);
               };
               return Container(
                 height: rowHeight,
@@ -814,9 +988,10 @@ class StoryContentModel {
 
   void scrollToTop(BuildContext context) {
     if (_scrollController is IndexedScrollController) {
-      showFloor(context, 1);
+      state.setFloor(null);
     } else {
       _scrollController.jumpTo(0.1);
+      _scrollController.jumpTo(0.0);
     }
   }
 
