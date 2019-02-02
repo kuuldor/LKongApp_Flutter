@@ -102,7 +102,7 @@ class RatelogItem extends StatelessWidget {
 
     return ListTile(
         onTap: () {
-          openThreadView(context, null, ratelog.pid);
+          openThreadView(context, null, postId: ratelog.pid);
         },
         title: Container(
             padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),

@@ -63,6 +63,7 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
           ..avatarDisplaySize = 1
           ..backgroundFetch = true
           ..cacheSize = 4
+          ..detectLink = false
           ..update(updates);
       });
 
@@ -110,6 +111,9 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   int get cacheSize;
   @BuiltValueField(wireName: 'showForumInfo')
   bool get showForumInfo;
+  @nullable
+  @BuiltValueField(wireName: 'detectLink')
+  bool get detectLink;
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));
   }

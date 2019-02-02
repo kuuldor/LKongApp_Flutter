@@ -152,6 +152,7 @@ class StoryContentModel {
   final BuiltList<String> blackList;
   final BuiltList<String> followList;
   final bool showDetailTime;
+  final bool detectLink;
   final StoryContentState state;
 
   StoryContentModel({
@@ -165,6 +166,7 @@ class StoryContentModel {
     @required this.blackList,
     @required this.followList,
     @required this.showDetailTime,
+    @required this.detectLink,
     @required this.state,
   });
 
@@ -190,6 +192,7 @@ class StoryContentModel {
                   : null,
           followList: selectUserData(store)?.followList?.tid,
           showDetailTime: selectSetting(store).showDetailTime,
+          detectLink: selectSetting(store).detectLink,
           state: state,
           loadContent: (storyId, page) {
             store.dispatch(StoryContentRequest(null, storyId, page));
@@ -516,6 +519,7 @@ class StoryContentModel {
                 uid: uid,
                 comment: comment,
                 showDetailTime: showDetailTime,
+                detectLink: detectLink,
                 onTap: (action) => onCommentAction(context, comment, action),
                 author: story?.storyInfo?.authorid,
                 concise: (state.readingMode == readingModeNovel),
@@ -532,7 +536,7 @@ class StoryContentModel {
 
     Widget listView;
 
-    if (state.floor != null && (state.floor % 20) != 1) {
+    if (lastError == null && state.floor != null && (state.floor % 20) != 1) {
       _scrollController = IndexedScrollController();
       listView = IndexedListView.builder(
         controller: _scrollController,
@@ -817,11 +821,13 @@ class StoryContentModel {
   }
 
   void showFloor(BuildContext context, int floor) {
-    var index = floor % 20;
-    if (index == 0) {
-      index = 20;
+    if (_scrollController is IndexedScrollController) {
+      var index = floor % 20;
+      if (index == 0) {
+        index = 20;
+      }
+      final controller = _scrollController as IndexedScrollController;
+      controller.jumpToIndex(index);
     }
-    final controller = _scrollController as IndexedScrollController;
-    controller.jumpToIndex(index);
   }
 }

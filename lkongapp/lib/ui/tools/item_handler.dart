@@ -17,11 +17,12 @@ Future<Null> onStoryTap(BuildContext context, Story story) {
     postId = parseLKTypeId(story.id, type: "post");
   }
   return Future(() {
-    openThreadView(context, storyId, postId);
+    openThreadView(context, storyId, postId: postId);
   });
 }
 
-void openThreadView(BuildContext context, int storyId, [int postId]) {
+void openThreadView(BuildContext context, int storyId,
+    {int postId, int page: 1}) {
   if (storyId != null) {
     dispatchAction(context)(StoryInfoRequest(null, storyId));
   }
@@ -29,12 +30,16 @@ void openThreadView(BuildContext context, int storyId, [int postId]) {
       UINavigationPush(context, LKongAppRoutes.story, false, (context) {
     return StoryScreen(
       storyId: storyId,
+      page: page,
       postId: postId,
     );
   }));
 }
 
 Future<Null> onForumTap(BuildContext context, Forum forum) {
+  if (forum.name == null) {
+    dispatchAction(context)(ForumInfoRequest(null, forum.fid));
+  }
   dispatchAction(context)(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
 
   return Future(() {

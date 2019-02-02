@@ -299,16 +299,16 @@ class SettingState extends State<SettingView> {
         ),
         GestureDetector(
           child: CSControl(
-            '同页面自动加载下一页',
+            '检测帖子中的超链接',
             CupertinoSwitch(
-              value: setting.loadInSamePage,
+              value: setting.detectLink == true,
               onChanged: (value) => setState(() {
-                    setting.loadInSamePage = value;
+                    setting.detectLink = value;
                   }),
             ),
           ),
           onTap: () => setState(() {
-                setting.loadInSamePage = !setting.loadInSamePage;
+                setting.detectLink = (setting.detectLink == false);
               }),
         ),
         CSHeader('主题'),

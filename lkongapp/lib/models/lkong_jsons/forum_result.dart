@@ -40,9 +40,7 @@ abstract class ForumListResult
 abstract class Forum implements Built<Forum, ForumBuilder> {
   Forum._();
 
-  factory Forum([updates(ForumBuilder b)]) => _$Forum((b) => b
-    ..fid = 0
-    ..name = "");
+  factory Forum([updates(ForumBuilder b)]) => _$Forum((b) => b..fid = 0);
 
   @nullable
   @BuiltValueField(wireName: 'fid')

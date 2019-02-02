@@ -19,6 +19,7 @@ class CommentItem extends StatelessWidget {
   final int uid;
   final int author;
   final bool showDetailTime;
+  final bool detectLink;
   final bool concise;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
@@ -29,6 +30,7 @@ class CommentItem extends StatelessWidget {
     @required this.uid,
     @required this.author,
     @required this.showDetailTime,
+    @required this.detectLink,
     this.concise: false,
   });
 
@@ -154,6 +156,7 @@ class CommentItem extends StatelessWidget {
             child: comment2Widget(
               context,
               comment.message,
+              detectLink: detectLink,
             ),
           )
         ],
@@ -217,7 +220,7 @@ class CommentItem extends StatelessWidget {
     var rows = <Widget>[];
     rows.add(Row(
       children: <Widget>[
-        buildUserAvatar(context, comment.authorid, size * 2 + 4,
+        buildUserAvatar(context, comment.authorid, size * 2 + 8,
             clickable: true),
         Expanded(
           child: Container(

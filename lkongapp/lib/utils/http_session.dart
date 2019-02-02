@@ -55,7 +55,7 @@ class HttpSession {
       line += delim + "$key=$value";
       delim = "; ";
     });
-    print("Send Cookie: $line");
+    // print("Send Cookie: $line");
     return line;
   }
 
@@ -65,7 +65,7 @@ class HttpSession {
 
   Future<http.Response> get(String path) async {
     String url = baseURL + path;
-    print("GET URL: $url");
+    // print("GET URL: $url");
     return client.get(url, headers: {'Cookie': cookieLine}).then((response) {
       updateCookie(response);
       return response;
@@ -74,7 +74,7 @@ class HttpSession {
 
   Future<http.Response> post(String path, {dynamic data}) async {
     String url = baseURL + path;
-    print("POST URL: $url");
+    // print("POST URL: $url");
     return client.post(url, body: data, headers: {'Cookie': cookieLine}).then(
         (response) {
       updateCookie(response);
@@ -104,7 +104,7 @@ class HttpSession {
   void updateCookie(http.Response response) {
     String rawCookie = response.headers['set-cookie'];
     if (rawCookie != null) {
-      print("Recv Cookie: $rawCookie");
+      // print("Recv Cookie: $rawCookie");
       parseCookie(rawCookie);
       saveCookies();
     }

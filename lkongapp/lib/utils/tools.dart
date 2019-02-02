@@ -12,7 +12,6 @@ import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/theme.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/utils.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:lkongapp/data/theme.dart' as themeData;
 import 'package:lkongapp/ui/tools/item_handler.dart';
 //here goes the function
@@ -61,43 +60,6 @@ String stripHtmlTag(String string) {
   string = HtmlUnescape().convert(string);
 
   return string.trim();
-}
-
-_handleURL(BuildContext context, String url) async {
-  print("URL is cliked: $url");
-  if (url.startsWith("http")) {
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
-  } else if (url.startsWith("lkong://")) {
-    final typeID = url.substring(8); // strip lkong://
-    final flds = parseTypeAndId(typeID);
-    switch (flds[0]) {
-      case "thread":
-        int tid;
-        try {
-          tid = int.parse(flds[1]);
-        } catch (_) {}
-        if (tid != null) {
-          openThreadView(context, tid);
-        }
-        break;
-      case "name":
-        openUserView(context, flds[1]);
-        break;
-      case "post":
-        int pid;
-        try {
-          pid = int.parse(flds[1]);
-        } catch (_) {}
-        if (pid != null) {
-          openThreadView(context, null, pid);
-        }
-        break;
-      default:
-        break;
-    }
-  }
 }
 
 _textList2Widget(List<TextSpan> textList) {
@@ -300,8 +262,9 @@ _parseImageAndText(
       } else if (e.localName == "a") {
         String dataItem = e.attributes["dataitem"];
 
-        String link =
-            dataItem == null ? e.attributes["href"] : "lkong://$dataItem";
+        String link = (dataItem == null || dataItem == "href")
+            ? e.attributes["href"]
+            : "lkong://$dataItem";
 
         if (link != null) {
           if (nodeWidgets.length > 0) {
@@ -309,7 +272,7 @@ _parseImageAndText(
             _cleanUpTextList(nodeWidgets, nodeTextList);
             var linkDetector = GestureDetector(
               // When the child is tapped, show a snackbar
-              onTap: () => _handleURL(context, link),
+              onTap: () => handleURL(context, link),
               // Our Custom Button!
               child: Column(
                 children: nodeWidgets,
@@ -325,7 +288,7 @@ _parseImageAndText(
             // );
             // textList.add(linkText);
             TapGestureRecognizer tapper = TapGestureRecognizer()
-              ..onTap = () => _handleURL(context, link);
+              ..onTap = () => handleURL(context, link);
             List<TextSpan> linkTexts = List<TextSpan>();
             nodeTextList.forEach((text) {
               linkTexts.add(TextSpan(
@@ -413,8 +376,35 @@ _parseDocumentBody(
   _cleanUpTextList(widgetList, textList);
 }
 
-Widget comment2Widget(BuildContext context, String comment) {
+String detectLinkAndConvert(String html) {
+  String retv = html;
+  final achorPattern = RegExp(
+      r'((src|href)=)(["' +
+          "'" +
+          r']?)(http)(s?:\/\/[^/$.?#]*\.[a-zA-Z0-9.;%\/&=?_-]*)',
+      caseSensitive: false);
+  final linkPattern = RegExp(r'(https?:\/\/[^/$.?#]*\.[a-zA-Z0-9.;%\/&=?_-]*)',
+      caseSensitive: false);
+  if (linkPattern.hasMatch(html)) {
+    var hideMapper = (Match m) => '${m[1]}${m[3]}h_x_t_x_t_x_p${m[5]}';
+
+    var mapper = (Match m) => '<a href="${m[1]}">${m[1]}</a>';
+
+    retv = retv.replaceAllMapped(achorPattern, hideMapper);
+    retv = retv.replaceAllMapped(linkPattern, mapper);
+    retv = retv.replaceAll("h_x_t_x_t_x_p", "http");
+  }
+
+  return retv;
+}
+
+Widget comment2Widget(BuildContext context, String comment,
+    {bool detectLink: false}) {
   List<Widget> widgetList = List<Widget>();
+
+  if (detectLink == true) {
+    comment = detectLinkAndConvert(comment);
+  }
 
   dom.Document document = parse(comment);
   dom.Element body = document.body;

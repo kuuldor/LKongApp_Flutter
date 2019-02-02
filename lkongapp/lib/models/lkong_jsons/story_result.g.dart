@@ -100,15 +100,18 @@ class _$StorySerializer implements StructuredSerializer<Story> {
       'dateline',
       serializers.serialize(object.dateline,
           specifiedType: const FullType(String)),
-      'subject',
-      serializers.serialize(object.subject,
-          specifiedType: const FullType(String)),
       'username',
       serializers.serialize(object.username,
           specifiedType: const FullType(String)),
       'id',
       serializers.serialize(object.id, specifiedType: const FullType(String)),
     ];
+    if (object.subject != null) {
+      result
+        ..add('subject')
+        ..add(serializers.serialize(object.subject,
+            specifiedType: const FullType(String)));
+    }
     if (object.digest != null) {
       result
         ..add('digest')
@@ -898,9 +901,6 @@ class _$Story extends Story {
     }
     if (dateline == null) {
       throw new BuiltValueNullFieldError('Story', 'dateline');
-    }
-    if (subject == null) {
-      throw new BuiltValueNullFieldError('Story', 'subject');
     }
     if (username == null) {
       throw new BuiltValueNullFieldError('Story', 'username');

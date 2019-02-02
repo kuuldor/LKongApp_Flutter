@@ -54,6 +54,7 @@ abstract class Story
   int get sortkey;
   @BuiltValueField(wireName: 'dateline')
   String get dateline;
+  @nullable
   @BuiltValueField(wireName: 'subject')
   String get subject;
   @BuiltValueField(wireName: 'username')

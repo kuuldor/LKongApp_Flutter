@@ -65,6 +65,8 @@ class ForumStoryState extends StoryListState<ForumStory> {
 }
 
 class ForumStoryModel extends StoryListModel {
+  final int fid;
+  final String forumName;
   final FetchList<Story> storyList;
   final bool loading;
   final String lastError;
@@ -75,6 +77,8 @@ class ForumStoryModel extends StoryListModel {
   final bool showDetailTime;
 
   ForumStoryModel({
+    @required this.fid,
+    @required this.forumName,
     @required this.uid,
     @required this.username,
     @required Store<AppState> store,
@@ -89,6 +93,8 @@ class ForumStoryModel extends StoryListModel {
   @override
   bool operator ==(other) {
     return other is ForumStoryModel &&
+        fid == other.fid &&
+        forumName == other.forumName &&
         storyList == other.storyList &&
         followList == other.followList &&
         loading == other.loading &&
@@ -101,6 +107,8 @@ class ForumStoryModel extends StoryListModel {
 
   @override
   int get hashCode => hashObjects([
+        fid,
+        forumName,
         storyList,
         followList,
         loading,
@@ -114,6 +122,11 @@ class ForumStoryModel extends StoryListModel {
   static final fromStateAndStore =
       (ForumStoryState state) => (Store<AppState> store) => ForumStoryModel(
             store: store,
+            fid: state.forum.fid,
+            forumName: state.forum.name ??
+                store.state.uiState.content.forumInfo.info[state.forum.fid]
+                    ?.name ??
+                "",
             username: selectUser(store)?.userInfo?.username,
             uid: selectUID(store),
             followList: selectUserData(store)?.followList?.fid,
@@ -138,7 +151,7 @@ class ForumStoryModel extends StoryListModel {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
 
-    return ForumStoryNewRequest(completer, state.forum.fid, state.mode, 0, 0);
+    return ForumStoryNewRequest(completer, fid, state.mode, 0, 0);
   }
 
   @override
@@ -152,7 +165,7 @@ class ForumStoryModel extends StoryListModel {
       // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
     });
     return ForumStoryLoadMoreRequest(
-        completer, state.forum.fid, state.mode, storyList.nexttime);
+        completer, fid, state.mode, storyList.nexttime);
   }
 
   @override
@@ -209,7 +222,7 @@ class ForumStoryModel extends StoryListModel {
       case MenuAction.follow:
         req = FollowRequest(
           completer,
-          id: state.forum.fid,
+          id: fid,
           replyType: FollowType.forum,
           unfollow: false,
         );
@@ -217,7 +230,7 @@ class ForumStoryModel extends StoryListModel {
       case MenuAction.unfollow:
         req = FollowRequest(
           completer,
-          id: state.forum.fid,
+          id: fid,
           replyType: FollowType.forum,
           unfollow: true,
         );
@@ -262,7 +275,7 @@ class ForumStoryModel extends StoryListModel {
     }
 
     if (followList != null) {
-      if (followList.contains("${state.forum.fid}")) {
+      if (followList.contains("$fid")) {
         actions.add(IconButton(
           icon: Icon(Icons.visibility_off),
           onPressed: () {
@@ -283,7 +296,7 @@ class ForumStoryModel extends StoryListModel {
 
     return SliverAppBar(
       title: GestureDetector(
-        child: Text(state.forum.name,
+        child: Text(forumName,
             style:
                 Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
@@ -300,8 +313,7 @@ class ForumStoryModel extends StoryListModel {
     completer.future.then((error) {
       // showToast(context, success ? 'Refresh Succeed' : 'Refresh Failed');
     });
-    return ForumStoryCheckNewRequest(
-        completer, state.forum.fid, storyList.current);
+    return ForumStoryCheckNewRequest(completer, fid, storyList.current);
   }
 
   @override
