@@ -12,7 +12,6 @@ import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/ui/tools/menu_choice.dart';
-import 'package:lkongapp/utils/indexed_controller.dart';
 import 'package:lkongapp/utils/theme.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -163,6 +162,7 @@ class StoryContentModel {
   final bool detectLink;
   final StoryContentState state;
 
+  int displayedFloor;
   bool get novelMode => state.readingMode == readingModeNovel;
 
   StoryContentModel({
@@ -539,6 +539,12 @@ class StoryContentModel {
           )));
     }
 
+    displayedFloor = (pageNo - 1) * 20;
+    int maxFloor = pageNo * 20;
+    if (info != null && maxFloor > info.replies) {
+      maxFloor = info.replies + 1;
+    }
+
     int totalPages = info == null ? 1 : info.replies ~/ 20 + 1;
     int lastAvailPage = 0;
     final availPages = <int>[];
@@ -588,8 +594,9 @@ class StoryContentModel {
       } else if (item is Comment) {
         var comment = item;
 
+        displayedFloor = comment.lou;
+
         bool visible = true;
-        bool concise = false;
         if (blackList != null && blackList.contains("${comment.authorid}")) {
           visible = false;
         }
@@ -599,7 +606,6 @@ class StoryContentModel {
             visible = false;
           }
         } else if (state.readingMode == readingModeNovel) {
-          concise = true;
           if (comment.authorid != info?.authorid ||
               comment.message.length < 1024) {
             visible = false;
@@ -626,78 +632,63 @@ class StoryContentModel {
       return tile;
     };
 
-    Widget view;
+    Widget bottomBar;
 
     if (novelMode) {
       _scrollController = ScrollController(initialScrollOffset: state.offset);
-      final listView = NotificationListener(
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: buildSlivers(context, itemCount, buildCommentViews),
-        ),
-        onNotification: (notification) {
-          if (notification is ScrollNotification) {
-            state.setOffset(notification.metrics.pixels);
-          }
-        },
-      );
 
-      view = Scaffold(
-        key: _scaffoldKey,
-        body: listView,
-        bottomNavigationBar: BottomAppBar(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(
-                width: 12.0,
-              ),
-              IconButton(
-                color: theme.mainColor,
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  _scrollController.animateTo(state.offset - screenHeight + 100,
-                      duration: Duration(milliseconds: 250),
-                      curve: Curves.easeOut);
-                },
-              ),
-              SizedBox(
-                width: 64,
-              ),
-              IconButton(
-                color: theme.mainColor,
-                icon: Icon(Icons.arrow_forward),
-                onPressed: () {
-                  _scrollController.animateTo(state.offset + screenHeight - 100,
-                      duration: Duration(milliseconds: 250),
-                      curve: Curves.easeOut);
-                },
-              ),
-              Expanded(
-                  child: Container(
-                height: 0.0,
-              )),
-              // IconButton(
-              //   icon: Icon(Icons.add_comment),
-              //   onPressed: () {
-              //     onReplyButtonTap(
-              //       context,
-              //       story: story.storyInfo,
-              //       uid: uid,
-              //       username: username,
-              //     );
-              //   },
-              // ),
-              SizedBox(
-                width: 12.0,
-              ),
-            ],
-          ),
+      bottomBar = BottomAppBar(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(
+              width: 12.0,
+            ),
+            IconButton(
+              color: theme.mainColor,
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                _scrollController.animateTo(state.offset - screenHeight + 100,
+                    duration: Duration(milliseconds: 250),
+                    curve: Curves.easeOut);
+              },
+            ),
+            SizedBox(
+              width: 64,
+            ),
+            IconButton(
+              color: theme.mainColor,
+              icon: Icon(Icons.arrow_forward),
+              onPressed: () {
+                _scrollController.animateTo(state.offset + screenHeight - 100,
+                    duration: Duration(milliseconds: 250),
+                    curve: Curves.easeOut);
+              },
+            ),
+            Expanded(
+                child: Container(
+              height: 0.0,
+            )),
+            // IconButton(
+            //   icon: Icon(Icons.add_comment),
+            //   onPressed: () {
+            //     onReplyButtonTap(
+            //       context,
+            //       story: story.storyInfo,
+            //       uid: uid,
+            //       username: username,
+            //     );
+            //   },
+            // ),
+            SizedBox(
+              width: 12.0,
+            ),
+          ],
         ),
       );
     } else {
-      final bottomBar = BottomAppBar(
+      bottomBar = BottomAppBar(
         child: Row(
           mainAxisSize: MainAxisSize.min,
           // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -766,33 +757,33 @@ class StoryContentModel {
         ),
       );
 
-      Widget listView;
-      if (lastError == null && state.floor != null && (state.floor % 20) != 1) {
-        _scrollController = IndexedScrollController();
-        listView = IndexedListView.builder(
-          controller: _scrollController,
-          itemBuilder: buildCommentViews,
-          itemCount: itemCount,
-        );
-        Future(() {
-          showFloor(context, state.floor);
+      _scrollController = ScrollController(initialScrollOffset: 0.0);
+
+      if (lastError == null &&
+          lastAvailPage > 0 &&
+          state.floor != null &&
+          (state.floor % 20) != 1) {
+        Future.delayed(Duration(milliseconds: 10), () {
+          showFloor(context, state.floor, maxFloor);
         });
-      } else {
-        _scrollController = ScrollController(initialScrollOffset: 0.0);
-        listView = ListView.builder(
-          controller: _scrollController,
-          itemBuilder: buildCommentViews,
-          itemCount: itemCount,
-        );
       }
-      view = Scaffold(
-        key: _scaffoldKey,
-        appBar: buildAppBar(context, false),
-        body: listView,
-        bottomNavigationBar: bottomBar,
-      );
     }
-    return view;
+
+    return Scaffold(
+      key: _scaffoldKey,
+      body: NotificationListener(
+        child: CustomScrollView(
+          controller: _scrollController,
+          slivers: buildSlivers(context, itemCount, buildCommentViews),
+        ),
+        onNotification: (notification) {
+          if (notification is ScrollNotification) {
+            state.setOffset(notification.metrics.pixels);
+          }
+        },
+      ),
+      bottomNavigationBar: bottomBar,
+    );
   }
 
   void onCommentAction(
@@ -987,22 +978,45 @@ class StoryContentModel {
   }
 
   void scrollToTop(BuildContext context) {
-    if (_scrollController is IndexedScrollController) {
-      state.setFloor(null);
-    } else {
-      _scrollController.jumpTo(0.1);
-      _scrollController.jumpTo(0.0);
-    }
+    _scrollController.jumpTo(0.1);
+    _scrollController.jumpTo(0.0);
   }
 
-  void showFloor(BuildContext context, int floor) {
-    if (_scrollController is IndexedScrollController) {
-      var index = floor % 20;
-      if (index == 0) {
-        index = 20;
+  void showFloor(BuildContext context, int floor, int max) async {
+    var dest;
+    dest = floor;
+
+    int step = dest - (displayedFloor ?? ((state.page - 1) * 20));
+
+    double offset = state.offset;
+    scrollToDest(context, dest, step, offset, max);
+  }
+
+  Future scrollToDest(
+      BuildContext context, int dest, int step, double offset, int max) async {
+    if (dest > displayedFloor && displayedFloor < max) {
+      offset += step * 20;
+      try {
+        _scrollController.jumpTo(offset);
+        Future.delayed(
+            Duration(milliseconds: 10),
+            () => scrollToDest(
+                context, dest, dest - displayedFloor, offset, max));
+      } catch (e) {
+        print(e.toString());
       }
-      final controller = _scrollController as IndexedScrollController;
-      controller.jumpToIndex(index);
+    } else {
+      final height = MediaQuery.of(context).size.height;
+      double lastMove = (step >= 0 ? 1 : -1) * height;
+      offset += lastMove;
+      try {
+        _scrollController.animateTo(offset,
+            duration: Duration(milliseconds: 400), curve: Curves.easeOut);
+        // _scrollController.jumpTo(offset);
+      } catch (e) {
+        print(e.toString());
+      }
+      state.floor = null;
     }
   }
 }
