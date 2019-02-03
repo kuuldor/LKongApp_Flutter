@@ -34,7 +34,13 @@ class ForumList extends StatelessWidget {
 
 class ForumListModel extends FetchedListModel {
   final ForumLists repo;
+
+  final Map<int, Forum> forums;
+
   final List<int> followed;
+  final List<int> forumIds;
+  final List<int> planeIds;
+
   final bool showInfo;
   bool get loading => repo.loading;
   String get lastError => repo.lastError;
@@ -60,8 +66,11 @@ class ForumListModel extends FetchedListModel {
 
   ForumListModel({
     @required this.repo,
-    @required this.showInfo,
+    @required this.forums,
     @required this.followed,
+    @required this.forumIds,
+    @required this.planeIds,
+    @required this.showInfo,
   });
 
   @override
@@ -101,12 +110,38 @@ class ForumListModel extends FetchedListModel {
 
   static ForumListModel fromStore(Store<AppState> store) {
     final userData = selectUserData(store);
+    final repo = store.state.uiState.content.forumInfo;
+    final followed = userData?.followList?.fid
+        ?.where((f) => f.length > 0)
+        ?.map((f) => int.parse(f))
+        ?.toList();
+
+    var forumMap = Map<int, Forum>();
+    List<int> forumIds;
+    List<int> planeIds;
+
+    if (repo.forums != null) {
+      forumMap.addAll(Map.fromIterable(repo.forums, key: (f) => f.fid));
+      forumIds = repo.forums
+          .map((f) => f.fid)
+          .where((fid) => followed?.contains(fid) != true)
+          .toList();
+    }
+
+    if (repo.sysplanes != null) {
+      forumMap.addAll(Map.fromIterable(repo.sysplanes, key: (f) => f.fid));
+      planeIds = repo.sysplanes
+          .map((f) => f.fid)
+          .where((fid) => followed?.contains(fid) != true)
+          .toList();
+    }
+
     return ForumListModel(
-      repo: store.state.uiState.content.forumInfo,
-      followed: userData?.followList?.fid
-          ?.where((f) => f.length > 0)
-          ?.map((f) => int.parse(f))
-          ?.toList(),
+      repo: repo,
+      followed: followed,
+      forums: forumMap,
+      forumIds: forumIds,
+      planeIds: planeIds,
       showInfo: selectSetting(store).showForumInfo,
     );
   }
@@ -142,13 +177,13 @@ class ForumListModel extends FetchedListModel {
         }
         break;
       case 1:
-        if (repo.forums != null) {
-          count = repo.forums.length;
+        if (forumIds != null) {
+          count = forumIds.length;
         }
         break;
       case 2:
-        if (repo.sysplanes != null) {
-          count = repo.sysplanes.length;
+        if (planeIds != null) {
+          count = planeIds.length;
         }
         break;
     }
@@ -158,30 +193,31 @@ class ForumListModel extends FetchedListModel {
   @override
   Widget cellForSectionAndIndex(BuildContext context,
       {int section, int index}) {
-    List<Forum> forums;
+    int fid;
     switch (section) {
       case 0:
         if (followed != null) {
-          forums = List<Forum>.from(repo.forums
-              .where((forum) => followed?.contains(forum.fid) == true));
+          fid = followed[index];
         }
         break;
       case 1:
-        if (repo.forums != null) {
-          forums = List<Forum>.from(repo.forums
-              .where((forum) => followed?.contains(forum.fid) != true));
+        if (forumIds != null) {
+          fid = forumIds[index];
         }
         break;
       case 2:
-        if (repo.sysplanes != null) {
-          forums = repo.sysplanes.toList();
+        if (planeIds != null) {
+          fid = planeIds[index];
         }
         break;
     }
-    if (forums != null && index >= 0 && index < forums.length) {
-      Widget item = createForumListItem(context, forums[index]);
 
-      return wrapItem(context, item);
+    if (fid != null) {
+      Forum forum = forums[fid];
+      if (forum != null) {
+        Widget item = createForumListItem(context, forum);
+        return wrapItem(context, item);
+      }
     }
 
     return null;
