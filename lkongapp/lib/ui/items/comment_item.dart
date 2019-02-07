@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/utils/async_avatar.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 import 'package:lkongapp/ui/tools/item_handler.dart';
@@ -13,7 +14,7 @@ enum CommentAction {
   UpVote,
 }
 
-class CommentItem extends StatelessWidget {
+class CommentItem extends StatefulWidget {
   final Function(CommentAction) onTap;
   final Comment comment;
   final int uid;
@@ -34,13 +35,33 @@ class CommentItem extends StatelessWidget {
     this.concise: false,
   });
 
+  @override
+  CommentItemState createState() {
+    return CommentItemState();
+  }
+}
+
+class CommentItemState extends State<CommentItem> with AvatarLoaderState {
+  bool disposed;
+  @override
+  void initState() {
+    super.initState();
+    disposed = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposed = true;
+  }
+
   Widget buildRateLog(BuildContext context, BuiltList<Ratelog> ratelog) {
     if (ratelog == null || ratelog.length == 0) {
       return Container();
     }
 
     final theme = LKModeledApp.modelOf(context).theme;
-    TextStyle style = theme.subheadStyle.apply(color: theme.mediumTextColor);
+    TextStyle style = theme.subtitleStyle.apply(color: theme.mediumTextColor);
 
     var list = <Widget>[];
     final creditName = {"2": '龙币', "3": '龙晶'};
@@ -155,30 +176,30 @@ class CommentItem extends StatelessWidget {
           Expanded(
             child: comment2Widget(
               context,
-              comment.message,
-              detectLink: detectLink,
+              widget.comment.message,
+              detectLink: widget.detectLink,
             ),
           )
         ],
       ),
     );
 
-    if (concise) {
+    if (widget.concise) {
       return Container(
-        key: commentItemKey(comment.id),
+        key: CommentItem.commentItemKey(widget.comment.id),
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: textContent,
       );
     }
 
     var actionButtons = <Widget>[];
-    if (uid != null && uid > 0) {
-      if (comment.authorid == uid) {
+    if (widget.uid != null && widget.uid > 0) {
+      if (widget.comment.authorid == widget.uid) {
         actionButtons.add(IconButton(
           iconSize: size * 2,
           icon: Icon(Icons.edit),
           onPressed: () {
-            onTap(CommentAction.Edit);
+            widget.onTap(CommentAction.Edit);
           },
         ));
       } else {
@@ -186,7 +207,7 @@ class CommentItem extends StatelessWidget {
           iconSize: size * 2,
           icon: Icon(Icons.thumb_up),
           onPressed: () {
-            onTap(CommentAction.UpVote);
+            widget.onTap(CommentAction.UpVote);
           },
         ));
       }
@@ -194,13 +215,13 @@ class CommentItem extends StatelessWidget {
         iconSize: size * 2,
         icon: Icon(Icons.comment),
         onPressed: () {
-          onTap(CommentAction.Reply);
+          widget.onTap(CommentAction.Reply);
         },
       ));
     }
 
-    Widget authorLine = Text(comment.author, style: subtitleStyle);
-    if (author == comment.authorid) {
+    Widget authorLine = Text(widget.comment.author, style: subtitleStyle);
+    if (widget.author == widget.comment.authorid) {
       authorLine = Row(
         children: <Widget>[
           authorLine,
@@ -212,16 +233,24 @@ class CommentItem extends StatelessWidget {
       );
     }
 
-    final timestamp = parseDatetime(comment.dateline);
-    final datetime = showDetailTime
+    final timestamp = parseDatetime(widget.comment.dateline);
+    final datetime = widget.showDetailTime
         ? stringFromDate(timestamp)
         : timeAgoSinceDate(timestamp);
+
+    final avatar = asyncUserAvatar(
+      context,
+      this,
+      widget.comment.authorid,
+      size * 2 + 8,
+      delayInMillies: 1000,
+      clickable: true,
+    );
 
     var rows = <Widget>[];
     rows.add(Row(
       children: <Widget>[
-        buildUserAvatar(context, comment.authorid, size * 2 + 8,
-            clickable: true),
+        avatar,
         Expanded(
           child: Container(
             padding: EdgeInsets.only(left: (size / 3 * 2)),
@@ -234,13 +263,13 @@ class CommentItem extends StatelessWidget {
             ),
           ),
         ),
-        Text("${comment.lou}楼", style: subtitleStyle),
+        Text("${widget.comment.lou}楼", style: subtitleStyle),
       ],
     ));
 
     rows.add(Container(height: size));
 
-    if (comment.warning == true) {
+    if (widget.comment.warning == true) {
       rows.add(Container(
           padding: EdgeInsets.all(size / 2),
           decoration: BoxDecoration(
@@ -252,7 +281,7 @@ class CommentItem extends StatelessWidget {
               Container(width: size / 3 * 2),
               Expanded(
                 child: Text(
-                  "此帖被警告。\n理由：${comment.warningReason}",
+                  "此帖被警告。\n理由：${widget.comment.warningReason}",
                   style: subheadStyle,
                 ),
               ),
@@ -266,7 +295,7 @@ class CommentItem extends StatelessWidget {
     rows.add(Container(
       height: size,
     ));
-    rows.add(buildRateLog(context, comment.ratelog));
+    rows.add(buildRateLog(context, widget.comment.ratelog));
     rows.add(Container(
       height: size * 4,
       width: MediaQuery.of(context).size.width,
@@ -277,7 +306,7 @@ class CommentItem extends StatelessWidget {
     ));
 
     return Container(
-      key: commentItemKey(comment.id),
+      key: CommentItem.commentItemKey(widget.comment.id),
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Column(children: rows),
     );

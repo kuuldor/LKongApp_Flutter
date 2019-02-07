@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
+import 'package:lkongapp/utils/async_avatar.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
@@ -22,13 +23,20 @@ dispatchAction(BuildContext context) =>
 AppState stateOf(BuildContext context) =>
     StoreProvider.of<AppState>(context).state;
 
-Widget buildUserAvatar(BuildContext context, int uid, double size,
-    {bool clickable: false}) {
+Widget asyncUserAvatar(
+  BuildContext context,
+  AvatarLoaderState loader,
+  int uid,
+  double size, {
+  bool clickable: false,
+  int delayInMillies,
+}) {
   final avatar = CircleAvatar(
     backgroundColor: Colors.transparent,
     backgroundImage: uid != null && uid > 0
-        ? CachedNetworkImageProvider(avatarForUserID(uid),
-            imageOnError: "assets/noavatar.png")
+        ? AsyncAvatarProvider(loader, avatarForUserID(uid),
+            defaultAvatar: "assets/noavatar.png",
+            delayInMillies: delayInMillies)
         : AssetImage("assets/noavatar.png"),
     radius: size / 2,
   );
@@ -41,6 +49,12 @@ Widget buildUserAvatar(BuildContext context, int uid, double size,
           },
         )
       : avatar;
+}
+
+Widget buildUserAvatar(BuildContext context, int uid, double size,
+    {bool clickable: false}) {
+  return asyncUserAvatar(context, null, uid, size,
+      clickable: clickable, delayInMillies: 0);
 }
 
 String html2Text(String htmlString) {

@@ -2,9 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/utils/async_avatar.dart';
 import 'package:lkongapp/utils/utils.dart';
 
-class StoryItem extends StatelessWidget {
+class StoryItem extends StatefulWidget {
   final GestureTapCallback onTap;
   final Story story;
   final bool showDetailTime;
@@ -18,6 +19,27 @@ class StoryItem extends StatelessWidget {
   });
 
   @override
+  StoryItemState createState() {
+    return StoryItemState();
+  }
+}
+
+class StoryItemState extends State<StoryItem> with AvatarLoaderState {
+  bool disposed;
+
+  @override
+  void initState() {
+    super.initState();
+    disposed = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposed = true;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = LKModeledApp.modelOf(context).theme;
     TextStyle titleStyle = theme.titleStyle;
@@ -28,27 +50,35 @@ class StoryItem extends StatelessWidget {
     Widget title;
     Widget subtitle;
 
-    final timestamp = parseDatetime(story.dateline);
-    final datetime = showDetailTime
+    final timestamp = parseDatetime(widget.story.dateline);
+    final datetime = widget.showDetailTime
         ? stringFromDate(timestamp)
         : timeAgoSinceDate(timestamp);
 
-    if (story.isthread != false) {
-      if (story.digest != null && story.digest != 0) {
+    final avatar = asyncUserAvatar(
+      context,
+      this,
+      widget.story.uid,
+      theme.subheadSize * 2 + 4,
+      delayInMillies: 1000,
+    );
+
+    if (widget.story.isthread != false) {
+      if (widget.story.digest != null && widget.story.digest != 0) {
         titleStyle = titleStyle.apply(fontWeightDelta: 2);
       }
 
       title = Column(children: <Widget>[
         Row(
           children: <Widget>[
-            buildUserAvatar(context, story.uid, theme.subheadSize * 2 + 4),
+            avatar,
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(left: size * 2 / 3),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(story.username, style: subheadStyle),
+                    Text(widget.story.username, style: subheadStyle),
                     Text(datetime, style: subheadStyle),
                   ],
                 ),
@@ -56,10 +86,10 @@ class StoryItem extends StatelessWidget {
             ),
             Column(
               children: <Widget>[
-                (story.closed == 1
+                (widget.story.closed == 1
                     ? Icon(Icons.lock, size: theme.subheadSize)
                     : Icon(Icons.message, size: theme.subheadSize)),
-                Text("${story.replynum ?? story.tReplynum}",
+                Text("${widget.story.replynum ?? widget.story.tReplynum}",
                     style: subheadStyle),
               ],
             ),
@@ -71,7 +101,7 @@ class StoryItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  story.subject,
+                  widget.story.subject,
                   style: titleStyle,
                 ),
               ),
@@ -79,29 +109,29 @@ class StoryItem extends StatelessWidget {
           ),
         ),
       ]);
-      if (story.message != null) {
-        subtitle = Text(stripHtmlTag(story.message),
+      if (widget.story.message != null) {
+        subtitle = Text(stripHtmlTag(widget.story.message),
             maxLines: 4, style: subtitleStyle);
       }
     } else {
       String message;
-      if (story.isquote) {
-        message = story.message;
+      if (widget.story.isquote) {
+        message = widget.story.message;
       } else {
         message =
-            "<blockquote><a href='' dataitem='name_${story.tAuthor}'>@${story.tAuthor}</a>：<b>${story.subject}</b></a></blockquote><div>${story.message}</div>";
+            "<blockquote><a href='' dataitem='name_${widget.story.tAuthor}'>@${widget.story.tAuthor}</a>：<b>${widget.story.subject}</b></a></blockquote><div>${widget.story.message}</div>";
       }
       title = Column(children: <Widget>[
         Row(
           children: <Widget>[
-            buildUserAvatar(context, story.uid, theme.subheadSize * 2 + 4),
+            avatar,
             Expanded(
               child: Container(
                 padding: EdgeInsets.only(left: size * 2 / 3),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(story.username, style: subheadStyle),
+                    Text(widget.story.username, style: subheadStyle),
                     Text(datetime, style: subheadStyle),
                   ],
                 ),
@@ -126,8 +156,8 @@ class StoryItem extends StatelessWidget {
     }
 
     return ListTile(
-      key: storyItemKey(story.id),
-      onTap: onTap,
+      key: StoryItem.storyItemKey(widget.story.id),
+      onTap: widget.onTap,
       title: title,
       subtitle: subtitle,
     );

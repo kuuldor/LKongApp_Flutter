@@ -8,7 +8,8 @@ import 'dart:ui' as ui show instantiateImageCodec, Codec;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import 'package:lkongapp/utils/cache_manager.dart';
 
 /**
  *  CachedNetworkImage for Flutter
@@ -272,7 +273,8 @@ class _CachedNetworkImageState extends State<CachedNetworkImage>
     if (widget.imageUrl != oldWidget.imageUrl ||
         widget.placeholder != widget.placeholder) {
       _imageProvider = new CachedNetworkImageProvider(widget.imageUrl,
-          errorListener: _imageLoadingFailed, imageOnError: widget.imageOnError);
+          errorListener: _imageLoadingFailed,
+          imageOnError: widget.imageOnError);
 
       _resolveImage();
     }
