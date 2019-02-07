@@ -31,22 +31,21 @@ class ImageFrameInfo extends Object with ImageFrameInfoMixin {
 
 class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
     with AvatarCodecMixin {
+  static ui.Codec defaultCodec;
+  static final defaultAvatar = "assets/noavatar.png";
+
   /// Creates an ImageProvider which loads an image from the [url], using the [scale].
   /// When the image fails to load [errorListener] is called.
   AsyncAvatarProvider(this.loader, this.url,
       {this.scale: 1.0,
-      @required this.defaultAvatar,
       this.delayInMillies: 0,
       this.errorListener,
       this.headers})
       : assert(url != null),
-        assert(defaultAvatar != null),
         assert(scale != null);
 
   final AvatarLoaderState loader;
   final String url;
-
-  final String defaultAvatar;
 
   final int delayInMillies;
 
@@ -85,12 +84,11 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
     final AsyncAvatarProvider typedOther = other;
     return url == typedOther.url &&
         loader == typedOther.loader &&
-        defaultAvatar == typedOther.defaultAvatar &&
         scale == typedOther.scale;
   }
 
   @override
-  int get hashCode => hashValues(url, loader, defaultAvatar, scale);
+  int get hashCode => hashValues(url, loader, scale);
 
   @override
   String toString() => '$runtimeType("$url", scale: $scale)';
@@ -113,7 +111,6 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
 
   bool defaultAvatarServed = false;
   ui.Codec avatarCodec;
-  ui.Codec defaultCodec;
 
   @override
   Future<ui.FrameInfo> getNextFrame() async {
@@ -129,7 +126,7 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
                 return c;
               });
             } else {
-              return defaultCodec;
+              return getDefaultCodec();
             }
           },
         );
@@ -140,10 +137,7 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
       }
       return codec.getNextFrame();
     } else {
-      defaultCodec = await rootBundle.load(defaultAvatar).then((bytes) {
-        Uint8List lst = new Uint8List.view(bytes.buffer);
-        return ui.instantiateImageCodec(lst);
-      });
+      await getDefaultCodec();
 
       final defaultFrame = await defaultCodec.getNextFrame();
 
@@ -154,16 +148,21 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
     }
   }
 
+  Future<ui.Codec> getDefaultCodec() async {
+    if (defaultCodec == null) {
+      defaultCodec = await rootBundle.load(defaultAvatar).then((bytes) {
+        Uint8List lst = new Uint8List.view(bytes.buffer);
+        return ui.instantiateImageCodec(lst);
+      });
+    }
+    return defaultCodec;
+  }
+
   Future<ui.Codec> _loadAsync() async {
     var cacheManager = await CacheManager.getInstance();
     var file = await cacheManager.getFile(url, headers: headers);
     if (file == null) {
-      if (defaultAvatar != null) {
-        return rootBundle.load(defaultAvatar).then((bytes) {
-          Uint8List lst = new Uint8List.view(bytes.buffer);
-          return ui.instantiateImageCodec(lst);
-        });
-      }
+      return getDefaultCodec();
     }
     return await _loadAsyncFromFile(file);
   }

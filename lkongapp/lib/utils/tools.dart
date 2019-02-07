@@ -35,7 +35,6 @@ Widget asyncUserAvatar(
     backgroundColor: Colors.transparent,
     backgroundImage: uid != null && uid > 0
         ? AsyncAvatarProvider(loader, avatarForUserID(uid),
-            defaultAvatar: "assets/noavatar.png",
             delayInMillies: delayInMillies)
         : AssetImage("assets/noavatar.png"),
     radius: size / 2,

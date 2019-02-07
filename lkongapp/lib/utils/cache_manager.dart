@@ -20,6 +20,7 @@ class CacheObject {
   static const _keyValidTill = "validTill";
   static const _keyETag = "ETag";
   static const _keyTouched = "touched";
+  static const _keyMissing = "missing";
 
   Future<String> getFilePath() async {
     if (relativePath == null) {
@@ -41,6 +42,10 @@ class CacheObject {
       return new DateTime.fromMillisecondsSinceEpoch(_map[_keyValidTill]);
     }
     return null;
+  }
+
+  bool get missing {
+    return _map.containsKey(_keyMissing);
   }
 
   String get eTag {
@@ -86,6 +91,13 @@ class CacheObject {
   touch() {
     touched = new DateTime.now();
     _map[_keyTouched] = touched.millisecondsSinceEpoch;
+  }
+
+  setMissing(String missing) {
+    _map[_keyMissing] = missing;
+    // keep the missing state for one day
+    _map[_keyValidTill] =
+        new DateTime.now().add(Duration(seconds: 86400)).millisecondsSinceEpoch;
   }
 
   setDataFromHeaders(Map<String, String> headers) async {
@@ -318,6 +330,10 @@ class CacheManager {
     }
   }
 
+  bool hasKey(String url) {
+    return _cacheData.containsKey(url);
+  }
+
   Future<bool> hasFile(String url) async {
     bool hasIt = _cacheData.containsKey(url);
     if (!hasIt) {
@@ -352,6 +368,25 @@ class CacheManager {
     await cacheObject.lock.synchronized(() async {
       // Set touched date to show that this object is being used recently
       cacheObject.touch();
+      final now = DateTime.now();
+
+      if (cacheObject.missing) {
+        if (cacheObject.validTill == null ||
+            cacheObject.validTill.isBefore(now)) {
+          log = "$log\nUpdating file in cache.";
+          var newCacheData = await _downloadFile(url, headers, cacheObject.lock,
+              relativePath: cacheObject.relativePath, eTag: cacheObject.eTag);
+          if (newCacheData != null) {
+            _cacheData[url] = newCacheData;
+          }
+          log = "$log\nRefresh the missing URL";
+          return;
+        }
+
+        log = "$log\nURL is missing";
+
+        return;
+      }
 
       if (headers == null) {
         headers = new Map();
@@ -384,7 +419,7 @@ class CacheManager {
       }
       //If file is old, download if server has newer one
       if (cacheObject.validTill == null ||
-          cacheObject.validTill.isBefore(new DateTime.now())) {
+          cacheObject.validTill.isBefore(now)) {
         log = "$log\nUpdating file in cache.";
         var newCacheData = await _downloadFile(url, headers, cacheObject.lock,
             relativePath: cacheObject.relativePath, eTag: cacheObject.eTag);
@@ -444,6 +479,8 @@ class CacheManager {
       }
     }
 
-    return null;
+    newCache.setMissing("");
+
+    return newCache;
   }
 }
