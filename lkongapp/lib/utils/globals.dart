@@ -6,7 +6,7 @@ import 'package:lkongapp/utils/http_session.dart';
 
 HttpSession session;
 
-String appVersion = "1.1.7";
+String appVersion = "1.1.8";
 
 void initGlobals({bool testing: false}) {
   session = HttpSession(baseURL: 'http://lkong.cn', persist: !testing);
