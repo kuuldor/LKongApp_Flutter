@@ -243,7 +243,7 @@ class CommentItemState extends State<CommentItem> with AvatarLoaderState {
       this,
       widget.comment.authorid,
       size * 2 + 8,
-      delayInMillies: 0,
+      delayInMillies: 250,
       clickable: true,
     );
 

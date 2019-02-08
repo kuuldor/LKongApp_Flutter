@@ -21,7 +21,7 @@ dependencies:
   path_provider: ^0.4.1
   http: ^0.12.0
   intl: any
-  shared_preferences: any
+  shared_preferences: 0.4.3
   synchronized: any
   uuid: any
   url_launcher: ^4.0.1
