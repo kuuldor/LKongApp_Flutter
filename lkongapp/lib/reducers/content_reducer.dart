@@ -11,7 +11,7 @@ import 'forum_reducer.dart';
 import 'userdata_reducer.dart';
 import 'search_reducer.dart';
 import 'profile_reducer.dart';
-import 'hot_digest_reducer.dart';
+import 'misc_reducer.dart';
 
 final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIRequest>(_contentRequested),
@@ -55,5 +55,6 @@ ContentCache _contentReducer(ContentCache content, action) {
     ..searchResult.replace(searchResultReducer(content.searchResult, action))
     ..profiles.replace(profileReducer(content.profiles, action))
     ..hotDigest.replace(hotDigestReducer(content.hotDigest, action))
+    ..blacklist.replace(blacklistReducer(content.blacklist, action))
     ..forumRepo.replace(forumRepoReducer(content.forumRepo, action)));
 }

@@ -12,4 +12,5 @@ class LKongAppRoutes {
   static final photoView = "/photo_view";
   static final accountManage = "/account_manage";
   static final photoGallery = "/photo_gallery";
+  static final manageBlacklist = "/manage_blacklist";
 }

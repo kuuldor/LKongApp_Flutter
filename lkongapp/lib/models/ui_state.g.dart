@@ -233,6 +233,8 @@ class _$ContentCache extends ContentCache {
   final BuiltMap<int, Profile> profiles;
   @override
   final BuiltList<HotDigestResult> hotDigest;
+  @override
+  final BuiltList<UserInfo> blacklist;
 
   factory _$ContentCache([void updates(ContentCacheBuilder b)]) =>
       (new ContentCacheBuilder()..update(updates)).build();
@@ -247,7 +249,8 @@ class _$ContentCache extends ContentCache {
       this.userData,
       this.searchResult,
       this.profiles,
-      this.hotDigest})
+      this.hotDigest,
+      this.blacklist})
       : super._() {
     if (homeList == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'homeList');
@@ -273,6 +276,9 @@ class _$ContentCache extends ContentCache {
     if (hotDigest == null) {
       throw new BuiltValueNullFieldError('ContentCache', 'hotDigest');
     }
+    if (blacklist == null) {
+      throw new BuiltValueNullFieldError('ContentCache', 'blacklist');
+    }
   }
 
   @override
@@ -295,7 +301,8 @@ class _$ContentCache extends ContentCache {
         userData == other.userData &&
         searchResult == other.searchResult &&
         profiles == other.profiles &&
-        hotDigest == other.hotDigest;
+        hotDigest == other.hotDigest &&
+        blacklist == other.blacklist;
   }
 
   @override
@@ -308,16 +315,18 @@ class _$ContentCache extends ContentCache {
                         $jc(
                             $jc(
                                 $jc(
-                                    $jc($jc(0, lastError.hashCode),
-                                        loading.hashCode),
-                                    homeList.hashCode),
-                                storyRepo.hashCode),
-                            forumInfo.hashCode),
-                        forumRepo.hashCode),
-                    userData.hashCode),
-                searchResult.hashCode),
-            profiles.hashCode),
-        hotDigest.hashCode));
+                                    $jc(
+                                        $jc($jc(0, lastError.hashCode),
+                                            loading.hashCode),
+                                        homeList.hashCode),
+                                    storyRepo.hashCode),
+                                forumInfo.hashCode),
+                            forumRepo.hashCode),
+                        userData.hashCode),
+                    searchResult.hashCode),
+                profiles.hashCode),
+            hotDigest.hashCode),
+        blacklist.hashCode));
   }
 
   @override
@@ -332,7 +341,8 @@ class _$ContentCache extends ContentCache {
           ..add('userData', userData)
           ..add('searchResult', searchResult)
           ..add('profiles', profiles)
-          ..add('hotDigest', hotDigest))
+          ..add('hotDigest', hotDigest)
+          ..add('blacklist', blacklist))
         .toString();
   }
 }
@@ -395,6 +405,12 @@ class ContentCacheBuilder
   set hotDigest(ListBuilder<HotDigestResult> hotDigest) =>
       _$this._hotDigest = hotDigest;
 
+  ListBuilder<UserInfo> _blacklist;
+  ListBuilder<UserInfo> get blacklist =>
+      _$this._blacklist ??= new ListBuilder<UserInfo>();
+  set blacklist(ListBuilder<UserInfo> blacklist) =>
+      _$this._blacklist = blacklist;
+
   ContentCacheBuilder();
 
   ContentCacheBuilder get _$this {
@@ -409,6 +425,7 @@ class ContentCacheBuilder
       _searchResult = _$v.searchResult?.toBuilder();
       _profiles = _$v.profiles?.toBuilder();
       _hotDigest = _$v.hotDigest?.toBuilder();
+      _blacklist = _$v.blacklist?.toBuilder();
       _$v = null;
     }
     return this;
@@ -442,7 +459,8 @@ class ContentCacheBuilder
               userData: userData.build(),
               searchResult: searchResult.build(),
               profiles: profiles.build(),
-              hotDigest: hotDigest.build());
+              hotDigest: hotDigest.build(),
+              blacklist: blacklist.build());
     } catch (_) {
       String _$failedField;
       try {
@@ -462,6 +480,8 @@ class ContentCacheBuilder
         profiles.build();
         _$failedField = 'hotDigest';
         hotDigest.build();
+        _$failedField = 'blacklist';
+        blacklist.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
             'ContentCache', _$failedField, e.toString());

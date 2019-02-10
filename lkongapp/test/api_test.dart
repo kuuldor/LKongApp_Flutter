@@ -59,6 +59,8 @@ Future main() async {
 
   await checkNewTest();
 
+  await blacklistTest();
+
   await logoutTest();
 }
 
@@ -255,6 +257,16 @@ Future<void> checkNewTest() async {
 Future<void> hotlistTest() async {
   return test('Get Hot List Test', () async {
     await getHotDigest({}).then((map) {
+      print(map.toString());
+      expect(map['error'], null);
+      print(session.cookies.toString());
+    });
+  });
+}
+
+Future<void> blacklistTest() async {
+  return test('Get Blacklist Test', () async {
+    await getBlacklist().then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());

@@ -18,6 +18,7 @@ class FollowRequest extends APIRequest with StartLoading {
   final int id;
   final FollowType replyType;
   final bool unfollow;
+  final String name;
 
   static final typeName = {
     FollowType.user: "uid",
@@ -31,6 +32,7 @@ class FollowRequest extends APIRequest with StartLoading {
     @required this.id,
     @required this.replyType,
     @required this.unfollow,
+    this.name,
   }) : super(completer: completer, api: FOLLOW_API, parameters: {
           "type": typeName[replyType],
           "id": id,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/middlewares/api.dart';
+import 'package:lkongapp/models/models.dart';
 import 'package:meta/meta.dart';
 import 'base_action.dart';
 import 'api_action.dart';
@@ -584,4 +585,25 @@ class SendPMSuccess extends APISuccess with StopLoading, GetMyDataSuccess {
 
 class SendPMFailure extends APIFailure with StopLoading, GetMyDataFailure {
   SendPMFailure(APIRequest request, String error) : super(request, error);
+}
+
+class GetBlacklistRequest extends APIRequest with StartLoading {
+  GetBlacklistRequest(Completer completer)
+      : super(completer: completer, api: GETBLACKLIST_API, parameters: {});
+
+  @override
+  CreateFailure get badResponse => (error) => GetBlacklistFailure(this, error);
+
+  @override
+  CreateSuccess get goodResponse => (list) => GetBlacklistSuccess(this, list);
+}
+
+class GetBlacklistSuccess extends APISuccess with StopLoading {
+  final List<UserInfo> list;
+
+  GetBlacklistSuccess(request, this.list) : super(request);
+}
+
+class GetBlacklistFailure extends APIFailure with StopLoading {
+  GetBlacklistFailure(request, String error) : super(request, error);
 }

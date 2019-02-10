@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
@@ -26,23 +27,22 @@ import 'package:lkongapp/actions/actions.dart';
 
 import 'package:lkongapp/ui/connected_widget.dart';
 
-class AccountManageScreen extends StatelessWidget {
+class BlacklistManageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return buildConnectedWidget(context, AccountManageModel.fromStore,
+    return buildConnectedWidget(context, BlacklistManageModel.fromStore,
         (viewModel) {
       return viewModel.buildListView(context);
     });
   }
 }
 
-class AccountManageModel extends DataTableSource with GroupedListModel {
-  final List<User> allUsers;
+class BlacklistManageModel extends DataTableSource with GroupedListModel {
+  final List<UserInfo> blacklist;
   final bool loading;
   final String lastError;
-  final User currentUser;
 
-  Set<User> selectedUsers;
+  Set<UserInfo> selectedUsers;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -59,16 +59,33 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
     actions.add(IconButton(
       icon: Icon(Icons.delete),
       onPressed: () {
-        if (selectedUsers.contains(currentUser)) {
-          dispatchAction(context)(LogoutRequest(null));
-        }
-        dispatchAction(context)(DeleteUsers(selectedUsers));
+        final completers = List<Future<String>>();
+
+        selectedUsers.forEach((user) {
+          final completer = Completer<String>();
+          completers.add(completer.future);
+          dispatchAction(context)(FollowRequest(
+            completer,
+            id: user.uid,
+            replyType: FollowType.black,
+            unfollow: true,
+          ));
+        });
+        Future.wait(completers).then((errors) {
+          String msg = '解除黑名单';
+          if (errors.where((e) => e != null).length == 0) {
+            msg += '成功';
+          } else {
+            msg += '失败' + ": $errors";
+          }
+          showToast(msg);
+        });
       },
     ));
 
     return SliverAppBar(
       title: GestureDetector(
-        child: Text("帐号管理",
+        child: Text("黑名单管理",
             style:
                 Theme.of(context).textTheme.title.apply(color: Colors.white)),
         onTap: () => scrollToTop(context),
@@ -81,25 +98,23 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
 
   @override
   bool operator ==(other) {
-    return other is AccountManageModel && allUsers == other.allUsers;
+    return other is BlacklistManageModel && blacklist == other.blacklist;
   }
 
   @override
-  int get hashCode => hashObjects([allUsers]);
+  int get hashCode => blacklist.hashCode;
 
-  AccountManageModel({
-    @required this.allUsers,
-    @required this.currentUser,
+  BlacklistManageModel({
+    @required this.blacklist,
     @required this.loading,
     @required this.lastError,
   }) {
-    selectedUsers = Set<User>();
+    selectedUsers = Set<UserInfo>();
   }
 
-  static AccountManageModel fromStore(Store<AppState> store) {
-    return AccountManageModel(
-      allUsers: store.state.persistState.authState.userRepo.values.toList(),
-      currentUser: selectUser(store),
+  static BlacklistManageModel fromStore(Store<AppState> store) {
+    return BlacklistManageModel(
+      blacklist: store.state.uiState.content.blacklist.toList(),
       loading: store.state.isLoading,
       lastError: store.state.persistState.authState.error,
     );
@@ -110,7 +125,7 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
 
   @override
   int countOfItemsInSection({int section}) {
-    int count = allUsers?.length ?? 0;
+    int count = blacklist?.length ?? 0;
     return count;
   }
 
@@ -147,12 +162,6 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
             DataColumn(
               label: Text('用户名'),
             ),
-            DataColumn(
-              label: Text('邮箱'),
-            ),
-            DataColumn(
-              label: Text('密码'),
-            ),
           ],
           source: this,
           rowsPerPage: rowsPerPage,
@@ -162,15 +171,31 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
   }
 
   Widget buildListView(BuildContext context) {
+    if (!initLoaded && loading != true && lastError == null) {
+      handleFetchFromScratch(context);
+    }
+
+    Widget view;
+    final listView = super.buildGroupedListView(context);
+
+    if (refreshRequest != null) {
+      view = listView;
+    } else {
+      view = RefreshIndicator(
+          backgroundColor: Colors.white70,
+          onRefresh: () => handleRefresh(context),
+          child: listView);
+    }
+
     return Scaffold(
       key: _scaffoldKey,
-      body: super.buildGroupedListView(context),
+      body: view,
     );
   }
 
   void _selectAll(bool checked) {
     if (checked) {
-      selectedUsers.addAll(allUsers);
+      selectedUsers.addAll(blacklist);
     } else {
       selectedUsers.clear();
     }
@@ -181,8 +206,8 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
   @override
   DataRow getRow(int index) {
     assert(index >= 0);
-    if (index >= allUsers.length) return null;
-    final User user = allUsers[index];
+    if (index >= blacklist.length) return null;
+    final UserInfo user = blacklist[index];
     return DataRow.byIndex(
         index: index,
         selected: selectedUsers.contains(user),
@@ -205,9 +230,7 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
                 : AssetImage("assets/noavatar.png"),
             radius: 12,
           )),
-          DataCell(Text('${user?.userInfo?.username ?? ""}')),
-          DataCell(Text('${user.identity}')),
-          DataCell(Text('${user.password}')),
+          DataCell(Text('${user?.username ?? ""}')),
         ]);
   }
 
@@ -215,7 +238,7 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => allUsers.length;
+  int get rowCount => blacklist.length;
 
   @override
   int get selectedRowCount => selectedUsers.length;
@@ -226,12 +249,47 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
     return null;
   }
 
+  bool get initLoaded => (blacklist?.length ?? 0) > 0;
+
+  APIRequest get refreshRequest => fetchFromScratchRequest;
+  APIRequest get fetchFromScratchRequest {
+    final Completer<String> completer = Completer<String>();
+    completer.future.then((error) {
+      // showToast(context, success ? 'Loading Succeed' : 'Loading Failed');
+    });
+    return GetBlacklistRequest(completer);
+  }
+
+  APIRequest get loadMoreRequest => null;
+
+  Future<Null> handleRefresh(BuildContext context) async {
+    var request = refreshRequest;
+    if (request != null) {
+      dispatchAction(context)(request);
+      return request.completer.future.then((_) {});
+    }
+
+    return Future(() {});
+  }
+
+  Future<Null> handleFetchFromScratch(BuildContext context) async {
+    var request = fetchFromScratchRequest;
+    if (request != null) {
+      dispatchAction(context)(request);
+    }
+  }
+
+  Future<Null> handleLoadMore(BuildContext context) async {
+    var request = loadMoreRequest;
+    if (request != null) {
+      dispatchAction(context)(request);
+    }
+  }
+
   void onAddUserTap(BuildContext context) {
     final usernameController = TextEditingController();
-    final passwordController = TextEditingController();
 
-    final ValueKey _usernameKey = Key('__adduser__username__');
-    final ValueKey _passwordKey = Key('__adduser__password__');
+    final ValueKey _usernameKey = Key('__addblacklist__username__');
 
     final usernameFld = TextFormField(
       key: _usernameKey,
@@ -239,24 +297,9 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
       autofocus: true,
       keyboardType: TextInputType.emailAddress,
       validator: (val) =>
-          val.isEmpty || val.trim().length == 0 ? '请输入登录邮箱' : null,
+          val.isEmpty || val.trim().length == 0 ? '请输入用户名' : null,
       decoration: InputDecoration(
-        hintText: '登录邮箱',
-        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
-      ),
-    );
-
-    final passwordFld = TextFormField(
-      key: _passwordKey,
-      controller: passwordController,
-      autocorrect: false,
-      obscureText: true,
-      autofocus: false,
-      validator: (val) =>
-          val.isEmpty || val.trim().length == 0 ? '请输入密码' : null,
-      decoration: InputDecoration(
-        hintText: '密码',
+        hintText: '输入用户名',
         contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
       ),
@@ -268,13 +311,9 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('邮箱'),
+            Text('用户名'),
             SizedBox(height: 4.0),
             usernameFld,
-            SizedBox(height: 8.0),
-            Text('密码'),
-            SizedBox(height: 4.0),
-            passwordFld,
             SizedBox(height: 18.0),
           ],
         ),
@@ -288,7 +327,7 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('添加账号'),
+          title: Text('拉黑用户'),
           content: form,
           actions: <Widget>[
             FlatButton(
@@ -303,14 +342,29 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
                 if (!_formKey.currentState.validate()) {
                   return;
                 }
-                final email = usernameController.text;
-                final password = passwordController.text.trim();
-                dispatchAction(context)(LoginTestRequest(
-                    completer,
-                    User().rebuild((b) => b
-                      ..identity = email.trim()
-                      ..password = password.trim())));
-                Navigator.of(context).pop();
+                final username = usernameController.text;
+                queryMetaData({"userName": username}).then((result) {
+                  int uid;
+                  final location = result["location"];
+                  if (location != null) {
+                    uid = parseLKTypeId(location, type: "user");
+                  }
+                  if (uid != null) {
+                    dispatchAction(context)(FollowRequest(
+                      completer,
+                      id: uid,
+                      name: username,
+                      replyType: FollowType.black,
+                      unfollow: false,
+                    ));
+                  } else {
+                    final String error = result["error"] ?? "没有找到用户";
+                    Future.delayed(Duration(milliseconds: 200),
+                        () => completer.complete(error));
+                  }
+
+                  Navigator.of(context).pop();
+                });
               },
             ),
           ],
@@ -319,14 +373,13 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
     );
 
     completer.future.then((error) {
-      String msg = '添加账号';
+      String msg = '拉黑用户';
       if (error == null) {
         msg += '成功';
       } else {
         msg += '失败' + ": $error";
       }
       showToast(msg);
-      dispatchAction(context)(LoginTestRequest(null, currentUser));
     });
   }
 }

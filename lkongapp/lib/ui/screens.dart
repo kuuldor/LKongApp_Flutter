@@ -8,3 +8,4 @@ export 'profile_screen.dart';
 export 'pmsession_screen.dart';
 export 'story_screen.dart';
 export 'account_manage.dart';
+export 'blacklist_manage.dart';

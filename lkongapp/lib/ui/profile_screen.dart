@@ -339,6 +339,12 @@ class ProfileScreenModel extends FetchedListModel {
           );
         }));
         break;
+      case MenuAction.manageBlackList:
+        dispatchAction(context)(UINavigationPush(
+            context, LKongAppRoutes.manageBlacklist, false, (context) {
+          return BlacklistManageScreen();
+        }));
+        break;
       default:
         break;
     }

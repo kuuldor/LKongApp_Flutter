@@ -34,6 +34,7 @@ const HOTDIGEST_API = "HOTDIGEST";
 const PMSESSION_API = "PMSESSION";
 const SENDPM_API = "SENDPM";
 const CHECKNOTICE_API = "CHECKNOTICE";
+const GETBLACKLIST_API = "GETBLACKLIST";
 
 const endpoint = {
   "login": "/index.php?mod=login",
@@ -74,11 +75,9 @@ Future<Map> _handleHttp(
     if (response.statusCode >= 400) {
       result = {"error": "HTTP错误: ${response.statusCode}"};
     } else {
-      var data;
+      var data = utf8.decode(response.bodyBytes);
       if (preProcessor != null) {
-        data = preProcessor(response.body);
-      } else {
-        data = response.body;
+        data = preProcessor(data);
       }
 
       // print(data);
@@ -769,6 +768,31 @@ Future<Map> getHotDigest(Map args) {
   });
 }
 
+Future<Map> getBlacklist() {
+  var urlString = endpoint["getBlacklist"] + querify(defaultParameter());
+  var httpAction = session.get(urlString);
+
+  return _handleHttp(httpAction, dataParser: parseBlacklist);
+}
+
+Map parseBlacklist(String htmlString) {
+  var users = List<UserInfo>();
+  if (htmlString != null && htmlString.length > 0) {
+    final pattern =
+        RegExp('<td><a.*?dataitem="user_([0-9]*)".*?>(.*?)</a></td>');
+    if (pattern.hasMatch(htmlString)) {
+      final List matches = pattern.allMatches(htmlString).toList();
+      if (matches.length > 0) {
+        matches.forEach((m) => users.add(UserInfo().rebuild((b) => b
+          ..uid = int.parse(m[1])
+          ..username = m[2])));
+      }
+    }
+  }
+
+  return {"result": users};
+}
+
 Future<Map> checkNewNotice() {
   final urlString = endpoint["checkNotice"] + querify(defaultParameter());
 
@@ -949,6 +973,10 @@ Future<Map> apiDispatch(api, Map parameters) async {
 
   if (api == CHECKNOTICE_API) {
     return checkNewNotice();
+  }
+
+  if (api == GETBLACKLIST_API) {
+    return getBlacklist();
   }
 
   return Future<Map>(null);

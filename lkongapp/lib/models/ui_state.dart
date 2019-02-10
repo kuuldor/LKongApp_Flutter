@@ -71,6 +71,9 @@ abstract class ContentCache
   BuiltMap<int, Profile> get profiles;
 
   BuiltList<HotDigestResult> get hotDigest;
+
+  BuiltList<UserInfo> get blacklist;
+
 }
 
 abstract class Profile implements Built<Profile, ProfileBuilder> {
