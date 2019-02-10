@@ -181,6 +181,17 @@ class AppDrawer extends StatelessWidget {
         },
       ),
     );
+
+    children.add(
+      ListTile(
+        leading: Icon(Icons.recent_actors),
+        title: Text('黑名单管理'),
+        onTap: () {
+          viewModel.pushScreen(context, LKongAppRoutes.manageBlacklist);
+        },
+      ),
+    );
+
     children.add(AboutListTile(
       applicationName: '龍空',
       applicationVersion: appVersion,

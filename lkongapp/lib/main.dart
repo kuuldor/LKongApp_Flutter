@@ -124,6 +124,7 @@ Widget _createModeledApp(viewModel) {
           LKongAppRoutes.home: (context) => HomeScreen(),
           LKongAppRoutes.settings: (context) => SettingScreen(),
           LKongAppRoutes.accountManage: (context) => AccountManageScreen(),
+          LKongAppRoutes.manageBlacklist: (context) => BlacklistManageScreen(),
           LKongAppRoutes.favorite: (context) => FavoriteScreen(),
         },
       ));
