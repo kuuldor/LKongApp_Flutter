@@ -125,8 +125,8 @@ class AccountManageModel extends DataTableSource with GroupedListModel {
   @override
   Widget builderSection(BuildContext context, int section) {
     int rowsPerPage = rowCount;
-    if (rowsPerPage > 10 || rowsPerPage == 0) {
-      rowsPerPage = 10;
+    if (rowsPerPage > 8 || rowsPerPage == 0) {
+      rowsPerPage = 8;
     }
     return SliverFillViewport(
       delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
