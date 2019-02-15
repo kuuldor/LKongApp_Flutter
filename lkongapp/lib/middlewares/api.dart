@@ -793,6 +793,26 @@ Map parseBlacklist(String htmlString) {
   return {"result": users};
 }
 
+Future<Map> uploadImage(Map args) async {
+  String file = args["file"];
+
+  if (file == null) {
+    return {"error": "File cannot be null"};
+  }
+
+  final urlString = "http://lkong.cn:1345/upload";
+
+  var httpAction = session.uploadFile(urlString, file);
+  return httpAction.then((response) async {
+    if (response.statusCode == 200) {
+      final body = await response.stream.toBytes();
+      return json.decode(utf8.decode(body));
+    } else {
+      return {"error": "Status ${response.statusCode}"};
+    }
+  });
+}
+
 Future<Map> checkNewNotice() {
   final urlString = endpoint["checkNotice"] + querify(defaultParameter());
 

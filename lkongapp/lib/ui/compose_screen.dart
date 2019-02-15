@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import 'package:lkongapp/actions/actions.dart';
+import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -44,6 +48,14 @@ class ComposeState extends State<ComposeScreen> {
 
   final subjectController = TextEditingController();
   final contentController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the Widget is removed from the Widget tree
+    subjectController.dispose();
+    contentController.dispose();
+    super.dispose();
+  }
 
   bool sending = false;
 
@@ -136,8 +148,34 @@ class ComposeState extends State<ComposeScreen> {
     });
   }
 
+  Future<String> chooseAndUploadImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    print("Image $image");
+    if (image != null) {
+      setState(() {
+        this.sending = true;
+      });
+      return uploadImage({"file": image.path}).then((result) {
+        setState(() {
+          this.sending = false;
+        });
+        final link = result["image"];
+        final error = result["error"];
+        if (link != null) {
+          return link;
+        }
+        if (error != null) {
+          showToast("传图失败: $error");
+        }
+      });
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
     String title;
 
     switch (widget.replyType) {
@@ -223,26 +261,84 @@ class ComposeState extends State<ComposeScreen> {
       ),
     );
 
-    final screen = Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(title),
-        actions: <Widget>[
+    Widget bottomBar = BottomAppBar(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          SizedBox(
+            width: 12.0,
+          ),
           IconButton(
-            icon: Icon(Icons.send),
-            onPressed: (sending
-                ? null
-                : () {
-                    if (!_formKey.currentState.validate()) {
-                      return;
-                    }
-                    sendMessage(context);
-                  }),
+            color: theme.mainColor,
+            icon: Icon(Icons.add_photo_alternate),
+            onPressed: () {
+              chooseAndUploadImage().then((link) {
+                if (link != null) {
+                  final cursor = contentController.selection;
+                  String text = contentController.text;
+                  contentController.text = text.replaceRange(
+                      cursor.start, cursor.end, "[img]$link[/img]\n");
+                }
+              });
+            },
+          ),
+          SizedBox(
+            width: 12,
+          ),
+          IconButton(
+            color: theme.mainColor,
+            icon: Icon(Icons.insert_emoticon),
+            onPressed: () {},
+          ),
+          Expanded(
+              child: Container(
+            height: 0.0,
+          )),
+          // IconButton(
+          //   icon: Icon(Icons.add_comment),
+          //   onPressed: () {
+          //     onReplyButtonTap(
+          //       context,
+          //       story: story.storyInfo,
+          //       uid: uid,
+          //       username: username,
+          //     );
+          //   },
+          // ),
+          SizedBox(
+            width: 12.0,
           ),
         ],
       ),
-      body: form,
     );
+
+    final screen = Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text(title),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.send),
+              onPressed: (sending
+                  ? null
+                  : () {
+                      if (!_formKey.currentState.validate()) {
+                        return;
+                      }
+                      sendMessage(context);
+                    }),
+            ),
+          ],
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: form,
+            ),
+            bottomBar,
+          ],
+        ));
 
     if (!sending) {
       return screen;

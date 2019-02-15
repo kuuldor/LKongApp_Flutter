@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -16,7 +17,7 @@ class HttpSession {
 
   void saveCookies() {
     if (!persist) return;
-    
+
     getApplicationDocumentsDirectory().then((Directory appDocDir) {
       String appStoragePath = getStorageFile(appDocDir);
 
@@ -78,6 +79,18 @@ class HttpSession {
     return client.post(url, body: data, headers: {'Cookie': cookieLine}).then(
         (response) {
       updateCookie(response);
+      return response;
+    });
+  }
+
+  Future<http.StreamedResponse> uploadFile(String url, String file) async {
+    // print("POST URL: $url");
+    var uri = Uri.parse(url);
+    var request = http.MultipartRequest("POST", uri);
+    final octects = await http.MultipartFile.fromPath('image', file);
+    request.files.add(octects);
+    request.headers.addAll({'Cookie': cookieLine});
+    return request.send().then((response) {
       return response;
     });
   }
