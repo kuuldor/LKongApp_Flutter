@@ -273,7 +273,7 @@ class ComposeState extends State<ComposeScreen> {
             width: 12.0,
           ),
           IconButton(
-            color: theme.mainColor,
+            color: theme.barIconColor,
             icon: Icon(Icons.add_photo_alternate),
             onPressed: () {
               final cursor = contentController.selection;
@@ -290,7 +290,7 @@ class ComposeState extends State<ComposeScreen> {
             width: 12,
           ),
           IconButton(
-            color: theme.mainColor,
+            color: theme.barIconColor,
             icon: Icon(Icons.insert_emoticon),
             onPressed: () {
               final cursor = contentController.selection;

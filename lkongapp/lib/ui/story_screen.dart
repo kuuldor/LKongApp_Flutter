@@ -646,7 +646,7 @@ class StoryContentModel {
               width: 12.0,
             ),
             IconButton(
-              color: theme.mainColor,
+              color: theme.barIconColor,
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 _scrollController.animateTo(state.offset - screenHeight + 100,
@@ -658,7 +658,7 @@ class StoryContentModel {
               width: 64,
             ),
             IconButton(
-              color: theme.mainColor,
+              color: theme.barIconColor,
               icon: Icon(Icons.arrow_forward),
               onPressed: () {
                 _scrollController.animateTo(state.offset + screenHeight - 100,
@@ -697,7 +697,7 @@ class StoryContentModel {
               width: 12.0,
             ),
             IconButton(
-              color: theme.mainColor,
+              color: theme.barIconColor,
               icon: Icon(Icons.arrow_back),
               onPressed: state.page > 1
                   ? () {
@@ -713,7 +713,7 @@ class StoryContentModel {
             FlatButton(
               child: Text(
                 "$pageNo / $totalPages",
-                style: titleStyle.apply(color: theme.mainColor),
+                style: titleStyle.apply(color: theme.barIconColor),
               ),
               onPressed: () {
                 if (totalPages > 1) {
@@ -722,7 +722,7 @@ class StoryContentModel {
               },
             ),
             IconButton(
-              color: theme.mainColor,
+              color: theme.barIconColor,
               icon: Icon(Icons.arrow_forward),
               onPressed: state.page < totalPages
                   ? () {
@@ -740,6 +740,7 @@ class StoryContentModel {
               height: 0.0,
             )),
             IconButton(
+              color: theme.barIconColor,
               icon: Icon(Icons.add_comment),
               onPressed: () {
                 onReplyButtonTap(
@@ -751,7 +752,7 @@ class StoryContentModel {
               },
             ),
             SizedBox(
-              width: 12.0,
+              width: 32.0,
             ),
           ],
         ),

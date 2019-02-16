@@ -11,6 +11,7 @@ class LKongAppTheme {
   final double fontSize;
 
   Color get mainColor => htmlColor(appTheme.colors['main']);
+  Color get barIconColor => isNightMode ? barTextColor : mainColor;
   Color get pageColor => htmlColor(appTheme.colors['paper']);
   Color get barTextColor => htmlColor(appTheme.colors['barText']);
   Color get headerBG => htmlColor(appTheme.colors['headerBG']);
