@@ -218,9 +218,10 @@ class ForumListModel extends FetchedListModel {
         Widget item = createForumListItem(context, forum);
         return wrapItem(context, item);
       }
+      return wrapItem(context, Text("ID无对应内容 ($fid)"));
     }
 
-    return null;
+    return wrapItem(context, Text("没有找到内容 ($section-$index)"));
   }
 
   @override
