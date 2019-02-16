@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/ui/emoji_picker.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/utils.dart';
@@ -58,6 +59,8 @@ class ComposeState extends State<ComposeScreen> {
   }
 
   bool sending = false;
+  int selectionStart;
+  int selectionEnd;
 
   bool hasSignature(String s) {
     RegExp pattern = RegExp(signaturePattern);
@@ -273,12 +276,12 @@ class ComposeState extends State<ComposeScreen> {
             color: theme.mainColor,
             icon: Icon(Icons.add_photo_alternate),
             onPressed: () {
+              final cursor = contentController.selection;
+              selectionStart = cursor.start;
+              selectionEnd = cursor.end;
               chooseAndUploadImage().then((link) {
                 if (link != null) {
-                  final cursor = contentController.selection;
-                  String text = contentController.text;
-                  contentController.text = text.replaceRange(
-                      cursor.start, cursor.end, "[img]$link[/img]\n");
+                  insertImage(link);
                 }
               });
             },
@@ -289,7 +292,20 @@ class ComposeState extends State<ComposeScreen> {
           IconButton(
             color: theme.mainColor,
             icon: Icon(Icons.insert_emoticon),
-            onPressed: () {},
+            onPressed: () {
+              final cursor = contentController.selection;
+              selectionStart = cursor.start;
+              selectionEnd = cursor.end;
+              dispatchAction(context)(UINavigationPush(
+                  context, LKongAppRoutes.emojiPicker, false, (context) {
+                return EmojiPicker(
+                  onEmojiTapped: (context, emid) {
+                    final link = "http://img.lkong.cn/bq/em$emid.gif";
+                    insertImage(link);
+                  },
+                );
+              }));
+            },
           ),
           Expanded(
               child: Container(
@@ -350,5 +366,39 @@ class ComposeState extends State<ComposeScreen> {
         ],
       );
     }
+  }
+
+  void insertImage(String link) {
+    // final image = "[img]$link[/img]";
+    final image = '<img src="$link" />';
+    insertText(image);
+  }
+
+  void insertText(String inserted) {
+    String text = contentController.text;
+    if (text == null || text.length == 0) {
+      contentController.text = inserted;
+      selectionStart = inserted.length;
+      selectionEnd = selectionStart;
+    } else {
+      if (selectionStart == null || selectionEnd == null) {
+        final cursor = contentController.selection;
+        selectionStart = cursor.start;
+        selectionEnd = cursor.end;
+      }
+
+      if (selectionStart >= 0 && selectionEnd >= 0) {
+        contentController.text =
+            text.replaceRange(selectionStart, selectionEnd, inserted);
+        selectionStart += inserted.length;
+        selectionEnd = selectionStart;
+      } else {
+        contentController.text += inserted;
+        selectionStart = contentController.text.length;
+        selectionEnd = selectionStart;
+      }
+    }
+    contentController.selection =
+        TextSelection.fromPosition(TextPosition(offset: selectionStart));
   }
 }

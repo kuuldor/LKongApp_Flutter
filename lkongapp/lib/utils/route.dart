@@ -13,4 +13,5 @@ class LKongAppRoutes {
   static final accountManage = "/account_manage";
   static final photoGallery = "/photo_gallery";
   static final manageBlacklist = "/manage_blacklist";
+  static final emojiPicker = "/emoji_picker";
 }
