@@ -38,6 +38,7 @@ class ComposeScreen extends StatefulWidget {
 class ComposeState extends State<ComposeScreen> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  static final GlobalKey<FormState> _linkFormKey = GlobalKey<FormState>();
 
   static final String signatureLink = "http://lkong.cn/thread/2214383";
   static final String signaturePattern =
@@ -50,12 +51,23 @@ class ComposeState extends State<ComposeScreen> {
   final subjectController = TextEditingController();
   final contentController = TextEditingController();
 
+  String initialContent;
+  String initialSubject;
+
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
     subjectController.dispose();
     contentController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    initialContent = widget.comment?.message;
+    initialSubject = widget.story?.subject;
   }
 
   bool sending = false;
@@ -195,20 +207,22 @@ class ComposeState extends State<ComposeScreen> {
         title = "回复：${comment.author}";
         break;
       case ReplyType.EditStory:
-        final comment = widget.comment;
         final story = widget.story;
-        if (subjectController.text.length == 0) {
-          subjectController.text = story.subject;
+        if (subjectController.text.length == 0 && initialSubject != null) {
+          subjectController.text = initialSubject;
+          initialSubject = null;
         }
-        if (contentController.text.length == 0) {
-          contentController.text = stripSignature(comment.message);
+        if (contentController.text.length == 0 && initialContent != null) {
+          contentController.text = stripSignature(initialContent);
+          initialContent = null;
         }
         title = "编辑：${story.subject}";
         break;
       case ReplyType.EditComment:
         final comment = widget.comment;
-        if (contentController.text.length == 0) {
-          contentController.text = stripSignature(comment.message);
+        if (contentController.text.length == 0 && initialContent != null) {
+          contentController.text = stripSignature(initialContent);
+          initialContent = null;
         }
         title = "编辑：${comment.lou}楼";
         break;
@@ -307,24 +321,23 @@ class ComposeState extends State<ComposeScreen> {
               }));
             },
           ),
+          SizedBox(
+            width: 12,
+          ),
+          IconButton(
+            color: theme.barIconColor,
+            icon: Icon(Icons.link),
+            onPressed: () {
+              final cursor = contentController.selection;
+              selectionStart = cursor.start;
+              selectionEnd = cursor.end;
+              onAddLinkTap(context);
+            },
+          ),
           Expanded(
               child: Container(
             height: 0.0,
           )),
-          // IconButton(
-          //   icon: Icon(Icons.add_comment),
-          //   onPressed: () {
-          //     onReplyButtonTap(
-          //       context,
-          //       story: story.storyInfo,
-          //       uid: uid,
-          //       username: username,
-          //     );
-          //   },
-          // ),
-          SizedBox(
-            width: 12.0,
-          ),
         ],
       ),
     );
@@ -374,6 +387,14 @@ class ComposeState extends State<ComposeScreen> {
     insertText(image);
   }
 
+  void insertLink(String title, String link) {
+    if (title == null || title.trim().length == 0) {
+      title = link;
+    }
+    final achor = '<a href="$link"> $title </a>';
+    insertText(achor);
+  }
+
   void insertText(String inserted) {
     String text = contentController.text;
     if (text == null || text.length == 0) {
@@ -400,5 +421,90 @@ class ComposeState extends State<ComposeScreen> {
     }
     contentController.selection =
         TextSelection.fromPosition(TextPosition(offset: selectionStart));
+  }
+
+  void onAddLinkTap(BuildContext context) {
+    final titleController = TextEditingController();
+    final linkController = TextEditingController();
+
+    final ValueKey _titleKey = Key('__addurl__title__');
+    final ValueKey _linkKey = Key('__addurl__link__');
+
+    final titleFld = TextFormField(
+      key: _titleKey,
+      controller: titleController,
+      autofocus: true,
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+        hintText: '链接标题',
+        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+      ),
+    );
+
+    final linkFld = TextFormField(
+      key: _linkKey,
+      controller: linkController,
+      autocorrect: false,
+      keyboardType: TextInputType.url,
+      autofocus: false,
+      validator: (val) =>
+          val.isEmpty || val.trim().length == 0 ? '请输入链接' : null,
+      decoration: InputDecoration(
+        hintText: '链接地址',
+        contentPadding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+      ),
+    );
+
+    final form = Form(
+      key: _linkFormKey,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('标题'),
+            SizedBox(height: 4.0),
+            titleFld,
+            SizedBox(height: 8.0),
+            Text('链接'),
+            SizedBox(height: 4.0),
+            linkFld,
+            SizedBox(height: 18.0),
+          ],
+        ),
+      ),
+    );
+
+    showDialog<void>(
+      context: _scaffoldKey.currentContext,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('添加链接'),
+          content: form,
+          actions: <Widget>[
+            FlatButton(
+              child: Text('取消'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('确定'),
+              onPressed: () {
+                if (!_linkFormKey.currentState.validate()) {
+                  return;
+                }
+                final title = titleController.text;
+                final link = linkController.text.trim();
+                insertLink(title, link);
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
