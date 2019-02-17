@@ -86,15 +86,21 @@ class ForumListModel extends FetchedListModel {
   APIRequest get refreshRequest => ForumListRequest(null);
 
   void _handleLoadInfo(BuildContext context, [int retries = 0]) async {
-    final list = List<Forum>();
+    final list = Set<int>();
     if (repo.forums != null && repo.forums.length > 0) {
-      list.addAll(repo.forums);
+      list.addAll(repo.forums.map((f) => f.fid));
     }
     if (repo.sysplanes != null && repo.sysplanes.length > 0) {
-      list.addAll(repo.sysplanes);
+      list.addAll(repo.sysplanes.map((f) => f.fid));
     }
-    list.forEach(
-        (forum) => dispatchAction(context)(ForumInfoRequest(null, forum.fid)));
+
+    final fetchList = followed.where((fid) => !list.contains(fid)).toSet();
+
+    if (showInfo) {
+      fetchList.addAll(list);
+    }
+    fetchList
+        .forEach((fid) => dispatchAction(context)(ForumInfoRequest(null, fid)));
   }
 
   @override
@@ -148,11 +154,11 @@ class ForumListModel extends FetchedListModel {
 
   @override
   void listIsReady(BuildContext context) {
-    if (showInfo && repo.info.length == 0) {
-      if (!loading) {
-        _handleLoadInfo(context);
-      }
+    // if (showInfo && repo.info.length == 0) {
+    if (!loading) {
+      _handleLoadInfo(context);
     }
+    // }
   }
 
   Widget createForumListItem(BuildContext context, Forum forum) {
@@ -214,14 +220,21 @@ class ForumListModel extends FetchedListModel {
 
     if (fid != null) {
       Forum forum = forums[fid];
+      if (forum == null) {
+        final info = repo.info[fid];
+        if (info != null) {
+          forum = Forum().rebuild((b) => b
+            ..fid = info.fid
+            ..name = info.name);
+        }
+      }
       if (forum != null) {
         Widget item = createForumListItem(context, forum);
         return wrapItem(context, item);
       }
-      return wrapItem(context, Text("ID无对应内容 ($fid)"));
     }
 
-    return wrapItem(context, Text("没有找到内容 ($section-$index)"));
+    return Container();
   }
 
   @override
@@ -249,12 +262,12 @@ class ForumListModel extends FetchedListModel {
         }
         break;
       case 1:
-        if (repo.forums != null && repo.forums.length > 0) {
+        if (repo.forums != null && forumIds.length > 0) {
           headerText = '版块列表';
         }
         break;
       case 2:
-        if (repo.sysplanes != null && repo.sysplanes.length > 0) {
+        if (repo.sysplanes != null && planeIds.length > 0) {
           headerText = '系统位面';
         }
         break;
