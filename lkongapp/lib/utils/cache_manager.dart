@@ -163,7 +163,7 @@ class CacheManager {
 
   static Duration inBetweenCleans = new Duration(days: 7);
   static Duration maxAgeCacheObject = new Duration(days: 30);
-  static int maxNrOfCacheObjects = 200;
+  static int maxNrOfCacheObjects = 2000;
   static bool showDebugLogs = false;
 
   static CacheManager _instance;
@@ -289,6 +289,18 @@ class CacheManager {
             _keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
       });
     }
+  }
+
+  dumpCache() async {
+    await _lock.synchronized(() async {
+      var allValues = _cacheData.values.toList();
+      allValues.forEach((item) async {
+        await _removeFile(item);
+      });
+
+      lastCacheClean = new DateTime.now();
+      _prefs.setInt(_keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
+    });
   }
 
   _removeOldObjectsFromCache() async {

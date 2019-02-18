@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/home_list.dart';
+import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
@@ -329,7 +330,10 @@ class SettingState extends State<SettingView> {
           print("It works!");
         }),
         CSHeader(),
-        CSButton(CSButtonType.DESTRUCTIVE, "删除所有缓存", () {})
+        CSButton(CSButtonType.DESTRUCTIVE, "删除所有缓存", () async {
+          final cache = await CacheManager.getInstance();
+          cache.dumpCache();
+        })
       ]),
     );
   }
