@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
 import 'package:lkongapp/utils/utils.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart';
 import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
@@ -802,7 +805,54 @@ Future<Map> uploadImage(Map args) async {
 
   final urlString = "http://lkong.cn:1345/upload";
 
-  var httpAction = session.uploadFile(urlString, file);
+  var httpAction = session.uploadFile(urlString, "image", file);
+  return httpAction.then((response) async {
+    if (response.statusCode == 200) {
+      final body = await response.stream.toBytes();
+      return json.decode(utf8.decode(body));
+    } else {
+      return {"error": "Status ${response.statusCode}"};
+    }
+  });
+}
+
+const avatarSizeLimit = 1153433;
+Future<Map> uploadAvatar(Map args) async {
+  String file = args["file"];
+
+  if (file == null) {
+    return {"error": "File cannot be null"};
+  }
+
+  File fp = File(file);
+  final len = await fp.length();
+
+  if (len > avatarSizeLimit) {
+    return {"error": "头像大小超出限制"};
+  }
+
+  final urlString = "http://img.lkong.cn/respond/upavatar.php";
+
+  final idCookie = session.cookies["identity"];
+  if (idCookie == null) {
+    return {"error": "未发现登录信息"};
+  }
+
+  final idenity = Uri.decodeFull(idCookie);
+  var headers = Map<String, String>();
+  headers["Referer"] = "http://lkong.cn/setting";
+  headers["Origin"] = "http://lkong.cn";
+
+  var fields = Map<String, String>();
+  fields["Filename"] = basename(file);
+  fields["folder"] = "/uploads";
+  fields["fileext"] = extension(file);
+  fields["identity"] = idenity;
+  fields["fid"] = "0";
+  fields["Upload"] = "Submit Query";
+
+  var httpAction = session.uploadFile(urlString, "picdata", file,
+      headers: headers, fields: fields);
   return httpAction.then((response) async {
     if (response.statusCode == 200) {
       final body = await response.stream.toBytes();

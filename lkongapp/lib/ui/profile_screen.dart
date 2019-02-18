@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:image_picker/image_picker.dart';
 import 'package:lkongapp/actions/profile_action.dart';
 import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
@@ -6,6 +9,7 @@ import 'package:lkongapp/ui/items/forum_item.dart';
 import 'package:lkongapp/ui/items/user_item.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/screens.dart';
+import 'package:lkongapp/ui/tools/choose_image.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/ui/tools/user_icon.dart';
@@ -123,6 +127,8 @@ class ProfileScreenModel extends FetchedListModel {
   final bool showDetailTime;
 
   final Function(int) changeFetchType;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool get loading => state.stateLoading || storeLoading;
 
@@ -345,6 +351,9 @@ class ProfileScreenModel extends FetchedListModel {
           return BlacklistManageScreen();
         }));
         break;
+      case MenuAction.uploadAvatar:
+        _uploadAvatar(context);
+        break;
       default:
         break;
     }
@@ -362,6 +371,33 @@ class ProfileScreenModel extends FetchedListModel {
 
       dispatchAction(context)(req);
     }
+  }
+
+  void _uploadAvatar(BuildContext context) async {
+    chooseImage(context, _scaffoldKey, (file) {
+      _uploadImage(file).then((link) {
+        if (link != null) {
+          showToast("上传头像成功");
+        }
+      });
+    });
+  }
+
+  Future<String> _uploadImage(File image) async {
+    // print("Image $image");
+    if (image != null) {
+      return uploadAvatar({"file": image.path}).then((result) {
+        final link = result["avatar"];
+        final error = result["error"];
+        if (link != null) {
+          return link;
+        }
+        if (error != null) {
+          showToast("上传头像失败: $error");
+        }
+      });
+    }
+    return null;
   }
 
   @override
@@ -618,6 +654,7 @@ class ProfileScreenModel extends FetchedListModel {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       body: super.buildListView(context),
     );
   }

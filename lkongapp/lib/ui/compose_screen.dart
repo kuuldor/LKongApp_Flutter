@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -8,6 +9,7 @@ import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/emoji_picker.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/ui/tools/choose_image.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -163,10 +165,8 @@ class ComposeState extends State<ComposeScreen> {
     });
   }
 
-  Future<String> chooseAndUploadImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    print("Image $image");
+  Future<String> _uploadImage(File image) async {
+    // print("Image $image");
     if (image != null) {
       setState(() {
         this.sending = true;
@@ -293,10 +293,12 @@ class ComposeState extends State<ComposeScreen> {
               final cursor = contentController.selection;
               selectionStart = cursor.start;
               selectionEnd = cursor.end;
-              chooseAndUploadImage().then((link) {
-                if (link != null) {
-                  insertImage(link);
-                }
+              chooseImage(context, _scaffoldKey, (file) {
+                _uploadImage(file).then((link) {
+                  if (link != null) {
+                    insertImage(link);
+                  }
+                });
               });
             },
           ),

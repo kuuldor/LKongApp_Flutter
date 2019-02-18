@@ -32,6 +32,7 @@ class ForumList extends StatefulWidget {
 
 class ForumListState extends State<ForumList> {
   bool loading;
+  bool disposed;
 
   void setLoading(bool value) {
     setState(() {
@@ -40,10 +41,18 @@ class ForumListState extends State<ForumList> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+
+    disposed = true;
+  }
+
+  @override
   void initState() {
     super.initState();
 
     loading = false;
+    disposed = false;
   }
 
   @override
@@ -139,7 +148,9 @@ class ForumListModel extends FetchedListModel {
       });
 
       Future.wait(completers).then((values) {
-        state.setLoading(false);
+        if (!state.disposed) {
+          state.setLoading(false);
+        }
       });
     }
   }

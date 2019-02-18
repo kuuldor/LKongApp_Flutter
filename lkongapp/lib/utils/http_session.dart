@@ -83,13 +83,23 @@ class HttpSession {
     });
   }
 
-  Future<http.StreamedResponse> uploadFile(String url, String file) async {
+  Future<http.StreamedResponse> uploadFile(String url, String field, String file,
+      {Map<String, String> headers, Map<String, String> fields}) async {
     // print("POST URL: $url");
     var uri = Uri.parse(url);
     var request = http.MultipartRequest("POST", uri);
-    final octects = await http.MultipartFile.fromPath('image', file);
+    final octects = await http.MultipartFile.fromPath(field, file);
     request.files.add(octects);
     request.headers.addAll({'Cookie': cookieLine});
+
+    if (headers != null) {
+      request.headers.addAll(headers);
+    }
+
+    if (fields != null) {
+      request.fields.addAll(fields);
+    }
+
     return request.send().then((response) {
       return response;
     });
