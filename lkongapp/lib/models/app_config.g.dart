@@ -146,6 +146,12 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         ..add(serializers.serialize(object.detectLink,
             specifiedType: const FullType(bool)));
     }
+    if (object.noCropImage != null) {
+      result
+        ..add('noCropImage')
+        ..add(serializers.serialize(object.noCropImage,
+            specifiedType: const FullType(bool)));
+    }
 
     return result;
   }
@@ -251,6 +257,10 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
           break;
         case 'detectLink':
           result.detectLink = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'noCropImage':
+          result.noCropImage = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
       }
@@ -578,6 +588,8 @@ class _$AppSetting extends AppSetting {
   final bool showForumInfo;
   @override
   final bool detectLink;
+  @override
+  final bool noCropImage;
 
   factory _$AppSetting([void updates(AppSettingBuilder b)]) =>
       (new AppSettingBuilder()..update(updates)).build();
@@ -605,7 +617,8 @@ class _$AppSetting extends AppSetting {
       this.backgroundFetch,
       this.cacheSize,
       this.showForumInfo,
-      this.detectLink})
+      this.detectLink,
+      this.noCropImage})
       : super._() {
     if (saveCredential == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'saveCredential');
@@ -708,7 +721,8 @@ class _$AppSetting extends AppSetting {
         backgroundFetch == other.backgroundFetch &&
         cacheSize == other.cacheSize &&
         showForumInfo == other.showForumInfo &&
-        detectLink == other.detectLink;
+        detectLink == other.detectLink &&
+        noCropImage == other.noCropImage;
   }
 
   @override
@@ -731,26 +745,26 @@ class _$AppSetting extends AppSetting {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode),
-                                                                                copyright.hashCode),
-                                                                            themeSetting.hashCode),
-                                                                        nightMode.hashCode),
-                                                                    shakeToShiftNightMode.hashCode),
-                                                                swipeThreshold.hashCode),
-                                                            lockOrientation.hashCode),
-                                                        fontSize.hashCode),
-                                                    allowCopy.hashCode),
-                                                loadInSamePage.hashCode),
-                                            hideBlacklisterPost.hashCode),
-                                        showDetailTime.hashCode),
-                                    uploadImageAPI.hashCode),
-                                noImageMode.hashCode),
-                            loadAvatar.hashCode),
-                        avatarDisplaySize.hashCode),
-                    backgroundFetch.hashCode),
-                cacheSize.hashCode),
-            showForumInfo.hashCode),
-        detectLink.hashCode));
+                                                                            $jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode),
+                                                                                themeSetting.hashCode),
+                                                                            nightMode.hashCode),
+                                                                        shakeToShiftNightMode.hashCode),
+                                                                    swipeThreshold.hashCode),
+                                                                lockOrientation.hashCode),
+                                                            fontSize.hashCode),
+                                                        allowCopy.hashCode),
+                                                    loadInSamePage.hashCode),
+                                                hideBlacklisterPost.hashCode),
+                                            showDetailTime.hashCode),
+                                        uploadImageAPI.hashCode),
+                                    noImageMode.hashCode),
+                                loadAvatar.hashCode),
+                            avatarDisplaySize.hashCode),
+                        backgroundFetch.hashCode),
+                    cacheSize.hashCode),
+                showForumInfo.hashCode),
+            detectLink.hashCode),
+        noCropImage.hashCode));
   }
 
   @override
@@ -778,7 +792,8 @@ class _$AppSetting extends AppSetting {
           ..add('backgroundFetch', backgroundFetch)
           ..add('cacheSize', cacheSize)
           ..add('showForumInfo', showForumInfo)
-          ..add('detectLink', detectLink))
+          ..add('detectLink', detectLink)
+          ..add('noCropImage', noCropImage))
         .toString();
   }
 }
@@ -891,6 +906,10 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   bool get detectLink => _$this._detectLink;
   set detectLink(bool detectLink) => _$this._detectLink = detectLink;
 
+  bool _noCropImage;
+  bool get noCropImage => _$this._noCropImage;
+  set noCropImage(bool noCropImage) => _$this._noCropImage = noCropImage;
+
   AppSettingBuilder();
 
   AppSettingBuilder get _$this {
@@ -918,6 +937,7 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
       _cacheSize = _$v.cacheSize;
       _showForumInfo = _$v.showForumInfo;
       _detectLink = _$v.detectLink;
+      _noCropImage = _$v.noCropImage;
       _$v = null;
     }
     return this;
@@ -964,7 +984,8 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
               backgroundFetch: backgroundFetch,
               cacheSize: cacheSize,
               showForumInfo: showForumInfo,
-              detectLink: detectLink);
+              detectLink: detectLink,
+              noCropImage: noCropImage);
     } catch (_) {
       String _$failedField;
       try {

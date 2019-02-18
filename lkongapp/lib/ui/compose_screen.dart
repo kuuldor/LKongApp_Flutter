@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
+import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/ui/emoji_picker.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/choose_image.dart';
@@ -190,6 +192,8 @@ class ComposeState extends State<ComposeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final config =
+        StoreProvider.of<AppState>(context).state.persistState.appConfig;
     final theme = LKModeledApp.modelOf(context).theme;
     String title;
 
@@ -293,13 +297,18 @@ class ComposeState extends State<ComposeScreen> {
               final cursor = contentController.selection;
               selectionStart = cursor.start;
               selectionEnd = cursor.end;
-              chooseImage(context, _scaffoldKey, (file) {
-                _uploadImage(file).then((link) {
-                  if (link != null) {
-                    insertImage(link);
-                  }
-                });
-              });
+              chooseImage(
+                context,
+                _scaffoldKey,
+                cropping: config.setting.noCropImage != true,
+                onChosen: (file) {
+                  _uploadImage(file).then((link) {
+                    if (link != null) {
+                      insertImage(link);
+                    }
+                  });
+                },
+              );
             },
           ),
           SizedBox(

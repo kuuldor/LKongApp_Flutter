@@ -127,7 +127,8 @@ class ForumListModel extends FetchedListModel {
       list.addAll(repo.sysplanes.map((f) => f.fid));
     }
 
-    var fetchList = followed.where((fid) => !list.contains(fid)).toSet();
+    var fetchList =
+        followed?.where((fid) => !list.contains(fid))?.toSet() ?? Set<int>();
 
     if (showInfo || force) {
       fetchList.addAll(list);

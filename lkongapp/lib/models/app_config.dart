@@ -44,8 +44,8 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
           ..saveCredential = true
           ..autoLogin = true
           ..autoPunch = true
-          ..version = '0.1'
-          ..copyright = '2017 Akeysoft'
+          ..version = '1.1'
+          ..copyright = '2018 Akeysoft'
           ..nightMode = false
           ..showForumInfo = false
           ..themeSetting.replace(ThemeSetting())
@@ -114,6 +114,9 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   @nullable
   @BuiltValueField(wireName: 'detectLink')
   bool get detectLink;
+  @nullable
+  @BuiltValueField(wireName: 'noCropImage')
+  bool get noCropImage;
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));
   }

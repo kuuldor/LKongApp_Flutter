@@ -374,7 +374,7 @@ class ProfileScreenModel extends FetchedListModel {
   }
 
   void _uploadAvatar(BuildContext context) async {
-    chooseImage(context, _scaffoldKey, (file) {
+    chooseImage(context, _scaffoldKey, onChosen: (file) {
       _uploadImage(file).then((link) {
         if (link != null) {
           showToast("上传头像成功");

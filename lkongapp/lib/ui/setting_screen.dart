@@ -242,6 +242,20 @@ class SettingState extends State<SettingView> {
                 setting.showForumInfo = !setting.showForumInfo;
               }),
         ),
+        GestureDetector(
+          child: CSControl(
+            '上传图片前进行裁剪',
+            CupertinoSwitch(
+              value: setting.noCropImage != true,
+              onChanged: (value) => setState(() {
+                    setting.noCropImage = !value;
+                  }),
+            ),
+          ),
+          onTap: () => setState(() {
+                setting.noCropImage = (setting.noCropImage == false);
+              }),
+        ),
         CSHeader('签名'),
         CSWidget(
           TextField(
@@ -325,7 +339,8 @@ class SettingState extends State<SettingView> {
           });
         }),
         CSHeader(),
-        CSControl('版权所有', Text(setting.copyright)),
+        CSControl('版权所有',
+            Text(setting.copyright, style: TextStyle(color: Colors.grey))),
         CSButton(CSButtonType.DEFAULT, "Licenses", () {
           print("It works!");
         }),
