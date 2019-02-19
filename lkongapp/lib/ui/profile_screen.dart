@@ -57,6 +57,8 @@ class ProfileScreenState extends State<ProfileScreen> {
   int fetchType;
   bool stateLoading = false;
 
+  double offset = 0.0;
+
   ProfileScreenState({
     this.fetchType: fetchTypeNone,
     @required this.user,
@@ -87,6 +89,10 @@ class ProfileScreenState extends State<ProfileScreen> {
         }
       });
     }
+  }
+
+  void setOffset(double value) {
+    offset = value;
   }
 
   @override
@@ -162,6 +168,11 @@ class ProfileScreenModel extends FetchedListModel {
 
   int get fetchType => state.fetchType;
   UserInfo get user => profile?.user;
+
+  ScrollController _scrollController;
+  @override
+  ScrollController get scrollController =>
+      _scrollController ??= ScrollController(initialScrollOffset: state.offset);
 
   @override
   bool operator ==(other) {
@@ -426,7 +437,14 @@ class ProfileScreenModel extends FetchedListModel {
       expandedHeight: 320.0,
       flexibleSpace: FlexibleSpaceBar(
           centerTitle: true,
-          title: Text(user?.username ?? ""),
+          title: GestureDetector(
+            child: Text(user?.username ?? "",
+                style: Theme.of(context)
+                    .textTheme
+                    .title
+                    .apply(color: Colors.white)),
+            onTap: () => scrollToTop(context),
+          ),
           background: Stack(
             fit: StackFit.expand,
             children: <Widget>[
@@ -655,7 +673,14 @@ class ProfileScreenModel extends FetchedListModel {
 
     return Scaffold(
       key: _scaffoldKey,
-      body: super.buildListView(context),
+      body: NotificationListener(
+        child: super.buildListView(context),
+        onNotification: (notification) {
+          if (notification is ScrollNotification) {
+            state.setOffset(notification.metrics.pixels);
+          }
+        },
+      ),
     );
   }
 
@@ -663,5 +688,10 @@ class ProfileScreenModel extends FetchedListModel {
     if (state.user.uid != 0) {
       dispatchAction(context)(UserInfoRequest(null, state.user.uid));
     }
+  }
+
+  void scrollToTop(context) {
+    _scrollController.jumpTo(0.1); // 0.1 to avoid pull-to-refresh is triggered
+    _scrollController.jumpTo(0.0); // then move to top
   }
 }

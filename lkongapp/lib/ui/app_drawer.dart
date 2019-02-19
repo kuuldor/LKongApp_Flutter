@@ -155,6 +155,13 @@ class AppDrawer extends StatelessWidget {
           },
         ),
         ListTile(
+          leading: Icon(Icons.recent_actors),
+          title: Text('黑名单管理'),
+          onTap: () {
+            viewModel.pushScreen(context, LKongAppRoutes.manageBlacklist);
+          },
+        ),
+        ListTile(
           leading: Icon(Icons.exit_to_app),
           title: Text('退出登录'),
           onTap: () {
@@ -178,16 +185,6 @@ class AppDrawer extends StatelessWidget {
         title: Text('帐号管理'),
         onTap: () {
           viewModel.pushScreen(context, LKongAppRoutes.accountManage);
-        },
-      ),
-    );
-
-    children.add(
-      ListTile(
-        leading: Icon(Icons.recent_actors),
-        title: Text('黑名单管理'),
-        onTap: () {
-          viewModel.pushScreen(context, LKongAppRoutes.manageBlacklist);
         },
       ),
     );
