@@ -39,6 +39,7 @@ class BlacklistManageScreen extends StatelessWidget {
 
 class BlacklistManageModel extends DataTableSource with GroupedListModel {
   final List<UserInfo> blacklist;
+  final FollowList followList;
   final bool loading;
   final String lastError;
 
@@ -108,6 +109,7 @@ class BlacklistManageModel extends DataTableSource with GroupedListModel {
     @required this.blacklist,
     @required this.loading,
     @required this.lastError,
+    @required this.followList,
   }) {
     selectedUsers = Set<UserInfo>();
   }
@@ -115,6 +117,7 @@ class BlacklistManageModel extends DataTableSource with GroupedListModel {
   static BlacklistManageModel fromStore(Store<AppState> store) {
     return BlacklistManageModel(
       blacklist: store.state.uiState.content.blacklist.toList(),
+      followList: selectUserData(store)?.followList,
       loading: store.state.isLoading,
       lastError: store.state.persistState.authState.error,
     );
@@ -249,7 +252,8 @@ class BlacklistManageModel extends DataTableSource with GroupedListModel {
     return null;
   }
 
-  bool get initLoaded => (blacklist?.length ?? 0) > 0;
+  bool get initLoaded =>
+      (blacklist?.length ?? 0) >= (followList?.black?.length ?? 0);
 
   APIRequest get refreshRequest => fetchFromScratchRequest;
   APIRequest get fetchFromScratchRequest {

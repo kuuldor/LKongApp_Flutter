@@ -323,6 +323,7 @@ class ProfileScreenModel extends FetchedListModel {
       case MenuAction.block:
         req = FollowRequest(
           completer,
+          name: user.username,
           id: profile.user.uid,
           replyType: FollowType.black,
           unfollow: false,
