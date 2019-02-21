@@ -128,17 +128,17 @@ _parseImageAndText(
       var src = e.attributes['src'];
 
       if (src.startsWith("http") || src.startsWith("https")) {
-        Widget image = CachedNetworkImage(
-          imageUrl: src,
-          imageOnError: "assets/image_placeholder.png",
-          fit: BoxFit.cover,
-        );
+        Widget image;
 
-        if (!isLKongEmoji(src)) {
+        final Match m = isLKongEmoji(src);
+        if (m == null) {
           final imageProvider = CachedNetworkImageProvider(src,
               imageOnError: "assets/image_placeholder.png");
           image = GestureDetector(
-            child: image,
+            child: Image(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            ),
             onLongPress: () {
               dispatchAction(context)(UINavigationPush(
                   context, LKongAppRoutes.photoView, false, (context) {
@@ -152,6 +152,9 @@ _parseImageAndText(
               }));
             },
           );
+        } else {
+          print("Emoji ${m[1]}");
+          image = Image.asset("assets/bq/${m[1]}");
         }
         widgetList.add(image);
       } else if (src.startsWith('data:image')) {

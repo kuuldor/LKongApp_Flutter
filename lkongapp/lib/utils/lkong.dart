@@ -16,11 +16,11 @@ String avatarForForumID(id) {
   return avatar;
 }
 
-bool isLKongEmoji(String urlString) {
+Match isLKongEmoji(String urlString) {
   final emojiPattern =
-      RegExp("http://.*?lkong.*?em[0-9]+.gif", caseSensitive: false);
+      RegExp("http://.*?lkong.*?(em[0-9]+.gif)", caseSensitive: false);
 
-  return emojiPattern.hasMatch(urlString);
+  return emojiPattern.firstMatch(urlString);
 }
 
 List<String> parseTypeAndId(String typeIDStr) {
