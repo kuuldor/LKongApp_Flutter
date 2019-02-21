@@ -35,10 +35,8 @@ void loadAppState(Store<AppState> store, action, NextDispatcher next) {
             return File(appStoragePath).readAsString();
           }).then((String json) {
             PersistentState newState = PersistentState.fromJson(json);
-            // newState = newState.rebuild((b) => b
-            //   ..authState.update((b) => b
-            //     ..isAuthed = false
-            //     ..currentUser = -1));
+            newState = newState.rebuild(
+                (b) => b..authState.update((b) => b..isAuthed = false));
             store.dispatch(RehydrateSuccess(newState));
           }).catchError((e) {
             store.dispatch(RehydrateFailure(e.toString()));

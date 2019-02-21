@@ -89,8 +89,12 @@ void filterAll(Store<AppState> store, action, NextDispatcher next) {
     Future.delayed(Duration(milliseconds: 10), () {
       final setting = selectSetting(store);
       final user = selectUser(store);
-      if (user != null && setting.autoLogin) {
-        store.dispatch(LoginRequest(null, user));
+      if (setting.autoLogin) {
+        if (user != null) {
+          store.dispatch(LoginRequest(null, user));
+        }
+      } else {
+        store.dispatch(LogoutRequest(null));
       }
     });
   }
