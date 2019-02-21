@@ -44,7 +44,7 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
           ..saveCredential = true
           ..autoLogin = true
           ..autoPunch = true
-          ..version = '1.1'
+          ..version = '1.2'
           ..copyright = '2018 Akeysoft'
           ..nightMode = false
           ..showForumInfo = false

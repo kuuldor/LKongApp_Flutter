@@ -11,7 +11,7 @@ LKongHttpSession session;
 NetworkIsolate apiIsolate;
 NetworkIsolate downloadIsolate;
 
-String appVersion = "1.1.9";
+String appVersion = "1.2.0";
 
 void initGlobals({bool testing: false}) async {
   final appDocDir = await getApplicationDocumentsDirectory();
