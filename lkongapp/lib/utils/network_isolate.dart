@@ -35,7 +35,7 @@ class NetworkIsolate {
     return port.first;
   }
 
-  void createNetworkIsolate(_main) async {
+  Future createNetworkIsolate(_main) async {
     ReceivePort receivePort = ReceivePort();
     _networkIsolate = await Isolate.spawn(
       _main,

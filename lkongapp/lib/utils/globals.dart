@@ -5,6 +5,7 @@ import 'package:redux/redux.dart';
 import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/app_state.dart';
 import 'package:lkongapp/utils/http_session.dart';
+import 'package:path_provider/path_provider.dart';
 
 LKongHttpSession session;
 NetworkIsolate apiIsolate;
@@ -12,15 +13,19 @@ NetworkIsolate downloadIsolate;
 
 String appVersion = "1.1.9";
 
-void initGlobals({bool testing: false}) {
+void initGlobals({bool testing: false}) async {
+  final appDocDir = await getApplicationDocumentsDirectory();
   if (testing) {
-    session = LKongHttpSession(baseURL: 'http://lkong.cn', persist: false);
+    session = LKongHttpSession(
+        baseURL: 'http://lkong.cn', appDocDir: appDocDir.path, persist: false);
   } else {
-    apiIsolate = NetworkIsolate();
-    apiIsolate.createNetworkIsolate(apiIsolateMain);
-
     downloadIsolate = NetworkIsolate();
     downloadIsolate.createNetworkIsolate(downloadIsolateMain);
+
+    apiIsolate = NetworkIsolate();
+    await apiIsolate.createNetworkIsolate(apiIsolateMain);
+
+    apiIsolate.sendReceive({"DOCDIR": appDocDir.path});
   }
 }
 

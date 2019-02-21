@@ -960,8 +960,6 @@ String Function(String) _tagStripperBuiler(List<String> fields) {
 }
 
 void apiIsolateMain(SendPort callerSendPort) async {
-  session = LKongHttpSession(baseURL: 'http://lkong.cn', persist: false);
-
   ReceivePort apiReceivePort = ReceivePort();
 
   callerSendPort.send(apiReceivePort.sendPort);
@@ -970,11 +968,17 @@ void apiIsolateMain(SendPort callerSendPort) async {
     CrossIsolatesMessage incomingMessage = message as CrossIsolatesMessage;
     Map params = incomingMessage.message as Map;
 
-    var result;
+    if (session == null && params.containsKey("DOCDIR")) {
+      final docDir = params["DOCDIR"];
+      session = LKongHttpSession(
+          baseURL: 'http://lkong.cn', appDocDir: docDir, persist: true);
+    } else {
+      var result;
 
-    result = await _handleAPIRequest(params);
+      result = await _handleAPIRequest(params);
 
-    incomingMessage.sender.send(result);
+      incomingMessage.sender.send(result);
+    }
   }
 }
 

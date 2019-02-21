@@ -2,14 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:meta/meta.dart';
-import 'package:path_provider/path_provider.dart';
 
 class LKongHttpSession {
   Map<String, String> cookies = {};
 
   final _storageFileName = 'coookie.jar';
+
+  final String appDocDir;
 
   final bool persist;
 
@@ -18,18 +18,17 @@ class LKongHttpSession {
   void saveCookies() {
     if (!persist) return;
 
-    getApplicationDocumentsDirectory().then((Directory appDocDir) {
-      String appStoragePath = getStorageFile(appDocDir);
+    try {
+      String appStoragePath = getStorageFile();
 
       String cookieJ = json.encode(cookies);
       File(appStoragePath).writeAsString(cookieJ);
-    }).catchError((e) {
+    } catch (e) {
       print(e.toString());
-    });
+    }
   }
 
-  String getStorageFile(Directory appDocDir) =>
-      appDocDir.path + "/" + _storageFileName;
+  String getStorageFile() => appDocDir + "/" + _storageFileName;
 
   void loadCookies() {
     if (!persist) {
@@ -37,16 +36,19 @@ class LKongHttpSession {
       return;
     }
 
-    getApplicationDocumentsDirectory().then((Directory appDocDir) {
-      String appStoragePath = getStorageFile(appDocDir);
-      return File(appStoragePath).readAsString();
-    }).then((String cookieJ) {
-      cookies = Map<String, String>.from(json.decode(cookieJ));
-      initialized = true;
-    }).catchError((e) {
+    try {
+      String appStoragePath = getStorageFile();
+
+      File(appStoragePath).readAsString().then((String cookieJ) {
+        cookies = Map<String, String>.from(json.decode(cookieJ));
+        initialized = true;
+      }).catchError((e) {
+        print(e.toString());
+        initialized = true;
+      });
+    } catch (e) {
       print(e.toString());
-      initialized = true;
-    });
+    }
   }
 
   final String baseURL;
@@ -63,7 +65,8 @@ class LKongHttpSession {
     return line;
   }
 
-  LKongHttpSession({@required this.baseURL, this.persist}) {
+  LKongHttpSession(
+      {@required this.baseURL, @required this.appDocDir, this.persist: false}) {
     loadCookies();
   }
 
