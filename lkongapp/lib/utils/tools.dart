@@ -153,7 +153,6 @@ _parseImageAndText(
             },
           );
         } else {
-          print("Emoji ${m[1]}");
           image = Image.asset("assets/bq/${m[1]}");
         }
         widgetList.add(image);
