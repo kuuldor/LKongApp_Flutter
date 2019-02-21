@@ -41,9 +41,7 @@ ContentCache _contentRequestSucceed(ContentCache content, APISuccess action) {
 }
 
 ContentCache _loginoutSucceeded(ContentCache content, action) {
-  return content.rebuild((b) => b
-    ..homeList.replace(FetchList<Story>())
-    ..hotDigest.clear());
+  return ContentCache();
 }
 
 ContentCache _contentReducer(ContentCache content, action) {

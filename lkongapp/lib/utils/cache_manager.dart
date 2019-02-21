@@ -301,6 +301,7 @@ class CacheManager {
       lastCacheClean = new DateTime.now();
       _prefs.setInt(_keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
     });
+    await _saveDataInPrefs();
   }
 
   _removeOldObjectsFromCache() async {

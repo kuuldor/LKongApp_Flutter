@@ -32,7 +32,10 @@ class HttpSession {
       appDocDir.path + "/" + _storageFileName;
 
   void loadCookies() {
-    if (!persist) return;
+    if (!persist) {
+      initialized = true;
+      return;
+    }
 
     getApplicationDocumentsDirectory().then((Directory appDocDir) {
       String appStoragePath = getStorageFile(appDocDir);
@@ -83,9 +86,10 @@ class HttpSession {
     });
   }
 
-  Future<http.StreamedResponse> uploadFile(String url, String field, String file,
+  Future<http.StreamedResponse> uploadFile(
+      String url, String field, String file,
       {Map<String, String> headers, Map<String, String> fields}) async {
-    // print("POST URL: $url");
+    // print("Upload URL: $url");
     var uri = Uri.parse(url);
     var request = http.MultipartRequest("POST", uri);
     final octects = await http.MultipartFile.fromPath(field, file);

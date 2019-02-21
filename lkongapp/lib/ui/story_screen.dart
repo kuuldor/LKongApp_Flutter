@@ -62,7 +62,7 @@ class StoryContentState extends State<StoryScreen> {
         this.page = 1;
       }
     } else {
-      api.queryMetaData({"postId": this.postId}).then((result) {
+      api.apiDispatch(api.QUERY_API, {"postId": this.postId}).then((result) {
         String location = result["location"];
         int lou = result["lou"];
         int page;
@@ -369,8 +369,8 @@ class StoryContentModel {
 
     if (unfavorite != null) {
       final storyId = story.storyInfo.tid;
-      api.favoriteThread({"threadId": storyId, "unfavorite": unfavorite}).then(
-          (result) {
+      api.apiDispatch(api.FAVORITE_API,
+          {"threadId": storyId, "unfavorite": unfavorite}).then((result) {
         // Load the first page to refresh the favorite status
         loadContent(storyId, 1);
       });

@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
+import 'package:lkongapp/utils/network_isolate.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:redux/redux.dart';
 import 'package:built_value/built_value.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
@@ -38,8 +38,12 @@ const PMSESSION_API = "PMSESSION";
 const SENDPM_API = "SENDPM";
 const CHECKNOTICE_API = "CHECKNOTICE";
 const GETBLACKLIST_API = "GETBLACKLIST";
+const QUERY_API = "QUERY";
+const FAVORITE_API = "FAVORITE";
+const UPLOAD_IMAGE_API = "UPLOAD_IMAGE";
+const UPLOAD_AVATAR_API = "UPLOAD_AVATAR";
 
-const endpoint = {
+const _endpoint = {
   "login": "/index.php?mod=login",
   "logout": "/forum/index.php?mod=ajax&action=logout",
   "userInfo": "/index.php?mod=ajax&action=userconfig",
@@ -106,10 +110,10 @@ Future<Map> _handleHttp(
   });
 }
 
-Future<Map> login(Map args) {
-  User user = userParam(args);
+Future<Map> _login(Map args) {
+  User user = _userParam(args);
 
-  var httpAction = session.post(endpoint["login"], data: {
+  var httpAction = session.post(_endpoint["login"], data: {
     "action": "login",
     "email": user.identity,
     "password": user.password,
@@ -118,27 +122,27 @@ Future<Map> login(Map args) {
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
-Future<Map> logout() {
-  final urlString = endpoint["logout"] + querify(defaultParameter());
+Future<Map> _logout() {
+  final urlString = _endpoint["logout"] + _querify(_defaultParameter());
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction, dataParser: (data) => {"result": data});
 }
 
-User userParam(Map args) {
+User _userParam(Map args) {
   User user = args["user"];
   return user;
 }
 
-int timeStamp = DateTime.now().millisecondsSinceEpoch;
+int _timeStamp = DateTime.now().millisecondsSinceEpoch;
 
-Map defaultParameter() {
+Map _defaultParameter() {
   var param = new Map();
-  param['_'] = timeStamp++;
+  param['_'] = _timeStamp++;
   return param;
 }
 
-Map getTimeParameter(nexttime, current) {
-  var param = defaultParameter();
+Map _getTimeParameter(nexttime, current) {
+  var param = _defaultParameter();
 
   if (nexttime != 0) {
     param['nexttime'] = nexttime;
@@ -149,7 +153,7 @@ Map getTimeParameter(nexttime, current) {
   return param;
 }
 
-String querify(Map parameters) {
+String _querify(Map parameters) {
   var param = '';
   parameters.forEach((key, value) {
     param +=
@@ -158,9 +162,9 @@ String querify(Map parameters) {
   return param;
 }
 
-Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
+Future<Map> _fetchStories<T>(url, parameters, T fromJson(String json),
     [T proccessor(T t)]) {
-  var urlString = url + querify(parameters);
+  var urlString = url + _querify(parameters);
 
   var httpAction = session.get(urlString);
   return _handleHttp(
@@ -177,14 +181,14 @@ Future<Map> fetchStories<T>(url, parameters, T fromJson(String json),
       }
       return result;
     },
-    preProcessor: combinedProcessorBuilder([
-      numMapperBuiler(["uid"]),
-      tagStripperBuiler(["subject"])
+    preProcessor: _combinedProcessorBuilder([
+      _numMapperBuiler(["uid"]),
+      _tagStripperBuiler(["subject"])
     ]),
   );
 }
 
-Future<Map> getStoriesForForum(Map args) {
+Future<Map> _getStoriesForForum(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int current = args["current"] ?? 0;
   int mode = args["mode"] ?? 0;
@@ -199,10 +203,10 @@ Future<Map> getStoriesForForum(Map args) {
     reverse = true;
   }
 
-  var urlString = endpoint["forumStories"] + "$forumId" + modeString;
-  var params = getTimeParameter(nexttime, current);
+  var urlString = _endpoint["forumStories"] + "$forumId" + modeString;
+  var params = _getTimeParameter(nexttime, current);
 
-  return fetchStories<StoryListResult>(
+  return _fetchStories<StoryListResult>(
       urlString,
       params,
       StoryListResult.fromJson,
@@ -211,39 +215,39 @@ Future<Map> getStoriesForForum(Map args) {
           : stories);
 }
 
-Future<Map> checkNewStories(Map args) {
+Future<Map> _checkNewStories(Map args) {
   int current = args["current"] ?? 0;
   int forumId = args["forumId"];
 
   String urlBase;
 
-  var parameters = getTimeParameter(0, current);
+  var parameters = _getTimeParameter(0, current);
   parameters["checkrenew"] = 1;
 
   if (forumId != null) {
     //Check for new stories in a forum
-    urlBase = endpoint["forumStories"] + "$forumId";
+    urlBase = _endpoint["forumStories"] + "$forumId";
   } else {
     //Check for the home list
-    urlBase = endpoint["stories"];
+    urlBase = _endpoint["stories"];
   }
 
-  var urlString = urlBase + querify(parameters);
+  var urlString = urlBase + _querify(parameters);
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: (data) => {"result": int.parse(data)});
 }
 
-Future<Map> getHomeList(Map args) {
+Future<Map> _getHomeList(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int current = args["current"] ?? 0;
   bool threadOnly = args["threadOnly"] ?? false;
 
-  var urlString = endpoint["stories"] + (threadOnly ? 'thread' : '');
-  var params = getTimeParameter(nexttime, current);
+  var urlString = _endpoint["stories"] + (threadOnly ? 'thread' : '');
+  var params = _getTimeParameter(nexttime, current);
 
-  return fetchStories<StoryListResult>(
+  return _fetchStories<StoryListResult>(
       urlString,
       params,
       StoryListResult.fromJson,
@@ -261,7 +265,7 @@ _parseResponseBody<T>(T fromJson(String json)) => (String data) {
       return result;
     };
 
-Future<Map> contentsForStory(Map args) {
+Future<Map> _contentsForStory(Map args) {
   int story = args["story"];
   int page = args["page"];
 
@@ -269,14 +273,14 @@ Future<Map> contentsForStory(Map args) {
   assert(page != null, "Page must be defined");
 
   var urlString =
-      endpoint["comments"] + "$story/$page" + querify(defaultParameter());
+      _endpoint["comments"] + "$story/$page" + _querify(_defaultParameter());
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(StoryContentResult.fromJson),
-      preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["pid", "id", "authorid"]),
-        strMapperBuiler(["extcredits"]),
+      preProcessor: _combinedProcessorBuilder([
+        _numMapperBuiler(["pid", "id", "authorid"]),
+        _strMapperBuiler(["extcredits"]),
         (data) {
           var mapper = (Match m) => "\"id\":${m[1]}";
 
@@ -289,61 +293,61 @@ Future<Map> contentsForStory(Map args) {
       ]));
 }
 
-Future<Map> getStoryInfo(Map args) {
+Future<Map> _getStoryInfo(Map args) {
   int story = args["story"];
 
   assert(story != null, "Story must be defined");
 
   var urlString =
-      endpoint["threadInfo"] + "_$story" + querify(defaultParameter());
+      _endpoint["threadInfo"] + "_$story" + _querify(_defaultParameter());
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(StoryInfoResult.fromJson),
-      preProcessor: tagStripperBuiler(["subject"]));
+      preProcessor: _tagStripperBuiler(["subject"]));
 }
 
-Future<Map> getForumList() {
-  var urlString = endpoint["forumList"] + querify(defaultParameter());
+Future<Map> _getForumList() {
+  var urlString = _endpoint["forumList"] + _querify(_defaultParameter());
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(ForumListResult.fromJson));
 }
 
-Future<Map> getForumInfo(Map args) {
+Future<Map> _getForumInfo(Map args) {
   int forumId = args["id"];
 
   assert(forumId != null, "forumId must be defined");
 
-  var urlString = endpoint["forumInfo"] + "_$forumId";
+  var urlString = _endpoint["forumInfo"] + "_$forumId";
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(ForumInfoResult.fromJson),
-      preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["membernum", "todayposts"]),
-        tagStripperBuiler(["description"])
+      preProcessor: _combinedProcessorBuilder([
+        _numMapperBuiler(["membernum", "todayposts"]),
+        _tagStripperBuiler(["description"])
       ]));
 }
 
-Future<Map> getUserInfo(Map args) {
+Future<Map> _getUserInfo(Map args) {
   int uid = args["id"];
   bool forceRenew = args["forceRenew"] ?? false;
 
   assert(uid != null, "UserId must be defined");
 
-  var urlString = endpoint["userInfo"] +
+  var urlString = _endpoint["userInfo"] +
       "_$uid" +
-      (forceRenew ? querify(defaultParameter()) : "");
+      (forceRenew ? _querify(_defaultParameter()) : "");
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(UserInfo.fromJson),
-      preProcessor: numMapperBuiler(["gender"]));
+      preProcessor: _numMapperBuiler(["gender"]));
 }
 
-Future<Map> getFollowList() {
+Future<Map> _getFollowList() {
   final httpAction = session.get("");
   return _handleHttp(
     httpAction,
@@ -366,15 +370,15 @@ Future<Map> getFollowList() {
   );
 }
 
-Future<Map> punchCard() {
-  var urlString = endpoint["punchCard"];
+Future<Map> _punchCard() {
+  var urlString = _endpoint["punchCard"];
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(PunchCardResult.fromJson));
 }
 
-Future<Map> getPersonalData(Map args) {
+Future<Map> _getPersonalData(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int current = args["current"] ?? 0;
   int mode = args["mode"];
@@ -431,29 +435,29 @@ Future<Map> getPersonalData(Map args) {
       break;
   }
 
-  var params = getTimeParameter(nexttime, current);
-  var urlString = endpoint["atMe"] + modeString + querify(params);
+  var params = _getTimeParameter(nexttime, current);
+  var urlString = _endpoint["atMe"] + modeString + _querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(
     httpAction,
     dataParser: _parseResponseBody(parser),
-    preProcessor: combinedProcessorBuilder([
-      numMapperBuiler(["uid", "score"]),
-      tagStripperBuiler(["subject"])
+    preProcessor: _combinedProcessorBuilder([
+      _numMapperBuiler(["uid", "score"]),
+      _tagStripperBuiler(["subject"])
     ]),
   );
 }
 
-Future<Map> getPMSession(Map args) {
+Future<Map> _getPMSession(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int current = args["current"] ?? 0;
   int pmid = args["pmid"];
 
   assert(pmid != null, "Must speicfy pmid");
 
-  var params = getTimeParameter(nexttime, current);
-  var urlString = endpoint["pmSession"] + "$pmid" + querify(params);
+  var params = _getTimeParameter(nexttime, current);
+  var urlString = _endpoint["pmSession"] + "$pmid" + _querify(params);
   final parser = (json) {
     var result = PMSession.fromJson(json);
     result = result.rebuild((b) => b..data.replace(result.data.reversed));
@@ -462,13 +466,13 @@ Future<Map> getPMSession(Map args) {
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
-      preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["uid"]),
-        tagStripperBuiler(["message"])
+      preProcessor: _combinedProcessorBuilder([
+        _numMapperBuiler(["uid"]),
+        _tagStripperBuiler(["message"])
       ]));
 }
 
-Future<Map> searchLKong(Map args) {
+Future<Map> _searchLKong(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int type = args["type"];
   int sort = args["sort"];
@@ -513,22 +517,22 @@ Future<Map> searchLKong(Map args) {
       break;
   }
 
-  var params = getTimeParameter(nexttime, 0);
-  var urlString = endpoint["search"] +
+  var params = _getTimeParameter(nexttime, 0);
+  var urlString = _endpoint["search"] +
       Uri.encodeComponent(searchTypePrefix + searchString) +
       sortSuffix +
-      querify(params);
+      _querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
-      preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["uid", "fid", "fansnum", "replynum"]),
-        tagStripperBuiler(["subject", "username", "name", "verifymessage"])
+      preProcessor: _combinedProcessorBuilder([
+        _numMapperBuiler(["uid", "fid", "fansnum", "replynum"]),
+        _tagStripperBuiler(["subject", "username", "name", "verifymessage"])
       ]));
 }
 
-Future<Map> getUserProfile(Map args) {
+Future<Map> _getUserProfile(Map args) {
   int nexttime = args["nexttime"] ?? 0;
   int uid = args["uid"];
   int type = args["type"];
@@ -568,19 +572,20 @@ Future<Map> getUserProfile(Map args) {
       break;
   }
 
-  var params = getTimeParameter(nexttime, 0);
-  var urlString = endpoint["userProfile"] + "$uid$typeString" + querify(params);
+  var params = _getTimeParameter(nexttime, 0);
+  var urlString =
+      _endpoint["userProfile"] + "$uid$typeString" + _querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(httpAction,
       dataParser: _parseResponseBody(parser),
-      preProcessor: combinedProcessorBuilder([
-        numMapperBuiler(["uid", "curtime", "nexttime", "sortkey"]),
-        tagStripperBuiler(["subject"])
+      preProcessor: _combinedProcessorBuilder([
+        _numMapperBuiler(["uid", "curtime", "nexttime", "sortkey"]),
+        _tagStripperBuiler(["subject"])
       ]));
 }
 
-Future<Map> replyWithParameter(Map args) {
+Future<Map> _replyWithParameter(Map args) {
   Map params = Map();
 
   ReplyType type = args["type"];
@@ -623,11 +628,11 @@ Future<Map> replyWithParameter(Map args) {
       break;
   }
 
-  var httpAction = session.post(endpoint["reply"], data: params);
+  var httpAction = session.post(_endpoint["reply"], data: params);
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
-Future<Map> followAction(Map args) {
+Future<Map> _followAction(Map args) {
   int id = args["id"];
   String type = args["type"];
   bool unfollow = args["unfollow"];
@@ -637,11 +642,11 @@ Future<Map> followAction(Map args) {
     "followid": "$type-$id"
   };
 
-  var httpAction = session.post(endpoint["follow"], data: params);
+  var httpAction = session.post(_endpoint["follow"], data: params);
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
-Future<Map> queryMetaData(Map args) {
+Future<Map> _queryMetaData(Map args) {
   int postId = args["postId"];
   String userName = args["userName"];
 
@@ -652,11 +657,11 @@ Future<Map> queryMetaData(Map args) {
     dataitem = "name_$userName";
   }
 
-  Map params = defaultParameter();
+  Map params = _defaultParameter();
 
   params["dataitem"] = dataitem;
 
-  final urlString = endpoint["query"] + querify(params);
+  final urlString = _endpoint["query"] + _querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(
@@ -665,17 +670,17 @@ Future<Map> queryMetaData(Map args) {
   );
 }
 
-Future<Map> favoriteThread(Map args) {
+Future<Map> _favoriteThread(Map args) {
   int threadId = args["threadId"];
   bool unfavorite = args["unfavorite"];
 
-  Map params = defaultParameter();
+  Map params = _defaultParameter();
   params["tid"] = "$threadId";
   if (unfavorite == true) {
     params["type"] = "-1";
   }
 
-  final urlString = endpoint["favorite"] + querify(params);
+  final urlString = _endpoint["favorite"] + _querify(params);
 
   var httpAction = session.get(urlString);
   return _handleHttp(
@@ -684,12 +689,12 @@ Future<Map> favoriteThread(Map args) {
   );
 }
 
-Future<Map> upvoteComment(Map args) {
+Future<Map> _upvoteComment(Map args) {
   int commentId = args["id"];
   int coins = args["coins"];
   String reason = args["reason"];
 
-  var httpAction = session.post(endpoint["upvote"], data: {
+  var httpAction = session.post(_endpoint["upvote"], data: {
     "request": "rate_post_$commentId",
     "num": "$coins",
     "reason": reason,
@@ -697,58 +702,59 @@ Future<Map> upvoteComment(Map args) {
   return _handleHttp(
     httpAction,
     dataParser: _parseResponseBody(UpvoteResult.fromJson),
-    preProcessor: strMapperBuiler(["extcredits"]),
+    preProcessor: _strMapperBuiler(["extcredits"]),
   );
 }
 
-Future<Map> sendPM(Map args) {
+Future<Map> _sendPM(Map args) {
   int pmId = args["pmid"];
   String message = args["message"];
 
-  var httpAction = session.post(endpoint["message"], data: {
+  var httpAction = session.post(_endpoint["message"], data: {
     "request": "pm_$pmId",
     "message": message,
   });
   return _handleHttp(httpAction, dataParser: (data) => json.decode(data));
 }
 
-Future<Map> getHotDigest(Map args) {
+Future<Map> _getHotDigest(Map args) {
   final forums = args["forums"] as List<Forum>;
 
-  var hotUrlString = endpoint["hotthread"] + querify(defaultParameter());
+  var hotUrlString = _endpoint["hotthread"] + _querify(_defaultParameter());
   var hotHttpAction = session.get(hotUrlString);
 
   final hotConnection = _handleHttp(
     hotHttpAction,
     dataParser: _parseResponseBody(HotDigestResult.fromJson),
-    preProcessor: numMapperBuiler(["tid"]),
+    preProcessor: _numMapperBuiler(["tid"]),
   );
 
   var connections = <Future>[hotConnection];
 
   if (forums != null && forums.length > 0) {
     forums.forEach((forum) {
-      var url =
-          endpoint["hotthread"] + "_${forum.fid}" + querify(defaultParameter());
+      var url = _endpoint["hotthread"] +
+          "_${forum.fid}" +
+          _querify(_defaultParameter());
       var action = session.get(url);
 
       final connection = _handleHttp(
         action,
         dataParser: _parseResponseBody(HotDigestResult.fromJson),
-        preProcessor: numMapperBuiler(["tid"]),
+        preProcessor: _numMapperBuiler(["tid"]),
       );
 
       connections.add(connection);
     });
   }
 
-  var digestUrlString = endpoint["digest"] + querify(defaultParameter());
+  var digestUrlString = _endpoint["digest"] + _querify(_defaultParameter());
   var digestHttpAction = session.get(digestUrlString);
 
   final digestConnection = _handleHttp(
     digestHttpAction,
     dataParser: _parseResponseBody(HotDigestResult.fromJson),
-    preProcessor: numMapperBuiler(["tid"]),
+    preProcessor: _numMapperBuiler(["tid"]),
   );
 
   connections.add(digestConnection);
@@ -771,14 +777,14 @@ Future<Map> getHotDigest(Map args) {
   });
 }
 
-Future<Map> getBlacklist() {
-  var urlString = endpoint["getBlacklist"] + querify(defaultParameter());
+Future<Map> _getBlacklist() {
+  var urlString = _endpoint["getBlacklist"] + _querify(_defaultParameter());
   var httpAction = session.get(urlString);
 
-  return _handleHttp(httpAction, dataParser: parseBlacklist);
+  return _handleHttp(httpAction, dataParser: _parseBlacklist);
 }
 
-Map parseBlacklist(String htmlString) {
+Map _parseBlacklist(String htmlString) {
   var users = List<UserInfo>();
   if (htmlString != null && htmlString.length > 0) {
     final pattern =
@@ -796,7 +802,7 @@ Map parseBlacklist(String htmlString) {
   return {"result": users};
 }
 
-Future<Map> uploadImage(Map args) async {
+Future<Map> _uploadImage(Map args) async {
   String file = args["file"];
 
   if (file == null) {
@@ -816,8 +822,8 @@ Future<Map> uploadImage(Map args) async {
   });
 }
 
-const avatarSizeLimit = 1153433;
-Future<Map> uploadAvatar(Map args) async {
+const _avatarSizeLimit = 1153433;
+Future<Map> _uploadAvatar(Map args) async {
   String file = args["file"];
 
   if (file == null) {
@@ -827,7 +833,7 @@ Future<Map> uploadAvatar(Map args) async {
   File fp = File(file);
   final len = await fp.length();
 
-  if (len > avatarSizeLimit) {
+  if (len > _avatarSizeLimit) {
     return {"error": "头像大小超出限制"};
   }
 
@@ -863,8 +869,8 @@ Future<Map> uploadAvatar(Map args) async {
   });
 }
 
-Future<Map> checkNewNotice() {
-  final urlString = endpoint["checkNotice"] + querify(defaultParameter());
+Future<Map> _checkNewNotice() {
+  final urlString = _endpoint["checkNotice"] + _querify(_defaultParameter());
 
   var httpAction = session.get(urlString);
   return _handleHttp(
@@ -873,7 +879,7 @@ Future<Map> checkNewNotice() {
   );
 }
 
-String Function(String) combinedProcessorBuilder(
+String Function(String) _combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
   processor = (String data) {
@@ -888,7 +894,7 @@ String Function(String) combinedProcessorBuilder(
   return processor;
 }
 
-String Function(String) numMapperBuiler(List<String> fields) {
+String Function(String) _numMapperBuiler(List<String> fields) {
   String Function(String) processor;
   processor = (String data) {
     String processed = data;
@@ -905,7 +911,7 @@ String Function(String) numMapperBuiler(List<String> fields) {
   return processor;
 }
 
-String Function(String) strMapperBuiler(List<String> fields) {
+String Function(String) _strMapperBuiler(List<String> fields) {
   String Function(String) processor;
   processor = (String data) {
     String processed = data;
@@ -922,7 +928,7 @@ String Function(String) strMapperBuiler(List<String> fields) {
   return processor;
 }
 
-String Function(String) tagStripperBuiler(List<String> fields) {
+String Function(String) _tagStripperBuiler(List<String> fields) {
   String Function(String) processor;
   processor = (String data) {
     String processed = data;
@@ -952,103 +958,134 @@ String Function(String) tagStripperBuiler(List<String> fields) {
 }
 
 Future<Map> apiDispatch(api, Map parameters) async {
-  if (session.initialized == false) {
+  if (isolateReady == null) {
     return Future.delayed(
         Duration(milliseconds: 500), () => apiDispatch(api, parameters));
   }
 
+  Map params = Map();
+  params.addAll(parameters);
+  params["API"] = api;
+  var result = await sendReceive(params);
+
+  return result as Map;
+}
+
+Future<Map> handleAPIRequest(Map params) {
+  if (session == null || session.initialized == false) {
+    return Future.delayed(
+        Duration(milliseconds: 500), () => handleAPIRequest(params));
+  }
+
+  final api = params["API"];
+  Map parameters = params;
+
   if (api == LOGIN_API) {
-    return login(parameters);
+    return _login(parameters);
   }
 
   if (api == LOGOUT_API) {
-    return logout();
+    return _logout();
   }
 
   if (api == HOMELIST_API) {
-    return getHomeList(parameters);
+    return _getHomeList(parameters);
   }
 
   if (api == STORY_CONTENT_API) {
-    return contentsForStory(parameters);
+    return _contentsForStory(parameters);
   }
 
   if (api == STORY_INFO_API) {
-    return getStoryInfo(parameters);
+    return _getStoryInfo(parameters);
   }
 
   if (api == FORUMLIST_API) {
-    return getForumList();
+    return _getForumList();
   }
 
   if (api == FORUM_INFO_API) {
-    return getForumInfo(parameters);
+    return _getForumInfo(parameters);
   }
 
   if (api.startsWith(FORUM_THREADS_API)) {
-    return getStoriesForForum(parameters);
+    return _getStoriesForForum(parameters);
   }
 
   if (api == FORUM_CHECKNEW_API) {
-    return checkNewStories(parameters);
+    return _checkNewStories(parameters);
   }
 
   if (api == USERINFO_API) {
-    return getUserInfo(parameters);
+    return _getUserInfo(parameters);
   }
 
   if (api == FOLLOWLIST_API) {
-    return getFollowList();
+    return _getFollowList();
   }
 
   if (api == PUNCHCARD_API) {
-    return punchCard();
+    return _punchCard();
   }
 
   if (api == MYDATA_API) {
-    return getPersonalData(parameters);
+    return _getPersonalData(parameters);
   }
 
   if (api == SEARCH_API) {
-    return searchLKong(parameters);
+    return _searchLKong(parameters);
   }
 
   if (api == USER_PROFILE_API) {
-    return getUserProfile(parameters);
+    return _getUserProfile(parameters);
   }
 
   if (api == REPLY_API) {
-    return replyWithParameter(parameters);
+    return _replyWithParameter(parameters);
   }
 
   if (api == FOLLOW_API) {
-    return followAction(parameters);
+    return _followAction(parameters);
   }
 
   if (api == UPVOTE_API) {
-    return upvoteComment(parameters);
+    return _upvoteComment(parameters);
   }
 
   if (api == HOTDIGEST_API) {
-    return getHotDigest(parameters);
+    return _getHotDigest(parameters);
   }
 
   if (api == PMSESSION_API) {
-    return getPMSession(parameters);
+    return _getPMSession(parameters);
   }
 
   if (api == SENDPM_API) {
-    return sendPM(parameters);
+    return _sendPM(parameters);
   }
 
   if (api == CHECKNOTICE_API) {
-    return checkNewNotice();
+    return _checkNewNotice();
   }
 
   if (api == GETBLACKLIST_API) {
-    return getBlacklist();
+    return _getBlacklist();
   }
 
+  if (api == QUERY_API) {
+    return _queryMetaData(parameters);
+  }
+
+  if (api == FAVORITE_API) {
+    return _favoriteThread(parameters);
+  }
+
+  if (api == UPLOAD_IMAGE_API) {
+    return _uploadImage(parameters);
+  }
+  if (api == UPLOAD_AVATAR_API) {
+    return _uploadAvatar(parameters);
+  }
   return Future<Map>(null);
 }
 
@@ -1067,7 +1104,7 @@ APIResponse createResponseAction(APIRequest action, Map response) {
 
   var output;
   if (api == LOGIN_API) {
-    User user = userParam(action.parameters);
+    User user = _userParam(action.parameters);
     output = user.rebuild((b) => b..uid = response["uid"]);
   } else {
     output = response["result"] ?? response;

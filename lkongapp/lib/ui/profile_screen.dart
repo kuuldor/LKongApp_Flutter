@@ -76,7 +76,7 @@ class ProfileScreenState extends State<ProfileScreen> {
 
     if (user.uid == 0 && user.username.length > 0) {
       stateLoading = true;
-      queryMetaData({"userName": user.username}).then((result) {
+      apiDispatch(QUERY_API, {"userName": user.username}).then((result) {
         final location = result["location"];
         if (location != null) {
           int uid = parseLKTypeId(location, type: "user");
@@ -398,7 +398,8 @@ class ProfileScreenModel extends FetchedListModel {
   Future<String> _uploadImage(File image) async {
     // print("Image $image");
     if (image != null) {
-      return uploadAvatar({"file": image.path}).then((result) {
+      return apiDispatch(UPLOAD_AVATAR_API, {"file": image.path})
+          .then((result) {
         final link = result["avatar"];
         final error = result["error"];
         if (link != null) {

@@ -36,6 +36,7 @@ class HomeListState extends StoryListState<HomeList> {
 }
 
 class HomeListModel extends StoryListModel {
+  final bool isAuthed;
   final bool threadOnlyHome;
   final FetchList<Story> storyList;
   final bool loading;
@@ -45,6 +46,7 @@ class HomeListModel extends StoryListModel {
   HomeListModel({
     @required Store<AppState> store,
     @required this.loading,
+    @required this.isAuthed,
     @required this.lastError,
     @required this.storyList,
     @required this.threadOnlyHome,
@@ -54,6 +56,7 @@ class HomeListModel extends StoryListModel {
   static HomeListModel fromStore(Store<AppState> store) {
     return HomeListModel(
       store: store,
+      isAuthed: store.state.persistState.authState.isAuthed,
       loading: store.state.uiState.content.homeList.loading,
       lastError: store.state.uiState.content.homeList.lastError,
       storyList: store.state.uiState.content.homeList,
@@ -116,4 +119,19 @@ class HomeListModel extends StoryListModel {
   @override
   APIRequest get checkNewRequest =>
       HomeListCheckNewRequest(null, storyList.current);
+
+  @override
+  Future<Null> handleFetchFromScratch(BuildContext context) async {
+    var request = fetchFromScratchRequest;
+    if (request != null) {
+      Duration delay;
+      if (isAuthed) {
+        delay = Duration();
+      } else {
+        // Delay for 2 seconds waiting for login.
+        delay = Duration(seconds: 2);
+      }
+      Future.delayed(delay, () => dispatchAction(context)(request));
+    }
+  }
 }

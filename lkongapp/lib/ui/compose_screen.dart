@@ -173,7 +173,7 @@ class ComposeState extends State<ComposeScreen> {
       setState(() {
         this.sending = true;
       });
-      return uploadImage({"file": image.path}).then((result) {
+      return apiDispatch(UPLOAD_IMAGE_API, {"file": image.path}).then((result) {
         setState(() {
           this.sending = false;
         });

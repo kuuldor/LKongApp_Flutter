@@ -347,7 +347,7 @@ class BlacklistManageModel extends DataTableSource with GroupedListModel {
                   return;
                 }
                 final username = usernameController.text;
-                queryMetaData({"userName": username}).then((result) {
+                apiDispatch(QUERY_API, {"userName": username}).then((result) {
                   int uid;
                   final location = result["location"];
                   if (location != null) {
