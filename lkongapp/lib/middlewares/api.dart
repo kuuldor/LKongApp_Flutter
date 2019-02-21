@@ -971,6 +971,20 @@ Future<Map> apiDispatch(api, Map parameters) async {
   return result as Map;
 }
 
+Future<Map> apiDispatchTest(api, Map parameters) async {
+  if (isolateReady == null) {
+    return Future.delayed(
+        Duration(milliseconds: 500), () => apiDispatchTest(api, parameters));
+  }
+
+  Map params = Map();
+  params.addAll(parameters);
+  params["API"] = api;
+  var result = await handleAPIRequest(params);
+
+  return result;
+}
+
 Future<Map> handleAPIRequest(Map params) {
   if (session == null || session.initialized == false) {
     return Future.delayed(

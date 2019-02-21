@@ -15,7 +15,7 @@ Future<Null> loginTestAccount() async {
 
   User user = builder.build();
 
-  await login({"user": user}).then((map) {
+  await apiDispatchTest(LOGIN_API, {"user": user}).then((map) {
     expect(map['success'], true);
   });
 }
@@ -68,7 +68,7 @@ Future<void> quoteLocationTest() async {
   return test('Get Quote Location Test', () async {
     await loginTestAccount();
 
-    await queryMetaData({"postId": 33776898}).then((map) {
+    await apiDispatchTest(QUERY_API, {"postId": 33776898}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -77,7 +77,7 @@ Future<void> quoteLocationTest() async {
 
 Future<void> logoutTest() async {
   return test('Logout Test', () async {
-    await logout().then((map) {
+    await apiDispatchTest(LOGOUT_API, {}).then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
@@ -88,13 +88,15 @@ Future<void> followTest() async {
   return test('Follow Test', () async {
     await loginTestAccount();
 
-    await followAction({"type": "uid", "unfollow": true, "id": 807754})
+    await apiDispatchTest(
+            FOLLOW_API, {"type": "uid", "unfollow": true, "id": 807754})
         .then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
 
-    await followAction({"type": "black", "unfollow": true, "id": 807754})
+    await apiDispatchTest(
+            FOLLOW_API, {"type": "black", "unfollow": true, "id": 807754})
         .then((map) {
       print(map.toString());
       expect(map['error'], null);
@@ -104,19 +106,23 @@ Future<void> followTest() async {
 
 Future<void> userProfileTest() async {
   return test('UserProfile Test', () async {
-    await getUserProfile({"uid": 445098, "type": 0}).then((map) {
+    await apiDispatchTest(USER_PROFILE_API, {"uid": 445098, "type": 0})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
-    await getUserProfile({"uid": 445098, "type": 1}).then((map) {
+    await apiDispatchTest(USER_PROFILE_API, {"uid": 445098, "type": 1})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
-    await getUserProfile({"uid": 445098, "type": 2}).then((map) {
+    await apiDispatchTest(USER_PROFILE_API, {"uid": 445098, "type": 2})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
-    await getUserProfile({"uid": 445098, "type": 3}).then((map) {
+    await apiDispatchTest(USER_PROFILE_API, {"uid": 445098, "type": 3})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
@@ -125,15 +131,18 @@ Future<void> userProfileTest() async {
 
 Future<void> searchTest() async {
   return test('Search Test', () async {
-    await searchLKong({"search": "iOS", "type": 0}).then((map) {
+    await apiDispatchTest(SEARCH_API, {"search": "iOS", "type": 0, "sort": 0})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
-    await searchLKong({"search": "小说", "type": 1}).then((map) {
+    await apiDispatchTest(SEARCH_API, {"search": "小说", "type": 1, "sort": 0})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
-    await searchLKong({"search": "小说", "type": 2}).then((map) {
+    await apiDispatchTest(SEARCH_API, {"search": "小说", "type": 2, "sort": 0})
+        .then((map) {
       print(map.toString());
       print(session.cookies.toString());
     });
@@ -144,12 +153,12 @@ Future<void> personalDataTest() async {
   return test('Get Personal Data Test', () async {
     await loginTestAccount();
 
-    await getPersonalData({"mode": 0}).then((map) {
+    await apiDispatchTest(MYDATA_API, {"mode": 0}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
 
-    await getPersonalData({"mode": 1}).then((map) {
+    await apiDispatchTest(MYDATA_API, {"mode": 1}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -160,7 +169,7 @@ Future<void> punchCardTest() async {
   return test('Punch Card Test', () async {
     await loginTestAccount();
 
-    await punchCard().then((map) {
+    await apiDispatchTest(PUNCHCARD_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -169,7 +178,7 @@ Future<void> punchCardTest() async {
 
 Future<void> followListTest() async {
   return test('Get Follow List Test', () async {
-    await getFollowList().then((map) {
+    await apiDispatchTest(FOLLOWLIST_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -178,11 +187,11 @@ Future<void> followListTest() async {
 
 Future<void> forumInfoTest() async {
   return test('Get Forum Info Test', () async {
-    await getForumInfo({"id": 60}).then((map) {
+    await apiDispatchTest(FORUM_INFO_API, {"id": 60}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
-    await getForumInfo({"id": 1024}).then((map) {
+    await apiDispatchTest(FORUM_INFO_API, {"id": 1024}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -191,7 +200,7 @@ Future<void> forumInfoTest() async {
 
 Future<void> forumListTest() async {
   return test('Get Forum List Test', () async {
-    await getForumList().then((map) {
+    await apiDispatchTest(FORUMLIST_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -200,7 +209,8 @@ Future<void> forumListTest() async {
 
 Future<void> threadContentTest() async {
   return test('Get Thread Content Test', () async {
-    await contentsForStory({"story": 2173241, "page": 0}).then((map) {
+    await apiDispatchTest(STORY_CONTENT_API, {"story": 2173241, "page": 0})
+        .then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -209,7 +219,7 @@ Future<void> threadContentTest() async {
 
 Future<void> threadInfoTest() async {
   return test('Get Thread Info Test', () async {
-    await getStoryInfo({"story": 2173241}).then((map) {
+    await apiDispatchTest(STORY_INFO_API, {"story": 2173241}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -218,7 +228,7 @@ Future<void> threadInfoTest() async {
 
 Future<void> forumCheckNewTest() async {
   return test('Check New Forum Story Test', () async {
-    await checkNewStories({"forumId": 60}).then((map) {
+    await apiDispatchTest(FORUM_CHECKNEW_API, {"forumId": 60}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -227,7 +237,7 @@ Future<void> forumCheckNewTest() async {
 
 Future<void> forumStoryTest() async {
   return test('Get Forum Story List Test', () async {
-    await getStoriesForForum({"forumId": 60}).then((map) {
+    await apiDispatchTest(FORUM_THREADS_API, {"forumId": 60}).then((map) {
       print(map.toString());
       expect(map['error'], null);
     });
@@ -236,7 +246,7 @@ Future<void> forumStoryTest() async {
 
 Future<void> homelistTest() async {
   return test('Get Home List Test', () async {
-    await getHomeList({}).then((map) {
+    await apiDispatchTest(HOMELIST_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
@@ -246,7 +256,7 @@ Future<void> homelistTest() async {
 
 Future<void> checkNewTest() async {
   return test('Check New Notice Test', () async {
-    await checkNewNotice().then((map) {
+    await apiDispatchTest(CHECKNOTICE_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
@@ -256,7 +266,7 @@ Future<void> checkNewTest() async {
 
 Future<void> hotlistTest() async {
   return test('Get Hot List Test', () async {
-    await getHotDigest({}).then((map) {
+    await apiDispatchTest(HOTDIGEST_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
@@ -266,7 +276,7 @@ Future<void> hotlistTest() async {
 
 Future<void> blacklistTest() async {
   return test('Get Blacklist Test', () async {
-    await getBlacklist().then((map) {
+    await apiDispatchTest(GETBLACKLIST_API, {}).then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
@@ -276,7 +286,7 @@ Future<void> blacklistTest() async {
 
 Future<void> pmSessionTest() async {
   return test('Get PM Session Test', () async {
-    await getPMSession({"uid": 812695}).then((map) {
+    await apiDispatchTest(PMSESSION_API, {"pmid": 812695}).then((map) {
       print(map.toString());
       expect(map['error'], null);
       print(session.cookies.toString());
@@ -294,7 +304,7 @@ Future<void> loginTest() async {
     final Completer<Null> completer = Completer<Null>();
     var request = LoginRequest(completer, user);
 
-    await login({"user": user}).then((map) {
+    await apiDispatchTest(LOGIN_API, {"user": user}).then((map) {
       print(map.toString());
       // expect(map['uid'], 812695);
       expect(map['success'], true);
