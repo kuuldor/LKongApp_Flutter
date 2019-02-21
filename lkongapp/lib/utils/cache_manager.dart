@@ -6,13 +6,86 @@ library flutter_cache_manager;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:http/http.dart' as http;
+import 'package:lkongapp/utils/globals.dart';
+import 'package:lkongapp/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:synchronized/synchronized.dart';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+
+void downloadIsolateMain(SendPort callerSendPort) async {
+  ReceivePort apiReceivePort = ReceivePort();
+
+  callerSendPort.send(apiReceivePort.sendPort);
+
+  apiReceivePort.listen((var message) async {
+    CrossIsolatesMessage incomingMessage = message as CrossIsolatesMessage;
+    Map params = incomingMessage.message as Map;
+
+    var result = await _downloadOnIsolate(params);
+
+    incomingMessage.sender.send(result);
+  });
+}
+
+String _fileNameFromHeaders(Map<String, String> headers) {
+  var fileExtension = "";
+  if (headers.containsKey("content-type")) {
+    var type = headers["content-type"].split("/");
+    if (type.length == 2) {
+      fileExtension = ".${type[1]}";
+    }
+  }
+
+  var fileName = "/NetworkCache/${Uuid().v1()}$fileExtension";
+
+  return fileName;
+}
+
+Future<Map> _downloadOnIsolate(Map params) async {
+  final url = params["URL"];
+  final cachePath = params["CACHE_PATH"];
+  final headers = params["HEADERS"];
+
+  var response;
+  try {
+    response = await http.get(url, headers: headers);
+  } catch (e) {}
+  if (response != null) {
+    if (response.statusCode == 200) {
+      String filename = _fileNameFromHeaders(response.headers);
+
+      var filePath = cachePath + filename;
+      var folder = File(filePath).parent;
+      if (!(await folder.exists())) {
+        folder.createSync(recursive: true);
+      }
+
+      await File(filePath).writeAsBytes(response.bodyBytes, flush: true);
+
+      return {"FILENAME": filename, "HEADERS": response.headers};
+    }
+
+    if (response.statusCode == 304) {
+      return {"HEADERS": response.headers};
+    }
+  }
+  return {};
+}
+
+Future<Map> enqueueDownload(Map params) async {
+  if (downloadIsolate == null || downloadIsolate.isolateReady == false) {
+    return Future.delayed(
+        Duration(milliseconds: 500), () => enqueueDownload(params));
+  }
+  var result = await downloadIsolate.sendReceive(params);
+
+  return result as Map;
+}
 
 ///Cache information of one file
 class CacheObject {
@@ -22,12 +95,24 @@ class CacheObject {
   static const _keyTouched = "touched";
   static const _keyMissing = "missing";
 
+  static String _cachePath;
+
+  Future<String> get cachePath async {
+    return _cachePath ??= await _getCacheFolder();
+  }
+
+  static Future<String> _getCacheFolder() async {
+    Directory directory = await getTemporaryDirectory();
+    return directory.path;
+  }
+
   Future<String> getFilePath() async {
     if (relativePath == null) {
       return null;
     }
-    Directory directory = await getTemporaryDirectory();
-    return directory.path + relativePath;
+
+    String folder = await cachePath;
+    return folder + relativePath;
   }
 
   String get relativePath {
@@ -39,7 +124,7 @@ class CacheObject {
 
   DateTime get validTill {
     if (_map.containsKey(_keyValidTill)) {
-      return new DateTime.fromMillisecondsSinceEpoch(_map[_keyValidTill]);
+      return DateTime.fromMillisecondsSinceEpoch(_map[_keyValidTill]);
     }
     return null;
   }
@@ -63,10 +148,10 @@ class CacheObject {
 
   CacheObject(String url, {this.lock}) {
     this.url = url;
-    _map = new Map();
+    _map = Map();
     touch();
     if (lock == null) {
-      lock = new Lock();
+      lock = Lock();
     }
   }
 
@@ -75,12 +160,12 @@ class CacheObject {
     _map = map;
 
     if (_map.containsKey(_keyTouched)) {
-      touched = new DateTime.fromMillisecondsSinceEpoch(_map[_keyTouched]);
+      touched = DateTime.fromMillisecondsSinceEpoch(_map[_keyTouched]);
     } else {
       touch();
     }
     if (lock == null) {
-      lock = new Lock();
+      lock = Lock();
     }
   }
 
@@ -89,7 +174,7 @@ class CacheObject {
   }
 
   touch() {
-    touched = new DateTime.now();
+    touched = DateTime.now();
     _map[_keyTouched] = touched.millisecondsSinceEpoch;
   }
 
@@ -97,12 +182,12 @@ class CacheObject {
     _map[_keyMissing] = missing;
     // keep the missing state for one day
     _map[_keyValidTill] =
-        new DateTime.now().add(Duration(seconds: 86400)).millisecondsSinceEpoch;
+        DateTime.now().add(Duration(seconds: 86400)).millisecondsSinceEpoch;
   }
 
   setDataFromHeaders(Map<String, String> headers) async {
     //Without a cache-control header we keep the file for a week
-    var ageDuration = new Duration(days: 7);
+    var ageDuration = Duration(days: 7);
 
     if (headers.containsKey("cache-control")) {
       var cacheControl = headers["cache-control"];
@@ -112,41 +197,32 @@ class CacheObject {
           var validSeconds =
               int.parse(setting.split("=")[1], onError: (source) => 0);
           if (validSeconds > 0) {
-            ageDuration = new Duration(seconds: validSeconds);
+            ageDuration = Duration(seconds: validSeconds);
           }
         }
       });
     }
 
     _map[_keyValidTill] =
-        new DateTime.now().add(ageDuration).millisecondsSinceEpoch;
+        DateTime.now().add(ageDuration).millisecondsSinceEpoch;
 
     if (headers.containsKey("etag")) {
       _map[_keyETag] = headers["etag"];
     }
+  }
 
-    var fileExtension = "";
-    if (headers.containsKey("content-type")) {
-      var type = headers["content-type"].split("/");
-      if (type.length == 2) {
-        fileExtension = ".${type[1]}";
-      }
-    }
-
+  setFileName(String newFileName) async {
     var oldPath = await getFilePath();
-    if (oldPath != null && !oldPath.endsWith(fileExtension)) {
+
+    if (oldPath != null && !oldPath.endsWith(newFileName)) {
       removeOldFile(oldPath);
-      _map[_keyFilePath] = null;
     }
 
-    if (relativePath == null) {
-      var fileName = "cache/${new Uuid().v1()}${fileExtension}";
-      _map[_keyFilePath] = "${fileName}";
-    }
+    _map[_keyFilePath] = newFileName;
   }
 
   removeOldFile(String filePath) async {
-    var file = new File(filePath);
+    var file = File(filePath);
     if (await file.exists()) {
       await file.delete();
     }
@@ -161,8 +237,8 @@ class CacheManager {
   static const _keyCacheData = "lib_cached_image_data";
   static const _keyCacheCleanDate = "lib_cached_image_data_last_clean";
 
-  static Duration inBetweenCleans = new Duration(days: 7);
-  static Duration maxAgeCacheObject = new Duration(days: 30);
+  static Duration inBetweenCleans = Duration(days: 7);
+  static Duration maxAgeCacheObject = Duration(days: 30);
   static int maxNrOfCacheObjects = 2000;
   static bool showDebugLogs = false;
 
@@ -173,7 +249,7 @@ class CacheManager {
       await _lock.synchronized(() async {
         if (_instance == null) {
           // keep local instance till it is fully initialized
-          var newInstance = new CacheManager._();
+          var newInstance = CacheManager._();
           await newInstance._init();
           _instance = newInstance;
         }
@@ -188,7 +264,7 @@ class CacheManager {
   Map<String, CacheObject> _cacheData;
   DateTime lastCacheClean;
 
-  static Lock _lock = new Lock();
+  static Lock _lock = Lock();
 
   ///Shared preferences is used to keep track of the information about the files
   Future _init() async {
@@ -199,17 +275,17 @@ class CacheManager {
 
   bool _isStoringData = false;
   bool _shouldStoreDataAgain = false;
-  Lock _storeLock = new Lock();
+  Lock _storeLock = Lock();
 
   _getSavedCacheDataFromPreferences() {
     //get saved cache data from shared prefs
     var jsonCacheString = _prefs.getString(_keyCacheData);
-    _cacheData = new Map();
+    _cacheData = Map();
     if (jsonCacheString != null) {
       Map jsonCache = const JsonDecoder().convert(jsonCacheString);
       jsonCache.forEach((key, data) {
         if (data != null) {
-          _cacheData[key] = new CacheObject.fromMap(key, data);
+          _cacheData[key] = CacheObject.fromMap(key, data);
         }
       });
     }
@@ -248,7 +324,7 @@ class CacheManager {
   }
 
   _saveDataInPrefs() async {
-    Map json = new Map();
+    Map json = Map();
 
     await _lock.synchronized(() {
       _cacheData.forEach((key, cache) {
@@ -267,15 +343,15 @@ class CacheManager {
     // Get data about when the last clean action has been performed
     var cleanMillis = _prefs.getInt(_keyCacheCleanDate);
     if (cleanMillis != null) {
-      lastCacheClean = new DateTime.fromMillisecondsSinceEpoch(cleanMillis);
+      lastCacheClean = DateTime.fromMillisecondsSinceEpoch(cleanMillis);
     } else {
-      lastCacheClean = new DateTime.now();
+      lastCacheClean = DateTime.now();
       _prefs.setInt(_keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
     }
   }
 
   _cleanCache({force: false}) async {
-    var sinceLastClean = new DateTime.now().difference(lastCacheClean);
+    var sinceLastClean = DateTime.now().difference(lastCacheClean);
 
     if (force ||
         sinceLastClean > inBetweenCleans ||
@@ -284,7 +360,7 @@ class CacheManager {
         await _removeOldObjectsFromCache();
         await _shrinkLargeCache();
 
-        lastCacheClean = new DateTime.now();
+        lastCacheClean = DateTime.now();
         _prefs.setInt(
             _keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
       });
@@ -298,14 +374,16 @@ class CacheManager {
         await _removeFile(item);
       });
 
-      lastCacheClean = new DateTime.now();
+      _cacheData.clear();
+
+      lastCacheClean = DateTime.now();
       _prefs.setInt(_keyCacheCleanDate, lastCacheClean.millisecondsSinceEpoch);
     });
     await _saveDataInPrefs();
   }
 
   _removeOldObjectsFromCache() async {
-    var oldestDateAllowed = new DateTime.now().subtract(maxAgeCacheObject);
+    var oldestDateAllowed = DateTime.now().subtract(maxAgeCacheObject);
 
     //Remove old objects
     var oldValues = List.from(
@@ -337,7 +415,7 @@ class CacheManager {
 
     _cacheData.remove(cacheObject.url);
 
-    var file = new File(await cacheObject.getFilePath());
+    var file = File(await cacheObject.getFilePath());
     if (await file.exists()) {
       file.delete();
     }
@@ -360,7 +438,7 @@ class CacheManager {
       return false;
     }
     //If file is removed from the cache storage
-    var cachedFile = new File(filePath);
+    var cachedFile = File(filePath);
     var cachedFileExists = await cachedFile.exists();
     return cachedFileExists;
   }
@@ -372,7 +450,7 @@ class CacheManager {
     if (!_cacheData.containsKey(url)) {
       await _lock.synchronized(() {
         if (!_cacheData.containsKey(url)) {
-          _cacheData[url] = new CacheObject(url);
+          _cacheData[url] = CacheObject(url);
         }
       });
     }
@@ -402,7 +480,7 @@ class CacheManager {
       }
 
       if (headers == null) {
-        headers = new Map();
+        headers = Map();
       }
 
       var filePath = await cacheObject.getFilePath();
@@ -410,13 +488,14 @@ class CacheManager {
       if (filePath == null) {
         log = "$log\nDownloading for first time.";
         var newCacheData = await _downloadFile(url, headers, cacheObject.lock);
+        log = "$log\nGet ${newCacheData.relativePath}.";
         if (newCacheData != null) {
           _cacheData[url] = newCacheData;
         }
         return;
       }
       //If file is removed from the cache storage, download again
-      var cachedFile = new File(filePath);
+      var cachedFile = File(filePath);
       var cachedFileExists = await cachedFile.exists();
       if (!cachedFileExists) {
         log = "$log\nDownloading because file does not exist.";
@@ -455,41 +534,34 @@ class CacheManager {
     if (path == null) {
       return null;
     }
-    return new File(path);
+    return File(path);
   }
 
   ///Download the file from the url
   Future<CacheObject> _downloadFile(
       String url, Map<String, String> headers, Object lock,
       {String relativePath, String eTag}) async {
-    var newCache = new CacheObject(url, lock: lock);
+    var newCache = CacheObject(url, lock: lock);
     newCache.setRelativePath(relativePath);
 
     if (eTag != null) {
       headers["If-None-Match"] = eTag;
     }
 
-    var response;
-    try {
-      response = await http.get(url, headers: headers);
-    } catch (e) {}
-    if (response != null) {
-      if (response.statusCode == 200) {
-        await newCache.setDataFromHeaders(response.headers);
+    String cachePath = await newCache.cachePath;
 
-        var filePath = await newCache.getFilePath();
-        var folder = new File(filePath).parent;
-        if (!(await folder.exists())) {
-          folder.createSync(recursive: true);
-        }
-        await new File(filePath).writeAsBytes(response.bodyBytes);
+    final params = {"URL": url, "HEADERS": headers, "CACHE_PATH": cachePath};
 
-        return newCache;
-      }
-      if (response.statusCode == 304) {
-        await newCache.setDataFromHeaders(response.headers);
-        return newCache;
-      }
+    var result = await enqueueDownload(params);
+
+    final respHeaders = result["HEADERS"];
+    if (respHeaders != null) {
+      await newCache.setDataFromHeaders(respHeaders);
+
+      final filename = result["FILENAME"];
+      await newCache.setFileName(filename);
+
+      return newCache;
     }
 
     newCache.setMissing("");

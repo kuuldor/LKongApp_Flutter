@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart' as http;
+import 'package:lkongapp/utils/http_session.dart';
 import 'package:lkongapp/utils/network_isolate.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:meta/meta.dart';
@@ -957,8 +959,27 @@ String Function(String) _tagStripperBuiler(List<String> fields) {
   return processor;
 }
 
+void apiIsolateMain(SendPort callerSendPort) async {
+  session = LKongHttpSession(baseURL: 'http://lkong.cn', persist: false);
+
+  ReceivePort apiReceivePort = ReceivePort();
+
+  callerSendPort.send(apiReceivePort.sendPort);
+
+  await for (var message in apiReceivePort) {
+    CrossIsolatesMessage incomingMessage = message as CrossIsolatesMessage;
+    Map params = incomingMessage.message as Map;
+
+    var result;
+
+    result = await _handleAPIRequest(params);
+
+    incomingMessage.sender.send(result);
+  }
+}
+
 Future<Map> apiDispatch(api, Map parameters) async {
-  if (isolateReady == null) {
+  if (apiIsolate == null || apiIsolate.isolateReady == false) {
     return Future.delayed(
         Duration(milliseconds: 500), () => apiDispatch(api, parameters));
   }
@@ -966,13 +987,13 @@ Future<Map> apiDispatch(api, Map parameters) async {
   Map params = Map();
   params.addAll(parameters);
   params["API"] = api;
-  var result = await sendReceive(params);
+  var result = await apiIsolate.sendReceive(params);
 
   return result as Map;
 }
 
 Future<Map> apiDispatchTest(api, Map parameters) async {
-  if (isolateReady == null) {
+  if (session == null) {
     return Future.delayed(
         Duration(milliseconds: 500), () => apiDispatchTest(api, parameters));
   }
@@ -980,15 +1001,15 @@ Future<Map> apiDispatchTest(api, Map parameters) async {
   Map params = Map();
   params.addAll(parameters);
   params["API"] = api;
-  var result = await handleAPIRequest(params);
+  var result = await _handleAPIRequest(params);
 
   return result;
 }
 
-Future<Map> handleAPIRequest(Map params) {
+Future<Map> _handleAPIRequest(Map params) {
   if (session == null || session.initialized == false) {
     return Future.delayed(
-        Duration(milliseconds: 500), () => handleAPIRequest(params));
+        Duration(milliseconds: 500), () => _handleAPIRequest(params));
   }
 
   final api = params["API"];

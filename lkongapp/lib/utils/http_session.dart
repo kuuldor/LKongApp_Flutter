@@ -6,7 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 
-class HttpSession {
+class LKongHttpSession {
   Map<String, String> cookies = {};
 
   final _storageFileName = 'coookie.jar';
@@ -63,7 +63,7 @@ class HttpSession {
     return line;
   }
 
-  HttpSession({@required this.baseURL, this.persist}) {
+  LKongHttpSession({@required this.baseURL, this.persist}) {
     loadCookies();
   }
 
