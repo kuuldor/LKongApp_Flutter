@@ -51,11 +51,17 @@ Future<Map> _downloadOnIsolate(Map params) async {
   final cachePath = params["CACHE_PATH"];
   final headers = params["HEADERS"];
 
-  var response;
+  http.Response response;
   try {
     response = await http.get(url, headers: headers);
   } catch (e) {}
   if (response != null) {
+    final headers = response.headers
+      ..removeWhere((key, value) {
+        key = key.toLowerCase();
+        return key != "cache-control" && key != "etag";
+      });
+
     if (response.statusCode == 200) {
       String filename = _fileNameFromHeaders(response.headers);
 
@@ -67,11 +73,11 @@ Future<Map> _downloadOnIsolate(Map params) async {
 
       await File(filePath).writeAsBytes(response.bodyBytes, flush: true);
 
-      return {"FILENAME": filename, "HEADERS": response.headers};
+      return {"FILENAME": filename, "HEADERS": headers};
     }
 
     if (response.statusCode == 304) {
-      return {"HEADERS": response.headers};
+      return {"HEADERS": headers};
     }
   }
   return {};
@@ -553,6 +559,7 @@ class CacheManager {
     final params = {"URL": url, "HEADERS": headers, "CACHE_PATH": cachePath};
 
     var result = await enqueueDownload(params);
+    // var result = await _downloadOnIsolate(params);
 
     final respHeaders = result["HEADERS"];
     if (respHeaders != null) {
