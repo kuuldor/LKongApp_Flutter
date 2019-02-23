@@ -17,6 +17,8 @@ import 'package:synchronized/synchronized.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+const String cacheSubFolder = "NetworkCache";
+
 void downloadIsolateMain(SendPort callerSendPort) async {
   ReceivePort apiReceivePort = ReceivePort();
 
@@ -41,7 +43,9 @@ String _fileNameFromHeaders(Map<String, String> headers) {
     }
   }
 
-  var fileName = "/NetworkCache/${Uuid().v1()}$fileExtension";
+  final uuid = Uuid().v1();
+  final partition = uuid.substring(0, 2);
+  var fileName = "/$cacheSubFolder/$partition/$uuid$fileExtension";
 
   return fileName;
 }
@@ -103,7 +107,7 @@ class CacheObject {
 
   static String _cachePath;
 
-  Future<String> get cachePath async {
+  static Future<String> get cachePath async {
     return _cachePath ??= await _getCacheFolder();
   }
 
@@ -241,7 +245,9 @@ class CacheObject {
 
 class CacheManager {
   static const _keyCacheData = "lib_cached_image_data";
+  static const _keyCacheVersion = "lib_cached_image_version";
   static const _keyCacheCleanDate = "lib_cached_image_data_last_clean";
+  static const int _currentCacheVersion = 1;
 
   static Duration inBetweenCleans = Duration(days: 7);
   static Duration maxAgeCacheObject = Duration(days: 30);
@@ -275,7 +281,7 @@ class CacheManager {
   ///Shared preferences is used to keep track of the information about the files
   Future _init() async {
     _prefs = await SharedPreferences.getInstance();
-    _getSavedCacheDataFromPreferences();
+    await _getSavedCacheDataFromPreferences();
     _getLastCleanTimestampFromPreferences();
   }
 
@@ -283,17 +289,27 @@ class CacheManager {
   bool _shouldStoreDataAgain = false;
   Lock _storeLock = Lock();
 
-  _getSavedCacheDataFromPreferences() {
-    //get saved cache data from shared prefs
-    var jsonCacheString = _prefs.getString(_keyCacheData);
+  _getSavedCacheDataFromPreferences() async {
     _cacheData = Map();
-    if (jsonCacheString != null) {
-      Map jsonCache = const JsonDecoder().convert(jsonCacheString);
-      jsonCache.forEach((key, data) {
-        if (data != null) {
-          _cacheData[key] = CacheObject.fromMap(key, data);
-        }
-      });
+
+    int cacheVersion = _prefs.getInt(_keyCacheVersion);
+    if (cacheVersion == null || cacheVersion != _currentCacheVersion) {
+      // cache version mismatch. Should migrate. Delete for now.
+      String cachePath = await CacheObject.cachePath;
+      await File(cachePath + "cache").delete(recursive: true);
+      await File(cachePath + "/$cacheSubFolder").delete(recursive: true);
+    } else {
+      //get saved cache data from shared prefs
+      var jsonCacheString = _prefs.getString(_keyCacheData);
+
+      if (jsonCacheString != null) {
+        Map jsonCache = const JsonDecoder().convert(jsonCacheString);
+        jsonCache.forEach((key, data) {
+          if (data != null) {
+            _cacheData[key] = CacheObject.fromMap(key, data);
+          }
+        });
+      }
     }
   }
 
@@ -339,6 +355,7 @@ class CacheManager {
     });
 
     _prefs.setString(_keyCacheData, const JsonEncoder().convert(json));
+    _prefs.setInt(_keyCacheVersion, _currentCacheVersion);
 
     if (await _shouldSaveAgain()) {
       await _saveDataInPrefs();
@@ -554,7 +571,7 @@ class CacheManager {
       headers["If-None-Match"] = eTag;
     }
 
-    String cachePath = await newCache.cachePath;
+    String cachePath = await CacheObject.cachePath;
 
     final params = {"URL": url, "HEADERS": headers, "CACHE_PATH": cachePath};
 

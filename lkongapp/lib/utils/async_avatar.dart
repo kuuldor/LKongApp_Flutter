@@ -112,29 +112,37 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
   bool defaultAvatarServed = false;
   ui.Codec avatarCodec;
 
+  _loadCodec() {
+    if (loader == null || !loader.disposed) {
+      return _loadAsync().then((c) {
+        avatarCodec = c;
+        return c;
+      });
+    } else {
+      return getDefaultCodec();
+    }
+  }
+
   @override
   Future<ui.FrameInfo> getNextFrame() async {
-    if (avatarCodec != null || defaultAvatarServed) {
+    if (avatarCodec != null) {
+      return avatarCodec.getNextFrame();
+    }
+    var cacheManager = await CacheManager.getInstance();
+    bool fetched = cacheManager.hasKey(url);
+    if (fetched || defaultAvatarServed || delayInMillies == 0) {
       ui.Codec codec;
-      if (avatarCodec == null) {
+      if (!fetched && delayInMillies > 0) {
         codec = await Future.delayed(
           Duration(milliseconds: delayInMillies),
-          () {
-            if (loader == null || !loader.disposed) {
-              return _loadAsync().then((c) {
-                avatarCodec = c;
-                return c;
-              });
-            } else {
-              return getDefaultCodec();
-            }
-          },
+          () => _loadCodec(),
         );
-        _frameCount = codec.frameCount;
-        _repetitionCount = codec.repetitionCount;
       } else {
-        codec = avatarCodec;
+        codec = await _loadCodec();
       }
+      _frameCount = codec.frameCount;
+      _repetitionCount = codec.repetitionCount;
+
       return codec.getNextFrame();
     } else {
       await getDefaultCodec();

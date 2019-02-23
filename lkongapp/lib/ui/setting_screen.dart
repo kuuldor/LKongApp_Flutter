@@ -334,7 +334,8 @@ class SettingState extends State<SettingView> {
             '无图模式',
             DropdownButtonHideUnderline(
               child: DropdownButton<int>(
-                style: TextStyle(fontSize: CS_ITEM_NAME_SIZE),
+                style: TextStyle(
+                    fontSize: CS_ITEM_NAME_SIZE, color: theme.textColor),
                 value: setting.noImageMode,
                 items: ['关闭', '开启', '流量']
                     .asMap()
