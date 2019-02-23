@@ -84,11 +84,13 @@ class CommentItemState extends State<CommentItem> with AvatarLoaderState {
               Row(children: <Widget>[
                 Container(
                     height: theme.titleSize,
-                    child: Image(
-                      image: CachedNetworkImageProvider(
-                          avatarForUserID(rate.uid),
-                          imageOnError: "assets/noavatar.png"),
-                    )),
+                    child: shouldLoadAvatar(context)
+                        ? Image(
+                            image: CachedNetworkImageProvider(
+                                avatarForUserID(rate.uid),
+                                imageOnError: "assets/noavatar.png"),
+                          )
+                        : Image.asset("assets/noavatar.png")),
                 Container(
                   width: 4.0,
                 ),

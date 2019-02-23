@@ -30,13 +30,15 @@ class ForumItem extends StatelessWidget {
       title: Column(children: <Widget>[
         Row(
           children: <Widget>[
-            CircleAvatar(
-              backgroundColor: Colors.transparent,
-              backgroundImage: CachedNetworkImageProvider(
-                  avatarForForumID(forum.fid),
-                  imageOnError: "assets/image_placeholder.png"),
-              radius: theme.titleSize + 4,
-            ),
+            shouldLoadAvatar(context)
+                ? CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: CachedNetworkImageProvider(
+                        avatarForForumID(forum.fid),
+                        imageOnError: "assets/image_placeholder.png"),
+                    radius: theme.titleSize + 4,
+                  )
+                : Container(),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.only(left: 8.0),

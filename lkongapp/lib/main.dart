@@ -7,6 +7,7 @@ import 'package:lkongapp/ui/setting_screen.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux_logging/redux_logging.dart';
+import 'package:connectivity/connectivity.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/middlewares/middlewares.dart';
@@ -48,16 +49,23 @@ class LKongApp extends StatefulWidget {
 class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
   Timer autoPunchTimer;
   Timer checkNotifTimer;
+  var subscription;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    subscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      globals.connectivity = result;
+    });
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    subscription.cancel();
     super.dispose();
   }
 

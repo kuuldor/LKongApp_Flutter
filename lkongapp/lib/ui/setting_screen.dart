@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/home_list.dart';
+import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -118,6 +119,8 @@ class SettingState extends State<SettingView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = LKModeledApp.modelOf(context).theme;
+
     _showSaveDialog = (AppConfig config) {
       // flutter defined function
       showDialog(
@@ -150,8 +153,8 @@ class SettingState extends State<SettingView> {
       );
     };
 
-    CSWidgetStyle fontStyle = const CSWidgetStyle(
-        icon: const Icon(Icons.font_download, color: Colors.black54));
+    CSWidgetStyle fontStyle =
+        CSWidgetStyle(icon: Icon(Icons.font_download, color: theme.textColor));
 
     AppSettingBuilder setting = config.setting;
     AccountSettingBuilder account = config.accountSettings.currentSetting;
@@ -169,7 +172,7 @@ class SettingState extends State<SettingView> {
           ),
         ],
       ),
-      body: CupertinoSettings(<Widget>[
+      body: CupertinoSettings(items: <Widget>[
         CSHeader('登录设置'),
         GestureDetector(
           child: CSControl(
@@ -242,25 +245,10 @@ class SettingState extends State<SettingView> {
                 setting.showForumInfo = !setting.showForumInfo;
               }),
         ),
-        GestureDetector(
-          child: CSControl(
-            '上传图片前进行裁剪',
-            CupertinoSwitch(
-              value: setting.noCropImage != true,
-              onChanged: (value) => setState(() {
-                    setting.noCropImage = !value;
-                  }),
-            ),
-          ),
-          onTap: () => setState(() {
-                setting.noCropImage = (setting.noCropImage == false);
-              }),
-        ),
         CSHeader('签名'),
         CSWidget(
           TextField(
-            style: const TextStyle(
-                fontSize: CS_ITEM_NAME_SIZE, color: CS_TEXT_COLOR),
+            style: TextStyle(fontSize: CS_ITEM_NAME_SIZE),
             controller: TextEditingController(text: account.signature),
             decoration: InputDecoration(
                 hintText: "在此输入论坛发帖签名", border: InputBorder.none),
@@ -326,6 +314,66 @@ class SettingState extends State<SettingView> {
                 setting.detectLink = (setting.detectLink == false);
               }),
         ),
+        CSHeader('图像设置'),
+        GestureDetector(
+          child: CSControl(
+            '上传图片前进行裁剪',
+            CupertinoSwitch(
+              value: setting.noCropImage != true,
+              onChanged: (value) => setState(() {
+                    setting.noCropImage = !value;
+                  }),
+            ),
+          ),
+          onTap: () => setState(() {
+                setting.noCropImage = (setting.noCropImage == false);
+              }),
+        ),
+        GestureDetector(
+          child: CSControl(
+            '无图模式',
+            DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                style: TextStyle(fontSize: CS_ITEM_NAME_SIZE),
+                value: setting.noImageMode,
+                items: ['关闭', '开启', '流量']
+                    .asMap()
+                    .map((int i, String title) {
+                      return MapEntry(
+                          i,
+                          DropdownMenuItem<int>(
+                            value: i,
+                            child: Text(title),
+                          ));
+                    })
+                    .values
+                    .toList(),
+                onChanged: (_value) {
+                  setState(() {
+                    setting.noImageMode = _value;
+                  });
+                },
+              ),
+            ),
+          ),
+          onTap: () => setState(() {
+                setting.noImageMode = (setting.noImageMode + 1) % 3;
+              }),
+        ),
+        GestureDetector(
+          child: CSControl(
+            '无图模式下加载头像',
+            CupertinoSwitch(
+              value: setting.loadAvatar == true,
+              onChanged: (value) => setState(() {
+                    setting.loadAvatar = value;
+                  }),
+            ),
+          ),
+          onTap: () => setState(() {
+                setting.loadAvatar = (setting.loadAvatar == false);
+              }),
+        ),
         CSHeader('主题'),
         CSSelection(['日间模式', '夜间模式'], (index) {
           print(index);
@@ -338,13 +386,13 @@ class SettingState extends State<SettingView> {
             setting.themeSetting.replace(ThemeSetting());
           });
         }),
-        CSHeader(),
+        CSHeader(""),
         CSControl('版权所有',
             Text(setting.copyright, style: TextStyle(color: Colors.grey))),
         CSButton(CSButtonType.DEFAULT, "Licenses", () {
           print("It works!");
         }),
-        CSHeader(),
+        CSHeader(""),
         CSButton(CSButtonType.DESTRUCTIVE, "删除所有缓存", () async {
           final cache = await CacheManager.getInstance();
           cache.dumpCache();

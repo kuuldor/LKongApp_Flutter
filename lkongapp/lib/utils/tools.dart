@@ -4,6 +4,8 @@ import 'package:html_unescape/html_unescape.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:lkongapp/utils/globals.dart' as globals;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
 import 'package:lkongapp/utils/async_avatar.dart';
@@ -31,9 +33,11 @@ Widget asyncUserAvatar(
   bool clickable: false,
   int delayInMillies,
 }) {
+  bool loadAvatar = shouldLoadAvatar(context);
+
   final avatar = CircleAvatar(
     backgroundColor: Colors.transparent,
-    backgroundImage: uid != null && uid > 0
+    backgroundImage: loadAvatar && uid != null && uid > 0
         ? AsyncAvatarProvider(loader, avatarForUserID(uid),
             delayInMillies: delayInMillies)
         : AssetImage("assets/noavatar.png"),
@@ -48,6 +52,27 @@ Widget asyncUserAvatar(
           },
         )
       : avatar;
+}
+
+bool shouldLoadAvatar(BuildContext context) {
+  final setting = stateOf(context).persistState.appConfig.setting;
+  bool loadAvatar = true;
+  if (!setting.loadAvatar) {
+    loadAvatar = shouldLoadImage(context);
+  }
+  return loadAvatar;
+}
+
+bool shouldLoadImage(context) {
+  final setting = stateOf(context).persistState.appConfig.setting;
+  bool loadImage = true;
+  if (setting.noImageMode == 1) {
+    loadImage = false;
+  } else if (setting.noImageMode == 2 &&
+      globals.connectivity == ConnectivityResult.mobile) {
+    loadImage = false;
+  }
+  return loadImage;
 }
 
 Widget buildUserAvatar(BuildContext context, int uid, double size,
@@ -135,10 +160,18 @@ _parseImageAndText(
           final imageProvider = CachedNetworkImageProvider(src,
               imageOnError: "assets/image_placeholder.png");
           image = GestureDetector(
-            child: Image(
-              image: imageProvider,
-              fit: BoxFit.cover,
-            ),
+            child: shouldLoadImage(context)
+                ? Image(
+                    image: imageProvider,
+                    fit: BoxFit.cover,
+                  )
+                : Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: <Widget>[
+                      Image.asset("assets/image_placeholder.png"),
+                      Text('长按查看图片', style: TextStyle(color: Colors.black)),
+                    ],
+                  ),
             onLongPress: () {
               dispatchAction(context)(UINavigationPush(
                   context, LKongAppRoutes.photoView, false, (context) {

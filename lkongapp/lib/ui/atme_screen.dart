@@ -52,8 +52,7 @@ class AtMeScreenState extends StoryListState<AtMeScreen> {
   @override
   Widget build(BuildContext context) {
     if (type == null) {
-      int screenType =
-          StoreProvider.of<AppState>(context).state.uiState.atMeScreenType;
+      int screenType = stateOf(context).uiState.atMeScreenType;
       changeScreenType(screenType);
     }
     return buildConnectedWidget<NotifScreenModel>(

@@ -192,8 +192,7 @@ class ComposeState extends State<ComposeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final config =
-        StoreProvider.of<AppState>(context).state.persistState.appConfig;
+    final config = stateOf(context).persistState.appConfig;
     final theme = LKModeledApp.modelOf(context).theme;
     String title;
 

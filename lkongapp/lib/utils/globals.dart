@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:connectivity/connectivity.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/network_isolate.dart';
 import 'package:redux/redux.dart';
@@ -10,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 LKongHttpSession session;
 NetworkIsolate apiIsolate;
 NetworkIsolate downloadIsolate;
+ConnectivityResult connectivity;
 
 String appVersion = "1.2.0";
 
