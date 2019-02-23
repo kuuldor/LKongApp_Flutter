@@ -60,12 +60,6 @@ Future<Map> _downloadOnIsolate(Map params) async {
     response = await http.get(url, headers: headers);
   } catch (e) {}
   if (response != null) {
-    final headers = response.headers
-      ..removeWhere((key, value) {
-        key = key.toLowerCase();
-        return key != "cache-control" && key != "etag";
-      });
-
     if (response.statusCode == 200) {
       String filename = _fileNameFromHeaders(response.headers);
 
@@ -77,10 +71,20 @@ Future<Map> _downloadOnIsolate(Map params) async {
 
       await File(filePath).writeAsBytes(response.bodyBytes, flush: true);
 
+      final headers = response.headers
+        ..removeWhere((key, value) {
+          key = key.toLowerCase();
+          return key != "cache-control" && key != "etag";
+        });
       return {"FILENAME": filename, "HEADERS": headers};
     }
 
     if (response.statusCode == 304) {
+      final headers = response.headers
+        ..removeWhere((key, value) {
+          key = key.toLowerCase();
+          return key != "cache-control" && key != "etag";
+        });
       return {"HEADERS": headers};
     }
   }
@@ -296,8 +300,14 @@ class CacheManager {
     if (cacheVersion == null || cacheVersion != _currentCacheVersion) {
       // cache version mismatch. Should migrate. Delete for now.
       String cachePath = await CacheObject.cachePath;
-      await File(cachePath + "cache").delete(recursive: true);
-      await File(cachePath + "/$cacheSubFolder").delete(recursive: true);
+      try {
+        await File(cachePath + "cache").delete(recursive: true);
+        await File(cachePath + "/$cacheSubFolder").delete(recursive: true);
+      } catch (e) {
+        print(e.toString());
+      }
+      _prefs.setInt(_keyCacheVersion, _currentCacheVersion);
+      _prefs.setString(_keyCacheData, null);
     } else {
       //get saved cache data from shared prefs
       var jsonCacheString = _prefs.getString(_keyCacheData);
