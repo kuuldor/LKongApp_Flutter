@@ -964,7 +964,7 @@ void apiIsolateMain(SendPort callerSendPort) async {
 
   callerSendPort.send(apiReceivePort.sendPort);
 
-  await for (var message in apiReceivePort) {
+  apiReceivePort.listen((var message) async {
     CrossIsolatesMessage incomingMessage = message as CrossIsolatesMessage;
     Map params = incomingMessage.message as Map;
 
@@ -979,7 +979,7 @@ void apiIsolateMain(SendPort callerSendPort) async {
 
       incomingMessage.sender.send(result);
     }
-  }
+  });
 }
 
 Future<Map> apiDispatch(api, Map parameters) async {
