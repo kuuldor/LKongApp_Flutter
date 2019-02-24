@@ -386,4 +386,9 @@ class BlacklistManageModel extends DataTableSource with GroupedListModel {
       showToast(msg);
     });
   }
+
+  @override
+  void scrolledToBottom(BuildContext context) {
+    // TODO: implement scrolledToBottom
+  }
 }

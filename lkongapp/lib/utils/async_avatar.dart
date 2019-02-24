@@ -1,5 +1,7 @@
 library async_avatar;
 
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'dart:ui' as ui;
 
@@ -15,7 +17,11 @@ import 'package:lkongapp/utils/lkong.dart';
 
 typedef void ErrorListener();
 
-class AvatarLoaderState {
+mixin ScrollerState {
+  bool get scrolling;
+}
+
+abstract class AvatarLoaderState implements ScrollerState {
   bool disposed = false;
 }
 
@@ -112,7 +118,7 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
   bool defaultAvatarServed = false;
   ui.Codec avatarCodec;
 
-  _loadCodec() {
+  Future<ui.Codec> _loadCodec() async {
     if (loader == null || !loader.disposed) {
       return _loadAsync().then((c) {
         avatarCodec = c;
@@ -125,35 +131,51 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
 
   @override
   Future<ui.FrameInfo> getNextFrame() async {
+    var cacheManager = await CacheManager.getInstance();
+    bool fetched = cacheManager.hasKey(url);
+
+    if (!fetched && !defaultAvatarServed) {
+      cacheManager.getFile(url);
+      return await serveDefaultFrame();
+    }
+
+    if (loader != null && loader.scrolling) {
+      if (!defaultAvatarServed) {
+        return await serveDefaultFrame();
+      } else {
+        return Future.delayed(Duration(milliseconds: max(500, delayInMillies)),
+            () => getNextFrame());
+      }
+    }
+
     if (avatarCodec != null) {
       return avatarCodec.getNextFrame();
     }
-    var cacheManager = await CacheManager.getInstance();
-    bool fetched = cacheManager.hasKey(url);
-    if (fetched || defaultAvatarServed || delayInMillies == 0) {
-      ui.Codec codec;
-      if (!fetched && delayInMillies > 0) {
-        codec = await Future.delayed(
-          Duration(milliseconds: delayInMillies),
-          () => _loadCodec(),
-        );
-      } else {
-        codec = await _loadCodec();
-      }
-      _frameCount = codec.frameCount;
-      _repetitionCount = codec.repetitionCount;
 
-      return codec.getNextFrame();
+    ui.Codec codec;
+    if (!fetched && delayInMillies > 0) {
+      codec = await Future.delayed(
+        Duration(milliseconds: max(250, delayInMillies)),
+        () => _loadCodec(),
+      );
     } else {
-      await getDefaultCodec();
-
-      final defaultFrame = await defaultCodec.getNextFrame();
-
-      ImageFrameInfo frame =
-          ImageFrameInfo(defaultFrame.image, Duration(milliseconds: 0));
-      defaultAvatarServed = true;
-      return frame;
+      codec = await _loadCodec();
     }
+    _frameCount = codec.frameCount;
+    _repetitionCount = codec.repetitionCount;
+
+    return codec.getNextFrame();
+  }
+
+  Future<ImageFrameInfo> serveDefaultFrame() async {
+    await getDefaultCodec();
+
+    final defaultFrame = await defaultCodec.getNextFrame();
+
+    ImageFrameInfo frame =
+        ImageFrameInfo(defaultFrame.image, Duration(milliseconds: 0));
+    defaultAvatarServed = true;
+    return frame;
   }
 
   Future<ui.Codec> getDefaultCodec() async {

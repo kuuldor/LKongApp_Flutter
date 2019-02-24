@@ -34,6 +34,7 @@ import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
+import 'package:lkongapp/utils/async_avatar.dart';
 
 const fetchTypeNone = -1;
 const fetchTypeStory = 0;
@@ -123,7 +124,7 @@ final allMenus = const <Choice>[
       title: '上传头像', icon: Icons.add_a_photo, action: MenuAction.uploadAvatar),
 ];
 
-class ProfileScreenModel extends FetchedListModel {
+class ProfileScreenModel extends FetchedListModel implements ScrollerState {
   final Profile profile;
   final bool storeLoading;
   final String lastError;
@@ -532,6 +533,7 @@ class ProfileScreenModel extends FetchedListModel {
       item = StoryItem(
         story: story,
         showDetailTime: showDetailTime,
+        scroller: this,
         onTap: () => onStoryTap(context, story),
       );
     } else if (fetchType == fetchTypeFans) {
@@ -554,6 +556,7 @@ class ProfileScreenModel extends FetchedListModel {
       item = StoryItem(
         story: digest,
         showDetailTime: showDetailTime,
+        scroller: this,
         onTap: () => onStoryTap(context, digest),
       );
     }
@@ -675,12 +678,10 @@ class ProfileScreenModel extends FetchedListModel {
 
     return Scaffold(
       key: _scaffoldKey,
-      body: NotificationListener(
+      body: NotificationListener<ScrollNotification>(
         child: super.buildListView(context),
         onNotification: (notification) {
-          if (notification is ScrollNotification) {
-            state.setOffset(notification.metrics.pixels);
-          }
+          state.setOffset(notification.metrics.pixels);
         },
       ),
     );

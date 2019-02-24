@@ -22,6 +22,7 @@ class CommentItem extends StatefulWidget {
   final bool showDetailTime;
   final bool detectLink;
   final bool concise;
+  final ScrollerState scroller;
 
   static final commentItemKey = (int id) => Key('__comment_item_${id}__');
 
@@ -32,6 +33,7 @@ class CommentItem extends StatefulWidget {
     @required this.author,
     @required this.showDetailTime,
     @required this.detectLink,
+    @required this.scroller,
     this.concise: false,
   });
 
@@ -313,4 +315,7 @@ class CommentItemState extends State<CommentItem> with AvatarLoaderState {
       child: Column(children: rows),
     );
   }
+
+  @override
+  bool get scrolling => widget.scroller.scrolling;
 }

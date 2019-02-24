@@ -58,20 +58,21 @@ abstract class FetchedListModel extends GroupedListModel {
         if (index < itemCount) {
           item = createListItem(context, index);
         } else {
-          if (!loading && lastError == null) {
-            handleLoadMore(context);
+          if (lastError == null && !loading) {
+            item = Container();
+          } else {
+            item = Container(
+                height: 84.0,
+                child: Center(
+                    child: loading
+                        ? CircularProgressIndicator()
+                        : RaisedButton(
+                            child: const Text('点击重试'),
+                            onPressed: () {
+                              handleLoadMore(context);
+                            },
+                          )));
           }
-          item = Container(
-              height: 84.0,
-              child: Center(
-                  child: lastError == null
-                      ? CircularProgressIndicator()
-                      : RaisedButton(
-                          child: const Text('点击重试'),
-                          onPressed: () {
-                            handleLoadMore(context);
-                          },
-                        )));
         }
       } else {
         assert(item == null, "Section $section is not defined");
@@ -82,6 +83,13 @@ abstract class FetchedListModel extends GroupedListModel {
 
     assert(false, "Should Override cellForSectionAndIndex");
     return null;
+  }
+
+  @override
+  void scrolledToBottom(context) {
+    if (!loading && lastError == null) {
+      handleLoadMore(context);
+    }
   }
 
   @override

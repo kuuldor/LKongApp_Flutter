@@ -19,6 +19,7 @@ import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
+import 'package:lkongapp/utils/async_avatar.dart';
 
 import 'package:lkongapp/models/models.dart';
 import 'package:lkongapp/actions/actions.dart';
@@ -246,7 +247,7 @@ class SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class SearchScreenModel extends FetchedListModel {
+class SearchScreenModel extends FetchedListModel implements ScrollerState {
   final SearchResult searchResult;
   final bool loading;
   final String lastError;
@@ -350,6 +351,7 @@ class SearchScreenModel extends FetchedListModel {
       item = StoryItem(
         story: story,
         showDetailTime: showDetailTime,
+        scroller: this,
         onTap: () => onStoryTap(context, story),
       );
     } else if (searchResult.searchType == searchTypeUser) {

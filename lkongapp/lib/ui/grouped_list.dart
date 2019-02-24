@@ -8,13 +8,17 @@ import 'package:lkongapp/utils/utils.dart';
 import 'package:lkongapp/actions/actions.dart';
 
 abstract class GroupedListModel {
-  var scrollController = ScrollController();
+  var scrollController = ScrollController(keepScrollOffset: false);
 
   SliverAppBar buildAppBar(BuildContext context);
 
   int get numberOfSections;
 
   bool get reverse => false;
+
+  bool scrolling = false;
+
+  void scrolledToBottom(BuildContext context);
 
   int countOfItemsInSection({@required int section});
 
@@ -74,11 +78,22 @@ abstract class GroupedListModel {
   }
 
   Widget buildGroupedListView(BuildContext context) {
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      reverse: reverse,
-      controller: scrollController,
-      slivers: buildSlivers(context),
+    return NotificationListener<ScrollNotification>(
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        reverse: reverse,
+        controller: scrollController,
+        slivers: buildSlivers(context),
+      ),
+      onNotification: (notification) {
+        if (notification is ScrollStartNotification) {
+          scrolling = true;
+        } else if (notification is ScrollEndNotification) {
+          scrolling = false;
+        } else if (notification is OverscrollNotification) {
+          scrolledToBottom(context);
+        }
+      },
     );
   }
 }

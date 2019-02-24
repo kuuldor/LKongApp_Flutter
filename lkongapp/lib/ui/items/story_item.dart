@@ -9,6 +9,7 @@ class StoryItem extends StatefulWidget {
   final GestureTapCallback onTap;
   final Story story;
   final bool showDetailTime;
+  final ScrollerState scroller;
 
   static final storyItemKey = (id) => Key('__story_item_${id}__');
 
@@ -16,6 +17,7 @@ class StoryItem extends StatefulWidget {
     @required this.onTap,
     @required this.story,
     @required this.showDetailTime,
+    @required this.scroller,
   });
 
   @override
@@ -162,4 +164,7 @@ class StoryItemState extends State<StoryItem> with AvatarLoaderState {
       subtitle: subtitle,
     );
   }
+
+  @override
+  bool get scrolling => widget.scroller.scrolling;
 }

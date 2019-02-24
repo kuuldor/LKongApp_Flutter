@@ -13,7 +13,7 @@ NetworkIsolate apiIsolate;
 NetworkIsolate downloadIsolate;
 ConnectivityResult connectivity;
 
-String appVersion = "1.2.0";
+String appVersion = "1.2.1";
 
 void initGlobals({bool testing: false}) async {
   final appDocDir = await getApplicationDocumentsDirectory();

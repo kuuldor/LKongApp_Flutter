@@ -16,6 +16,7 @@ import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
+import 'package:lkongapp/utils/async_avatar.dart';
 
 abstract class StoryListState<T extends StatefulWidget> extends State<T> {
   final int timerPeriod;
@@ -72,7 +73,7 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
   }
 }
 
-abstract class StoryListModel extends FetchedListModel {
+abstract class StoryListModel extends FetchedListModel implements ScrollerState {
   StoryListModel(Store<AppState> store) {
     if (store != null) {
       if (store.state.persistState.appConfig.setting.hideBlacklisterPost) {
@@ -137,6 +138,7 @@ abstract class StoryListModel extends FetchedListModel {
     var item = StoryItem(
       story: story,
       onTap: () => onStoryTap(context, story),
+      scroller: this,
       showDetailTime: showDetailTime,
     );
 

@@ -13,6 +13,7 @@ import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/ui/tools/menu_choice.dart';
 import 'package:lkongapp/utils/theme.dart';
+import 'package:lkongapp/utils/async_avatar.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
@@ -150,7 +151,7 @@ class StoryContentState extends State<StoryScreen> {
   }
 }
 
-class StoryContentModel {
+class StoryContentModel implements ScrollerState {
   final int uid;
   final String username;
   final StoryPageList story;
@@ -164,6 +165,8 @@ class StoryContentModel {
 
   int displayedFloor;
   bool get novelMode => state.readingMode == readingModeNovel;
+
+  bool scrolling = false;
 
   StoryContentModel({
     @required this.username,
@@ -455,7 +458,8 @@ class StoryContentModel {
       if (!loading && storyId != null) {
         loadInfo(storyId);
       }
-      _scrollController = ScrollController(initialScrollOffset: 0.0);
+      _scrollController =
+          ScrollController(initialScrollOffset: 0.0, keepScrollOffset: false);
       return Scaffold(
           key: _scaffoldKey,
           body: Container(
@@ -620,6 +624,7 @@ class StoryContentModel {
             onTap: (action) => onCommentAction(context, comment, action),
             author: story?.storyInfo?.authorid,
             concise: (state.readingMode == readingModeNovel),
+            scroller: this,
           );
           tile = wrapTile(item);
         } else {
@@ -758,7 +763,8 @@ class StoryContentModel {
         ),
       );
 
-      _scrollController = ScrollController(initialScrollOffset: 0.0);
+      _scrollController =
+          ScrollController(initialScrollOffset: 0.0, keepScrollOffset: false);
 
       if (lastError == null &&
           lastAvailPage > 0 &&
@@ -772,14 +778,17 @@ class StoryContentModel {
 
     return Scaffold(
       key: _scaffoldKey,
-      body: NotificationListener(
+      body: NotificationListener<ScrollNotification>(
         child: CustomScrollView(
           controller: _scrollController,
           slivers: buildSlivers(context, itemCount, buildCommentViews),
         ),
         onNotification: (notification) {
-          if (notification is ScrollNotification) {
-            state.setOffset(notification.metrics.pixels);
+          state.setOffset(notification.metrics.pixels);
+          if (notification is ScrollStartNotification) {
+            scrolling = true;
+          } else if (notification is ScrollEndNotification) {
+            scrolling = false;
           }
         },
       ),
