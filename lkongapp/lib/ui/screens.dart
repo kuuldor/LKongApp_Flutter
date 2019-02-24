@@ -9,3 +9,4 @@ export 'pmsession_screen.dart';
 export 'story_screen.dart';
 export 'account_manage.dart';
 export 'blacklist_manage.dart';
+export 'theme_setting.dart';

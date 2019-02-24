@@ -14,6 +14,7 @@ abstract class FetchedListModel extends GroupedListModel {
 
   bool get loading;
   String get lastError;
+  bool requestingMore = false;
 
   bool get initLoaded;
 
@@ -87,7 +88,8 @@ abstract class FetchedListModel extends GroupedListModel {
 
   @override
   void scrolledToBottom(context) {
-    if (!loading && lastError == null) {
+    if (!loading && !requestingMore && lastError == null) {
+      print("Load More");
       handleLoadMore(context);
     }
   }
@@ -121,6 +123,7 @@ abstract class FetchedListModel extends GroupedListModel {
   Future<Null> handleLoadMore(BuildContext context) async {
     var request = loadMoreRequest;
     if (request != null) {
+      requestingMore = true;
       dispatchAction(context)(request);
     }
   }

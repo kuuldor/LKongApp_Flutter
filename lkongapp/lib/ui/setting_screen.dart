@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/home_list.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/ui/screens.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -376,16 +377,118 @@ class SettingState extends State<SettingView> {
               }),
         ),
         CSHeader('主题'),
-        CSSelection(['日间模式', '夜间模式'], (index) {
-          print(index);
-          setState(() {
-            setting.nightMode = index == 1;
-          });
-        }, currentSelection: setting.nightMode ? 1 : 0),
-        CSButton(CSButtonType.DEFAULT_CENTER, "恢复默认主题", () {
-          setState(() {
-            setting.themeSetting.replace(ThemeSetting());
-          });
+        GestureDetector(
+          child: CSControl(
+            '夜间模式',
+            CupertinoSwitch(
+              value: setting.nightMode == true,
+              onChanged: (value) => setState(() {
+                    setting.nightMode = value;
+                  }),
+            ),
+          ),
+          onTap: () => setState(() {
+                setting.nightMode = (setting.nightMode == false);
+              }),
+        ),
+        CSControl(
+          '日间主题',
+          DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              style: TextStyle(
+                  fontSize: CS_ITEM_NAME_SIZE, color: theme.textColor),
+              value: setting.themeSetting.day,
+              items: setting.themeSetting.theme
+                  .build()
+                  .asMap()
+                  .map((int i, AppTheme theme) {
+                    return MapEntry(
+                        i,
+                        DropdownMenuItem<int>(
+                          value: i,
+                          child: Text(theme.name),
+                        ));
+                  })
+                  .values
+                  .toList(),
+              onChanged: (_value) {
+                setState(() {
+                  setting.themeSetting.day = _value;
+                });
+              },
+            ),
+          ),
+        ),
+        CSControl(
+          '夜间主题',
+          DropdownButtonHideUnderline(
+            child: DropdownButton<int>(
+              style: TextStyle(
+                  fontSize: CS_ITEM_NAME_SIZE, color: theme.textColor),
+              value: setting.themeSetting.night,
+              items: setting.themeSetting.theme
+                  .build()
+                  .asMap()
+                  .map((int i, AppTheme theme) {
+                    return MapEntry(
+                        i,
+                        DropdownMenuItem<int>(
+                          value: i,
+                          child: Text(theme.name),
+                        ));
+                  })
+                  .values
+                  .toList(),
+              onChanged: (_value) {
+                setState(() {
+                  setting.themeSetting.night = _value;
+                });
+              },
+            ),
+          ),
+        ),
+        CSButton(CSButtonType.DEFAULT_CENTER, "修改主题设置", () {
+          dispatchAction(context)(UINavigationPush(
+              context, LKongAppRoutes.themeSetting, false, (context) {
+            return ThemeScreen(
+              themeSetting: setting.themeSetting,
+              onChange: (themes) {
+                setState(() {
+                  setting.themeSetting.theme.replace(themes);
+                });
+              },
+            );
+          }));
+        }),
+        CSButton(CSButtonType.DESTRUCTIVE, "恢复默认主题", () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              // return object of type Dialog
+              return AlertDialog(
+                title: Text('恢复默认主题'),
+                content: Text('这将会抹去你对所有自定义主题所做的修改，是否继续？'),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    child: Text("取消"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("继续"),
+                    onPressed: () {
+                      setState(() {
+                        setting.themeSetting.replace(ThemeSetting());
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         }),
         CSHeader(""),
         CSControl('版权所有',
