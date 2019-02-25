@@ -12,6 +12,8 @@ class LKongAppTheme {
 
   Color get mainColor => htmlColor(appTheme.colors['main']);
   Color get barIconColor => isNightMode ? barTextColor : mainColor;
+  Color get backgroundColor =>
+      htmlColor(appTheme.colors['background'] ?? appTheme.colors['paper']);
   Color get pageColor => htmlColor(appTheme.colors['paper']);
   Color get barTextColor => htmlColor(appTheme.colors['barText']);
   Color get headerBG => htmlColor(appTheme.colors['headerBG']);
@@ -61,9 +63,12 @@ class LKongAppTheme {
     return _themeData ??=
         (isNightMode ? ThemeData.dark() : ThemeData.light()).copyWith(
       primaryColor: mainColor,
-      backgroundColor: pageColor,
+      backgroundColor: backgroundColor,
+      canvasColor: backgroundColor,
+      scaffoldBackgroundColor: pageColor,
+      cardColor: pageColor,
       accentColor: mainColor,
-      bottomAppBarColor: pageColor,
+      bottomAppBarColor: backgroundColor,
     );
   }
 

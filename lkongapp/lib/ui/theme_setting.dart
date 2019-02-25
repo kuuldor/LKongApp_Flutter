@@ -216,18 +216,17 @@ class ThemeViewState extends State<ThemeView> {
     ];
 
     if (theme.colors.length > 0) {
+      final colors = theme.colors.build();
+
       items.add(CSHeader('色彩设置'));
-      items.addAll(theme.colors
-          .build()
-          .toMap()
-          .map((name, color) => MapEntry(
-              name,
-              color2Widget(context, name, color, (newColor) {
+      items.addAll(themeColorKeys.keys
+          .map((name) => color2Widget(context, name, colors[name], (newColor) {
                 setState(() {
-                  theme.colors.updateValue(name, (v) => newColor);
+                  theme.colors.updateValue(name, (v) => newColor,
+                      ifAbsent: () => newColor);
                 });
-              })))
-          .values);
+              }))
+          .toList());
     }
 
     if (!widget.readOnly && widget.onDelete != null) {
@@ -284,7 +283,8 @@ class ThemeViewState extends State<ThemeView> {
   Widget color2Widget(BuildContext context, String name, String color,
       Function(String) onChange) {
     final appTheme = LKModeledApp.modelOf(context).theme;
-    Color currentColor = htmlColor(color);
+    Color currentColor =
+        color != null ? htmlColor(color) : appTheme.backgroundColor;
 
     return GestureDetector(
       child: CSControl(

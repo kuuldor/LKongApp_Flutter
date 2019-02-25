@@ -42,29 +42,21 @@ Widget wrapItem(BuildContext context, Widget item) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
   double size = theme.captionSize;
 
-  return Container(
-      decoration: BoxDecoration(
-        color: theme.pageColor,
-      ),
-      child: Column(children: <Widget>[
-        SizedBox(height: 2.0),
-        item,
-        Divider(
-          height: size,
-        ),
-      ]));
+  return Column(children: <Widget>[
+    SizedBox(height: 2.0),
+    item,
+    Divider(
+      height: size,
+    ),
+  ]);
 }
 
 Widget wrapItemNoDivider(BuildContext context, Widget item) {
   LKongAppTheme theme = LKModeledApp.modelOf(context).theme;
   double size = theme.captionSize;
 
-  return Container(
-      decoration: BoxDecoration(
-        color: theme.pageColor,
-      ),
-      child: Column(children: <Widget>[
-        SizedBox(height: size / 2.0),
-        item,
-      ]));
+  return Column(children: <Widget>[
+    SizedBox(height: size / 2.0),
+    item,
+  ]);
 }

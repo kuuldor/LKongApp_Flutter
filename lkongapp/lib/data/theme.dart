@@ -1,7 +1,8 @@
 final Map<String, String> themeColorKeys = {
   "main": "主色调",
   "barText": "标题栏文字颜色",
-  "paper": "背景色",
+  "background": "系统背景色",
+  "paper": "阅读背景色",
   "headerBG": "标题背景",
   "quoteBG": "引文背景",
   "text": "正文颜色",
