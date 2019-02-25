@@ -60,7 +60,7 @@ abstract class FetchedListModel extends GroupedListModel {
           item = createListItem(context, index);
         } else {
           if (lastError == null && !loading) {
-            item = Container();
+            return Container();
           } else {
             item = Container(
                 height: 84.0,
