@@ -107,33 +107,43 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
     );
 
     LKongApp.store.dispatch(Rehydrate());
+
     return StoreProvider<AppState>(
       store: LKongApp.store,
-      child: buildConnectedWidget(
-          context, LKAppModel.fromStore, _createModeledApp),
+      child: buildConnectedWidget(context, LKAppModel.fromStore, (viewModel) {
+        return LKModeledApp(
+          model: viewModel,
+          child: GestureDetector(
+            child: MaterialApp(
+              title: LKongLocalizations().appTitle,
+              theme: viewModel.theme.themeData,
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: [
+                LKongLocalizationsDelegate(),
+              ],
+              initialRoute: LKongAppRoutes.home,
+              routes: {
+                LKongAppRoutes.login: (context) =>
+                    LoginScreen(key: LKongAppKeys.loginScreen),
+                LKongAppRoutes.home: (context) => HomeScreen(),
+                LKongAppRoutes.settings: (context) => SettingScreen(),
+                LKongAppRoutes.accountManage: (context) =>
+                    AccountManageScreen(),
+                LKongAppRoutes.manageBlacklist: (context) =>
+                    BlacklistManageScreen(),
+                LKongAppRoutes.favorite: (context) => FavoriteScreen(),
+              },
+            ),
+            onDoubleTap: () {
+              final setting = selectSetting(LKongApp.store);
+              if (setting.shakeToShiftNightMode) {
+                LKongApp.store.dispatch(ChangeSetting(
+                    (b) => b..nightMode = (b.nightMode == false)));
+              }
+            },
+          ),
+        );
+      }),
     );
   }
-}
-
-Widget _createModeledApp(viewModel) {
-  return LKModeledApp(
-      model: viewModel,
-      child: MaterialApp(
-        title: LKongLocalizations().appTitle,
-        theme: viewModel.theme.themeData,
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: [
-          LKongLocalizationsDelegate(),
-        ],
-        initialRoute: LKongAppRoutes.home,
-        routes: {
-          LKongAppRoutes.login: (context) =>
-              LoginScreen(key: LKongAppKeys.loginScreen),
-          LKongAppRoutes.home: (context) => HomeScreen(),
-          LKongAppRoutes.settings: (context) => SettingScreen(),
-          LKongAppRoutes.accountManage: (context) => AccountManageScreen(),
-          LKongAppRoutes.manageBlacklist: (context) => BlacklistManageScreen(),
-          LKongAppRoutes.favorite: (context) => FavoriteScreen(),
-        },
-      ));
 }

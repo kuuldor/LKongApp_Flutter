@@ -407,6 +407,22 @@ class SettingState extends State<SettingView> {
                 setting.nightMode = (setting.nightMode == false);
               }),
         ),
+        GestureDetector(
+          child: CSControl(
+            '双击切换夜间模式',
+            CupertinoSwitch(
+              value: setting.shakeToShiftNightMode == true,
+              onChanged: (value) => setState(() {
+                    setting.shakeToShiftNightMode = value;
+                  }),
+            ),
+            fontSize: CS_ITEM_NAME_SIZE,
+          ),
+          onTap: () => setState(() {
+                setting.shakeToShiftNightMode =
+                    (setting.shakeToShiftNightMode == false);
+              }),
+        ),
         CSControl(
           '日间主题',
           DropdownButtonHideUnderline(
