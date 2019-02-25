@@ -7,13 +7,14 @@ import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/models/app_state.dart';
 import 'package:lkongapp/utils/http_session.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:package_info/package_info.dart';
 
 LKongHttpSession session;
 NetworkIsolate apiIsolate;
 NetworkIsolate downloadIsolate;
 ConnectivityResult connectivity;
 
-String appVersion = "1.2.1";
+PackageInfo packageInfo;
 
 void initGlobals({bool testing: false}) async {
   final appDocDir = await getApplicationDocumentsDirectory();
@@ -29,6 +30,8 @@ void initGlobals({bool testing: false}) async {
 
     apiIsolate.sendReceive({"DOCDIR": appDocDir.path});
   }
+
+  packageInfo = await PackageInfo.fromPlatform();
 }
 
 Timer createPeriodicTimer(Store<AppState> store,

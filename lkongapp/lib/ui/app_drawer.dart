@@ -191,7 +191,7 @@ class AppDrawer extends StatelessWidget {
 
     children.add(AboutListTile(
       applicationName: '龍空',
-      applicationVersion: appVersion,
+      applicationVersion: packageInfo.version,
       icon: Icon(Icons.info_outline),
     ));
 
