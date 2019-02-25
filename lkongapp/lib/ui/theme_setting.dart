@@ -106,10 +106,33 @@ class ThemeScreenState extends State<ThemeScreen> {
 
   Widget theme2Widget(BuildContext context, AppTheme theme,
       {bool readOnly: false}) {
+    final appTheme = LKModeledApp.modelOf(context).theme;
     return GestureDetector(
       child: CSControl(
         '${theme.name}',
-        Container(),
+        Row(
+          children: <Widget>[
+            Container(
+              width: 24.0,
+              height: 20.0,
+              decoration: new BoxDecoration(
+                color: htmlColor(theme.colors['main']),
+                border: Border.all(color: appTheme.textColor),
+              ),
+            ),
+            SizedBox(
+              width: 4.0,
+            ),
+            Container(
+              width: 24.0,
+              height: 20.0,
+              decoration: new BoxDecoration(
+                color: htmlColor(theme.colors['paper']),
+                border: Border.all(color: appTheme.textColor),
+              ),
+            ),
+          ],
+        ),
         fontSize: CS_ITEM_NAME_SIZE,
       ),
       onTap: () {
@@ -290,8 +313,8 @@ class ThemeViewState extends State<ThemeView> {
       child: CSControl(
         '${themeColorKeys[name]}',
         Container(
-          width: 24.0,
-          height: 16.0,
+          width: 28.0,
+          height: 20.0,
           decoration: new BoxDecoration(
             color: currentColor,
             border: Border.all(color: appTheme.textColor),
