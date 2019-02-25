@@ -135,7 +135,7 @@ abstract class NotifScreenModel extends StoryListModel {
   }
 
   void menuSelected(BuildContext context, Choice choice) {
-    print("Menu Selcected for ${choice.title}");
+    // print("Menu Selcected for ${choice.title}");
 
     int newType;
     switch (choice.action) {

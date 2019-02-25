@@ -135,7 +135,7 @@ class SearchScreenState extends State<SearchScreen> {
   }
 
   void menuSelected(BuildContext context, Choice choice) {
-    print("Menu Selcected for ${choice.title}");
+    // print("Menu Selcected for ${choice.title}");
 
     int sort;
     switch (choice.action) {

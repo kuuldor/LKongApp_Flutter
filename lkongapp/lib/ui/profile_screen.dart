@@ -300,7 +300,7 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
   }
 
   void menuSelected(BuildContext context, Choice choice) {
-    print("Menu Selcected for ${choice.title}");
+    // print("Menu Selcected for ${choice.title}");
     final completer = Completer<String>();
 
     FollowRequest req;
