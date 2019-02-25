@@ -392,7 +392,7 @@ class ColorPickDialogContentState extends State<ColorPickDialogContent> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            Text('色彩选择器模式：'),
+            Text('选择器模式：'),
             DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 style: TextStyle(
