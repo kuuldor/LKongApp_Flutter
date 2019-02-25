@@ -321,7 +321,7 @@ class ComposeState extends State<ComposeScreen> {
               selectionStart = cursor.start;
               selectionEnd = cursor.end;
               dispatchAction(context)(UINavigationPush(
-                  context, LKongAppRoutes.emojiPicker, false, (context) {
+                  context, LKongAppRoutes.emojiPicker, builder: (context) {
                 return EmojiPicker(
                   onEmojiTapped: (context, emid) {
                     final link = "http://img.lkong.cn/bq/em$emid.gif";

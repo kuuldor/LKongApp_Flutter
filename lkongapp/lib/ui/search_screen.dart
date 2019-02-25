@@ -104,6 +104,13 @@ class SearchScreenState extends State<SearchScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    _focusNode.dispose();
+
+    super.dispose();
+  }
+
   void startSearch(String s, int type, int sort) {
     _focusNode.unfocus();
     if (s.length > 0) {

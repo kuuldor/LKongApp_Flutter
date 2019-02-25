@@ -19,7 +19,8 @@ class UINavigationPush {
   final bool unique;
   final WidgetBuilder builder;
 
-  UINavigationPush(this.context, this.routeName,  [this.unique = false, this.builder]);
+  UINavigationPush(this.context, this.routeName,
+      {this.unique: false, this.builder});
 }
 
 class UINavigationPopTo {

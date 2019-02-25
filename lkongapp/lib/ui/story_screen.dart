@@ -513,7 +513,7 @@ class StoryContentModel implements ScrollerState {
 
   Widget _buildStoryView(BuildContext context) {
     int storyId = state.storyId;
-    int pageNo = state.page;
+    int pageNo = state.page ?? 1;
 
     final theme = LKModeledApp.modelOf(context).theme;
     final subheadStyle = theme.subheadStyle;

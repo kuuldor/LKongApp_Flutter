@@ -112,7 +112,7 @@ class PMSessionModel extends FetchedListModel {
   @override
   APIRequest get refreshRequest {
     if (session == null || session.current == 0) {
-      return null;
+      return fetchFromScratchRequest;
     }
 
     final Completer<String> completer = Completer<String>();
@@ -246,8 +246,11 @@ class PMSessionModel extends FetchedListModel {
       }
     }
 
+    final theme = LKModeledApp.modelOf(context).theme;
+
     return Scaffold(
       appBar: appBar(context),
+      backgroundColor: theme.pageColor,
       body: buildListView(context),
     );
   }

@@ -248,7 +248,8 @@ class AtMeScreenModel extends NotifScreenModel {
       (AtMeScreenState state) => (Store<AppState> store) => AtMeScreenModel(
             store: store,
             loading: store.state.uiState.content.userData[selectUID(store)]
-                ?.atMe?.loading,
+                    ?.atMe?.loading ??
+                false,
             lastError: store.state.uiState.content.userData[selectUID(store)]
                 ?.atMe?.lastError,
             storyList:
@@ -280,7 +281,7 @@ class AtMeScreenModel extends NotifScreenModel {
   @override
   APIRequest get refreshRequest {
     if (storyList == null || storyList.current == 0) {
-      return null;
+      return fetchFromScratchRequest;
     }
 
     final Completer<String> completer = Completer<String>();
@@ -367,7 +368,7 @@ class NoticeScreenModel extends NotifScreenModel {
   @override
   APIRequest get refreshRequest {
     if (noticeList == null || noticeList.current == 0) {
-      return null;
+      return fetchFromScratchRequest;
     }
 
     final Completer<String> completer = Completer<String>();
@@ -463,7 +464,7 @@ class RatelogScreenModel extends NotifScreenModel {
   @override
   APIRequest get refreshRequest {
     if (ratelogList == null || ratelogList.current == 0) {
-      return null;
+      return fetchFromScratchRequest;
     }
 
     final Completer<String> completer = Completer<String>();
@@ -558,7 +559,7 @@ class PMScreenModel extends NotifScreenModel {
   @override
   APIRequest get refreshRequest {
     if (pmList == null || pmList.current == 0) {
-      return null;
+      return fetchFromScratchRequest;
     }
 
     final Completer<String> completer = Completer<String>();

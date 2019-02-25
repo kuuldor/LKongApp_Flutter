@@ -107,7 +107,7 @@ class HomeListModel extends StoryListModel {
   @override
   APIRequest get refreshRequest {
     if (storyList.current == 0) {
-      return null;
+      return fetchFromScratchRequest;
     }
     final Completer<String> completer = Completer<String>();
     completer.future.then((error) {

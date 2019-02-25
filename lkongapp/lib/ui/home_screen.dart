@@ -171,7 +171,8 @@ class PageModel {
       },
       showLoginScreen: (BuildContext context) {
         Future(() {
-          store.dispatch(UINavigationPush(context, LKongAppRoutes.login, true));
+          store.dispatch(
+              UINavigationPush(context, LKongAppRoutes.login, unique: true));
         });
       },
       notice: selectUserData(store)?.newNotice,

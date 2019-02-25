@@ -27,7 +27,7 @@ void openThreadView(BuildContext context, int storyId,
     dispatchAction(context)(StoryInfoRequest(null, storyId));
   }
   dispatchAction(context)(
-      UINavigationPush(context, LKongAppRoutes.story, false, (context) {
+      UINavigationPush(context, LKongAppRoutes.story, builder: (context) {
     return StoryScreen(
       storyId: storyId,
       page: page,
@@ -44,7 +44,7 @@ Future<Null> onForumTap(BuildContext context, Forum forum) {
 
   return Future(() {
     dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.forumStory, false, (context) {
+        UINavigationPush(context, LKongAppRoutes.forumStory, builder: (context) {
       return ForumStory(
         forum: forum,
       );
@@ -57,7 +57,7 @@ Future<Null> onUserTap(BuildContext context, UserInfo user) {
 
   return Future(() {
     dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.profile, false, (context) {
+        UINavigationPush(context, LKongAppRoutes.profile, builder: (context) {
       return ProfileScreen(
         user: user,
       );
@@ -68,7 +68,7 @@ Future<Null> onUserTap(BuildContext context, UserInfo user) {
 Future<Null> onPMTap(BuildContext context, int pmid) {
   return Future(() {
     dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.pmsession, false, (context) {
+        UINavigationPush(context, LKongAppRoutes.pmsession, builder: (context) {
       return PMSessionScreen(
         pmid: pmid,
       );
@@ -81,7 +81,7 @@ Future<Null> openUserView(BuildContext context, String userName) {
 
   return Future(() {
     dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.profile, false, (context) {
+        UINavigationPush(context, LKongAppRoutes.profile, builder: (context) {
       return ProfileScreen(
         user: user,
       );
@@ -97,7 +97,7 @@ onReplyButtonTap(
   @required String username,
 }) =>
     Future(() => dispatchAction(context)(
-            UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
+            UINavigationPush(context, LKongAppRoutes.reply, builder: (context) {
           ReplyType replyType;
           if (story != null) {
             if (comment != null) {
@@ -125,7 +125,7 @@ onEditButtonTap(
   @required String username,
 }) =>
     Future(() => dispatchAction(context)(
-            UINavigationPush(context, LKongAppRoutes.reply, false, (context) {
+            UINavigationPush(context, LKongAppRoutes.reply, builder: (context) {
           ReplyType replyType;
           if (story != null && comment != null) {
             if (comment.lou == 1) {
@@ -152,7 +152,7 @@ onPostButtonTap(
   @required String username,
 }) =>
     Future(() => dispatchAction(context)(
-            UINavigationPush(context, LKongAppRoutes.post, false, (context) {
+            UINavigationPush(context, LKongAppRoutes.post, builder: (context) {
           ReplyType replyType;
           if (forum != null) {
             replyType = ReplyType.Forum;

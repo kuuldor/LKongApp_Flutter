@@ -89,7 +89,6 @@ abstract class FetchedListModel extends GroupedListModel {
   @override
   void scrolledToBottom(context) {
     if (!loading && !requestingMore && lastError == null) {
-      print("Load More");
       handleLoadMore(context);
     }
   }

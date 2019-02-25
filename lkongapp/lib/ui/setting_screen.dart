@@ -94,6 +94,8 @@ class SettingState extends State<SettingView> {
 
   AppConfig _originalCopy;
 
+  TextEditingController _signatureTextController;
+
   Function(AppConfig) _showSaveDialog;
 
   @override
@@ -101,6 +103,8 @@ class SettingState extends State<SettingView> {
     super.initState();
 
     _originalCopy = config.build();
+    _signatureTextController = TextEditingController(
+        text: config.accountSettings.currentSetting.signature);
   }
 
   void checkSaveConfig() {
@@ -184,6 +188,7 @@ class SettingState extends State<SettingView> {
                     setting.saveCredential = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.saveCredential = !setting.saveCredential;
@@ -198,6 +203,7 @@ class SettingState extends State<SettingView> {
                     setting.autoLogin = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.autoLogin = !setting.autoLogin;
@@ -212,6 +218,7 @@ class SettingState extends State<SettingView> {
                     setting.autoPunch = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.autoPunch = !setting.autoPunch;
@@ -227,6 +234,7 @@ class SettingState extends State<SettingView> {
                     account.threadOnlyHome = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 account.threadOnlyHome = !account.threadOnlyHome;
@@ -241,6 +249,7 @@ class SettingState extends State<SettingView> {
                     setting.showForumInfo = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.showForumInfo = !setting.showForumInfo;
@@ -250,7 +259,7 @@ class SettingState extends State<SettingView> {
         CSWidget(
           TextField(
             style: TextStyle(fontSize: CS_ITEM_NAME_SIZE),
-            controller: TextEditingController(text: account.signature),
+            controller: _signatureTextController,
             decoration: InputDecoration(
                 hintText: "在此输入论坛发帖签名", border: InputBorder.none),
             onChanged: (text) {
@@ -282,6 +291,7 @@ class SettingState extends State<SettingView> {
                     setting.hideBlacklisterPost = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.hideBlacklisterPost = !setting.hideBlacklisterPost;
@@ -296,6 +306,7 @@ class SettingState extends State<SettingView> {
                     setting.showDetailTime = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.showDetailTime = !setting.showDetailTime;
@@ -310,6 +321,7 @@ class SettingState extends State<SettingView> {
                     setting.detectLink = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.detectLink = (setting.detectLink == false);
@@ -325,6 +337,7 @@ class SettingState extends State<SettingView> {
                     setting.noCropImage = !value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.noCropImage = (setting.noCropImage == false);
@@ -336,7 +349,7 @@ class SettingState extends State<SettingView> {
             DropdownButtonHideUnderline(
               child: DropdownButton<int>(
                 style: TextStyle(
-                    fontSize: CS_ITEM_NAME_SIZE, color: theme.textColor),
+                    fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
                 value: setting.noImageMode,
                 items: ['关闭', '开启', '流量']
                     .asMap()
@@ -357,6 +370,7 @@ class SettingState extends State<SettingView> {
                 },
               ),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.noImageMode = (setting.noImageMode + 1) % 3;
@@ -371,6 +385,7 @@ class SettingState extends State<SettingView> {
                     setting.loadAvatar = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.loadAvatar = (setting.loadAvatar == false);
@@ -386,6 +401,7 @@ class SettingState extends State<SettingView> {
                     setting.nightMode = value;
                   }),
             ),
+            fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
                 setting.nightMode = (setting.nightMode == false);
@@ -396,7 +412,7 @@ class SettingState extends State<SettingView> {
           DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               style: TextStyle(
-                  fontSize: CS_ITEM_NAME_SIZE, color: theme.textColor),
+                  fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
               value: setting.themeSetting.day,
               items: setting.themeSetting.theme
                   .build()
@@ -418,13 +434,14 @@ class SettingState extends State<SettingView> {
               },
             ),
           ),
+          fontSize: CS_ITEM_NAME_SIZE,
         ),
         CSControl(
           '夜间主题',
           DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               style: TextStyle(
-                  fontSize: CS_ITEM_NAME_SIZE, color: theme.textColor),
+                  fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
               value: setting.themeSetting.night,
               items: setting.themeSetting.theme
                   .build()
@@ -446,61 +463,78 @@ class SettingState extends State<SettingView> {
               },
             ),
           ),
+          fontSize: CS_ITEM_NAME_SIZE,
         ),
-        CSButton(CSButtonType.DEFAULT_CENTER, "修改主题设置", () {
-          dispatchAction(context)(UINavigationPush(
-              context, LKongAppRoutes.themeSetting, false, (context) {
-            return ThemeScreen(
-              themeSetting: setting.themeSetting,
-              onChange: (themes) {
-                setState(() {
-                  setting.themeSetting.theme.replace(themes);
-                });
+        CSButton(
+          CSButtonType.DEFAULT_CENTER,
+          "修改主题设置",
+          () {
+            dispatchAction(context)(UINavigationPush(
+                context, LKongAppRoutes.themeSetting, builder: (context) {
+              return ThemeScreen(
+                themeSetting: setting.themeSetting,
+                onChange: (themes) {
+                  setState(() {
+                    setting.themeSetting.theme.replace(themes);
+                  });
+                },
+              );
+            }));
+          },
+          fontSize: CS_ITEM_NAME_SIZE,
+        ),
+        CSButton(
+          CSButtonType.DESTRUCTIVE,
+          "恢复默认主题",
+          () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                // return object of type Dialog
+                return AlertDialog(
+                  title: Text('恢复默认主题'),
+                  content: Text('这将会抹去你对所有自定义主题所做的修改，是否继续？'),
+                  actions: <Widget>[
+                    // usually buttons at the bottom of the dialog
+                    FlatButton(
+                      child: Text("取消"),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    FlatButton(
+                      child: Text("继续"),
+                      onPressed: () {
+                        setState(() {
+                          setting.themeSetting.replace(ThemeSetting());
+                        });
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
               },
             );
-          }));
-        }),
-        CSButton(CSButtonType.DESTRUCTIVE, "恢复默认主题", () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              // return object of type Dialog
-              return AlertDialog(
-                title: Text('恢复默认主题'),
-                content: Text('这将会抹去你对所有自定义主题所做的修改，是否继续？'),
-                actions: <Widget>[
-                  // usually buttons at the bottom of the dialog
-                  FlatButton(
-                    child: Text("取消"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  FlatButton(
-                    child: Text("继续"),
-                    onPressed: () {
-                      setState(() {
-                        setting.themeSetting.replace(ThemeSetting());
-                      });
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        }),
+          },
+          fontSize: CS_ITEM_NAME_SIZE,
+        ),
+        CSHeader("缓存管理"),
+        CSButton(
+          CSButtonType.DESTRUCTIVE,
+          "删除所有缓存",
+          () async {
+            final cache = await CacheManager.getInstance();
+            cache.dumpCache();
+          },
+          fontSize: CS_ITEM_NAME_SIZE,
+        ),
         CSHeader(""),
-        CSControl('版权所有',
-            Text(setting.copyright, style: TextStyle(color: Colors.grey))),
-        CSButton(CSButtonType.DEFAULT, "Licenses", () {
-          print("It works!");
-        }),
+        CSControl(
+          '版权所有',
+          Text(setting.copyright, style: TextStyle(color: Colors.grey)),
+          fontSize: CS_ITEM_NAME_SIZE,
+        ),
         CSHeader(""),
-        CSButton(CSButtonType.DESTRUCTIVE, "删除所有缓存", () async {
-          final cache = await CacheManager.getInstance();
-          cache.dumpCache();
-        })
       ]),
     );
   }

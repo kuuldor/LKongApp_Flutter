@@ -340,7 +340,7 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
         break;
       case MenuAction.showAll:
         dispatchAction(context)(
-            UINavigationPush(context, LKongAppRoutes.post, false, (context) {
+            UINavigationPush(context, LKongAppRoutes.post, builder: (context) {
           if (user != null) {
             return UserStory(
               user: user,
@@ -352,7 +352,7 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
         break;
       case MenuAction.chat:
         dispatchAction(context)(UINavigationPush(
-            context, LKongAppRoutes.pmsession, false, (context) {
+            context, LKongAppRoutes.pmsession, builder: (context) {
           return PMSessionScreen(
             pmid: profile.user.uid,
           );
@@ -360,7 +360,7 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
         break;
       case MenuAction.manageBlackList:
         dispatchAction(context)(UINavigationPush(
-            context, LKongAppRoutes.manageBlacklist, false, (context) {
+            context, LKongAppRoutes.manageBlacklist, builder: (context) {
           return BlacklistManageScreen();
         }));
         break;
