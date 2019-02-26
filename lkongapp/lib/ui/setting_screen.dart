@@ -409,7 +409,7 @@ class SettingState extends State<SettingView> {
         ),
         GestureDetector(
           child: CSControl(
-            '双击切换夜间模式',
+            '摇晃手机切换夜间模式',
             CupertinoSwitch(
               value: setting.shakeToShiftNightMode == true,
               onChanged: (value) => setState(() {

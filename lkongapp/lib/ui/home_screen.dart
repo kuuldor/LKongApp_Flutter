@@ -43,7 +43,7 @@ const pages = [
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key key}) : super(key: key);
 
-  final pageController = PageController();
+  PageController pageController;
   void navigationTapped(int page) {
     //Animating Page
     pageController.jumpToPage(page);
@@ -53,11 +53,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = LKModeledApp.modelOf(context).theme;
     return buildConnectedWidget<PageModel>(context, PageModel.fromStore,
-        (viewModel) {
+        (PageModel viewModel) {
       if (!viewModel.isAuthed) {
         //viewModel.showLoginScreen(context);
       }
-
+      pageController = PageController(initialPage: viewModel.page);
       return Scaffold(
         drawer: AppDrawerBuilder(),
         body: PageView(
