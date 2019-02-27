@@ -64,6 +64,8 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
           ..backgroundFetch = true
           ..cacheSize = 4
           ..detectLink = false
+          ..noCropImage = false
+          ..switchMethod = 0
           ..update(updates);
       });
 
@@ -117,6 +119,10 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   @nullable
   @BuiltValueField(wireName: 'noCropImage')
   bool get noCropImage;
+  @nullable
+  @BuiltValueField(wireName: 'nightModeSwitchMethod')
+  int get switchMethod;
+
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));
   }
@@ -166,11 +172,12 @@ abstract class AccountSettings
   factory AccountSettings([updates(AccountSettingsBuilder b)]) =>
       _$AccountSettings((b) {
         b
-          ..currentSetting.replace(AccountSetting())
-          ..accounts.addAll(Map<int, AccountSetting>())
+          // ..currentSetting.replace(AccountSetting())
+          // ..accounts.addAll(Map<int, AccountSetting>())
           ..update(updates);
       });
 
+  @nullable
   @BuiltValueField(wireName: 'currentSetting')
   AccountSetting get currentSetting;
 

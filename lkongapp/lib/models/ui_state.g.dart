@@ -21,9 +21,6 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
       'navigationRoute',
       serializers.serialize(object.navigationRoute,
           specifiedType: const FullType(String)),
-      'homePageIndex',
-      serializers.serialize(object.homePageIndex,
-          specifiedType: const FullType(int)),
       'atMeScreenType',
       serializers.serialize(object.atMeScreenType,
           specifiedType: const FullType(int)),
@@ -31,6 +28,12 @@ class _$UIStateSerializer implements StructuredSerializer<UIState> {
       serializers.serialize(object.content,
           specifiedType: const FullType(ContentCache)),
     ];
+    if (object.homePageIndex != null) {
+      result
+        ..add('homePageIndex')
+        ..add(serializers.serialize(object.homePageIndex,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -90,9 +93,6 @@ class _$UIState extends UIState {
       : super._() {
     if (navigationRoute == null) {
       throw new BuiltValueNullFieldError('UIState', 'navigationRoute');
-    }
-    if (homePageIndex == null) {
-      throw new BuiltValueNullFieldError('UIState', 'homePageIndex');
     }
     if (atMeScreenType == null) {
       throw new BuiltValueNullFieldError('UIState', 'atMeScreenType');

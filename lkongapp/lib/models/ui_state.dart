@@ -17,7 +17,6 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
 
   factory UIState([updates(UIStateBuilder b)]) => _$UIState((b) {
         b
-          ..homePageIndex = 0
           ..atMeScreenType = 0
           ..content.replace(ContentCache())
           ..navigationRoute = "/"
@@ -26,6 +25,7 @@ abstract class UIState implements Built<UIState, UIStateBuilder> {
 
   String get navigationRoute;
 
+  @nullable
   @BuiltValueField(wireName: 'homePageIndex')
   int get homePageIndex;
 
@@ -73,7 +73,6 @@ abstract class ContentCache
   BuiltList<HotDigestResult> get hotDigest;
 
   BuiltList<UserInfo> get blacklist;
-
 }
 
 abstract class Profile implements Built<Profile, ProfileBuilder> {

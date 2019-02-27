@@ -61,7 +61,7 @@ class HomeListModel extends StoryListModel {
       lastError: store.state.uiState.content.homeList.lastError,
       storyList: store.state.uiState.content.homeList,
       threadOnlyHome: store.state.persistState.appConfig.accountSettings
-          .currentSetting.threadOnlyHome,
+          .currentSetting?.threadOnlyHome ?? false,
       showDetailTime: selectSetting(store).showDetailTime,
     );
   }

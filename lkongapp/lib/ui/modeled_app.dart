@@ -8,16 +8,22 @@ import 'package:redux/redux.dart';
 class LKAppModel {
   final LKongAppTheme theme;
   final bool shakeToNM;
+  final int switchMethod;
 
   LKAppModel({
     @required this.theme,
     @required this.shakeToNM,
+    @required this.switchMethod,
   });
 
   static LKAppModel fromStore(Store<AppState> store) {
-    var _theme = LKongAppTheme.fromStore(store);
+    final _theme = LKongAppTheme.fromStore(store);
+    final settings = selectSetting(store);
     LKAppModel model = LKAppModel(
-        theme: _theme, shakeToNM: selectSetting(store).shakeToShiftNightMode);
+      theme: _theme,
+      shakeToNM: settings.shakeToShiftNightMode,
+      switchMethod: settings.switchMethod,
+    );
     return model;
   }
 
@@ -25,11 +31,12 @@ class LKAppModel {
   bool operator ==(other) {
     return other is LKAppModel &&
         theme == other.theme &&
-        shakeToNM == other.shakeToNM;
+        shakeToNM == other.shakeToNM &&
+        switchMethod == other.switchMethod;
   }
 
   @override
-  int get hashCode => hash2(theme, shakeToNM);
+  int get hashCode => hash3(theme, shakeToNM, switchMethod);
 }
 
 class LKModeledApp extends InheritedWidget {

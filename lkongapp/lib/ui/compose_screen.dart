@@ -50,7 +50,7 @@ class ComposeState extends State<ComposeScreen> {
   static final String editorPattern =
       r"<i class=.pstatus.>.*?</i><br\s*[/]?><br\s*[/]?>";
   static final String quotaPattern =
-      "<blockquote class=.lkquote.>.*?</blockquote>";
+      "<blockquote class=.lkquote.>[^]*?</blockquote>(<br>)?";
 
   final subjectController = TextEditingController();
   final contentController = TextEditingController();
@@ -86,11 +86,12 @@ class ComposeState extends State<ComposeScreen> {
   String appendSignature(BuildContext context, String content) {
     if (!hasSignature(content)) {
       String signatureRaw = stateOf(context)
-          .persistState
-          .appConfig
-          .accountSettings
-          .currentSetting
-          .signature;
+              .persistState
+              .appConfig
+              .accountSettings
+              .currentSetting
+              ?.signature ??
+          "";
       RegExp dotPattern = RegExp(r"'(\.\*\?)\'(\.\*\?)>(\.\*\?)");
       final signature = signaturePattern.replaceAllMapped(
           dotPattern, (Match m) => "'$signatureLink'>$signatureRaw");

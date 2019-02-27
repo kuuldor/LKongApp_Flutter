@@ -39,6 +39,8 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
 
   ShakeDetector shakeDetector;
 
+  int quickSwitchNightMode = -1;
+
   @override
   void initState() {
     super.initState();
@@ -49,9 +51,13 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
       globals.connectivity = result;
     });
 
+    quickSwitchNightMode = -1;
     ShakeDetector.getInstance().then((detector) {
       shakeDetector = detector;
-      shakeSubscription = shakeDetector.listen((shake) => shakeDetected());
+      shakeSubscription = shakeDetector.listen((shake) => switchNightMode());
+      if (quickSwitchNightMode < 0) {
+        shakeDetector.stopCaptureSensor();
+      }
     });
   }
 
@@ -73,13 +79,32 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
         globals.store.dispatch(CheckNoticeRequest(null, user));
       }
 
-      if (shakeDetector != null) {
+      final settings = selectSetting(globals.store);
+      if (shakeDetector != null &&
+          settings.shakeToShiftNightMode &&
+          (settings.switchMethod ?? 0) == 0) {
         shakeDetector.startCaptureSensor();
       }
     } else if (state == AppLifecycleState.paused) {
       if (shakeDetector != null) {
         shakeDetector.stopCaptureSensor();
       }
+    }
+  }
+
+  void setSwitchMode(bool enabled, int mode) {
+    if (enabled) {
+      if (quickSwitchNightMode != mode) {
+        quickSwitchNightMode = mode;
+        if (mode == 0) {
+          shakeDetector?.startCaptureSensor();
+        } else {
+          shakeDetector?.stopCaptureSensor();
+        }
+      }
+    } else {
+      quickSwitchNightMode = -1;
+      shakeDetector?.stopCaptureSensor();
     }
   }
 
@@ -112,33 +137,71 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
     return StoreProvider<AppState>(
       store: globals.store,
       child: buildConnectedWidget(context, LKAppModel.fromStore, (viewModel) {
-        return LKModeledApp(
-          model: viewModel,
-          child: MaterialApp(
-            title: LKongLocalizations().appTitle,
-            theme: viewModel.theme.themeData,
-            debugShowCheckedModeBanner: false,
-            localizationsDelegates: [
-              LKongLocalizationsDelegate(),
-            ],
-            initialRoute: LKongAppRoutes.home,
-            routes: {
-              LKongAppRoutes.login: (context) =>
-                  LoginScreen(key: LKongAppKeys.loginScreen),
-              LKongAppRoutes.home: (context) => HomeScreen(),
-              LKongAppRoutes.settings: (context) => SettingScreen(),
-              LKongAppRoutes.accountManage: (context) => AccountManageScreen(),
-              LKongAppRoutes.manageBlacklist: (context) =>
-                  BlacklistManageScreen(),
-              LKongAppRoutes.favorite: (context) => FavoriteScreen(),
-            },
-          ),
-        );
+        final settings = selectSetting(globals.store);
+        final enabled = settings.shakeToShiftNightMode;
+        final mode = settings.switchMethod;
+
+        setSwitchMode(enabled, mode);
+
+        if (enabled && mode == 1) {
+          return LKModeledApp(
+            model: viewModel,
+            child: GestureDetector(
+              child: MaterialApp(
+                title: LKongLocalizations().appTitle,
+                theme: viewModel.theme.themeData,
+                debugShowCheckedModeBanner: false,
+                localizationsDelegates: [
+                  LKongLocalizationsDelegate(),
+                ],
+                initialRoute: LKongAppRoutes.home,
+                routes: {
+                  LKongAppRoutes.login: (context) =>
+                      LoginScreen(key: LKongAppKeys.loginScreen),
+                  LKongAppRoutes.home: (context) => HomeScreen(),
+                  LKongAppRoutes.settings: (context) => SettingScreen(),
+                  LKongAppRoutes.accountManage: (context) =>
+                      AccountManageScreen(),
+                  LKongAppRoutes.manageBlacklist: (context) =>
+                      BlacklistManageScreen(),
+                  LKongAppRoutes.favorite: (context) => FavoriteScreen(),
+                },
+              ),
+              onLongPress: () {
+                switchNightMode();
+              },
+            ),
+          );
+        } else {
+          return LKModeledApp(
+            model: viewModel,
+            child: MaterialApp(
+              title: LKongLocalizations().appTitle,
+              theme: viewModel.theme.themeData,
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: [
+                LKongLocalizationsDelegate(),
+              ],
+              initialRoute: LKongAppRoutes.home,
+              routes: {
+                LKongAppRoutes.login: (context) =>
+                    LoginScreen(key: LKongAppKeys.loginScreen),
+                LKongAppRoutes.home: (context) => HomeScreen(),
+                LKongAppRoutes.settings: (context) => SettingScreen(),
+                LKongAppRoutes.accountManage: (context) =>
+                    AccountManageScreen(),
+                LKongAppRoutes.manageBlacklist: (context) =>
+                    BlacklistManageScreen(),
+                LKongAppRoutes.favorite: (context) => FavoriteScreen(),
+              },
+            ),
+          );
+        }
       }),
     );
   }
 
-  shakeDetected() {
+  switchNightMode() {
     final setting = selectSetting(globals.store);
     if (setting.shakeToShiftNightMode) {
       globals.store.dispatch(

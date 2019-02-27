@@ -17,8 +17,6 @@ final contentReducer = combineReducers<ContentCache>([
   TypedReducer<ContentCache, APIRequest>(_contentRequested),
   TypedReducer<ContentCache, APIFailure>(_contentRequestFailed),
   TypedReducer<ContentCache, APISuccess>(_contentRequestSucceed),
-  TypedReducer<ContentCache, LoginSuccess>(_loginoutSucceeded),
-  TypedReducer<ContentCache, LogoutSuccess>(_loginoutSucceeded),
   _contentReducer,
 ]);
 
@@ -38,10 +36,6 @@ ContentCache _contentRequestSucceed(ContentCache content, APISuccess action) {
   return content.rebuild((b) => b
     ..lastError = null
     ..loading = false);
-}
-
-ContentCache _loginoutSucceeded(ContentCache content, action) {
-  return ContentCache();
 }
 
 ContentCache _contentReducer(ContentCache content, action) {

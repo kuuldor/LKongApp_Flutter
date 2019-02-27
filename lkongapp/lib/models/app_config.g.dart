@@ -152,6 +152,12 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         ..add(serializers.serialize(object.noCropImage,
             specifiedType: const FullType(bool)));
     }
+    if (object.switchMethod != null) {
+      result
+        ..add('nightModeSwitchMethod')
+        ..add(serializers.serialize(object.switchMethod,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -263,6 +269,10 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
           result.noCropImage = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
           break;
+        case 'nightModeSwitchMethod':
+          result.switchMethod = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
+          break;
       }
     }
 
@@ -335,14 +345,17 @@ class _$AccountSettingsSerializer
   Iterable serialize(Serializers serializers, AccountSettings object,
       {FullType specifiedType = FullType.unspecified}) {
     final result = <Object>[
-      'currentSetting',
-      serializers.serialize(object.currentSetting,
-          specifiedType: const FullType(AccountSetting)),
       'accounts',
       serializers.serialize(object.accounts,
           specifiedType: const FullType(BuiltMap,
               const [const FullType(int), const FullType(AccountSetting)])),
     ];
+    if (object.currentSetting != null) {
+      result
+        ..add('currentSetting')
+        ..add(serializers.serialize(object.currentSetting,
+            specifiedType: const FullType(AccountSetting)));
+    }
 
     return result;
   }
@@ -590,6 +603,8 @@ class _$AppSetting extends AppSetting {
   final bool detectLink;
   @override
   final bool noCropImage;
+  @override
+  final int switchMethod;
 
   factory _$AppSetting([void updates(AppSettingBuilder b)]) =>
       (new AppSettingBuilder()..update(updates)).build();
@@ -618,7 +633,8 @@ class _$AppSetting extends AppSetting {
       this.cacheSize,
       this.showForumInfo,
       this.detectLink,
-      this.noCropImage})
+      this.noCropImage,
+      this.switchMethod})
       : super._() {
     if (saveCredential == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'saveCredential');
@@ -722,7 +738,8 @@ class _$AppSetting extends AppSetting {
         cacheSize == other.cacheSize &&
         showForumInfo == other.showForumInfo &&
         detectLink == other.detectLink &&
-        noCropImage == other.noCropImage;
+        noCropImage == other.noCropImage &&
+        switchMethod == other.switchMethod;
   }
 
   @override
@@ -745,26 +762,26 @@ class _$AppSetting extends AppSetting {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode),
-                                                                                themeSetting.hashCode),
-                                                                            nightMode.hashCode),
-                                                                        shakeToShiftNightMode.hashCode),
-                                                                    swipeThreshold.hashCode),
-                                                                lockOrientation.hashCode),
-                                                            fontSize.hashCode),
-                                                        allowCopy.hashCode),
-                                                    loadInSamePage.hashCode),
-                                                hideBlacklisterPost.hashCode),
-                                            showDetailTime.hashCode),
-                                        uploadImageAPI.hashCode),
-                                    noImageMode.hashCode),
-                                loadAvatar.hashCode),
-                            avatarDisplaySize.hashCode),
-                        backgroundFetch.hashCode),
-                    cacheSize.hashCode),
-                showForumInfo.hashCode),
-            detectLink.hashCode),
-        noCropImage.hashCode));
+                                                                            $jc($jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode), themeSetting.hashCode),
+                                                                                nightMode.hashCode),
+                                                                            shakeToShiftNightMode.hashCode),
+                                                                        swipeThreshold.hashCode),
+                                                                    lockOrientation.hashCode),
+                                                                fontSize.hashCode),
+                                                            allowCopy.hashCode),
+                                                        loadInSamePage.hashCode),
+                                                    hideBlacklisterPost.hashCode),
+                                                showDetailTime.hashCode),
+                                            uploadImageAPI.hashCode),
+                                        noImageMode.hashCode),
+                                    loadAvatar.hashCode),
+                                avatarDisplaySize.hashCode),
+                            backgroundFetch.hashCode),
+                        cacheSize.hashCode),
+                    showForumInfo.hashCode),
+                detectLink.hashCode),
+            noCropImage.hashCode),
+        switchMethod.hashCode));
   }
 
   @override
@@ -793,7 +810,8 @@ class _$AppSetting extends AppSetting {
           ..add('cacheSize', cacheSize)
           ..add('showForumInfo', showForumInfo)
           ..add('detectLink', detectLink)
-          ..add('noCropImage', noCropImage))
+          ..add('noCropImage', noCropImage)
+          ..add('switchMethod', switchMethod))
         .toString();
   }
 }
@@ -910,6 +928,10 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   bool get noCropImage => _$this._noCropImage;
   set noCropImage(bool noCropImage) => _$this._noCropImage = noCropImage;
 
+  int _switchMethod;
+  int get switchMethod => _$this._switchMethod;
+  set switchMethod(int switchMethod) => _$this._switchMethod = switchMethod;
+
   AppSettingBuilder();
 
   AppSettingBuilder get _$this {
@@ -938,6 +960,7 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
       _showForumInfo = _$v.showForumInfo;
       _detectLink = _$v.detectLink;
       _noCropImage = _$v.noCropImage;
+      _switchMethod = _$v.switchMethod;
       _$v = null;
     }
     return this;
@@ -985,7 +1008,8 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
               cacheSize: cacheSize,
               showForumInfo: showForumInfo,
               detectLink: detectLink,
-              noCropImage: noCropImage);
+              noCropImage: noCropImage,
+              switchMethod: switchMethod);
     } catch (_) {
       String _$failedField;
       try {
@@ -1130,9 +1154,6 @@ class _$AccountSettings extends AccountSettings {
       (new AccountSettingsBuilder()..update(updates)).build();
 
   _$AccountSettings._({this.currentSetting, this.accounts}) : super._() {
-    if (currentSetting == null) {
-      throw new BuiltValueNullFieldError('AccountSettings', 'currentSetting');
-    }
     if (accounts == null) {
       throw new BuiltValueNullFieldError('AccountSettings', 'accounts');
     }
@@ -1214,13 +1235,13 @@ class AccountSettingsBuilder
     try {
       _$result = _$v ??
           new _$AccountSettings._(
-              currentSetting: currentSetting.build(),
+              currentSetting: _currentSetting?.build(),
               accounts: accounts.build());
     } catch (_) {
       String _$failedField;
       try {
         _$failedField = 'currentSetting';
-        currentSetting.build();
+        _currentSetting?.build();
         _$failedField = 'accounts';
         accounts.build();
       } catch (e) {

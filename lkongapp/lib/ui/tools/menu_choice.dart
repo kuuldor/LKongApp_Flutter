@@ -9,6 +9,7 @@ enum MenuAction {
   showAll,
   manageBlackList,
   uploadAvatar,
+  punchCard,
   normal,
   digest,
   timeline,

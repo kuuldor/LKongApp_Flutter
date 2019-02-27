@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/app_action.dart';
 import 'package:connectivity/connectivity.dart';
 
@@ -12,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:package_info/package_info.dart';
 import 'package:lkongapp/middlewares/middlewares.dart';
 import 'package:lkongapp/reducers/reducers.dart';
+import 'package:redux_logging/redux_logging.dart';
 
 LKongHttpSession session;
 NetworkIsolate apiIsolate;
@@ -21,6 +23,29 @@ ConnectivityResult connectivity;
 PackageInfo packageInfo;
 
 Store<AppState> store;
+
+const screenPages = const [
+  {
+    "title": '首页',
+    "icon": Icons.home,
+  },
+  {
+    "title": '版块',
+    "icon": Icons.dashboard,
+  },
+  {
+    "title": '热门',
+    "icon": Icons.whatshot,
+  },
+  {
+    "title": '通知',
+    "icon": Icons.notifications,
+  },
+  {
+    "title": '搜索',
+    "icon": Icons.search,
+  },
+];
 
 void initGlobals({bool testing: false}) async {
   store = Store<AppState>(

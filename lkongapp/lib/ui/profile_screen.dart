@@ -122,6 +122,10 @@ final allMenus = const <Choice>[
       action: MenuAction.manageBlackList),
   const Choice(
       title: '上传头像', icon: Icons.add_a_photo, action: MenuAction.uploadAvatar),
+  const Choice(
+      title: '打卡签到',
+      icon: Icons.confirmation_number,
+      action: MenuAction.punchCard),
 ];
 
 class ProfileScreenModel extends FetchedListModel implements ScrollerState {
@@ -303,7 +307,7 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
     // print("Menu Selcected for ${choice.title}");
     final completer = Completer<String>();
 
-    FollowRequest req;
+    APIRequest req;
     switch (choice.action) {
       case MenuAction.follow:
         req = FollowRequest(
@@ -367,6 +371,12 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
       case MenuAction.uploadAvatar:
         _uploadAvatar(context);
         break;
+      case MenuAction.punchCard:
+        req = PunchCardRequest(
+          completer,
+          User().rebuild((b) => b..uid = uid),
+        );
+        break;
       default:
         break;
     }
@@ -421,11 +431,20 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
     if (user?.regdate != null) {
       infoText +=
           "注册于: ${stringFromDate(dateFromString(user.regdate), format: 'yyyy-MM-dd')}";
-      if (user.extcredits2 != null) {
-        infoText += "   龙币: ${user.extcredits2}";
+    }
+    if (user?.extcredits2 != null) {
+      infoText += "   龙币: ${user.extcredits2}";
+    }
+    if (user?.extcredits3 != null) {
+      infoText += "   龙晶: ${user.extcredits3}";
+    }
+    if (user?.punchday != null || user?.punchallday != null) {
+      infoText += "\n";
+      if (user.punchday != null) {
+        infoText += "连续签到天数: ${user.punchday}天";
       }
-      if (user.extcredits3 != null) {
-        infoText += "   龙晶: ${user.extcredits3}";
+      if (user.punchallday != null) {
+        infoText += "   总签到天数: ${user.punchallday}天";
       }
     }
 
@@ -464,7 +483,7 @@ class ProfileScreenModel extends FetchedListModel implements ScrollerState {
                                 user.verifymessage.length < 12
                             ? 48.0
                             : 32.0),
-                    height: 144.0,
+                    height: 128.0,
                     alignment: Alignment.bottomCenter,
                     child: user?.verifymessage != null
                         ? Text(

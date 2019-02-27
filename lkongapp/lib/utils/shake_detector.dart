@@ -60,18 +60,22 @@ class ShakeDetector extends Stream<Motion> {
   }
 
   void dispose() {
-    _listener.cancel();
+    stopCaptureSensor();
   }
 
   void startCaptureSensor() {
     if (_listener != null) {
       _listener.resume();
+    } else {
+      _listener = userAccelerometerEvents.listen(_handleEvent);
     }
   }
 
   void stopCaptureSensor() {
     if (_listener != null) {
       _listener.pause();
+      _listener.cancel();
+      _listener = null;
     }
   }
 
@@ -85,8 +89,7 @@ class ShakeDetector extends Stream<Motion> {
     Motion shake = detectShake(event);
     if (shake != null) {
       // print("Shake Detected:  $shake");
-      if (lastShake != null &&
-          shake.timestamp - lastShake.timestamp < timeSpan) {
+      if (lastShake != null) {
         final product = shake.x * lastShake.x +
             shake.y * lastShake.y +
             shake.z * lastShake.z;
@@ -97,7 +100,6 @@ class ShakeDetector extends Stream<Motion> {
           shakeCount++;
         }
       }
-
       lastShake = shake;
 
       if (shakeCount >= countPerShake) {

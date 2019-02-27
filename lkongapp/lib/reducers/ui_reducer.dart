@@ -8,8 +8,14 @@ import 'package:lkongapp/reducers/content_reducer.dart';
 final uiStateReducer = combineReducers<UIState>([
   TypedReducer<UIState, UIChange>(_changeUIState),
   TypedReducer<UIState, UIUpdateCurrentRoute>(_changeCurrentRoute),
+  TypedReducer<UIState, LoginSuccess>(_loginoutSucceeded),
+  TypedReducer<UIState, LogoutSuccess>(_loginoutSucceeded),
   _contentReducer,
 ]);
+
+UIState _loginoutSucceeded(UIState state, action) {
+  return UIState().rebuild((b) => b..navigationRoute = state.navigationRoute);
+}
 
 UIState _changeUIState(UIState state, UIChange action) {
   return state.rebuild((b) => action.change(b));

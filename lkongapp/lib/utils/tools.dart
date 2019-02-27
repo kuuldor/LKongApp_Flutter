@@ -429,9 +429,10 @@ String detectLinkAndConvert(String html) {
   final achorPattern = RegExp(
       r'((src|href)=)(["' +
           "'" +
-          r']?)(http)(s?:\/\/[^/$.?#]*\.[a-zA-Z0-9.;%\/&=?_-]*)',
+          r']?)(http)(s?:\/\/[^/$.?#]*\.[a-zA-Z0-9.:;!%\/&=?_-]*)',
       caseSensitive: false);
-  final linkPattern = RegExp(r'(https?:\/\/[^/$.?#]*\.[a-zA-Z0-9.;%\/&=?_-]*)',
+  final linkPattern = RegExp(
+      r'(https?:\/\/[^/$.?#]*\.[a-zA-Z0-9.:;!%\/&=?_-]*)',
       caseSensitive: false);
   if (linkPattern.hasMatch(html)) {
     var hideMapper = (Match m) => '${m[1]}${m[3]}h_x_t_x_t_x_p${m[5]}';

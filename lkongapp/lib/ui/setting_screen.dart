@@ -4,6 +4,7 @@ import 'package:lkongapp/ui/home_list.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/screens.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
+import 'package:lkongapp/utils/globals.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
@@ -255,6 +256,40 @@ class SettingState extends State<SettingView> {
                 setting.showForumInfo = !setting.showForumInfo;
               }),
         ),
+        GestureDetector(
+          child: CSControl(
+            '启动页面',
+            DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                style: TextStyle(
+                    fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
+                value: account.homePage,
+                items: screenPages
+                    .asMap()
+                    .map((i, page) {
+                      String title = page["title"];
+                      return MapEntry(
+                          i,
+                          DropdownMenuItem<int>(
+                            value: i,
+                            child: Text(title),
+                          ));
+                    })
+                    .values
+                    .toList(),
+                onChanged: (_value) {
+                  setState(() {
+                    account.homePage = _value;
+                  });
+                },
+              ),
+            ),
+            fontSize: CS_ITEM_NAME_SIZE,
+          ),
+          onTap: () => setState(() {
+                account.homePage = (account.homePage + 1) % screenPages.length;
+              }),
+        ),
         CSHeader('签名'),
         CSWidget(
           TextField(
@@ -409,7 +444,7 @@ class SettingState extends State<SettingView> {
         ),
         GestureDetector(
           child: CSControl(
-            '摇晃手机切换夜间模式',
+            '快速切换夜间模式',
             CupertinoSwitch(
               value: setting.shakeToShiftNightMode == true,
               onChanged: (value) => setState(() {
@@ -421,6 +456,39 @@ class SettingState extends State<SettingView> {
           onTap: () => setState(() {
                 setting.shakeToShiftNightMode =
                     (setting.shakeToShiftNightMode == false);
+              }),
+        ),
+        GestureDetector(
+          child: CSControl(
+            '快速切换方法',
+            DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                style: TextStyle(
+                    fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
+                value: setting.switchMethod ?? 0,
+                items: ['摇晃手机', '长按屏幕']
+                    .asMap()
+                    .map((int i, String title) {
+                      return MapEntry(
+                          i,
+                          DropdownMenuItem<int>(
+                            value: i,
+                            child: Text(title),
+                          ));
+                    })
+                    .values
+                    .toList(),
+                onChanged: (_value) {
+                  setState(() {
+                    setting.switchMethod = _value;
+                  });
+                },
+              ),
+            ),
+            fontSize: CS_ITEM_NAME_SIZE,
+          ),
+          onTap: () => setState(() {
+                setting.switchMethod = ((setting.switchMethod ?? 0) + 1) % 2;
               }),
         ),
         CSControl(
