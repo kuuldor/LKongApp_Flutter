@@ -40,8 +40,8 @@ class ShakeDetector extends Stream<Motion> {
   ShakeDetector._();
 
   static const threshold = 3.0;
-  static const timeSpan = 500;
-  static const countPerShake = 2;
+  static const timeSpan = 800;
+  static const countPerShake = 3;
   static const prodThreshold = -9.0;
 
   Motion lastShake;
@@ -97,7 +97,12 @@ class ShakeDetector extends Stream<Motion> {
         // print("product:  $product");
 
         if (product < prodThreshold) {
-          shakeCount++;
+          if (shake.timestamp - shakeTimestamp < timeSpan) {
+            shakeCount++;
+          } else {
+            shakeCount = 1;
+          }
+          shakeTimestamp = shake.timestamp;
         }
       }
       lastShake = shake;
