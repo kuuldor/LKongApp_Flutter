@@ -18,13 +18,13 @@ dependencies:
   built_value: ^6.1.4
   built_collection: ^4.0.0
   redux_thunk: ^0.2.1
-  path_provider: ^0.4.1
+  path_provider: 0.4.1
   http: ^0.12.0
   intl: any
   shared_preferences: 0.4.3
   synchronized: any
   uuid: any
-  url_launcher: ^4.0.1
+  url_launcher: 4.1.0+1
   html_unescape: any
   flutter_sticky_header : ^0.3.4
   flutter_cupertino_settings: any
@@ -37,8 +37,10 @@ dependencies:
   connectivity: 0.3.2
   flutter_colorpicker: ^0.2.1
   package_info: any
-  sensors: any
-  
+  sensors: 0.3.5
+  simple_permissions: ^0.1.9
+
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2

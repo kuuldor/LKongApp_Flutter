@@ -1,10 +1,15 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:io';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_permissions/simple_permissions.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/globals.dart' as globals;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' show parse;
@@ -175,11 +180,67 @@ _parseImageAndText(
             onLongPress: () {
               dispatchAction(context)(UINavigationPush(
                   context, LKongAppRoutes.photoView, builder: (context) {
-                return Container(
-                  child: PhotoView(
-                    imageProvider: imageProvider,
-                    minScale: PhotoViewComputedScale.contained * 0.5,
-                    maxScale: 2.5,
+                return Scaffold(
+                  body: GestureDetector(
+                    child: PhotoView(
+                      imageProvider: imageProvider,
+                      minScale: PhotoViewComputedScale.contained * 0.5,
+                      maxScale: 2.5,
+                    ),
+                    onLongPress: () {
+                      showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(100, 100, 100, 100),
+                        items: <PopupMenuEntry>[
+                          PopupMenuItem<int>(
+                            value: 0,
+                            child: Row(
+                              children: <Widget>[
+                                Icon(Icons.add_a_photo),
+                                Text('保存图片'),
+                              ],
+                            ),
+                          )
+                        ],
+                      ).then((_) async {
+                        final cache = await CacheManager.getInstance();
+                        File imgFile = await cache.getFile(src);
+                        try {
+                          Directory extStorage =
+                              await getExternalStorageDirectory();
+                          if (extStorage != null) {
+                            final copyFile =  () async {
+                              final picPath = extStorage.path + "/Pictures";
+                              final picFolder = Directory(picPath);
+                              if (!(await picFolder.exists())
+                              ) {
+                                picFolder.createSync(recursive: true);
+                              }
+                              imgFile
+                                  .copy(picPath + "/" + basename
+                                (
+                                  imgFile
+                                      .
+                                  path
+                              )
+                              );
+                            };
+                            bool granted = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+                            if (!granted) {
+                              final status = await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+                              if (status == PermissionStatus.authorized) {
+                                copyFile();
+                              }
+                            } else {
+                              copyFile();
+                            }
+
+                          }
+                        } catch (e) {
+                          print("$e");
+                        }
+                      });
+                    },
                   ),
                 );
               }));
