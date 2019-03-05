@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lkongapp/ui/home_list.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/screens.dart';
+import 'package:lkongapp/ui/tools/check_upgrade.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/globals.dart';
 import 'package:lkongapp/utils/utils.dart';
@@ -10,6 +11,7 @@ import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_cupertino_settings/flutter_cupertino_settings.dart';
 import 'package:lkongapp/ui/forum_list.dart';
+import 'package:lkongapp/utils/globals.dart' as globals;
 import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
@@ -615,7 +617,21 @@ class SettingState extends State<SettingView> {
         CSHeader(""),
         CSControl(
           '版权所有',
-          Text(setting.copyright, style: TextStyle(color: Colors.grey)),
+          Text(globals.copyRight, style: TextStyle(color: Colors.grey)),
+          fontSize: CS_ITEM_NAME_SIZE,
+        ),
+        CSControl(
+          '当前版本',
+          Text("${globals.packageInfo.version}-${globals.packageInfo.buildNumber}",
+              style: TextStyle(color: Colors.grey)),
+          fontSize: CS_ITEM_NAME_SIZE,
+        ),
+        CSButton(
+          CSButtonType.DEFAULT_CENTER,
+          "检查版本更新",
+          () async {
+            checkUpgrade(context);
+          },
           fontSize: CS_ITEM_NAME_SIZE,
         ),
         CSHeader(""),

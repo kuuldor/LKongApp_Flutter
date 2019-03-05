@@ -72,8 +72,7 @@ class LKongHttpSession {
 
   Future<http.Response> get(String path) async {
     String url = baseURL + path;
-    // print("GET URL: $url");
-    return client.get(url, headers: {'Cookie': cookieLine}).then((response) {
+    return getURL(url, headers: {'Cookie': cookieLine}).then((response) {
       updateCookie(response);
       return response;
     });
@@ -82,8 +81,8 @@ class LKongHttpSession {
   Future<http.Response> post(String path, {dynamic data}) async {
     String url = baseURL + path;
     // print("POST URL: $url");
-    return client.post(url, body: data, headers: {'Cookie': cookieLine}).then(
-        (response) {
+    return postToURL(url, data: data, headers: {'Cookie': cookieLine})
+        .then((response) {
       updateCookie(response);
       return response;
     });
@@ -110,6 +109,18 @@ class LKongHttpSession {
     return request.send().then((response) {
       return response;
     });
+  }
+
+  Future<http.Response> getURL(String url,
+      {Map<String, String> headers: const {}}) async {
+    // print("GET URL: $url");
+    return client.get(url, headers: headers);
+  }
+
+  Future<http.Response> postToURL(String url,
+      {dynamic data, Map<String, String> headers: const {}}) async {
+    // print("POST URL: $url");
+    return client.post(url, body: data, headers: headers);
   }
 
   RegExp cookiePattern = RegExp("([^;,]*?=[^;,]*)", caseSensitive: false);

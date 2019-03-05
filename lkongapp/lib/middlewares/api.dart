@@ -44,6 +44,7 @@ const QUERY_API = "QUERY";
 const FAVORITE_API = "FAVORITE";
 const UPLOAD_IMAGE_API = "UPLOAD_IMAGE";
 const UPLOAD_AVATAR_API = "UPLOAD_AVATAR";
+const CHECK_UPGRADE_API = "CHECK_UPGRADE";
 
 const _endpoint = {
   "login": "/index.php?mod=login",
@@ -881,6 +882,16 @@ Future<Map> _checkNewNotice() {
   );
 }
 
+Future<Map> _checkUpgradeInfo() {
+  final urlString = "https://topmusic.sinaapp.com/lkongapp";
+
+  var httpAction = session.getURL(urlString);
+  return _handleHttp(
+    httpAction,
+    dataParser: (data) => json.decode(data),
+  );
+}
+
 String Function(String) _combinedProcessorBuilder(
     List<String Function(String)> processors) {
   String Function(String) processor;
@@ -989,7 +1000,9 @@ Future<Map> apiDispatch(api, Map parameters) async {
   }
 
   Map params = Map();
-  params.addAll(parameters);
+  if (parameters != null) {
+    params.addAll(parameters);
+  }
   params["API"] = api;
   var result = await apiIsolate.sendReceive(params);
 
@@ -1122,9 +1135,15 @@ Future<Map> _handleAPIRequest(Map params) {
   if (api == UPLOAD_IMAGE_API) {
     return _uploadImage(parameters);
   }
+
   if (api == UPLOAD_AVATAR_API) {
     return _uploadAvatar(parameters);
   }
+
+  if (api == CHECK_UPGRADE_API) {
+    return _checkUpgradeInfo();
+  }
+
   return Future<Map>(null);
 }
 

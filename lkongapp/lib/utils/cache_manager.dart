@@ -35,17 +35,28 @@ void downloadIsolateMain(SendPort callerSendPort) async {
 }
 
 String _fileNameFromHeaders(Map<String, String> headers) {
-  var fileExtension = "";
-  if (headers.containsKey("content-type")) {
+  String fileName;
+
+  if (headers.containsKey("content-disposition")) {
+    var disposition = headers["content-disposition"];
+    final match = RegExp(r'filename="(.*?)"').firstMatch(disposition);
+    if (match != null) {
+      fileName = match[1];
+    }
+  }
+
+  if (fileName == null && headers.containsKey("content-type")) {
+    String fileExtension = "";
+
     var type = headers["content-type"].split("/");
     if (type.length == 2) {
       fileExtension = ".${type[1]}";
     }
-  }
 
-  final uuid = Uuid().v1();
-  final partition = uuid.substring(0, 2);
-  var fileName = "/$cacheSubFolder/$partition/$uuid$fileExtension";
+    final uuid = Uuid().v1();
+    final partition = uuid.substring(0, 2);
+    fileName = "$cacheSubFolder/$partition/$uuid$fileExtension";
+  }
 
   return fileName;
 }
@@ -63,7 +74,8 @@ Future<Map> _downloadOnIsolate(Map params) async {
     if (response.statusCode == 200) {
       String filename = _fileNameFromHeaders(response.headers);
 
-      var filePath = cachePath + filename;
+      var filePath = cachePath + "/" + filename;
+
       var folder = File(filePath).parent;
       if (!(await folder.exists())) {
         folder.createSync(recursive: true);
@@ -126,7 +138,7 @@ class CacheObject {
     }
 
     String folder = await cachePath;
-    return folder + relativePath;
+    return folder + "/" + relativePath;
   }
 
   String get relativePath {

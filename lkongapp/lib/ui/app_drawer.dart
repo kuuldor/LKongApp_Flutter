@@ -4,7 +4,8 @@ import 'package:flutter/widgets.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/actions/ui_action.dart';
 import 'package:lkongapp/ui/connected_widget.dart';
-import 'package:lkongapp/utils/globals.dart';
+import 'package:lkongapp/ui/tools/check_upgrade.dart';
+import 'package:lkongapp/utils/globals.dart' as globals;
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -55,6 +56,7 @@ class AppDrawerViewModel {
 
   static AppDrawerViewModel fromStore(Store<AppState> store) {
     AuthState state = store.state.persistState.authState;
+
     var _user = selectUser(store);
     var _info = _user?.userInfo;
 
@@ -189,9 +191,20 @@ class AppDrawer extends StatelessWidget {
       ),
     );
 
+    children.add(
+      ListTile(
+        leading: Icon(Icons.system_update_alt),
+        title: Text('检查新版本'),
+        onTap: () {
+          checkUpgrade(context);
+        },
+      ),
+    );
+
     children.add(AboutListTile(
       applicationName: '龍空',
-      applicationVersion: packageInfo.version,
+      applicationVersion: globals.packageInfo.version,
+      applicationLegalese: "${globals.copyRight}  All Rights Reserved",
       icon: Icon(Icons.info_outline),
     ));
 

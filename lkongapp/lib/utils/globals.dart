@@ -24,6 +24,8 @@ PackageInfo packageInfo;
 
 Store<AppState> store;
 
+String copyRight = '© 2018 Akeysoft.';
+
 const screenPages = const [
   {
     "title": '首页',
