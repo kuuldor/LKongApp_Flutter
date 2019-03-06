@@ -7,7 +7,7 @@ description: A Flutter client for lkong.cn web forum.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.2.3+47
+version: 1.2.4+48
 
 dependencies:
   flutter:
