@@ -64,6 +64,7 @@ checkUpgrade(BuildContext context) async {
                   child: Text("更新"),
                   onPressed: () async {
                     Navigator.of(context).pop();
+
                     final downloadPath =
                         (await getExternalStorageDirectory()).path +
                             "/Download";
@@ -71,7 +72,19 @@ checkUpgrade(BuildContext context) async {
                     params["URL"] = downloadURL;
                     params["CACHE_PATH"] = downloadPath;
                     params["HEADERS"] = Map<String, String>();
+
                     final spinnerCancel = await showSpinner(context);
+
+                    bool granted = await SimplePermissions.checkPermission(
+                        Permission.WriteExternalStorage);
+                    if (!granted) {
+                      final status = await SimplePermissions.requestPermission(
+                          Permission.WriteExternalStorage);
+                      if (status != PermissionStatus.authorized) {
+                        return;
+                      }
+                    }
+
                     final result = await enqueueDownload(params);
                     String fileName = result["FILENAME"];
                     try {
