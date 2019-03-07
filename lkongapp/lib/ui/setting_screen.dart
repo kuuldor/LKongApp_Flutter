@@ -292,6 +292,22 @@ class SettingState extends State<SettingView> {
                 account.homePage = (account.homePage + 1) % screenPages.length;
               }),
         ),
+        CSHeader('发帖设置'),
+        GestureDetector(
+          child: CSControl(
+            '退出编辑时保存草稿',
+            CupertinoSwitch(
+              value: setting.alwaysSaveDraft == true,
+              onChanged: (value) => setState(() {
+                    setting.alwaysSaveDraft = value;
+                  }),
+            ),
+            fontSize: CS_ITEM_NAME_SIZE,
+          ),
+          onTap: () => setState(() {
+                setting.alwaysSaveDraft = (setting.alwaysSaveDraft == false);
+              }),
+        ),
         CSHeader('签名'),
         CSWidget(
           TextField(
@@ -622,7 +638,8 @@ class SettingState extends State<SettingView> {
         ),
         CSControl(
           '当前版本',
-          Text("${globals.packageInfo.version}-${globals.packageInfo.buildNumber}",
+          Text(
+              "${globals.packageInfo.version}-${globals.packageInfo.buildNumber}",
               style: TextStyle(color: Colors.grey)),
           fontSize: CS_ITEM_NAME_SIZE,
         ),

@@ -158,6 +158,12 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         ..add(serializers.serialize(object.switchMethod,
             specifiedType: const FullType(int)));
     }
+    if (object.alwaysSaveDraft != null) {
+      result
+        ..add('alwaysSaveDraft')
+        ..add(serializers.serialize(object.alwaysSaveDraft,
+            specifiedType: const FullType(bool)));
+    }
 
     return result;
   }
@@ -272,6 +278,10 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         case 'nightModeSwitchMethod':
           result.switchMethod = serializers.deserialize(value,
               specifiedType: const FullType(int)) as int;
+          break;
+        case 'alwaysSaveDraft':
+          result.alwaysSaveDraft = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
           break;
       }
     }
@@ -605,6 +615,8 @@ class _$AppSetting extends AppSetting {
   final bool noCropImage;
   @override
   final int switchMethod;
+  @override
+  final bool alwaysSaveDraft;
 
   factory _$AppSetting([void updates(AppSettingBuilder b)]) =>
       (new AppSettingBuilder()..update(updates)).build();
@@ -634,7 +646,8 @@ class _$AppSetting extends AppSetting {
       this.showForumInfo,
       this.detectLink,
       this.noCropImage,
-      this.switchMethod})
+      this.switchMethod,
+      this.alwaysSaveDraft})
       : super._() {
     if (saveCredential == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'saveCredential');
@@ -739,7 +752,8 @@ class _$AppSetting extends AppSetting {
         showForumInfo == other.showForumInfo &&
         detectLink == other.detectLink &&
         noCropImage == other.noCropImage &&
-        switchMethod == other.switchMethod;
+        switchMethod == other.switchMethod &&
+        alwaysSaveDraft == other.alwaysSaveDraft;
   }
 
   @override
@@ -762,26 +776,26 @@ class _$AppSetting extends AppSetting {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode), themeSetting.hashCode),
-                                                                                nightMode.hashCode),
-                                                                            shakeToShiftNightMode.hashCode),
-                                                                        swipeThreshold.hashCode),
-                                                                    lockOrientation.hashCode),
-                                                                fontSize.hashCode),
-                                                            allowCopy.hashCode),
-                                                        loadInSamePage.hashCode),
-                                                    hideBlacklisterPost.hashCode),
-                                                showDetailTime.hashCode),
-                                            uploadImageAPI.hashCode),
-                                        noImageMode.hashCode),
-                                    loadAvatar.hashCode),
-                                avatarDisplaySize.hashCode),
-                            backgroundFetch.hashCode),
-                        cacheSize.hashCode),
-                    showForumInfo.hashCode),
-                detectLink.hashCode),
-            noCropImage.hashCode),
-        switchMethod.hashCode));
+                                                                            $jc($jc($jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode), themeSetting.hashCode), nightMode.hashCode),
+                                                                                shakeToShiftNightMode.hashCode),
+                                                                            swipeThreshold.hashCode),
+                                                                        lockOrientation.hashCode),
+                                                                    fontSize.hashCode),
+                                                                allowCopy.hashCode),
+                                                            loadInSamePage.hashCode),
+                                                        hideBlacklisterPost.hashCode),
+                                                    showDetailTime.hashCode),
+                                                uploadImageAPI.hashCode),
+                                            noImageMode.hashCode),
+                                        loadAvatar.hashCode),
+                                    avatarDisplaySize.hashCode),
+                                backgroundFetch.hashCode),
+                            cacheSize.hashCode),
+                        showForumInfo.hashCode),
+                    detectLink.hashCode),
+                noCropImage.hashCode),
+            switchMethod.hashCode),
+        alwaysSaveDraft.hashCode));
   }
 
   @override
@@ -811,7 +825,8 @@ class _$AppSetting extends AppSetting {
           ..add('showForumInfo', showForumInfo)
           ..add('detectLink', detectLink)
           ..add('noCropImage', noCropImage)
-          ..add('switchMethod', switchMethod))
+          ..add('switchMethod', switchMethod)
+          ..add('alwaysSaveDraft', alwaysSaveDraft))
         .toString();
   }
 }
@@ -932,6 +947,11 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   int get switchMethod => _$this._switchMethod;
   set switchMethod(int switchMethod) => _$this._switchMethod = switchMethod;
 
+  bool _alwaysSaveDraft;
+  bool get alwaysSaveDraft => _$this._alwaysSaveDraft;
+  set alwaysSaveDraft(bool alwaysSaveDraft) =>
+      _$this._alwaysSaveDraft = alwaysSaveDraft;
+
   AppSettingBuilder();
 
   AppSettingBuilder get _$this {
@@ -961,6 +981,7 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
       _detectLink = _$v.detectLink;
       _noCropImage = _$v.noCropImage;
       _switchMethod = _$v.switchMethod;
+      _alwaysSaveDraft = _$v.alwaysSaveDraft;
       _$v = null;
     }
     return this;
@@ -1009,7 +1030,8 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
               showForumInfo: showForumInfo,
               detectLink: detectLink,
               noCropImage: noCropImage,
-              switchMethod: switchMethod);
+              switchMethod: switchMethod,
+              alwaysSaveDraft: alwaysSaveDraft);
     } catch (_) {
       String _$failedField;
       try {
@@ -1366,4 +1388,4 @@ class AccountSettingBuilder
   }
 }
 
-// ignore_for_file: always_put_control_body_on_new_line,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new
+// ignore_for_file: always_put_control_body_on_new_line,always_specify_types,annotate_overrides,avoid_annotating_with_dynamic,avoid_as,avoid_catches_without_on_clauses,avoid_returning_this,lines_longer_than_80_chars,omit_local_variable_types,prefer_expression_function_bodies,sort_constructors_first,test_types_in_equals,unnecessary_const,unnecessary_new

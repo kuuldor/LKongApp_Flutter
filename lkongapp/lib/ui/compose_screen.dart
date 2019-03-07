@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import 'package:lkongapp/ui/emoji_picker.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/choose_image.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
+import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/utils.dart';
 
 class ComposeScreen extends StatefulWidget {
@@ -39,7 +41,7 @@ class ComposeScreen extends StatefulWidget {
   }
 }
 
-class ComposeState extends State<ComposeScreen> {
+class ComposeState extends State<ComposeScreen> with WidgetsBindingObserver {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   static final GlobalKey<FormState> _linkFormKey = GlobalKey<FormState>();
@@ -58,9 +60,18 @@ class ComposeState extends State<ComposeScreen> {
   String initialContent;
   String initialSubject;
 
+  bool alwaysSaveDraft = false;
+
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
+    if (!alwaysSaveDraft) {
+      deleteDraft();
+    } else {
+      saveDraft();
+    }
+
+    WidgetsBinding.instance.removeObserver(this);
     subjectController.dispose();
     contentController.dispose();
     super.dispose();
@@ -69,9 +80,16 @@ class ComposeState extends State<ComposeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
-    initialContent = widget.comment?.message;
-    initialSubject = widget.story?.subject;
+    initContent();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      saveDraft();
+    }
   }
 
   bool sending = false;
@@ -121,6 +139,69 @@ class ComposeState extends State<ComposeScreen> {
     return content;
   }
 
+  void initContent() async {
+    Map draft = await loadDraft();
+
+    if (draft != null) {
+      initialContent = draft["content"];
+      initialSubject = draft["subject"];
+    } else if (widget.replyType == ReplyType.EditComment ||
+        widget.replyType == ReplyType.EditStory) {
+      initialContent = widget.comment?.message;
+      initialSubject = widget.story?.subject;
+    }
+  }
+
+  Future<Map> loadDraft() async {
+    Map draft;
+    final draftFile = await getDraftFile();
+
+    if (await draftFile.exists()) {
+      String payload = draftFile.readAsStringSync();
+      draft = json.decode(payload);
+    }
+    return draft;
+  }
+
+  void deleteDraft() async {
+    File file = await getDraftFile();
+    if (await file.exists()) {
+      file.delete();
+    }
+  }
+
+  void saveDraft() async {
+    File file = await getDraftFile();
+
+    String subject;
+
+    switch (widget.replyType) {
+      case ReplyType.Forum:
+        subject = subjectController.text;
+        break;
+      case ReplyType.EditStory:
+        subject = subjectController.text;
+        break;
+      default:
+        break;
+    }
+    String content = contentController.text;
+    if ((subject != null && subject.length > 0) ||
+        (content != null && content.length > 0)) {
+      String payload = json.encode({"subject": subject, "content": content});
+      file.writeAsString(payload, flush: true);
+    }
+  }
+
+  String _draftFile;
+  Future<File> getDraftFile() async {
+    if (_draftFile == null) {
+      final folder = await CacheObject.cachePath;
+      _draftFile = "$folder/._draft.sav";
+    }
+    return File(_draftFile);
+  }
+
   void sendMessage(BuildContext context) {
     String subject;
 
@@ -139,6 +220,9 @@ class ComposeState extends State<ComposeScreen> {
     final Completer<String> completer = Completer<String>();
     completer.future.then((error) {
       if (error == null) {
+        subjectController.clear();
+        contentController.clear();
+        deleteDraft();
         dispatchAction(context)(UINavigationPop(context));
       } else {
         showToast("发帖失败: $error");
@@ -197,6 +281,8 @@ class ComposeState extends State<ComposeScreen> {
     final theme = LKModeledApp.modelOf(context).theme;
     String title;
 
+    alwaysSaveDraft = (config.setting.alwaysSaveDraft == true);
+
     switch (widget.replyType) {
       case ReplyType.Forum:
         final forum = widget.forum;
@@ -212,24 +298,21 @@ class ComposeState extends State<ComposeScreen> {
         break;
       case ReplyType.EditStory:
         final story = widget.story;
-        if (subjectController.text.length == 0 && initialSubject != null) {
-          subjectController.text = initialSubject;
-          initialSubject = null;
-        }
-        if (contentController.text.length == 0 && initialContent != null) {
-          contentController.text = stripSignature(initialContent);
-          initialContent = null;
-        }
         title = "编辑：${story.subject}";
         break;
       case ReplyType.EditComment:
         final comment = widget.comment;
-        if (contentController.text.length == 0 && initialContent != null) {
-          contentController.text = stripSignature(initialContent);
-          initialContent = null;
-        }
         title = "编辑：${comment.lou}楼";
         break;
+    }
+
+    if (subjectController.text.length == 0 && initialSubject != null) {
+      subjectController.text = initialSubject;
+      initialSubject = null;
+    }
+    if (contentController.text.length == 0 && initialContent != null) {
+      contentController.text = stripSignature(initialContent);
+      initialContent = null;
     }
 
     final ValueKey _subjectKey = LKongAppKeys.composeSubjectKey;

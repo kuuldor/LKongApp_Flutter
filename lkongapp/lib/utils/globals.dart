@@ -24,7 +24,7 @@ PackageInfo packageInfo;
 
 Store<AppState> store;
 
-String copyRight = '© 2018 Akeysoft.';
+String copyRight = '© 2018 Akeysoft';
 
 const screenPages = const [
   {

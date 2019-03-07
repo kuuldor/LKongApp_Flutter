@@ -122,6 +122,9 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   @nullable
   @BuiltValueField(wireName: 'nightModeSwitchMethod')
   int get switchMethod;
+  @nullable
+  @BuiltValueField(wireName: 'alwaysSaveDraft')
+  bool get alwaysSaveDraft;
 
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));
