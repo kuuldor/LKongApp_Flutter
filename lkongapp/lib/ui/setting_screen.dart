@@ -245,19 +245,56 @@ class SettingState extends State<SettingView> {
         ),
         GestureDetector(
           child: CSControl(
-            '显示版块信息',
-            CupertinoSwitch(
-              value: setting.showForumInfo,
-              onChanged: (value) => setState(() {
-                    setting.showForumInfo = value;
-                  }),
+            '版块显示方式',
+            DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                style: TextStyle(
+                    fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
+                value:
+                    setting.forumViewLayout ?? (setting.showForumInfo ? 1 : 0),
+                items: ['简单列表', '详细列表', '九宫格']
+                    .asMap()
+                    .map((int i, String title) {
+                      return MapEntry(
+                          i,
+                          DropdownMenuItem<int>(
+                            value: i,
+                            child: Text(title),
+                          ));
+                    })
+                    .values
+                    .toList(),
+                onChanged: (_value) {
+                  setState(() {
+                    setting.forumViewLayout = _value;
+                  });
+                },
+              ),
             ),
             fontSize: CS_ITEM_NAME_SIZE,
           ),
           onTap: () => setState(() {
-                setting.showForumInfo = !setting.showForumInfo;
+                setting.forumViewLayout = ((setting.forumViewLayout ??
+                            (setting.showForumInfo ? 1 : 0)) +
+                        1) %
+                    3;
               }),
         ),
+        // GestureDetector(
+        //   child: CSControl(
+        //     '显示版块信息',
+        //     CupertinoSwitch(
+        //       value: setting.showForumInfo,
+        //       onChanged: (value) => setState(() {
+        //             setting.showForumInfo = value;
+        //           }),
+        //     ),
+        //     fontSize: CS_ITEM_NAME_SIZE,
+        //   ),
+        //   onTap: () => setState(() {
+        //         setting.showForumInfo = !setting.showForumInfo;
+        //       }),
+        // ),
         GestureDetector(
           child: CSControl(
             '启动页面',

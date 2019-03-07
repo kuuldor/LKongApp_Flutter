@@ -164,6 +164,12 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         ..add(serializers.serialize(object.alwaysSaveDraft,
             specifiedType: const FullType(bool)));
     }
+    if (object.forumViewLayout != null) {
+      result
+        ..add('forumViewLayout')
+        ..add(serializers.serialize(object.forumViewLayout,
+            specifiedType: const FullType(int)));
+    }
 
     return result;
   }
@@ -282,6 +288,10 @@ class _$AppSettingSerializer implements StructuredSerializer<AppSetting> {
         case 'alwaysSaveDraft':
           result.alwaysSaveDraft = serializers.deserialize(value,
               specifiedType: const FullType(bool)) as bool;
+          break;
+        case 'forumViewLayout':
+          result.forumViewLayout = serializers.deserialize(value,
+              specifiedType: const FullType(int)) as int;
           break;
       }
     }
@@ -617,6 +627,8 @@ class _$AppSetting extends AppSetting {
   final int switchMethod;
   @override
   final bool alwaysSaveDraft;
+  @override
+  final int forumViewLayout;
 
   factory _$AppSetting([void updates(AppSettingBuilder b)]) =>
       (new AppSettingBuilder()..update(updates)).build();
@@ -647,7 +659,8 @@ class _$AppSetting extends AppSetting {
       this.detectLink,
       this.noCropImage,
       this.switchMethod,
-      this.alwaysSaveDraft})
+      this.alwaysSaveDraft,
+      this.forumViewLayout})
       : super._() {
     if (saveCredential == null) {
       throw new BuiltValueNullFieldError('AppSetting', 'saveCredential');
@@ -753,7 +766,8 @@ class _$AppSetting extends AppSetting {
         detectLink == other.detectLink &&
         noCropImage == other.noCropImage &&
         switchMethod == other.switchMethod &&
-        alwaysSaveDraft == other.alwaysSaveDraft;
+        alwaysSaveDraft == other.alwaysSaveDraft &&
+        forumViewLayout == other.forumViewLayout;
   }
 
   @override
@@ -776,26 +790,26 @@ class _$AppSetting extends AppSetting {
                                                                 $jc(
                                                                     $jc(
                                                                         $jc(
-                                                                            $jc($jc($jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode), themeSetting.hashCode), nightMode.hashCode),
-                                                                                shakeToShiftNightMode.hashCode),
-                                                                            swipeThreshold.hashCode),
-                                                                        lockOrientation.hashCode),
-                                                                    fontSize.hashCode),
-                                                                allowCopy.hashCode),
-                                                            loadInSamePage.hashCode),
-                                                        hideBlacklisterPost.hashCode),
-                                                    showDetailTime.hashCode),
-                                                uploadImageAPI.hashCode),
-                                            noImageMode.hashCode),
-                                        loadAvatar.hashCode),
-                                    avatarDisplaySize.hashCode),
-                                backgroundFetch.hashCode),
-                            cacheSize.hashCode),
-                        showForumInfo.hashCode),
-                    detectLink.hashCode),
-                noCropImage.hashCode),
-            switchMethod.hashCode),
-        alwaysSaveDraft.hashCode));
+                                                                            $jc($jc($jc($jc($jc($jc($jc($jc($jc(0, saveCredential.hashCode), autoLogin.hashCode), autoPunch.hashCode), version.hashCode), copyright.hashCode), themeSetting.hashCode), nightMode.hashCode), shakeToShiftNightMode.hashCode),
+                                                                                swipeThreshold.hashCode),
+                                                                            lockOrientation.hashCode),
+                                                                        fontSize.hashCode),
+                                                                    allowCopy.hashCode),
+                                                                loadInSamePage.hashCode),
+                                                            hideBlacklisterPost.hashCode),
+                                                        showDetailTime.hashCode),
+                                                    uploadImageAPI.hashCode),
+                                                noImageMode.hashCode),
+                                            loadAvatar.hashCode),
+                                        avatarDisplaySize.hashCode),
+                                    backgroundFetch.hashCode),
+                                cacheSize.hashCode),
+                            showForumInfo.hashCode),
+                        detectLink.hashCode),
+                    noCropImage.hashCode),
+                switchMethod.hashCode),
+            alwaysSaveDraft.hashCode),
+        forumViewLayout.hashCode));
   }
 
   @override
@@ -826,7 +840,8 @@ class _$AppSetting extends AppSetting {
           ..add('detectLink', detectLink)
           ..add('noCropImage', noCropImage)
           ..add('switchMethod', switchMethod)
-          ..add('alwaysSaveDraft', alwaysSaveDraft))
+          ..add('alwaysSaveDraft', alwaysSaveDraft)
+          ..add('forumViewLayout', forumViewLayout))
         .toString();
   }
 }
@@ -952,6 +967,11 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
   set alwaysSaveDraft(bool alwaysSaveDraft) =>
       _$this._alwaysSaveDraft = alwaysSaveDraft;
 
+  int _forumViewLayout;
+  int get forumViewLayout => _$this._forumViewLayout;
+  set forumViewLayout(int forumViewLayout) =>
+      _$this._forumViewLayout = forumViewLayout;
+
   AppSettingBuilder();
 
   AppSettingBuilder get _$this {
@@ -982,6 +1002,7 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
       _noCropImage = _$v.noCropImage;
       _switchMethod = _$v.switchMethod;
       _alwaysSaveDraft = _$v.alwaysSaveDraft;
+      _forumViewLayout = _$v.forumViewLayout;
       _$v = null;
     }
     return this;
@@ -1031,7 +1052,8 @@ class AppSettingBuilder implements Builder<AppSetting, AppSettingBuilder> {
               detectLink: detectLink,
               noCropImage: noCropImage,
               switchMethod: switchMethod,
-              alwaysSaveDraft: alwaysSaveDraft);
+              alwaysSaveDraft: alwaysSaveDraft,
+              forumViewLayout: forumViewLayout);
     } catch (_) {
       String _$failedField;
       try {

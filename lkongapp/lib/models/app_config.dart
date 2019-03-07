@@ -125,6 +125,9 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   @nullable
   @BuiltValueField(wireName: 'alwaysSaveDraft')
   bool get alwaysSaveDraft;
+  @nullable
+  @BuiltValueField(wireName: 'forumViewLayout')
+  int get forumViewLayout;
 
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/selectors/selectors.dart';
 import 'package:lkongapp/ui/app_drawer.dart';
@@ -73,7 +74,7 @@ class ForumListModel extends FetchedListModel {
   final List<int> forumIds;
   final List<int> planeIds;
 
-  final bool showInfo;
+  final int forumLayout;
   bool get loading => repo.loading;
   String get lastError => repo.lastError;
 
@@ -90,11 +91,11 @@ class ForumListModel extends FetchedListModel {
     return other is ForumListModel &&
         repo == other.repo &&
         followed == other.followed &&
-        showInfo == other.showInfo;
+        forumLayout == other.forumLayout;
   }
 
   @override
-  int get hashCode => hash3(repo, followed, showInfo);
+  int get hashCode => hash3(repo, followed, forumLayout);
 
   ForumListModel({
     @required this.repo,
@@ -103,7 +104,7 @@ class ForumListModel extends FetchedListModel {
     @required this.followed,
     @required this.forumIds,
     @required this.planeIds,
-    @required this.showInfo,
+    @required this.forumLayout,
   });
 
   @override
@@ -130,7 +131,7 @@ class ForumListModel extends FetchedListModel {
     var fetchList =
         followed?.where((fid) => !list.contains(fid))?.toSet() ?? Set<int>();
 
-    if (showInfo || force) {
+    if (forumLayout == 1 || force) {
       fetchList.addAll(list);
     }
 
@@ -195,6 +196,17 @@ class ForumListModel extends FetchedListModel {
               .toList();
         }
 
+        final setting = selectSetting(store);
+        int forumViewLayout = setting.forumViewLayout;
+        if (forumViewLayout == null) {
+          bool showForumInfo = setting.showForumInfo;
+          if (showForumInfo) {
+            forumViewLayout = 1;
+          } else {
+            forumViewLayout = 0;
+          }
+        }
+
         return ForumListModel(
           repo: repo,
           state: state,
@@ -202,7 +214,7 @@ class ForumListModel extends FetchedListModel {
           forums: forumMap,
           forumIds: forumIds,
           planeIds: planeIds,
-          showInfo: selectSetting(store).showForumInfo,
+          forumLayout: forumViewLayout,
         );
       };
 
@@ -213,11 +225,44 @@ class ForumListModel extends FetchedListModel {
     }
   }
 
+  Widget createForumGridItem(BuildContext context, Forum forum) {
+    final theme = LKModeledApp.modelOf(context).theme;
+    TextStyle subtitleStyle = theme.subtitleStyle;
+
+    return GestureDetector(
+      key: Key('__forum_grid_item_${forum.fid}__'),
+      onTap: () => onForumTap(context, forum),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 16.0),
+        alignment: Alignment.center,
+        child: Column(children: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.transparent,
+            backgroundImage: shouldLoadAvatar(context)
+                ? CachedNetworkImageProvider(avatarForForumID(forum.fid),
+                    imageOnError: "assets/image_placeholder.png")
+                : AssetImage("assets/image_placeholder.png"),
+            radius: theme.titleSize + 4,
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                forum.name,
+                style: subtitleStyle,
+              ),
+              // Text(timeAgoSinceDate(parseDatetime(forum.dateline))),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
   Widget createForumListItem(BuildContext context, Forum forum) {
-    var info = repo.info[forum.fid];
     return ForumItem(
       forum: forum,
-      info: showInfo ? info : null,
+      info: forumLayout == 1 ? repo.info[forum.fid] : null,
       onTap: () => onForumTap(context, forum),
     );
   }
@@ -281,8 +326,12 @@ class ForumListModel extends FetchedListModel {
         }
       }
       if (forum != null) {
-        Widget item = createForumListItem(context, forum);
-        return wrapItem(context, item);
+        if (forumLayout != 2) {
+          Widget item = createForumListItem(context, forum);
+          return wrapItem(context, item);
+        } else {
+          return createForumGridItem(context, forum);
+        }
       }
     }
 
@@ -337,6 +386,39 @@ class ForumListModel extends FetchedListModel {
     }
 
     return null;
+  }
+
+  @override
+  Widget builderSection(BuildContext context, int section) {
+    if (forumLayout != 2) {
+      return super.builderSection(context, section);
+    }
+
+    final theme = LKModeledApp.modelOf(context).theme;
+    double gridHeight = (theme.titleSize + 4) * 2 + theme.subtitleSize + 48.0;
+    double gridWidth = MediaQuery.of(context).size.width / 3;
+
+    var header = headerForSection(context, section: section);
+    var list = SliverGrid(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 10.0,
+        crossAxisSpacing: 10.0,
+        childAspectRatio: gridWidth / gridHeight,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, i) =>
+            cellForSectionAndIndex(context, section: section, index: i),
+        childCount: countOfItemsInSection(section: section),
+      ),
+    );
+
+    return header == null
+        ? list
+        : SliverStickyHeader(
+            header: header,
+            sliver: list,
+          );
   }
 
   @override
