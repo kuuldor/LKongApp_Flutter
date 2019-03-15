@@ -73,7 +73,8 @@ abstract class StoryListState<T extends StatefulWidget> extends State<T> {
   }
 }
 
-abstract class StoryListModel extends FetchedListModel implements ScrollerState {
+abstract class StoryListModel extends FetchedListModel
+    implements ScrollerState {
   StoryListModel(Store<AppState> store) {
     if (store != null) {
       if (store.state.persistState.appConfig.setting.hideBlacklisterPost) {
@@ -126,6 +127,9 @@ abstract class StoryListModel extends FetchedListModel implements ScrollerState 
 
   Function startTimer;
 
+  Function(BuildContext context, Story story) get handleStoryTap =>
+      (context, story) => onStoryTap(context, story);
+
   @override
   bool get initLoaded =>
       storyList != null &&
@@ -137,7 +141,7 @@ abstract class StoryListModel extends FetchedListModel implements ScrollerState 
 
     var item = StoryItem(
       story: story,
-      onTap: () => onStoryTap(context, story),
+      onTap: () => handleStoryTap(context, story),
       scroller: this,
       showDetailTime: showDetailTime,
     );

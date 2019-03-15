@@ -9,6 +9,7 @@ import 'package:lkongapp/ui/items/story_item.dart';
 import 'package:lkongapp/ui/story_screen.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
+import 'package:lkongapp/ui/tools/item_handler.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -118,6 +119,10 @@ class FavoriteScreenModel extends StoryListModel {
 
   @override
   APIRequest get checkNewRequest => null;
+
+  @override
+  Function(BuildContext context, Story story) get handleStoryTap =>
+      (context, story) => onStoryTap(context, story, favorite: true);
 
   @override
   Widget buildStoryListView(BuildContext context, StoryListState aState) {

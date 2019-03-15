@@ -7,7 +7,8 @@ import 'package:lkongapp/ui/forum_story.dart';
 import 'package:lkongapp/ui/screens.dart';
 import 'package:lkongapp/utils/utils.dart';
 
-Future<Null> onStoryTap(BuildContext context, Story story) {
+Future<Null> onStoryTap(BuildContext context, Story story,
+    {bool favorite: false}) {
   int storyId;
   int postId;
   if (story.tid == null) {
@@ -17,12 +18,12 @@ Future<Null> onStoryTap(BuildContext context, Story story) {
     postId = parseLKTypeId(story.id, type: "post");
   }
   return Future(() {
-    openThreadView(context, storyId, postId: postId);
+    openThreadView(context, storyId, postId: postId, favorite: favorite);
   });
 }
 
 void openThreadView(BuildContext context, int storyId,
-    {int postId, int page: 1}) {
+    {int postId, int page: 1, bool favorite: false}) {
   if (storyId != null) {
     dispatchAction(context)(StoryInfoRequest(null, storyId));
   }
@@ -32,6 +33,7 @@ void openThreadView(BuildContext context, int storyId,
       storyId: storyId,
       page: page,
       postId: postId,
+      favorite: favorite,
     );
   }));
 }
@@ -43,8 +45,8 @@ Future<Null> onForumTap(BuildContext context, Forum forum) {
   dispatchAction(context)(ForumStoryNewRequest(null, forum.fid, 0, 0, 0));
 
   return Future(() {
-    dispatchAction(context)(
-        UINavigationPush(context, LKongAppRoutes.forumStory, builder: (context) {
+    dispatchAction(context)(UINavigationPush(context, LKongAppRoutes.forumStory,
+        builder: (context) {
       return ForumStory(
         forum: forum,
       );

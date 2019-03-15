@@ -28,10 +28,16 @@ class StoryScreen extends StatefulWidget {
   final int postId;
   final int page;
   final int floor;
+  final bool favorite;
 
-  const StoryScreen(
-      {Key key, @required this.storyId, this.postId, this.page, this.floor})
-      : super(key: key);
+  const StoryScreen({
+    Key key,
+    @required this.storyId,
+    this.postId,
+    this.page,
+    this.floor,
+    this.favorite,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -265,7 +271,9 @@ class StoryContentModel implements ScrollerState {
       }
     }
 
-    if (story?.pages != null &&
+    if (state.widget.favorite == true) {
+      menus.add(actionMenus[3]);
+    } else if (story?.pages != null &&
         story?.pages[1] != null &&
         story.pages[1].comments != null &&
         story.pages[1].comments.length > 0) {
