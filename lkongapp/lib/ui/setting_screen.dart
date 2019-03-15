@@ -96,6 +96,7 @@ class SettingState extends State<SettingView> {
   final User user;
 
   AppConfig _originalCopy;
+  bool saveChecked = false;
 
   TextEditingController _signatureTextController;
 
@@ -110,17 +111,25 @@ class SettingState extends State<SettingView> {
         text: config.accountSettings.currentSetting.signature);
   }
 
-  void checkSaveConfig() {
+  bool checkSaveConfig() {
+    if (saveChecked) {
+      return true;
+    }
+
     AppSetting newGlobalSetting = config.setting.build();
     AccountSetting newUserSetting =
         config.accountSettings.currentSetting.build();
 
     if (newGlobalSetting != _originalCopy.setting ||
         newUserSetting != _originalCopy.accountSettings.currentSetting) {
+      saveChecked = false;
       config.accountSettings.accounts
           .updateValue(user.uid, (v) => newUserSetting);
+
       _showSaveDialog(config.build());
+      return false;
     }
+    return true;
   }
 
   SettingState({this.config, this.user});
@@ -143,6 +152,8 @@ class SettingState extends State<SettingView> {
               FlatButton(
                 child: Text("不保存"),
                 onPressed: () {
+                  saveChecked = true;
+                  Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 },
               ),
@@ -151,6 +162,7 @@ class SettingState extends State<SettingView> {
                 onPressed: () {
                   dispatchAction(context)(SaveConfig(config));
                   dispatchAction(context)(Dehydrate());
+                  saveChecked = true;
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 },
@@ -167,18 +179,9 @@ class SettingState extends State<SettingView> {
     AppSettingBuilder setting = config.setting;
     AccountSettingBuilder account = config.accountSettings.currentSetting;
 
-    return Scaffold(
+    final widget = Scaffold(
       appBar: AppBar(
         title: Text('设置'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.save_alt),
-            onPressed: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-              checkSaveConfig();
-            },
-          ),
-        ],
       ),
       body: CupertinoSettings(items: <Widget>[
         CSHeader('登录设置'),
@@ -690,6 +693,13 @@ class SettingState extends State<SettingView> {
         ),
         CSHeader(""),
       ]),
+    );
+
+    return WillPopScope(
+      child: widget,
+      onWillPop: () => Future(() {
+            return checkSaveConfig();
+          }),
     );
   }
 }
