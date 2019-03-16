@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lkongapp/middlewares/api.dart';
 import 'package:lkongapp/ui/home_list.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/screens.dart';
@@ -434,6 +435,40 @@ class SettingState extends State<SettingView> {
           ),
           onTap: () => setState(() {
                 setting.noCropImage = (setting.noCropImage == false);
+              }),
+        ),
+        GestureDetector(
+          child: CSControl(
+            '使用图床',
+            DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                style: TextStyle(
+                    fontSize: CS_HEADER_FONT_SIZE, color: theme.textColor),
+                value: setting.uploadImageAPI,
+                items: (['每次上传前选择']..addAll(UPLOAD_IMAGE_API_NAMES))
+                    .asMap()
+                    .map((int i, String title) {
+                      return MapEntry(
+                          i,
+                          DropdownMenuItem<int>(
+                            value: i,
+                            child: Text(title),
+                          ));
+                    })
+                    .values
+                    .toList(),
+                onChanged: (_value) {
+                  setState(() {
+                    setting.uploadImageAPI = _value;
+                  });
+                },
+              ),
+            ),
+            fontSize: CS_ITEM_NAME_SIZE,
+          ),
+          onTap: () => setState(() {
+                setting.uploadImageAPI =
+                    (setting.uploadImageAPI + 1) % (UPLOAD_IMAGE_API_COUNT + 1);
               }),
         ),
         GestureDetector(

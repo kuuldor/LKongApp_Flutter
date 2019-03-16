@@ -14,6 +14,7 @@ import 'package:lkongapp/ui/emoji_picker.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/choose_image.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
+import 'package:lkongapp/ui/tools/radio_dialog.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -252,25 +253,109 @@ class ComposeState extends State<ComposeScreen> with WidgetsBindingObserver {
     });
   }
 
-  Future<String> _uploadImage(File image) async {
-    // print("Image $image");
-    if (image != null) {
-      setState(() {
-        this.sending = true;
-      });
-      return apiDispatch(UPLOAD_IMAGE_API, {"file": image.path}).then((result) {
-        setState(() {
-          this.sending = false;
-        });
-        final link = result["image"];
-        final error = result["error"];
+  Future<String> _uploadImageWithAPI(File image, int api) {
+    // print("Upload Image $image with API ${UPLOAD_IMAGE_API_NAMES[api]}");
+
+    final callbacks = <String Function(Map)>[
+      (result) {
+        final String link = result["image"];
         if (link != null) {
           return link;
         }
-        if (error != null) {
-          showToast("传图失败: $error");
+        final String error = result["error"];
+        throw Exception(error);
+      },
+      (result) {
+        final List files = result["files"];
+        final success = result["success"];
+        String link;
+        if (success && files != null && files.length > 0) {
+          link = files[0]["url"];
         }
+        if (link != null) {
+          return link;
+        }
+        throw Exception();
+      },
+      (result) {
+        final success = result["code"];
+        final error = result["msg"];
+
+        if (success != "success") {
+          throw Exception("$error");
+        }
+
+        final data = result["data"];
+        String link;
+        if (data != null) {
+          link = data["url"];
+        }
+        if (link != null) {
+          return link;
+        }
+      },
+      (result) {
+        final data = result['result'];
+        String link;
+        if (data != null && data.length > 0) {
+          link = data[0];
+        }
+        if (link != null) {
+          return "https://i.ooxx.ooo/$link";
+        }
+        throw Exception();
+      }
+    ];
+
+    setState(() {
+      this.sending = true;
+    });
+
+    return apiDispatch(UPLOAD_IMAGE_API_LIST[api], {"file": image.path})
+        .then((result) {
+      setState(() {
+        this.sending = false;
       });
+      try {
+        return callbacks[api](result);
+      } catch (e) {
+        final errMsg = e.toString().replaceFirst("Exception", "传图失败");
+
+        showToast(errMsg);
+      }
+      return null;
+    });
+  }
+
+  Future<String> _uploadImage(BuildContext context, File image) async {
+    // print("Image $image");
+
+    if (image != null) {
+      int uploadAPI =
+          stateOf(context).persistState.appConfig.setting.uploadImageAPI;
+      if (uploadAPI > 0) {
+        return _uploadImageWithAPI(image, uploadAPI - 1);
+      } else {
+        final Completer<String> completer = Completer<String>();
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => RadioDialog(
+                  title: '选择图床',
+                  selections: UPLOAD_IMAGE_API_NAMES,
+                  onSelected: (int selected) {
+                    if (selected != null &&
+                        selected >= 0 &&
+                        selected < UPLOAD_IMAGE_API_COUNT) {
+                      final url = _uploadImageWithAPI(image, selected);
+                      completer.complete(url);
+                    } else {
+                      completer.complete(null);
+                    }
+                  },
+                ));
+        return completer.future;
+      }
     }
     return null;
   }
@@ -385,7 +470,7 @@ class ComposeState extends State<ComposeScreen> with WidgetsBindingObserver {
                 _scaffoldKey,
                 cropping: config.setting.noCropImage != true,
                 onChosen: (file) {
-                  _uploadImage(file).then((link) {
+                  _uploadImage(context, file).then((link) {
                     if (link != null) {
                       insertImage(link);
                     }

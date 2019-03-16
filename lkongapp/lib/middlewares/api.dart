@@ -42,7 +42,25 @@ const CHECKNOTICE_API = "CHECKNOTICE";
 const GETBLACKLIST_API = "GETBLACKLIST";
 const QUERY_API = "QUERY";
 const FAVORITE_API = "FAVORITE";
+
 const UPLOAD_IMAGE_API = "UPLOAD_IMAGE";
+const UPLOAD_IMAGE_DMCA_GRIPE_API = "UPLOAD_IMAGE_DMCA_GRIPE";
+const UPLOAD_IMAGE_SMMS_API = "UPLOAD_IMAGE_SMMS";
+const UPLOAD_IMAGE_OOXX_API = "UPLOAD_IMAGE_OOXX";
+const UPLOAD_IMAGE_API_COUNT = 4;
+const UPLOAD_IMAGE_API_NAMES = [
+  "龙空(新浪图床)",
+  "dmca.gripe(海外)",
+  "sm.ms(阿里云)",
+  "ooxx(CloudFlare)",
+];
+const UPLOAD_IMAGE_API_LIST = <String>[
+  UPLOAD_IMAGE_API,
+  UPLOAD_IMAGE_DMCA_GRIPE_API,
+  UPLOAD_IMAGE_SMMS_API,
+  UPLOAD_IMAGE_OOXX_API
+];
+
 const UPLOAD_AVATAR_API = "UPLOAD_AVATAR";
 const CHECK_UPGRADE_API = "CHECK_UPGRADE";
 
@@ -825,6 +843,90 @@ Future<Map> _uploadImage(Map args) async {
   });
 }
 
+Future<Map> _uploadImageToDMCAGripe(Map args) async {
+  String file = args["file"];
+
+  if (file == null) {
+    return {"error": "File cannot be null"};
+  }
+
+  final urlString = "https://dmca.gripe/api/upload";
+
+  var headers = Map<String, String>();
+  headers["Referer"] = "https://dmca.gripe/";
+  headers["Origin"] = "https://dmca.gripe/";
+  headers["Cache-Control"] = "no-cache";
+
+  var fields = Map<String, String>();
+
+  var httpAction = session.uploadFile(urlString, "files[]", file,
+      headers: headers, fields: fields);
+  return httpAction.then((response) async {
+    if (response.statusCode == 200) {
+      final body = await response.stream.toBytes();
+      return json.decode(utf8.decode(body));
+    } else {
+      return {"error": "Status ${response.statusCode}"};
+    }
+  });
+}
+
+Future<Map> _uploadImageToSMMS(Map args) async {
+  String file = args["file"];
+
+  if (file == null) {
+    return {"error": "File cannot be null"};
+  }
+
+  final urlString = "https://sm.ms/api/upload";
+
+  var headers = Map<String, String>();
+  headers["Referer"] = "https://sm.ms";
+  headers["Origin"] = "https://sm.ms";
+  headers["Cache-Control"] = "no-cache";
+
+  var fields = Map<String, String>();
+
+  var httpAction = session.uploadFile(urlString, "smfile", file,
+      headers: headers, fields: fields);
+  return httpAction.then((response) async {
+    if (response.statusCode == 200) {
+      final body = await response.stream.toBytes();
+      return json.decode(utf8.decode(body));
+    } else {
+      return {"error": "Status ${response.statusCode}"};
+    }
+  });
+}
+
+Future<Map> _uploadImageToOOXX(Map args) async {
+  String file = args["file"];
+
+  if (file == null) {
+    return {"error": "File cannot be null"};
+  }
+
+  final urlString = "https://ooxx.ooo/upload";
+
+  var headers = Map<String, String>();
+  headers["Referer"] = "https://ooxx.ooo";
+  headers["Origin"] = "https://ooxx.ooo/upload";
+  headers["Cache-Control"] = "no-cache";
+
+  var fields = Map<String, String>();
+
+  var httpAction = session.uploadFile(urlString, "files[]", file,
+      headers: headers, fields: fields);
+  return httpAction.then((response) async {
+    if (response.statusCode == 200) {
+      final body = await response.stream.toBytes();
+      return {"result": json.decode(utf8.decode(body))};
+    } else {
+      return {"error": "Status ${response.statusCode}"};
+    }
+  });
+}
+
 const _avatarSizeLimit = 1153433;
 Future<Map> _uploadAvatar(Map args) async {
   String file = args["file"];
@@ -1134,6 +1236,18 @@ Future<Map> _handleAPIRequest(Map params) {
 
   if (api == UPLOAD_IMAGE_API) {
     return _uploadImage(parameters);
+  }
+
+  if (api == UPLOAD_IMAGE_DMCA_GRIPE_API) {
+    return _uploadImageToDMCAGripe(parameters);
+  }
+
+  if (api == UPLOAD_IMAGE_SMMS_API) {
+    return _uploadImageToSMMS(parameters);
+  }
+
+  if (api == UPLOAD_IMAGE_OOXX_API) {
+    return _uploadImageToOOXX(parameters);
   }
 
   if (api == UPLOAD_AVATAR_API) {
