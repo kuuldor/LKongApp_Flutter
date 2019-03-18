@@ -1,8 +1,10 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
+import 'package:lkongapp/ui/tools/selectable_text.dart';
 import 'package:lkongapp/utils/async_avatar.dart';
 import 'package:lkongapp/utils/utils.dart';
 
@@ -45,6 +47,7 @@ class CommentItem extends StatefulWidget {
 
 class CommentItemState extends State<CommentItem> with AvatarLoaderState {
   bool disposed;
+
   @override
   void initState() {
     super.initState();
@@ -198,6 +201,35 @@ class CommentItemState extends State<CommentItem> with AvatarLoaderState {
 
     var actionButtons = <Widget>[];
     if (widget.uid != null && widget.uid > 0) {
+      actionButtons.add(IconButton(
+        iconSize: size * 2,
+        icon: Icon(Icons.content_copy),
+        onPressed: () {
+          final copyController = TextEditingController(
+            text: html2Text(widget.comment.message),
+          );
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text('复制内容'),
+                  content: SelectableField(
+                    controller: copyController,
+                    maxLines: null,
+                  ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text('全部复制'),
+                      onPressed: () {
+                        Clipboard.setData(
+                            ClipboardData(text: copyController.text));
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+          );
+        },
+      ));
       if (widget.comment.authorid == widget.uid) {
         actionButtons.add(IconButton(
           iconSize: size * 2,

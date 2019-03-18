@@ -238,6 +238,10 @@ class CacheObject {
   }
 
   setFileName(String newFileName) async {
+    if (newFileName == null) {
+      return;
+    }
+
     var oldPath = await getFilePath();
 
     if (oldPath != null && !oldPath.endsWith(newFileName)) {

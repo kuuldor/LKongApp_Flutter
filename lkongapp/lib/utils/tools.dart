@@ -87,9 +87,16 @@ Widget buildUserAvatar(BuildContext context, int uid, double size,
 }
 
 String html2Text(String htmlString) {
+  htmlString = htmlString.replaceAll(RegExp("\n+"), "");
+  htmlString = htmlString.replaceAll(RegExp("\\s+"), " ");
+
+  htmlString =
+      htmlString.replaceAll(RegExp(r"(<br\s*[/]?>|<p\s*>|<div\s*>)"), "\n");
+
   var document = parse(htmlString);
 
   String parsedString = parse(document.body.text).documentElement.text;
+  parsedString = parsedString.replaceAll(RegExp(r"^\s+", multiLine: true), "");
 
   return parsedString;
 }
@@ -209,32 +216,28 @@ _parseImageAndText(
                           Directory extStorage =
                               await getExternalStorageDirectory();
                           if (extStorage != null) {
-                            final copyFile =  () async {
+                            final copyFile = () async {
                               final picPath = extStorage.path + "/Pictures";
                               final picFolder = Directory(picPath);
-                              if (!(await picFolder.exists())
-                              ) {
+                              if (!(await picFolder.exists())) {
                                 picFolder.createSync(recursive: true);
                               }
                               imgFile
-                                  .copy(picPath + "/" + basename
-                                (
-                                  imgFile
-                                      .
-                                  path
-                              )
-                              );
+                                  .copy(picPath + "/" + basename(imgFile.path));
                             };
-                            bool granted = await SimplePermissions.checkPermission(Permission.WriteExternalStorage);
+                            bool granted =
+                                await SimplePermissions.checkPermission(
+                                    Permission.WriteExternalStorage);
                             if (!granted) {
-                              final status = await SimplePermissions.requestPermission(Permission.WriteExternalStorage);
+                              final status =
+                                  await SimplePermissions.requestPermission(
+                                      Permission.WriteExternalStorage);
                               if (status == PermissionStatus.authorized) {
                                 copyFile();
                               }
                             } else {
                               copyFile();
                             }
-
                           }
                         } catch (e) {
                           print("$e");
@@ -510,6 +513,9 @@ String detectLinkAndConvert(String html) {
 
 Widget comment2Widget(BuildContext context, String comment,
     {bool detectLink: false}) {
+  comment = comment.replaceAll(RegExp("\n+"), "");
+  comment = comment.replaceAll(RegExp("\\s+"), " ");
+
   List<Widget> widgetList = List<Widget>();
 
   if (detectLink == true) {
