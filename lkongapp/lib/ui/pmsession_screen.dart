@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:built_collection/built_collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:lkongapp/models/lkong_jsons/lkong_json.dart';
 import 'package:lkongapp/selectors/selectors.dart';
@@ -15,6 +16,7 @@ import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/tools/drawer_button.dart';
 import 'package:lkongapp/ui/tools/icon_message.dart';
 import 'package:lkongapp/ui/tools/item_handler.dart';
+import 'package:lkongapp/ui/tools/selectable_text.dart';
 import 'package:lkongapp/utils/route.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
@@ -40,7 +42,7 @@ class PMSessionScreen extends StatelessWidget {
 }
 
 class PMSessionModel extends FetchedListModel {
-  final int uid;
+  final User user;
   final int pmid;
   final Profile profile;
   final FetchList<PrivateMessage> session;
@@ -50,6 +52,21 @@ class PMSessionModel extends FetchedListModel {
 
   static final _textController = TextEditingController();
 
+  String getFullMessageText() {
+    final otherName = profile?.user?.username ?? "";
+    final myName = user.userInfo.username;
+    BuiltList<PrivateMessage> messages = session.data;
+
+    String messageText = "";
+    messages.forEach((m) {
+      messageText =
+          "@${m.msgfromid == 1 ? otherName : myName} ${m.dateline}:\n${m.message}\n\n" +
+              messageText;
+    });
+
+    return messageText;
+  }
+
   AppBar appBar(BuildContext context) => AppBar(
         title: GestureDetector(
           child: Text("${profile?.user?.username ?? ""}",
@@ -57,6 +74,36 @@ class PMSessionModel extends FetchedListModel {
                   Theme.of(context).textTheme.title.apply(color: Colors.white)),
           onTap: () => scrollToTop(context),
         ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.content_copy),
+            onPressed: () {
+              final copyController = TextEditingController(
+                text: getFullMessageText(),
+              );
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      title: Text('复制内容'),
+                      content: SelectableField(
+                        controller: copyController,
+                        maxLines: null,
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('全部复制'),
+                          onPressed: () {
+                            Clipboard.setData(
+                                ClipboardData(text: copyController.text));
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+              );
+            },
+          )
+        ],
       );
 
   @override
@@ -65,7 +112,7 @@ class PMSessionModel extends FetchedListModel {
         session == other.session &&
         profile == other.profile &&
         loading == other.loading &&
-        uid == other.uid &&
+        user.uid == other.user.uid &&
         pmid == other.pmid &&
         showDetailTime == other.showDetailTime &&
         lastError == other.lastError;
@@ -73,10 +120,10 @@ class PMSessionModel extends FetchedListModel {
 
   @override
   int get hashCode => hashObjects(
-      [session, profile, loading, lastError, uid, pmid, showDetailTime]);
+      [session, profile, loading, lastError, user.uid, pmid, showDetailTime]);
 
   PMSessionModel({
-    @required this.uid,
+    @required this.user,
     @required this.pmid,
     @required this.profile,
     @required this.session,
@@ -95,7 +142,7 @@ class PMSessionModel extends FetchedListModel {
   APIRequest get fetchFromScratchRequest {
     final Completer<String> completer = Completer<String>();
     completer.future.then((error) {});
-    return GetPMSessionNewRequest(completer, uid, pmid, 0, 0);
+    return GetPMSessionNewRequest(completer, user.uid, pmid, 0, 0);
   }
 
   @override
@@ -106,7 +153,8 @@ class PMSessionModel extends FetchedListModel {
 
     final Completer<String> completer = Completer<String>();
     completer.future.then((error) {});
-    return GetPMSessionLoadMoreRequest(completer, uid, pmid, session.nexttime);
+    return GetPMSessionLoadMoreRequest(
+        completer, user.uid, pmid, session.nexttime);
   }
 
   @override
@@ -117,25 +165,26 @@ class PMSessionModel extends FetchedListModel {
 
     final Completer<String> completer = Completer<String>();
     completer.future.then((error) {});
-    return GetPMSessionRefreshRequest(completer, uid, pmid, session.current);
+    return GetPMSessionRefreshRequest(
+        completer, user.uid, pmid, session.current);
   }
 
   @override
   Future<Null> handleRefresh(BuildContext context) {
     final Completer<String> completer = Completer<String>();
     dispatchAction(context)(
-        GetPMSessionRefreshRequest(completer, uid, pmid, session.current));
+        GetPMSessionRefreshRequest(completer, user.uid, pmid, session.current));
     return completer.future.then((_) {});
   }
 
   static Function fromIDAndStore(int pmid) {
     final func = (Store<AppState> store) {
       final userData = selectUserData(store);
-      final uid = selectUID(store);
+      final user = selectUser(store);
 
       return PMSessionModel(
         profile: store.state.uiState.content.profiles[pmid],
-        uid: uid,
+        user: user,
         loading: userData?.pmSession[pmid]?.loading ?? false,
         lastError: userData?.pmSession[pmid]?.lastError,
         pmid: pmid,
@@ -161,7 +210,7 @@ class PMSessionModel extends FetchedListModel {
     print("Send Message: ${_textController.text}");
     _textController.clear();
 
-    dispatchAction(context)(SendPMRequest(completer, uid, pmid, message));
+    dispatchAction(context)(SendPMRequest(completer, user.uid, pmid, message));
 
     completer.future.then((error) {
       if (error != null) {
