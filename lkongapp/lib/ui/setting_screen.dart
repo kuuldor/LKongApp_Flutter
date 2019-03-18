@@ -175,7 +175,7 @@ class SettingState extends State<SettingView> {
     };
 
     CSWidgetStyle fontStyle =
-        CSWidgetStyle(icon: Icon(Icons.font_download, color: theme.textColor));
+        CSWidgetStyle(icon: Icon(Icons.format_size, color: theme.textColor));
 
     AppSettingBuilder setting = config.setting;
     AccountSettingBuilder account = config.accountSettings.currentSetting;
