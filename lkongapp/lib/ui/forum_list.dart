@@ -233,7 +233,7 @@ class ForumListModel extends FetchedListModel {
       key: Key('__forum_grid_item_${forum.fid}__'),
       onTap: () => onForumTap(context, forum),
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 16.0),
+        margin: const EdgeInsets.only(top: 16.0),
         alignment: Alignment.center,
         child: Column(children: <Widget>[
           CircleAvatar(
@@ -246,7 +246,7 @@ class ForumListModel extends FetchedListModel {
           ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 8.0),
               child: Text(
                 forum.name,
                 style: subtitleStyle,
@@ -396,13 +396,12 @@ class ForumListModel extends FetchedListModel {
 
     final theme = LKModeledApp.modelOf(context).theme;
     double gridHeight = (theme.titleSize + 4) * 2 + theme.subtitleSize + 48.0;
-    double gridWidth = MediaQuery.of(context).size.width / 3;
+    double gridWidth = (MediaQuery.of(context).size.width - 20) / 3;
 
     var header = headerForSection(context, section: section);
     var list = SliverGrid(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        mainAxisSpacing: 10.0,
         crossAxisSpacing: 10.0,
         childAspectRatio: gridWidth / gridHeight,
       ),
