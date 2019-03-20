@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
 import 'package:lkongapp/ui/setting_screen.dart';
+import 'package:lkongapp/utils/globals.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux_logging/redux_logging.dart';
@@ -54,6 +55,9 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
     quickSwitchNightMode = -1;
     ShakeDetector.getInstance().then((detector) {
       shakeDetector = detector;
+      final threshold =
+          selectSetting(globals.store).shakeThreshold ?? defaultShakeThreshold;
+      shakeDetector.setShakeThreshold(threshold);
       shakeSubscription = shakeDetector.listen((shake) => switchNightMode());
       if (quickSwitchNightMode < 0) {
         shakeDetector.stopCaptureSensor();

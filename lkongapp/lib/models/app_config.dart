@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:lkongapp/utils/globals.dart';
 
 import 'package:lkongapp/utils/localization.dart';
 import 'package:lkongapp/models/theme.dart';
@@ -66,6 +67,8 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
           ..detectLink = false
           ..noCropImage = false
           ..switchMethod = 0
+          ..alwaysSaveDraft = false
+          ..shakeThreshold = defaultShakeThreshold
           ..update(updates);
       });
 
@@ -128,6 +131,9 @@ abstract class AppSetting implements Built<AppSetting, AppSettingBuilder> {
   @nullable
   @BuiltValueField(wireName: 'forumViewLayout')
   int get forumViewLayout;
+  @nullable
+  @BuiltValueField(wireName: 'shakeThreshold')
+  double get shakeThreshold;
 
   String toJson() {
     return json.encode(serializers.serializeWith(AppSetting.serializer, this));

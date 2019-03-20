@@ -39,15 +39,20 @@ class ShakeDetector extends Stream<Motion> {
 
   ShakeDetector._();
 
-  static const threshold = 3.0;
-  static const timeSpan = 800;
-  static const countPerShake = 3;
-  static const prodThreshold = -9.0;
+  double _threshold = 5.0;
+  double _prodThreshold = -25.0;
+  static const _timeSpan = 800;
+  static const _countPerShake = 3;
 
   Motion lastShake;
 
   int shakeTimestamp = 0;
   int shakeCount = 0;
+
+  void setShakeThreshold(double value) {
+    _threshold = value;
+    _prodThreshold = -(value * value);
+  }
 
   StreamSubscription<UserAccelerometerEvent> _listener;
 
@@ -96,8 +101,8 @@ class ShakeDetector extends Stream<Motion> {
         // final cos0 = product / (shake.mag * lastShake.mag);
         // print("product:  $product");
 
-        if (product < prodThreshold) {
-          if (shake.timestamp - shakeTimestamp < timeSpan) {
+        if (product < _prodThreshold) {
+          if (shake.timestamp - shakeTimestamp < _timeSpan) {
             shakeCount++;
           } else {
             shakeCount = 1;
@@ -107,7 +112,7 @@ class ShakeDetector extends Stream<Motion> {
       }
       lastShake = shake;
 
-      if (shakeCount >= countPerShake) {
+      if (shakeCount >= _countPerShake) {
         if (!_controller.isPaused) {
           _controller.add(shake);
         }
@@ -122,7 +127,7 @@ class ShakeDetector extends Stream<Motion> {
     Motion result;
 
     final magnitude = sqrt(x * x + y * y + z * z);
-    if (magnitude > threshold) {
+    if (magnitude > _threshold) {
       result =
           Motion(DateTime.now().millisecondsSinceEpoch, x, y, z, magnitude);
     }

@@ -26,6 +26,8 @@ Store<AppState> store;
 
 String copyRight = '© 2018 Akeysoft';
 
+double defaultShakeThreshold = 5.0;
+
 const screenPages = const [
   {
     "title": '首页',

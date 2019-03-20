@@ -7,6 +7,7 @@ import 'package:lkongapp/ui/screens.dart';
 import 'package:lkongapp/ui/tools/check_upgrade.dart';
 import 'package:lkongapp/utils/cache_manager.dart';
 import 'package:lkongapp/utils/globals.dart';
+import 'package:lkongapp/utils/shake_detector.dart';
 import 'package:lkongapp/utils/utils.dart';
 import 'package:quiver/core.dart';
 import 'package:redux/redux.dart';
@@ -284,21 +285,6 @@ class SettingState extends State<SettingView> {
                     3;
               }),
         ),
-        // GestureDetector(
-        //   child: CSControl(
-        //     '显示版块信息',
-        //     CupertinoSwitch(
-        //       value: setting.showForumInfo,
-        //       onChanged: (value) => setState(() {
-        //             setting.showForumInfo = value;
-        //           }),
-        //     ),
-        //     fontSize: CS_ITEM_NAME_SIZE,
-        //   ),
-        //   onTap: () => setState(() {
-        //         setting.showForumInfo = !setting.showForumInfo;
-        //       }),
-        // ),
         GestureDetector(
           child: CSControl(
             '启动页面',
@@ -695,6 +681,20 @@ class SettingState extends State<SettingView> {
           },
           fontSize: CS_ITEM_NAME_SIZE,
         ),
+        CSHeader("晃动手机灵敏度调节"),
+        CSWidget(
+            CupertinoSlider(
+                min: 1.0,
+                max: 125.0,
+                value: setting.shakeThreshold ?? defaultShakeThreshold,
+                onChanged: (double value) => setState(() {
+                      setting.shakeThreshold = value;
+                      ShakeDetector.getInstance().then((instance) {
+                        instance.setShakeThreshold(value);
+                      });
+                    })),
+            style: CSWidgetStyle(
+                icon: Icon(Icons.vibration, color: theme.textColor))),
         CSHeader("缓存管理"),
         CSButton(
           CSButtonType.DESTRUCTIVE,
