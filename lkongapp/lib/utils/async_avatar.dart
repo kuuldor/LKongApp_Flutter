@@ -88,13 +88,11 @@ class AsyncAvatarProvider extends ImageProvider<AsyncAvatarProvider>
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
     final AsyncAvatarProvider typedOther = other;
-    return url == typedOther.url &&
-        loader == typedOther.loader &&
-        scale == typedOther.scale;
+    return url == typedOther.url && scale == typedOther.scale;
   }
 
   @override
-  int get hashCode => hashValues(url, loader, scale);
+  int get hashCode => hashValues(url, scale);
 
   @override
   String toString() => '$runtimeType("$url", scale: $scale)';

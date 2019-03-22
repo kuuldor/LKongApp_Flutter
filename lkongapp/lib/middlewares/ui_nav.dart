@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/models/models.dart';
@@ -8,7 +9,7 @@ void navigatorPush(Store<AppState> store, action, NextDispatcher next) {
   if (action is UINavigationPush) {
     if (!action.unique || !route.endsWith(action.routeName)) {
       if (action.builder != null) {
-        Navigator.of(action.context).push(MaterialPageRoute(
+        Navigator.of(action.context).push(CupertinoPageRoute(
           builder: action.builder,
         ));
       } else {

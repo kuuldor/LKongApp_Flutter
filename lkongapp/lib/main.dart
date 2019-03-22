@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lkongapp/actions/actions.dart';
 import 'package:lkongapp/ui/modeled_app.dart';
@@ -112,6 +113,16 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
     }
   }
 
+  final routes = {
+    LKongAppRoutes.login: (context) =>
+        LoginScreen(key: LKongAppKeys.loginScreen),
+    LKongAppRoutes.home: (context) => HomeScreen(),
+    LKongAppRoutes.settings: (context) => SettingScreen(),
+    LKongAppRoutes.accountManage: (context) => AccountManageScreen(),
+    LKongAppRoutes.manageBlacklist: (context) => BlacklistManageScreen(),
+    LKongAppRoutes.favorite: (context) => FavoriteScreen(),
+  };
+  
   @override
   Widget build(BuildContext context) {
     autoPunchTimer = globals.createPeriodicTimer(
@@ -187,16 +198,12 @@ class LKongAppState extends State<LKongApp> with WidgetsBindingObserver {
                 LKongLocalizationsDelegate(),
               ],
               initialRoute: LKongAppRoutes.home,
-              routes: {
-                LKongAppRoutes.login: (context) =>
-                    LoginScreen(key: LKongAppKeys.loginScreen),
-                LKongAppRoutes.home: (context) => HomeScreen(),
-                LKongAppRoutes.settings: (context) => SettingScreen(),
-                LKongAppRoutes.accountManage: (context) =>
-                    AccountManageScreen(),
-                LKongAppRoutes.manageBlacklist: (context) =>
-                    BlacklistManageScreen(),
-                LKongAppRoutes.favorite: (context) => FavoriteScreen(),
+              onGenerateRoute: (RouteSettings settings) {
+                final route = routes[settings.name];
+                if (route != null) {
+                  return CupertinoPageRoute(builder: route, settings: settings);
+                }
+                return null;
               },
             ),
           );
