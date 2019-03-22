@@ -43,8 +43,8 @@ Widget asyncUserAvatar(
   final avatar = CircleAvatar(
     backgroundColor: Colors.transparent,
     backgroundImage: loadAvatar && uid != null && uid > 0
-        ? AsyncAvatarProvider(loader, avatarForUserID(uid),
-            delayInMillies: delayInMillies)
+        ? CachedNetworkImageProvider(avatarForUserID(uid),
+            imageOnError: "assets/noavatar.png")
         : AssetImage("assets/noavatar.png"),
     radius: size / 2,
   );

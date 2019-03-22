@@ -134,6 +134,12 @@ class SettingState extends State<SettingView> {
     return true;
   }
 
+  void revertChanges() {
+    ShakeDetector.getInstance().then((instance) {
+      instance.setShakeThreshold(_originalCopy.setting.shakeThreshold);
+    });
+  }
+
   SettingState({this.config, this.user});
 
   @override
@@ -155,6 +161,9 @@ class SettingState extends State<SettingView> {
                 child: Text("不保存"),
                 onPressed: () {
                   saveChecked = true;
+
+                  revertChanges();
+
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
                 },
